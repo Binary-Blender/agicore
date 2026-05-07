@@ -144,9 +144,19 @@ The result is systems that are:
 
 ## Status
 
-Agicore is in active development. The architecture is defined. The DSL grammar is being formalized. The 3G NovaSyn ecosystem (9 working applications) serves as proof-of-work and the source of patterns being generalized into the platform.
+Phases 1 and 2 are complete. The DSL covers 21 declaration types across 4 layers. The parser (253 tests) and compiler (161 tests) generate complete Tauri projects with expert system and orchestration runtimes from `.agi` files.
 
-See [ROADMAP.md](ROADMAP.md) for the development plan.
+See [ROADMAP.md](ROADMAP.md) for the full development plan.
+
+---
+
+## Community & Resources
+
+**Free training and community:** [TAO — Tactical AI Orchestration on Skool](https://www.skool.com/tao-tactical-ai-orchestration-4733)
+
+**Tools and skill documents:** [Binary Blender](https://binary-blender.myshopify.com/)
+
+See [COMMUNITY.md](COMMUNITY.md) for details.
 
 ---
 
