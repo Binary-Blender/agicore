@@ -1,0 +1,466 @@
+SCREAMMO MASTER DOCUMENT v1.0
+PART 5 OF N
+
+UX SPECIFICATIONS
+
+9.1 HIGH-LEVEL INTERACTION MODEL
+The user flows within Screamo follow a triad: ingest → prioritize → respond.
+
+Primary workflow:
+
+User opens the dashboard.
+
+High-priority messages appear first.
+
+User selects a message.
+
+Screamo displays:
+
+Message content
+
+Classification metadata
+
+Priority justification
+
+AI-generated draft
+
+User edits or approves the draft.
+
+Final message is sent and feedback is logged.
+
+SPC metrics update immediately.
+
+Secondary workflow:
+
+Feed scanner identifies LinkedIn opportunities.
+
+User sees suggested comments.
+
+User approves, edits, or rejects.
+
+If approved, the system posts via LinkedIn API.
+
+System continuously updates the SPC controller and models across all workflows.
+
+9.2 SCREEN-LEVEL SPECIFICATIONS
+
+9.2.1 DASHBOARD
+The dashboard must present:
+
+Count of new messages
+
+Count of pending items requiring human review
+
+Highest-priority messages (top 5)
+
+SPC indicators showing automation tier for each channel
+
+Recent system actions (ingestions, drafts, postings)
+
+Performance:
+Screen load time < 2 seconds.
+
+9.2.2 UNIFIED INBOX
+Columns include:
+
+Priority score
+
+Channel
+
+Sender
+
+Preview text
+
+Timestamp
+
+Sorting defaults to priority score descending.
+Filters:
+
+Channel
+
+Opportunity type
+
+Sentiment
+
+Response mode suggestion
+
+Message list must support keyboard navigation.
+
+9.2.3 MESSAGE DETAIL PANEL
+Contains:
+
+Original message body
+
+Thread context
+
+Classification details
+
+Priority explanation
+
+AI-generated draft
+
+Editable text box
+
+Rationale (hidden by default, expandable)
+
+Buttons:
+
+Approve and Send
+
+Edit and Send
+
+Reject Draft
+
+Reclassify
+
+Mark High Priority
+
+9.2.4 FEED SCANNER PANEL
+Features:
+
+List of posts with detected opportunities
+
+Suggested response type
+
+Draft comment preview
+
+Confidence score
+
+User actions:
+
+Approve and Publish
+
+Edit and Publish
+
+Reject Opportunity
+
+9.2.5 SPC METRICS PANEL
+Displays:
+
+Control charts per channel
+
+Automation level
+
+Out-of-control alerts
+
+Rolling averages
+
+9.2.6 SETTINGS PANEL
+Sections:
+
+Account and API credentials
+
+Style preferences
+
+Redline topics
+
+Automation limits
+
+Notification preferences
+
+Data retention and privacy controls
+
+9.3 NAVIGATION REQUIREMENTS
+Top navigation bar links: Dashboard, Inbox, Feed Scanner, SPC, Settings.
+Keyboard shortcuts must be supported for all frequent actions.
+
+9.4 ACCESSIBILITY REQUIREMENTS
+WCAG 2.1 AA:
+
+Focus indicators
+
+Color contrast compliance
+
+Screen reader labels
+
+No animations that trigger vestibular issues
+
+TESTING AND VALIDATION
+
+10.1 TEST STRATEGY
+Testing includes the following categories:
+
+Unit Tests
+
+Integration Tests
+
+End-to-End Tests
+
+AI Model Validation
+
+SPC Stability Testing
+
+Security and Penetration Testing
+
+Usability Testing
+
+All tests must run in an automated CI/CD pipeline.
+
+10.2 FUNCTIONAL TEST CASES
+Tests include:
+
+Ingestion prevents duplicates
+
+Classification assigns correct opportunity type
+
+Prioritization updates dynamically
+
+Draft generation returns text within defined time
+
+Knowledge base retrieval returns top-k relevant results
+
+Feed scanner finds relevant posts
+
+SPC controller adjusts automation correctly
+
+10.3 INTEGRATION TESTS
+
+Gmail ingestion end-to-end
+
+LinkedIn inbound messaging
+
+YouTube comment ingestion
+
+LinkedIn outbound posting
+
+RAG-based generation pipeline
+
+10.4 AI PERFORMANCE TESTS
+
+Style similarity measurement
+
+Opinion alignment accuracy
+
+Reduction of edit distance over time
+
+Misclassification rate under threshold
+
+10.5 SPC VALIDATION TESTS
+Test automated transitions between tiers:
+
+Simulate 100 messages with high accuracy → ensure automation increases
+
+Simulate high error rate spike → ensure automation drops to Tier 0
+
+Validate control limit detection logic
+
+10.6 SECURITY TESTS
+
+OAuth token storage security
+
+SQL injection testing
+
+XSS testing
+
+API rate limit enforcement
+
+Permissions isolation
+
+10.7 ACCEPTANCE CRITERIA
+System is considered acceptable when:
+
+95% of functional tests pass
+
+Misclassification rate < 10% initial, < 5% after learning period
+
+Average draft acceptance + light edit rate > 50%
+
+SPC controller stabilizes with predictable behavior
+
+No major security vulnerabilities
+
+DEPLOYMENT AND OPERATIONS
+
+11.1 ENVIRONMENTS
+The following environments are required:
+
+Development
+
+Staging
+
+Production
+
+Each environment must support isolated API credentials.
+
+11.2 DEPLOYMENT MODEL
+Deploy using containerized microservices on a managed Kubernetes cluster.
+Deployment pipeline shall:
+
+Run tests
+
+Build containers
+
+Version services
+
+Apply incremental deployment
+
+Trigger smoke tests
+
+11.3 CONFIGURATION MANAGEMENT
+Configuration stored as environment variables.
+Secrets stored in encrypted secret manager.
+
+11.4 MONITORING AND ALERTING
+Monitoring metrics:
+
+API error rates
+
+Classification latency
+
+Draft generation latency
+
+Feed scanner performance
+
+SPC anomalies
+
+Alerting:
+
+Slack or email alerts for errors
+
+SPC Out-of-Control alerts
+
+11.5 BACKUP AND RECOVERY
+Daily backups for PostgreSQL.
+Weekly backups for vector database.
+Recovery time objective: < 1 hour.
+
+DEVELOPMENT PROMPTS FOR AI CODING AGENTS
+
+This section provides plain-text, executable instructions for your AI dev team (Refrain, GPT-Codex, Claude-Code, BabyAI) to follow.
+
+All instructions assume:
+
+Each AI agent has access to the repository
+
+Step 000 comes before all sprints
+
+Steps 1–5 form one sprint cycle
+
+Agents must read the full Screamo Master Document before beginning
+
+12.1 STEP 000: REPOSITORY BOOTSTRAP
+
+Instruction:
+Read all documentation.
+Create a new repository structure.
+Initialize backend, frontend, and infra directories.
+Generate scaffold files for services: ingestion, classification, prioritization, drafting, style engine, KB service, feedback service, SPC controller, feed scanner, UI.
+Create configuration templates.
+Initialize database migrations.
+Document all decisions in a technical plan file.
+
+12.2 BACKEND SERVICE DEVELOPMENT
+
+STEP 1: Build Ingestion Service
+
+Implement polling for Gmail, O365, LinkedIn, YouTube
+
+Normalize messages into unified schema
+
+Store in messages table
+
+Handle retries, rate limits, idempotency
+
+Create ingestion API endpoints
+
+STEP 2: Build Classification Service
+
+Implement classification endpoints
+
+Integrate base LLM
+
+Apply classification schema
+
+Store classifications in database
+
+Create explanations
+
+STEP 3: Build Prioritization Engine
+
+Add scoring logic
+
+Integrate user preference history
+
+Expose prioritization API
+
+Integrate with frontend
+
+STEP 4: Implement Draft Generation
+
+Add request handler
+
+Integrate RAG pipeline
+
+Implement style rewrite pass
+
+Return draft + rationale
+
+STEP 5: Build Feedback Processing
+
+Compute edit distance
+
+Classify edits
+
+Update preference model data
+
+Append to KB if high-quality
+
+12.3 FRONTEND DEVELOPMENT
+
+STEP 1: Build Dashboard
+STEP 2: Build Unified Inbox
+STEP 3: Build Message Detail Panel
+STEP 4: Build Feed Scanner UI
+STEP 5: Build SPC Dashboard
+
+12.4 AI INTEGRATION STEPS
+
+STEP 1: Integrate embedding generator
+STEP 2: Implement KB ingestion service
+STEP 3: Implement vector similarity search
+STEP 4: Implement RAG-context assembler
+STEP 5: Connect RAG to drafting engine
+
+12.5 SPC MODULE IMPLEMENTATION
+
+STEP 1: Implement SPC metric collectors
+STEP 2: Build control limit calculators
+STEP 3: Implement tier logic
+STEP 4: Integrate with prioritization engine
+STEP 5: Add UI visualization
+
+12.6 FINAL INTEGRATION STEPS
+
+STEP 1: Deploy services in staging
+STEP 2: Run end-to-end tests
+STEP 3: Fix defects
+STEP 4: Deploy to production
+STEP 5: Monitor SPC metrics and retrain models as needed
+
+APPENDICES
+
+APPENDIX A: DETAILED SCHEMAS
+Full database table definitions (see Part 4).
+
+APPENDIX B: EXTENDED API SPECS
+Full request/response formats for each internal and external API.
+
+APPENDIX C: STYLISTIC PROMPT TEMPLATES
+Templates for each mode: standard, amplify, educate, battle.
+
+APPENDIX D: GLOSSARY
+All terminology used within system.
+
+APPENDIX E: RISK LOG
+Platform API changes
+LLM drift
+Rate-limit blocking
+Incorrect automation escalation
+User privacy concerns
+
+APPENDIX F: FUTURE ENHANCEMENTS
+Voice message ingestion
+Phone call transcription
+Video reply generation
+LinkedIn article writing
+Personality-based outreach

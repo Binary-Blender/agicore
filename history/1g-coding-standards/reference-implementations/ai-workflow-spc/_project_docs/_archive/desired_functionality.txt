@@ -1,0 +1,42 @@
+a reminder: we are working on C:\Users\Chris\Documents\_DevProjects\ai-workflow-spc
+
+desired functionality:
+
+I want this application to work similar to make.com, with resable components that can be connected together to perform workflows
+
+four sections to the app:
+1. asset repo to store images to start, other objects later (done)
+2. workflow run screen (done)
+3. A qc "queue" for items awaiting human QC (done)
+4. a workflow builder with an interface similar to make.com.
+
+two modules in the workflow builder to start: 
+1. An image generation module that uses an ai image generating api to produce an image from a prompt.  user enters prompt when module added to workflow and can edit.  images generated added to repo in "unchecked" state
+2. A Pass/Fail QC Module for human qc.  On pass keeps image in asset repo and moves onto next step (if no more steps end workflow), on fail image deleted from repo.  
+
+idea for workflow builder:
+1. build the workflow from top to bottom with each "task" numbered, and each qc step referencing the task # that executes.  think about how old school basic programs used to work with line numbers and goto statements, except this will be a graphical drag drop to add modules to the workflow.  each module should have an editable form that allows you to enter details for the current instance: parameter, # images generated, whatever else you think we need.  Each module that requires an API key should have that as a parameter.  we'll use "byok" instead of trying to create and manager our own credit system.
+
+example:
+0. Start
+1. Generate Image
+ - parameter, other details shown.
+2. pass/fail qc	
+ - on pass: save asset and continue
+ - on fail: go to 1
+3. end workflow
+
+For my test workflow I want to be able to build in the workflow builder:
+image --> qc or just image (no qc, goes straight to repo in "unchecked" state
+
+don't worry about the spc stuff for now, we'll add that into the qc module later.
+
+best practices:
+1. never run anything in localhost as my pc is garbage.  always deploy to fly.io.
+2. wait until i tell you to deploy.  deployment is slow, so i will want to work on a few things before we deploy.
+3. update lessons_learned.md "on the fly" while you are working with new lessons as you learn them.  this will help us to improve our work across sessions.
+
+documentation (read to better understand the work we are doing):
+lessons_learned.md
+current_sprint.md (our current sprint tasks)
+https://docs.akool.com/ai-tools-suite/image-generate

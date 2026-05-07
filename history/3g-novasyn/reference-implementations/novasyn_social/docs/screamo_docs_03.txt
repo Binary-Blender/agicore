@@ -1,0 +1,274 @@
+SCREAMO MASTER DOCUMENT v1.0
+PART 3 OF N
+
+3.9 FEED SCANNING AND OPPORTUNITY COMMENTING
+
+FR-9.1: The system shall retrieve the user’s LinkedIn feed via the LinkedIn API at defined intervals.
+FR-9.2: The system shall analyze each post for topic alignment with the user’s known interests, expertise, and opinions.
+FR-9.3: Posts that strongly align with user views shall trigger Agree-and-Amplify mode.
+FR-9.4: Posts that conflict with user views but present an educational opportunity shall trigger Educate mode.
+FR-9.5: Feed scanning subsystem shall generate a justification score for each proposed comment.
+FR-9.6: The system shall provide draft comments for user approval before posting, unless SPC automation permits auto-posting for low-risk Agree-and-Amplify comments.
+FR-9.7: The system shall respect platform rate limits and implement throttling when necessary.
+FR-9.8: The system shall log all proposed opportunities, even those rejected by the user, for model refinement.
+
+3.10 BATTLE MODE RESPONSE LOGIC
+
+FR-10.1: Battle mode shall be triggered when a message is classified as hostile, confrontational, or directly challenging the user's statement.
+FR-10.2: Battle mode shall generate a structured rebuttal including:
+
+Identification of opposing claims
+
+Logical deconstruction of each claim
+
+Evidence-based counterpoints
+
+Reinforcement of user stance
+
+Invitation for civil discourse or closure statement
+
+FR-10.3: Battle mode shall maintain strict professionalism and avoid personal attacks.
+FR-10.4: Battle mode drafts shall require explicit human approval and shall never be auto-sent.
+FR-10.5: Battle mode shall use a specialized AI model optimized for argument breakdown and clarity.
+FR-10.6: The system shall store all battle mode drafts and user edits for analysis of argumentation patterns.
+
+3.11 USER INTERFACE REQUIREMENTS
+
+FR-11.1: The system shall provide a unified inbox displaying prioritized messages.
+FR-11.2: The dashboard shall display high-priority items, SPC status indicators, and pending tasks.
+FR-11.3: A message detail view shall display:
+
+Original message
+
+Classification details
+
+Priority score
+
+AI-generated draft
+
+Editable response field
+
+Explanation of classification
+
+FR-11.4: A feedback panel shall allow categorizing user edits.
+FR-11.5: The UI shall contain a feed-scanning suggestions page listing proposed comments.
+FR-11.6: The settings page shall include:
+
+Channel connections
+
+Automation controls
+
+Style parameters
+
+Blacklist/redline topics
+
+Rate limit configurations
+
+FR-11.7: The UI shall support keyboard-only navigation.
+FR-11.8: UI components shall load within 2 seconds under standard network conditions.
+
+3.12 ADMINISTRATIVE AND CONFIGURATION FUNCTIONS
+
+FR-12.1: Admin panel shall provide control over channel credentials and permissions.
+FR-12.2: System shall allow enabling or disabling individual automation modes.
+FR-12.3: Admin shall configure model update frequency.
+FR-12.4: System shall support export of logs in CSV format.
+FR-12.5: Admin controls shall allow clearing of selected portions of the knowledge base.
+FR-12.6: Admin panel shall show real-time SPC dashboard with control charts.
+
+3.13 LOGGING, AUDITING, AND EXPLAINABILITY
+
+FR-13.1: The system shall log every message ingested, classified, drafted, or responded to.
+FR-13.2: Logs shall include timestamps, user IDs, channel type, and draft version.
+FR-13.3: Logs shall be stored for a minimum of 90 days.
+FR-13.4: Explainability module shall provide:
+
+Reason for classification
+
+Factors contributing to priority score
+
+Rationale behind automation decisions
+
+Summary of how style model influenced the draft
+
+FR-13.5: System shall generate audit-ready summaries of automation events.
+
+EXTERNAL INTERFACE REQUIREMENTS
+
+4.1 USER INTERFACES (UI)
+The UI shall be browser-based, responsive, and follow a standard layout. Requirements:
+
+Prioritized inbox view
+
+Draft editor
+
+Adjustable pane for message context
+
+SPC metrics panel
+
+Settings interface
+
+4.2 APPLICATION PROGRAMMING INTERFACES (APIs)
+
+Internal APIs:
+
+Ingestion API
+
+Classification API
+
+Prioritization API
+
+Draft generation API
+
+Feedback API
+
+SPC API
+
+KB API
+
+Feed scanning API
+
+External APIs:
+
+Gmail REST API
+
+Microsoft Graph API
+
+LinkedIn API for messaging and feed
+
+YouTube Data API for comments
+
+All external API calls shall use secure OAuth2 authentication where applicable.
+
+4.3 HARDWARE INTERFACES
+None. System is cloud-hosted.
+
+4.4 SOFTWARE INTERFACES
+The system shall interface with:
+
+PostgreSQL database
+
+Vector database (pgvector or similar)
+
+LLM provider APIs
+
+Job queue system (Redis, RabbitMQ, or equivalent)
+
+4.5 COMMUNICATIONS INTERFACES
+All internal communication shall use HTTPS and JSON.
+WebSockets may be used for real-time UI updates.
+
+SYSTEM ARCHITECTURE
+
+5.1 ARCHITECTURAL OVERVIEW
+Screamo uses a service-oriented architecture composed of independent, loosely coupled microservices. Each subsystem runs as a containerized deployment. Communication occurs through internal REST APIs and asynchronous queues.
+
+5.2 COMPONENT DESCRIPTIONS
+
+Ingestion Service
+Polls external APIs, normalizes incoming messages, stores them in the database.
+
+Classification Service
+Classifies messages using an LLM or fine-tuned model. Outputs classification metadata.
+
+Prioritization Service
+Computes and updates priority scores based on predefined algorithms and user feedback.
+
+Draft Generation Service
+Generates preliminary responses using a base LLM and applies style transformations.
+
+Style Rewrite Engine
+Uses RAG and embeddings to align tone with user’s writing.
+
+Knowledge Base Service
+Manages embeddings, style samples, redline topics, and opinion maps.
+
+Feedback Processing Service
+Analyzes user edits and updates preference models.
+
+SPC Controller
+Evaluates SPC metrics and determines allowable automation level.
+
+Feed Scanner Service
+Analyzes user’s LinkedIn feed and identifies comment opportunities.
+
+Battle Mode Engine
+Constructs structured argumentation responses.
+
+UI Frontend
+Handles user display and interaction.
+
+Logging and Audit Service
+Captures system events and stores them for compliance and review.
+
+5.3 DATA FLOW DESCRIPTION
+
+Flow sequence for inbound messages:
+
+Platform → Ingestion Service
+
+Normalization → Database
+
+Classification Service → classification results stored
+
+Prioritization Service → priority score stored
+
+UI retrieves data → displays sorted inbox
+
+User requests a draft → Draft Generation Service
+
+User approves/edits → stored in feedback logs
+
+Feedback Processing Service updates models
+
+Flow sequence for feed scanning:
+
+Feed Scanner fetches posts
+
+Classification of posts
+
+Opportunity detection
+
+Draft Generation for comments
+
+User approval
+
+Posting via LinkedIn API
+
+5.4 CONTROL FLOW DESCRIPTION
+
+Automation levels are controlled by SPC Controller:
+Manual → Assisted → Automatic (low-risk only)
+Battle mode always remains Manual.
+
+5.5 SEQUENCE DIAGRAMS (TEXTUAL)
+
+Example sequence: Message reply mechanism
+User receives new message
+→ Message ingested
+→ Classified
+→ Prioritized
+→ User clicks message
+→ Draft requested
+→ Draft Generation Service returns draft
+→ User edits
+→ Final sent
+→ Feedback collected
+→ Models updated
+
+5.6 CONCURRENCY AND SCALING MODEL
+All services are horizontally scalable.
+Message ingestion and classification support concurrent processing.
+Job queue ensures ordered execution.
+
+5.7 ERROR HANDLING ARCHITECTURE
+Services must handle:
+
+API rate limits
+
+Partial failures
+
+Timeout retries
+
+Bulk backoff
+Errors shall be logged with full stack trace and retried automatically when possible.

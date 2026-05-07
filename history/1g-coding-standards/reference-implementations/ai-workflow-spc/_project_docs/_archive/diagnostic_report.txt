@@ -1,0 +1,50 @@
+==========================================
+Workflow Execution Diagnostic
+==========================================
+
+1. Checking backend health...
+   Response: {"status":"healthy","version":"6.0"}
+
+2. Current executions:
+{
+    "executions": [
+        {
+            "id": "exec_9fc3c4e9",
+            "workflow_id": "wf_dce0545d",
+            "state": "running",
+            "started_at": "2025-11-03T23:59:28.569714+00:00",
+            "completed_at": null
+        },
+        {
+            "id": "exec_9ebb7f3b",
+            "workflow_id": "wf_09c4e1f5",
+            "state": "running",
+            "started_at": "2025-11-04T00:01:37.831098+00:00",
+            "completed_at": null
+        }
+    ]
+}
+
+3. Fly.io machine status:
+[1mApp[0m
+  Name     = ai-workflow-spc                                        
+  Owner    = personal                                               
+  Hostname = ai-workflow-spc.fly.dev                                
+  Image    = ai-workflow-spc:deployment-01K95VSX23TY0QAYGZMAWDW6NK  
+
+[1mMachines[0m
+PROCESS	ID            	VERSION	REGION	STATE  	ROLE	CHECKS            	LAST UPDATED         
+app    	d8dd959b794998	73     	sjc   	started	    	1 total, 1 passing	2025-11-03T22:01:34Z	
+app    	e829737a4677e8	73     	sjc   	started	    	1 total, 1 passing	2025-11-03T22:01:50Z	
+
+
+4. Searching logs for execution activity...
+   Looking for exec_9fc3c4e9 and exec_9ebb7f3b...
+[2m2025-11-04T00:29:39Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]INFO:     172.16.42.162:56548 - "DELETE /executions/exec_9ebb7f3b HTTP/1.1" 200 OK
+[2m2025-11-04T00:29:39Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]2025-11-04 00:29:39,360 - src.main_workflow_db - INFO - Archived execution: exec_9ebb7f3b
+[2m2025-11-04T00:29:41Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:29:41,557 - src.main_workflow_db - INFO - Archived execution: exec_9fc3c4e9
+[2m2025-11-04T00:29:41Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]INFO:     172.16.31.18:40480 - "DELETE /executions/exec_9fc3c4e9 HTTP/1.1" 200 OK
+[2m2025-11-04T00:42:38Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]INFO:     172.16.31.18:60590 - "POST /admin/executions/exec_9fc3c4e9/fail HTTP/1.1" 404 Not Found
+[2m2025-11-04T00:42:38Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]INFO:     172.16.31.18:60590 - "POST /admin/executions/exec_9ebb7f3b/fail HTTP/1.1" 404 Not Found
+
+5. Checking for TIMING logs (last 50 lines)...

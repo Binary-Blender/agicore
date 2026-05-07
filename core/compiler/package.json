@@ -1,0 +1,24 @@
+{
+  "name": "@agicore/compiler",
+  "version": "0.1.0",
+  "description": "Agicore DSL compiler - generates Tauri applications from .agi files",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "agicore": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node --import tsx test/codegen.test.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agicore/parser": "file:../parser"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,540 @@
+Screamo – Intelligent Opportunity Scanner & Response Engine
+
+Tagline: “Stop babysitting your inbox. Start weaponizing it.”
+
+1. Product Overview
+
+Screamo is an AI-powered communication orchestrator that:
+
+Reads all your inbound channels:
+
+Email (Gmail / O365 / IMAP)
+
+LinkedIn DMs & comments
+
+YouTube comments & DMs (where supported)
+
+(Future) X/Twitter, Discord, etc.
+
+Evaluates each message for:
+
+Relevance
+
+Opportunity value
+
+Tone & intent
+
+Prioritizes and routes:
+
+Builds a single prioritized queue of “things Chris should see/respond to.”
+
+Uses feedback + SPC to improve prioritization over time.
+
+Responds intelligently:
+
+Drafts replies in your style (using a personal KB & style model).
+
+Supports different modes:
+
+Standard reply (DM/email)
+
+Agree & Amplify (supportive public comment)
+
+Educate (polite, corrective “compliment sandwich”)
+
+Battle Mode (firm but professional rebuttal).
+
+Starts with human approval, then gradually reduces human involvement in well-controlled areas.
+
+Goal: Make sure the right messages get your attention and the right responses go out — with less of your time in the loop over time.
+
+2. Core Objectives
+
+Unified Opportunity Inbox
+
+Aggregate all messages into one normalized stream.
+
+Surface the top 10–20 “high leverage” items at any given time.
+
+Self-Improving Prioritization
+
+Learn what “important” means for you.
+
+Use feedback (approve, edit, discard, re-rank) to improve over time.
+
+Apply Statistical Process Control (SPC) on key metrics (e.g., “accepted without edit” rate) to determine when automation can be safely increased.
+
+On-Brand, On-Point Responses
+
+Build a KB of your:
+
+Writing style
+
+Opinions
+
+Big themes (AI orchestration, SPC, Amish, Binary Blender, etc.).
+
+Draft responses that feel like “Chris on his best day with 8 hours of sleep and coffee.”
+
+Outbound Engagement
+
+Proactively scan your LinkedIn feed for:
+
+Posts where you can Agree & Amplify.
+
+Posts where you can Educate (gently “disagree,” but actually teach).
+
+Handle replies and arguments, with escalation to Battle Mode when needed.
+
+3. Key User Flows
+3.1 Message Ingestion & Prioritization
+
+Connect accounts:
+
+User connects: Gmail/O365, LinkedIn, YouTube, etc.
+
+Screamo periodically pulls:
+
+New emails, DMs, comments, mentions.
+
+For each item:
+
+Normalize into a unified schema (channel, author, timestamp, content, thread context, metadata).
+
+Run Message Quality & Opportunity Scoring:
+
+importance_score (0–100)
+
+opportunity_type (job, partnership, sales lead, fan, hater, spam, etc.)
+
+sentiment (supportive, neutral, negative, hostile)
+
+Display in Screamo UI:
+
+Inbox tab (prioritized queue)
+
+Filters: Channel, opportunity type, sentiment, etc.
+
+3.2 Feedback Loop & Learning
+
+For each message, the user can:
+
+Approve & send AI-drafted response.
+
+Edit then send (capture the delta as training signal).
+
+Reject AI response and:
+
+Provide quick feedback tag: “Too aggressive”, “Too soft”, “Off-topic,” “Wrong priority,” “Don’t respond.”
+
+Re-classify opportunity type if wrong.
+
+Pin a message as “high importance” to teach what “high value” looks like.
+
+All feedback feeds:
+
+User preference model (tone, length, structure, risk tolerance).
+
+Prioritization model (what to surface first).
+
+SPC metrics (see below).
+
+3.3 Response Modes
+3.3.1 Standard Reply (DM / Email)
+
+Draft personalized replies using:
+
+Message content
+
+Thread context
+
+Your style KB
+
+Known relationship/history (if available)
+
+Offer:
+
+Quick actions: “Shorten”, “More casual”, “More direct”, “More generous”, etc.
+
+3.3.2 Agree & Amplify (Feed Comments)
+
+Trigger condition:
+
+Screamo finds a post in your feed with high alignment to your known beliefs and topics.
+
+Behavior:
+
+Generate a comment that:
+
+Starts with authentic agreement (e.g., “100% this.”)
+
+Adds a distinctive insight (not just “Great post!”).
+
+Optionally includes a short example or “micro-framework” that sounds like you.
+
+Control:
+
+Early stage: All comments require your approval.
+
+Later stage (post-SPC control): Low-risk comments can be auto-approved with periodic spot-checks.
+
+3.3.3 Educate Mode (Polite Counterpoint)
+
+Trigger condition:
+
+Post is misaligned with your views, but not hostile.
+
+Screamo sees an opportunity to add value by educating.
+
+Behavior:
+
+Use a compliment sandwich:
+
+Positive opener (acknowledge something they got right or a legitimate concern).
+
+Middle: Clarification, nuance, or alternative perspective.
+
+Close: Encouragement or common-ground statement.
+
+Example structure (internally):
+
+Compliment: “You’re absolutely right that X is a huge concern…”
+
+Education: “One nuance I’d add is that when you [explain your approach]…”
+
+Wrap: “Curious how you’re seeing this play out in your own work.”
+
+Guardrails:
+
+No insults.
+
+No quote-tweet-style dogpiling.
+
+Emphasis on curiosity and clarity, not “winning.”
+
+3.3.4 Battle Mode (Professional Dismantling)
+
+Trigger condition:
+
+A reply/mention/comment that:
+
+Directly calls you out
+
+Misrepresents your ideas
+
+Or is aggressively dismissive.
+
+Behavior:
+
+“Battle Mode” is firm, factual, and surgical, not personal or abusive.
+
+Steps:
+
+Clarify the opponent’s main claims.
+
+Deconstruct each claim with:
+
+Evidence
+
+Logic
+
+Clear counterpoints
+
+Re-assert your position succinctly.
+
+Invite constructive debate or leave a mic-drop closer.
+
+Rules:
+
+No attacks on the person (only their arguments).
+
+No profanity, slurs, or harassment.
+
+Explicit “de-escalation preference” options in settings:
+
+Soft Battle
+
+Standard
+
+Nuclear (still professional, but maximal argument density).
+
+Control:
+
+Battle mode always requires human approval for public posts.
+
+SPC can only reduce friction in drafting (e.g., fewer internal checks), but not bypass your final review.
+
+4. SPC Integration
+
+We treat Screamo’s behavior as a process monitored with Statistical Process Control.
+
+4.1 Key Metrics
+
+Track over rolling windows:
+
+Response Acceptance Rate
+
+% of AI drafts sent without edits.
+
+Light Edit Rate
+
+% of drafts with minor edits (e.g., <10% token change).
+
+Heavy Rewrite / Reject Rate
+
+% of drafts the user completely rewrites or discards.
+
+Misclassification Rate
+
+% of messages the user re-tags (wrong opportunity type, wrong priority).
+
+User Satisfaction Signals
+
+1-click rating on some replies (👍 / 👎 / 🔥).
+
+4.2 Control Charts
+
+For each mode/channel:
+
+Maintain a control chart on:
+
+Acceptance rate
+
+Misclassification rate
+
+Define control limits:
+
+Example:
+
+If acceptance rate > 80% and misclassification < 5% for N messages, process is “in control.”
+
+When in control:
+
+Allow automation to increase:
+
+Auto-send low-risk “Thank you!” style responses.
+
+Auto-comment limited Agree & Amplify with random audits.
+
+If process goes out of control:
+
+Increase human oversight:
+
+Require approval for everything again.
+
+Trigger re-training / recalibration.
+
+5. Knowledge Base & Style Modeling
+5.1 Sources
+
+KB ingests:
+
+Your:
+
+Emails
+
+LinkedIn posts
+
+Comments
+
+Blog posts / website copy
+
+Past replies generated and approved.
+
+5.2 Content
+
+KB stores:
+
+Writing patterns:
+
+Typical sentence length
+
+Use of analogies, humor, metaphors
+
+Signature phrases.
+
+Opinion map:
+
+Key stances on AI, automation, mental health, Amish, SPC, etc.
+
+“Red line” topics (stuff you never want auto-commented on without explicit approval).
+
+Example “gold standard” replies:
+
+Handpicked best comments/emails to use as exemplars.
+
+5.3 Style API
+
+Downstream models operate via a Style API:
+
+Input:
+
+Draft response (semantic content)
+
+Desired tone (soft / standard / strong)
+
+Output:
+
+Same content rewritten in “Chris voice” with appropriate tone.
+
+6. Functional Requirements (High-Level)
+6.1 Integrations
+
+Email
+
+OAuth for Gmail/O365.
+
+Read-only + send permissions.
+
+LinkedIn
+
+Read:
+
+DMs
+
+Comments on your posts.
+
+Your feed posts (for scanning).
+
+Write:
+
+Draft & send comments and replies (subject to LinkedIn ToS & rate limits).
+
+YouTube
+
+Read:
+
+Comments on your videos.
+
+Write:
+
+Replies to comments.
+
+All integrations must:
+
+Respect platform rate limits and automation policies.
+
+Provide clear on/off toggles per channel and per action type.
+
+6.2 Message Pipeline
+
+Ingestion service:
+
+Poll or webhook-based.
+
+Normalizes into a common message schema.
+
+Storage:
+
+Persistent message store (Postgres).
+
+PII-handling and deletion controls.
+
+Processing:
+
+LLM-based classification + scoring.
+
+Preference model (fine-tuned or RAG-backed).
+
+6.3 UI
+
+Core screens:
+
+Dashboard
+
+Today’s top opportunities.
+
+Metrics (acceptance rate, pending messages).
+
+Unified Inbox
+
+Prioritized list view.
+
+Filters & search.
+
+Per-message details + AI draft pane.
+
+Training / Feedback
+
+History of feedback events.
+
+Control state: is each channel/mode in “manual”, “assisted”, or “auto”?
+
+Settings
+
+Channels & permissions.
+
+Risk controls (battle mode level, automation thresholds).
+
+Topics to avoid.
+
+“Always manual approval” list.
+
+7. Non-Functional Requirements
+
+Security
+
+OAuth where possible.
+
+Encrypted storage for tokens.
+
+Role-based access if multi-user later (e.g., assistant can see queue but not settings).
+
+Compliance & ToS
+
+Respect platform automation rules.
+
+Throttling and randomization to avoid “bot-like” behavior.
+
+Performance
+
+New messages processed & scored within ~30 seconds of arrival (target).
+
+Explainability
+
+For each priority score or response, user can see “why”:
+
+“High priority because: job opportunity + matches past high-value patterns + from domain X.”
+
+8. Phased MVP
+Phase 1 – Core Inbox & Drafting
+
+Integrate: Email + LinkedIn DMs.
+
+Unified inbox + basic prioritization.
+
+Manual approval for all replies.
+
+Basic KB ingestion (your posts + emails).
+
+Simple metrics dashboard (accept/reject, edit %).
+
+Phase 2 – Feed Scanning & Comment Modes
+
+LinkedIn feed scanning.
+
+Agree & Amplify + Educate mode.
+
+Compliment sandwich templates.
+
+Feedback tagging per comment.
+
+Phase 3 – SPC & Adaptive Automation
+
+Introduce SPC control charts on:
+
+Acceptance
+
+Misclassification.
+
+Automatically adjust automation level per channel/mode.
+
+Add Battle Mode with mandatory human approval.
+
+Phase 4 – Multi-Platform Expansion
+
+YouTube comments.
+
+More platforms (X, Discord, etc.).
+
+Advanced opinion mapping & topic models.

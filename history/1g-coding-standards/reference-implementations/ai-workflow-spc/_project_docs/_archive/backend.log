@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/mnt/c/Users/Chris/Documents/_DevProjects/ai-workflow-spc/src/main_workflow_db.py", line 11, in <module>
+    from fastapi import FastAPI, HTTPException, Depends, Request
+ModuleNotFoundError: No module named 'fastapi'

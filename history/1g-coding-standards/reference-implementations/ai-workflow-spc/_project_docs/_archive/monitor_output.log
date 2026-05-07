@@ -1,0 +1,71 @@
+[2m2025-11-04T00:25:19Z[0m runner[d8dd959b794998] [32msjc[0m [[34minfo[0m]Successfully prepared image registry.fly.io/ai-workflow-spc@sha256:5695ae6544cade99b9d5f6a332af8c7800baa701a5d19b897ba9fc0e21dd06ad (1.234132053s)
+[2m2025-11-04T00:25:21Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2025-11-04T00:25:23Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m][32m INFO[0m Starting init (commit: fad6f82)...
+[2m2025-11-04T00:25:23Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]=== Starting Sprint 6.0 Deployment ===
+[2m2025-11-04T00:25:23Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]Starting FastAPI application...
+[2m2025-11-04T00:25:23Z[0m health[d8dd959b794998] [32msjc[0m [[31merror[0m]Health check on port 8000 has failed. Your app is not responding properly. Services exposed on ports [80, 443] will have intermittent failures until the health check passes.
+[2m2025-11-04T00:25:28Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]2025-11-04 00:25:28,517 - src.main_workflow_db - INFO - Starting up workflow application with database support...
+[2m2025-11-04T00:25:28Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]2025-11-04 00:25:28,657 - src.database.connection - INFO - Database tables initialized successfully
+[2m2025-11-04T00:25:35Z[0m runner[e829737a4677e8] [32msjc[0m [[34minfo[0m]Successfully prepared image registry.fly.io/ai-workflow-spc@sha256:5695ae6544cade99b9d5f6a332af8c7800baa701a5d19b897ba9fc0e21dd06ad (703.635219ms)
+[2m2025-11-04T00:25:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2025-11-04T00:25:38Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m][32m INFO[0m Starting init (commit: fad6f82)...
+[2m2025-11-04T00:25:38Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]=== Starting Sprint 6.0 Deployment ===
+[2m2025-11-04T00:25:38Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]Starting FastAPI application...
+[2m2025-11-04T00:25:38Z[0m health[e829737a4677e8] [32msjc[0m [[31merror[0m]Health check on port 8000 has failed. Your app is not responding properly. Services exposed on ports [80, 443] will have intermittent failures until the health check passes.
+[2m2025-11-04T00:25:44Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:25:44,037 - src.main_workflow_db - INFO - Starting up workflow application with database support...
+[2m2025-11-04T00:25:44Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:25:44,189 - src.database.connection - INFO - Database tables initialized successfully
+[2m2025-11-04T00:29:39Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]INFO:     172.16.42.162:56548 - "DELETE /executions/exec_9ebb7f3b HTTP/1.1" 200 OK
+[2m2025-11-04T00:29:39Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]2025-11-04 00:29:39,360 - src.main_workflow_db - INFO - Archived execution: exec_9ebb7f3b
+[2m2025-11-04T00:29:41Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:29:41,557 - src.main_workflow_db - INFO - Archived execution: exec_9fc3c4e9
+[2m2025-11-04T00:29:41Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]INFO:     172.16.31.18:40480 - "DELETE /executions/exec_9fc3c4e9 HTTP/1.1" 200 OK
+[2m2025-11-04T00:30:35Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:35,980 - src.main_workflow_db - INFO - Started background execution task for exec_4de2e895
+[2m2025-11-04T00:30:35Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:35,981 - src.main_workflow_db - INFO - [BACKGROUND-TASK] Starting workflow execution exec_4de2e895
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,066 - src.engine.workflow_engine_db - INFO - Executing level 0 with 1 module(s): ['module_1762216195840_f05ay6sbw']
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,066 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216195840_f05ay6sbw: Starting execution
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,066 - src.engine.workflow_engine_db - INFO - Module module_1762216195840_f05ay6sbw has 0 incoming connection(s)
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,067 - src.engine.workflow_engine_db - INFO - Module module_1762216195840_f05ay6sbw inputs prepared: []
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,067 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216195840_f05ay6sbw: Input gathering took 0.000s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,067 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216195840_f05ay6sbw: Module creation took 0.000s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,067 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216195840_f05ay6sbw: Asset repo injection took 0.000s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,067 - src.engine.workflow_engine_db - INFO - Executing module module_1762216195840_f05ay6sbw (start)
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,068 - src.modules.base - INFO - [ASSET-CENTRIC] Module module_1762216195840_f05ay6sbw: Starting asset-centric execution
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,068 - src.modules.base - INFO - [ASSET-CENTRIC] Executing legacy module logic
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,069 - src.modules.base - INFO - [ASSET-CENTRIC] Module module_1762216195840_f05ay6sbw: Completed in 0.001s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,069 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216195840_f05ay6sbw: Execution took 0.001s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,069 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216195840_f05ay6sbw: Total time 0.003s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,070 - src.engine.workflow_engine_db - INFO - [TIMING] Level 0: Starting database update
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,177 - src.engine.workflow_engine_db - INFO - [TIMING] Level 0: Database update took 0.108s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,177 - src.engine.workflow_engine_db - INFO - Executing level 1 with 1 module(s): ['module_1762216198264_0n8hugxfg']
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,178 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216198264_0n8hugxfg: Starting execution
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,178 - src.engine.workflow_engine_db - INFO - Module module_1762216198264_0n8hugxfg has 1 incoming connection(s)
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,178 - src.engine.workflow_engine_db - INFO - Module module_1762216198264_0n8hugxfg inputs prepared: ['trigger']
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,178 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216198264_0n8hugxfg: Input gathering took 0.000s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,178 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216198264_0n8hugxfg: Module creation took 0.000s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,178 - src.engine.workflow_engine_db - INFO - [TIMING] Module module_1762216198264_0n8hugxfg: Asset repo injection took 0.000s
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,178 - src.engine.workflow_engine_db - INFO - Executing module module_1762216198264_0n8hugxfg (mcp_dalle)
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,178 - src.modules.base - INFO - [ASSET-CENTRIC] Module module_1762216198264_0n8hugxfg: Starting asset-centric execution
+[2m2025-11-04T00:30:36Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:36,179 - src.modules.base - INFO - [ASSET-CENTRIC] Executing legacy module logic
+[2m2025-11-04T00:30:40Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:40,799 - src.engine.workflow_engine_db - ERROR - Level execution failed: Tool call failed: {'code': -32603, 'message': 'DALL-E API error: 502 - <html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>cloudflare</center>\r\n</body>\r\n</html>\r\n'}
+[2m2025-11-04T00:30:40Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:40,892 - src.engine.workflow_engine_db - ERROR - Workflow execution failed: Tool call failed: {'code': -32603, 'message': 'DALL-E API error: 502 - <html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>cloudflare</center>\r\n</body>\r\n</html>\r\n'}
+[2m2025-11-04T00:30:40Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:30:40,986 - src.main_workflow_db - ERROR - [BACKGROUND-TASK] Workflow execution exec_4de2e895 failed: Tool call failed: {'code': -32603, 'message': 'DALL-E API error: 502 - <html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>cloudflare</center>\r\n</body>\r\n</html>\r\n'}
+[2m2025-11-04T00:30:40Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]    raise RuntimeError(f"Tool call failed: {response['error']}")
+[2m2025-11-04T00:30:40Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]RuntimeError: Tool call failed: {'code': -32603, 'message': 'DALL-E API error: 502 - <html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>cloudflare</center>\r\n</body>\r\n</html>\r\n'}
+[2m2025-11-04T00:40:55Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]2025/11/04 00:40:55 ERROR unexpected error executing command error="exec: \"cd\": executable file not found in $PATH"
+[2m2025-11-04T00:41:59Z[0m runner[d8dd959b794998] [32msjc[0m [[34minfo[0m]Successfully prepared image registry.fly.io/ai-workflow-spc@sha256:781123429740f58696fdfe1a2a883e8bf2449a5e88fd4ddad963d3553274d716 (1.238775377s)
+[2m2025-11-04T00:42:01Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2025-11-04T00:42:02Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m][32m INFO[0m Starting init (commit: fad6f82)...
+[2m2025-11-04T00:42:03Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]=== Starting Sprint 6.0 Deployment ===
+[2m2025-11-04T00:42:03Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]Starting FastAPI application...
+[2m2025-11-04T00:42:03Z[0m health[d8dd959b794998] [32msjc[0m [[31merror[0m]Health check on port 8000 has failed. Your app is not responding properly. Services exposed on ports [80, 443] will have intermittent failures until the health check passes.
+[2m2025-11-04T00:42:08Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]2025-11-04 00:42:08,448 - src.main_workflow_db - INFO - Starting up workflow application with database support...
+[2m2025-11-04T00:42:08Z[0m app[d8dd959b794998] [32msjc[0m [[34minfo[0m]2025-11-04 00:42:08,576 - src.database.connection - INFO - Database tables initialized successfully
+[2m2025-11-04T00:42:16Z[0m runner[e829737a4677e8] [32msjc[0m [[34minfo[0m]Successfully prepared image registry.fly.io/ai-workflow-spc@sha256:781123429740f58696fdfe1a2a883e8bf2449a5e88fd4ddad963d3553274d716 (1.321572651s)
+[2m2025-11-04T00:42:17Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2025-11-04T00:42:19Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m][32m INFO[0m Starting init (commit: fad6f82)...
+[2m2025-11-04T00:42:19Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]=== Starting Sprint 6.0 Deployment ===
+[2m2025-11-04T00:42:19Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]Starting FastAPI application...
+[2m2025-11-04T00:42:19Z[0m health[e829737a4677e8] [32msjc[0m [[31merror[0m]Health check on port 8000 has failed. Your app is not responding properly. Services exposed on ports [80, 443] will have intermittent failures until the health check passes.
+[2m2025-11-04T00:42:25Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:42:25,102 - src.main_workflow_db - INFO - Starting up workflow application with database support...
+[2m2025-11-04T00:42:25Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]2025-11-04 00:42:25,369 - src.database.connection - INFO - Database tables initialized successfully
+[2m2025-11-04T00:42:38Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]INFO:     172.16.31.18:60590 - "POST /admin/executions/exec_9fc3c4e9/fail HTTP/1.1" 404 Not Found
+[2m2025-11-04T00:42:38Z[0m app[e829737a4677e8] [32msjc[0m [[34minfo[0m]INFO:     172.16.31.18:60590 - "POST /admin/executions/exec_9ebb7f3b/fail HTTP/1.1" 404 Not Found

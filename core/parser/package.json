@@ -1,0 +1,17 @@
+{
+  "name": "@agicore/parser",
+  "version": "0.1.0",
+  "description": "Agicore DSL parser - converts .agi files to typed AST",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --import tsx test/parser.test.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0"
+  },
+  "license": "MIT"
+}

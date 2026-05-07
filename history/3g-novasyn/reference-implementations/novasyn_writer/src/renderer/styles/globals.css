@@ -1,0 +1,663 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Theme Variables ──────────────────────────────────────────────── */
+
+:root,
+[data-theme="dark"] {
+  --bg-page: #1a1a2e;
+  --bg-panel: #16213e;
+  --bg-editor: #1e1e3a;
+  --border: #2a2a4a;
+  --text-primary: #e9ecef;
+  --text-heading: #f8f9fa;
+  --text-muted: #adb5bd;
+  --text-placeholder: #6c6f85;
+  --scrollbar-track: #16213e;
+  --scrollbar-thumb: #4a4e69;
+  --scrollbar-thumb-hover: #6c6f85;
+  --code-bg: #2d2d44;
+  --blockquote-border: #4c6ef5;
+  --blockquote-text: #adb5bd;
+  --hr-color: #4a4e69;
+  --highlight-bg: rgba(250, 204, 21, 0.3);
+}
+
+[data-theme="light"] {
+  --bg-page: #f5f5f5;
+  --bg-panel: #ffffff;
+  --bg-editor: #ffffff;
+  --border: #e0e0e0;
+  --text-primary: #1a1a1a;
+  --text-heading: #111111;
+  --text-muted: #666666;
+  --text-placeholder: #999999;
+  --scrollbar-track: #f0f0f0;
+  --scrollbar-thumb: #c0c0c0;
+  --scrollbar-thumb-hover: #a0a0a0;
+  --code-bg: #f0f0f0;
+  --blockquote-border: #4c6ef5;
+  --blockquote-text: #555555;
+  --hr-color: #d0d0d0;
+  --highlight-bg: rgba(250, 204, 21, 0.4);
+}
+
+[data-theme="sepia"] {
+  --bg-page: #f4ecd8;
+  --bg-panel: #ede4cf;
+  --bg-editor: #faf5e8;
+  --border: #d4c9a8;
+  --text-primary: #3b3121;
+  --text-heading: #2a2010;
+  --text-muted: #7a6e55;
+  --text-placeholder: #a09070;
+  --scrollbar-track: #ede4cf;
+  --scrollbar-thumb: #c4b898;
+  --scrollbar-thumb-hover: #a89870;
+  --code-bg: #e8dfc8;
+  --blockquote-border: #8b6914;
+  --blockquote-text: #6a5d40;
+  --hr-color: #c4b898;
+  --highlight-bg: rgba(200, 160, 50, 0.3);
+}
+
+/* ─── Base Styles ──────────────────────────────────────────────────── */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* TipTap editor styles */
+.ProseMirror {
+  outline: none;
+  min-height: 100%;
+  padding: 2rem;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.ProseMirror p {
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-heading);
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-heading);
+}
+
+.ProseMirror h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-heading);
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid var(--blockquote-border);
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-bottom: 0.75rem;
+  color: var(--blockquote-text);
+  font-style: italic;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror code {
+  background: var(--code-bg);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.9em;
+}
+
+.ProseMirror pre {
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+}
+
+.ProseMirror pre code {
+  background: none;
+  padding: 0;
+}
+
+.ProseMirror mark {
+  background: var(--highlight-bg);
+  color: inherit;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid var(--hr-color);
+  margin: 1.5rem 0;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: var(--text-placeholder);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ─── Screenplay Mode ──────────────────────────────────────────────── */
+
+.screenplay-mode .ProseMirror {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 12pt;
+  line-height: 1.0;
+  max-width: 8.5in;
+  margin: 0 auto;
+}
+
+.screenplay-mode .ProseMirror p {
+  margin-bottom: 1rem;
+}
+
+/* Scene headings: H1 → uppercase, bold, left-aligned */
+.screenplay-mode .ProseMirror h1 {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 12pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text-heading);
+}
+
+/* Character names: H2 → uppercase, centered */
+.screenplay-mode .ProseMirror h2 {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 12pt;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+  margin-left: 2in;
+  margin-right: 2in;
+  margin-bottom: 0;
+  color: var(--text-heading);
+}
+
+/* Parentheticals: H3 → centered, in parens style, italic */
+.screenplay-mode .ProseMirror h3 {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 12pt;
+  font-weight: 400;
+  font-style: italic;
+  text-align: center;
+  margin-left: 1.5in;
+  margin-right: 1.5in;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: var(--text-muted);
+}
+
+/* Dialogue: Blockquote → centered block */
+.screenplay-mode .ProseMirror blockquote {
+  font-family: 'Courier New', 'Courier', monospace;
+  border-left: none;
+  padding-left: 0;
+  margin-left: 1in;
+  margin-right: 1in;
+  margin-bottom: 1rem;
+  font-style: normal;
+  color: var(--text-primary);
+}
+
+/* Transitions: Code blocks → right-aligned, uppercase */
+.screenplay-mode .ProseMirror pre {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 12pt;
+  background: transparent;
+  padding: 0;
+  text-align: right;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  border-radius: 0;
+}
+
+.screenplay-mode .ProseMirror pre code {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 12pt;
+  background: transparent;
+}
+
+/* ─── Poetry Mode ──────────────────────────────────────────────────── */
+
+.poetry-mode .ProseMirror {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.poetry-mode .ProseMirror p {
+  margin-bottom: 0.25rem;
+  text-indent: 0;
+}
+
+/* Stanza titles: H1 → centered, larger */
+.poetry-mode .ProseMirror h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  color: var(--text-heading);
+}
+
+/* Section headings: H2 → smaller, muted */
+.poetry-mode .ProseMirror h2 {
+  font-size: 1.2rem;
+  font-weight: 400;
+  font-style: italic;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Annotations: H3 → small, muted */
+.poetry-mode .ProseMirror h3 {
+  font-size: 0.9rem;
+  font-weight: 400;
+  font-style: italic;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-muted);
+}
+
+/* Stanza break: HR → extra spacing */
+.poetry-mode .ProseMirror hr {
+  border: none;
+  margin: 1.5rem auto;
+  width: 40px;
+  height: 1px;
+  background: var(--hr-color);
+}
+
+/* Epigraph / attribution: Blockquote → right-aligned italic */
+.poetry-mode .ProseMirror blockquote {
+  border-left: none;
+  text-align: right;
+  font-style: italic;
+  color: var(--text-muted);
+  padding-left: 0;
+  margin-left: auto;
+  margin-right: 0;
+  max-width: 300px;
+  margin-bottom: 1rem;
+}
+
+/* ─── Article Mode ────────────────────────────────────────────────── */
+
+.article-mode .ProseMirror {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.1rem;
+  line-height: 1.75;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.article-mode .ProseMirror p {
+  margin-bottom: 1rem;
+  text-indent: 0;
+}
+
+/* Article title: H1 → large, bold, centered */
+.article-mode .ProseMirror h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-heading);
+}
+
+/* Subheadings: H2 → bold, left-aligned, border-bottom */
+.article-mode .ProseMirror h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--hr-color);
+  color: var(--text-heading);
+}
+
+/* Sub-subheadings: H3 → bold, smaller */
+.article-mode .ProseMirror h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-heading);
+}
+
+/* Pull quotes: Blockquote → large italic, centered, border-top + border-bottom */
+.article-mode .ProseMirror blockquote {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  text-align: center;
+  border-left: none;
+  border-top: 2px solid var(--blockquote-border);
+  border-bottom: 2px solid var(--blockquote-border);
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  color: var(--blockquote-text);
+}
+
+/* Sidebar notes: Code blocks → muted box with smaller text */
+.article-mode .ProseMirror pre {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.85rem;
+  background: var(--code-bg);
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--blockquote-border);
+  border-radius: 0 4px 4px 0;
+  margin: 1rem 0;
+  color: var(--text-muted);
+}
+
+.article-mode .ProseMirror pre code {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.85rem;
+  background: transparent;
+}
+
+/* ─── Typewriter Mode ──────────────────────────────────────────────── */
+
+.typewriter-mode .ProseMirror {
+  padding-top: 45vh;
+  padding-bottom: 45vh;
+}
+
+/* ─── Focus Mode (dim non-active paragraphs) ──────────────────────── */
+
+.focus-mode .ProseMirror > *:not(.has-focus) {
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+
+.focus-mode .ProseMirror > .has-focus {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* ─── Preview Pane ────────────────────────────────────────────────── */
+
+.preview-content p { margin-bottom: 0.75em; text-indent: 1.5em; }
+.preview-content p:first-child { text-indent: 0; }
+.preview-content h1 { font-size: 1.8em; font-weight: 700; margin: 1em 0 0.5em; text-indent: 0; }
+.preview-content h2 { font-size: 1.4em; font-weight: 600; margin: 1em 0 0.4em; text-indent: 0; }
+.preview-content h3 { font-size: 1.2em; font-weight: 600; margin: 0.8em 0 0.3em; text-indent: 0; }
+.preview-content blockquote { border-left: 3px solid #ccc; padding-left: 1em; margin: 0.75em 0; color: #555; font-style: italic; text-indent: 0; }
+.preview-content ul, .preview-content ol { padding-left: 1.5em; margin-bottom: 0.75em; text-indent: 0; }
+.preview-content pre { background: #f4f4f4; padding: 0.75em; border-radius: 4px; margin: 0.75em 0; font-family: monospace; font-size: 0.9em; text-indent: 0; }
+.preview-content hr { border: none; border-top: 1px solid #ddd; margin: 1.5em 0; }
+.preview-content mark { background: rgba(250, 204, 21, 0.4); }
+.preview-content strong { font-weight: 700; }
+.preview-content em { font-style: italic; }
+.preview-content s { text-decoration: line-through; }
+
+/* ─── Typography Controls (CSS custom properties) ──────────────────── */
+
+.ProseMirror {
+  font-family: var(--editor-font, inherit);
+  font-size: var(--editor-font-size, 1.05rem);
+  line-height: var(--editor-line-height, 1.8);
+  text-align: var(--editor-text-align, left);
+}
+
+.ProseMirror p {
+  margin-bottom: var(--editor-paragraph-spacing, 0.75rem);
+  text-indent: var(--editor-paragraph-indent, 0);
+}
+
+.ProseMirror p:first-child {
+  text-indent: 0;
+}
+
+/* ─── Advanced Typography (heading font, code font, letter spacing) ── */
+
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3 {
+  font-family: var(--editor-heading-font, var(--editor-font, inherit));
+}
+
+.ProseMirror code, .ProseMirror pre code {
+  font-family: var(--editor-code-font, 'Fira Code', Consolas, monospace);
+}
+
+.ProseMirror {
+  letter-spacing: var(--editor-letter-spacing, normal);
+}
+
+/* Small caps mode */
+.small-caps-mode .ProseMirror p {
+  font-variant: small-caps;
+}
+
+/* Kerning and ligatures */
+.ProseMirror {
+  font-kerning: var(--editor-kerning, auto);
+  font-variant-ligatures: var(--editor-ligatures, common-ligatures);
+}
+
+/* ─── Multi-Column Layout ─────────────────────────────────────────── */
+
+.ProseMirror {
+  column-count: var(--editor-columns, 1);
+  column-gap: 2em;
+  column-rule: 1px solid var(--border);
+}
+
+/* ─── Named Styles ────────────────────────────────────────────────── */
+
+.style-manuscript .ProseMirror {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  line-height: 2.0;
+  max-width: 8.5in;
+  margin: 0 auto;
+}
+.style-manuscript .ProseMirror p { text-indent: 0.5in; margin-bottom: 0; }
+.style-manuscript .ProseMirror p:first-child { text-indent: 0; }
+
+.style-literary .ProseMirror {
+  font-family: Garamond, Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.style-literary .ProseMirror p { margin-bottom: 0.5rem; text-indent: 1.5em; }
+.style-literary .ProseMirror p:first-child { text-indent: 0; }
+
+.style-dialogue .ProseMirror {
+  font-family: Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 650px;
+  margin: 0 auto;
+}
+.style-dialogue .ProseMirror p { margin-bottom: 0.4rem; }
+.style-dialogue .ProseMirror blockquote {
+  border-left: none;
+  font-style: normal;
+  padding-left: 2em;
+  color: var(--text-primary);
+}
+
+.style-journal .ProseMirror {
+  font-family: 'Georgia', cursive, serif;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 550px;
+  margin: 0 auto;
+  font-style: italic;
+}
+.style-journal .ProseMirror h1, .style-journal .ProseMirror h2 {
+  font-style: normal;
+  font-family: Georgia, serif;
+}
+
+.style-letter .ProseMirror {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.style-letter .ProseMirror p { margin-bottom: 0.75rem; text-indent: 0; }
+
+.style-minimal .ProseMirror {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.style-minimal .ProseMirror p { margin-bottom: 0.5rem; }
+.style-minimal .ProseMirror h1 { font-size: 1.5rem; font-weight: 600; }
+.style-minimal .ProseMirror h2 { font-size: 1.2rem; font-weight: 600; }
+
+.style-vintage .ProseMirror {
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.style-vintage .ProseMirror p { text-indent: 1.5em; margin-bottom: 0.25rem; }
+.style-vintage .ProseMirror p:first-child { text-indent: 0; }
+.style-vintage .ProseMirror h1 { font-variant: small-caps; letter-spacing: 0.1em; text-align: center; }
+
+/* ─── Drop Caps ──────────────────────────────────────────────────── */
+
+.dropcap-classic .ProseMirror > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.5em;
+  line-height: 0.8;
+  padding-right: 0.1em;
+  margin-top: 0.05em;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.dropcap-raised .ProseMirror > p:first-of-type::first-letter {
+  font-size: 3em;
+  line-height: 1;
+  padding-right: 0.08em;
+  font-weight: 700;
+  color: var(--text-heading);
+  vertical-align: top;
+}
+
+.dropcap-hanging .ProseMirror > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.5em;
+  line-height: 0.8;
+  padding-right: 0.1em;
+  margin-left: -0.05em;
+  margin-top: 0.05em;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+/* ─── Find & Replace Highlights ────────────────────────────────────── */
+
+.find-result {
+  background: rgba(250, 204, 21, 0.25);
+  border-radius: 2px;
+}
+
+.find-result-active {
+  background: rgba(250, 204, 21, 0.6);
+  border-radius: 2px;
+  outline: 2px solid rgba(250, 204, 21, 0.8);
+}
+
+/* ─── Chapter Opener Ornaments (for preview/export) ───────────────── */
+
+.chapter-ornament-line { display: block; width: 60%; margin: 0.5em auto; border-top: 1px solid #999; }
+.chapter-ornament-dots::after { content: '• • •'; display: block; text-align: center; margin: 0.5em 0; color: #999; letter-spacing: 0.5em; }
+.chapter-ornament-fleuron::after { content: '❧'; display: block; text-align: center; margin: 0.5em 0; font-size: 1.5em; color: #999; }
+.chapter-ornament-diamond::after { content: '◆'; display: block; text-align: center; margin: 0.5em 0; font-size: 1.2em; color: #999; }
+.chapter-ornament-stars::after { content: '✦  ✦  ✦'; display: block; text-align: center; margin: 0.5em 0; color: #999; letter-spacing: 0.3em; }
+
+/* ─── Preview Spread View ─────────────────────────────────────────── */
+
+.preview-spread {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  background: #e0e0e0;
+  padding: 1rem;
+  min-height: 100%;
+}
+
+.preview-spread .preview-page {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 2rem 1.5rem;
+  min-height: 11in;
+  flex: 0 0 5in;
+  overflow: hidden;
+}

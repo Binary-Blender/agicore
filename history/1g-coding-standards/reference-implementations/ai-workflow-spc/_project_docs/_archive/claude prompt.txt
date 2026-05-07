@@ -1,0 +1,8 @@
+ - we are working on C:\Users\Chris\Documents\_DevProjects\ai-workflow-spc.  please read all of the documentation at C:\Users\Chris\Documents\_DevProjects\ai-workflow-spc\_project_docs to understand what is next for this project.  after reviewing the documentation, create a current_sprint.md markdown file with your plan to implement these requirements.  include everything you will need to know to work on this in future sessions.  then go ahead and get started on the next sprint.
+ 
+ 
+ 
+ 
+  - your context window reset, so remind yourself of what we are doing in case you forgot.  we are working on C:\Users\Chris\Documents\_DevProjects\ai-workflow-spc. you will find your latest instructions in standard_work_integration_guide.md.  do not follow these instructions blindly, if you have an idea of how to improve upon this design or find mistakes feel free to make course corrections as needed.
+  
+  your context window reset, so remind yourself of what we are doing in case you forgot.  we are working on C:\Users\Chris\Documents\_DevProjects\binary-blender-website.  please read documents at C:\Users\Chris\Documents\_DevProjects\binary-blender-website\_project_docs for what you are building.  then continue working.  thanks!  

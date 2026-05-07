@@ -1,0 +1,292 @@
+SCREAMO MASTER DOCUMENT v1.0
+PART 2 OF N
+
+OVERALL DESCRIPTION
+
+2.1 PRODUCT PERSPECTIVE
+Screamo is a standalone application composed of multiple coordinated subsystems. It integrates with third-party communication platforms (Gmail, Microsoft Office 365, LinkedIn, YouTube) via their respective APIs. It provides a single consolidated interface for reviewing messages, rankings, AI-generated drafts, SPC status, and automation settings.
+
+Subsystems include:
+
+Multi-channel ingestion service
+
+Message normalization pipeline
+
+Classification and opportunity detection engine
+
+Prioritization and ranking algorithm
+
+Response generation engine
+
+Style rewriting engine
+
+Knowledge base and embedding store
+
+Human feedback processor
+
+SPC automation controller
+
+Public feed scanning subsystem
+
+Argument analysis and battle mode subsystem
+
+User interface
+
+Logging and auditing framework
+
+These components interact via internal APIs using a service-oriented or microservices architecture. Screamo operates as an orchestrated environment of discrete services deployed in a containerized infrastructure.
+
+2.2 PRODUCT FUNCTIONS
+Major functions include:
+
+Multi-channel ingestion
+The system retrieves new messages via API polling or webhook mechanisms. Messages are normalized into a single representation.
+
+Classification
+AI categorizes each message according to opportunity type, sentiment, risk, topic alignment, and intent.
+
+Prioritization
+The prioritization algorithm generates an overall priority score based on classification outputs, historical feedback, and SPC automation parameters.
+
+Automated response generation
+Screamo produces draft replies for user approval. It operates in one of several modes:
+
+Standard reply
+
+Agree and amplify
+
+Educate
+
+Battle mode
+
+Human-in-the-loop training
+User edits and reclassifications provide training signals for improving the classifiers and editors.
+
+Knowledge base indexing
+Approved written content is indexed with embeddings for style replication and consistency.
+
+Adaptive automation
+SPC metrics determine which tasks may be automated without human review.
+
+Feed scanning
+LinkedIn feed posts are examined for opportunities to engage.
+
+Configuration and administration
+User-specific controls determine risk tolerance, tone, blacklist topics, and approval thresholds.
+
+Monitoring and auditing
+The system logs all actions for traceability and diagnostic purposes.
+
+2.3 USER CLASSES AND CHARACTERISTICS
+The following user classes exist:
+
+Primary User:
+
+High-volume communicator
+
+Requires prioritization of inbound messages
+
+Expects personalization of generated responses
+
+System Administrator:
+
+Responsible for configuration of data sources and permissions
+
+Observes system health and SPC metrics
+
+Quality Assurance Engineer:
+
+Validates models and system behavior
+
+Executes test suites
+
+AI Engineers:
+
+Maintain models and pipelines
+
+Handle model training, fine-tuning, and preference learning
+
+2.4 OPERATING ENVIRONMENT
+The system operates in a cloud-based environment. The following requirements apply:
+
+Linux-based container host environment
+
+Databases operating on PostgreSQL version 13 or later
+
+External integrations via HTTPS REST APIs
+
+Storage of embeddings in a vector database such as Pinecone, Weaviate, or PostgreSQL with pgvector
+
+Compatibility with major browsers for the UI: Chrome, Edge, Firefox
+
+2.5 CONSTRAINTS
+
+All integrations must comply with platform Terms of Service
+
+LinkedIn rate limits may restrict posting frequency
+
+Email providers impose API quotas
+
+Data privacy rules must be followed for sensitive content
+
+No unauthorized autonomous posting outside SPC-approved controls
+
+Responses must adhere to a professional tone
+
+System must support consistent formatting across channels
+
+2.6 ASSUMPTIONS AND DEPENDENCIES
+Assumptions:
+
+User grants permission for API access
+
+Platforms remain accessible with stable APIs
+
+User writes consistently enough for style modeling
+
+Feedback provided is reliable for model improvement
+
+Dependencies:
+
+Email providers (Gmail, Microsoft Graph)
+
+LinkedIn API
+
+YouTube API
+
+Hosting provider
+
+Vector database
+
+LLM provider APIs
+
+Authentication and authorization provider
+
+SYSTEM REQUIREMENTS
+
+3.1 FUNCTIONAL REQUIREMENTS OVERVIEW
+The system shall meet all requirements detailed in sections 3.2 to 3.13. Each requirement will be referenced as FR-x.y for functional requirements and NFR-x for non-functional requirements.
+
+3.2 MESSAGE INGESTION AND NORMALIZATION
+
+FR-2.1: The system shall ingest messages from supported channels (Gmail, Office365, LinkedIn, YouTube).
+FR-2.2: The ingestion subsystem shall operate via API polling or webhook triggers.
+FR-2.3: The system shall normalize messages into a unified message schema containing:
+
+Message ID
+
+Timestamp
+
+Channel type
+
+Sender metadata
+
+Message body
+
+Thread context
+
+Attachments (metadata only)
+
+FR-2.4: The system shall prevent duplication during ingestion.
+FR-2.5: The system shall store all normalized messages in the database.
+FR-2.6: Ingestion system shall retry failed API calls using exponential backoff.
+
+3.3 MESSAGE CLASSIFICATION AND OPPORTUNITY DETECTION
+
+FR-3.1: The system shall analyze each incoming message using AI classification models.
+FR-3.2: The classifier shall assign the following properties:
+
+Opportunity type (job, partnership, sales lead, social connection, logistics, spam, etc.)
+
+Priority factors (urgency, importance, relevance)
+
+Sentiment (positive, neutral, negative, hostile)
+
+Topic alignment (aligned, misaligned, unknown)
+
+Intent (informational, promotional, confrontational, inquiry)
+
+FR-3.3: Classifier shall provide an interpreted explanation viewable by the user.
+FR-3.4: Classifier shall assign a confidence score to each classification.
+FR-3.5: Classification shall be updated based on feedback signals.
+
+3.4 PRIORITIZATION AND RANKING ENGINE
+
+FR-4.1: The system shall compute a priority score for each message.
+FR-4.2: Priority score shall consider:
+
+Opportunity type weighting
+
+User preference history
+
+Past accepted messages
+
+Urgency cues
+
+Sentiment
+
+Relationship history
+
+SPC-controlled automation levels
+
+FR-4.3: The prioritization engine shall sort all messages into a single unified inbox.
+FR-4.4: Messages with a high priority score shall be surfaced in the dashboard.
+FR-4.5: User feedback (such as manual re-ranking) shall feed into the scoring model.
+
+3.5 AUTOMATED RESPONSE GENERATION
+
+FR-5.1: The system shall generate AI-drafted responses for messages.
+FR-5.2: The system shall support four response modes:
+
+Standard Reply Mode
+
+Agree-and-Amplify Mode
+
+Educate Mode
+
+Battle Mode
+
+FR-5.3: The system shall generate responses using the user’s writing style as defined in the knowledge base.
+FR-5.4: Response drafting shall incorporate message context and prior messages in the thread.
+FR-5.5: The user shall have the ability to accept, edit, or reject drafts.
+FR-5.6: Edits made by the user shall be captured for training.
+FR-5.7: Battle mode shall always require explicit user approval.
+FR-5.8: Automated drafts shall provide a rationale (internal explanation).
+
+3.6 HUMAN-IN-THE-LOOP FEEDBACK PROCESSING
+
+FR-6.1: The system shall log all user edits.
+FR-6.2: Differences between AI draft and final sent message shall be computed.
+FR-6.3: Classified changes (tone shift, factual correction, structural adjustment) shall be stored as training signals.
+FR-6.4: Incorrect classifications shall be reclassified by the user and stored for model adjustment.
+FR-6.5: If user rejects a draft, the rejection reason shall be requested.
+FR-6.6: Feedback data shall be applied to future classification and drafting.
+
+3.7 SPC-BASED ADAPTIVE AUTOMATION
+
+FR-7.1: The system shall track metrics for AI-generated drafts including acceptance rate, light edit rate, heavy edit rate, rejection rate, and misclassification rate.
+FR-7.2: The system shall compute SPC control charts for each response mode and each channel.
+FR-7.3: The system shall define automation eligibility rules based on SPC-controlled parameters.
+FR-7.4: If metrics fall within control limits for N samples, automation level may be increased.
+FR-7.5: If metrics exceed upper or lower control limits, automation level shall be decreased.
+FR-7.6: Automation escalation shall always require user approval.
+FR-7.7: Battle mode shall never be automated regardless of SPC status.
+
+3.8 KNOWLEDGE BASE AND STYLE MODELING
+
+FR-8.1: The system shall maintain a knowledge base of user writing samples.
+FR-8.2: Writing samples shall be embedded using a vector model.
+FR-8.3: Knowledge base shall index:
+
+Style patterns
+
+Tone preferences
+
+Opinion map
+
+Redline topics (topics requiring manual approval)
+
+High-performing past responses
+
+FR-8.4: The style model shall rewrite drafted responses to match the user’s voice.
+FR-8.5: Knowledge base updates shall occur daily.

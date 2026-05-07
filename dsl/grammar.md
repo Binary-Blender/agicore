@@ -1,0 +1,1710 @@
+# Agicore DSL Grammar Specification
+
+Version: 0.1.0
+
+## Overview
+
+The Agicore DSL is a declarative language for defining deterministic systems. It serves as the constraint boundary between AI-generated intent and deterministic execution.
+
+A `.agi` file contains one or more top-level declarations that together define a complete system. The DSL compiler parses these declarations into an AST, validates them, and generates executable artifacts (SQL migrations, Rust commands, TypeScript types, Zustand stores, React components, Tauri configuration, and test suites).
+
+---
+
+## File Structure
+
+An `.agi` file consists of:
+
+1. One `APP` declaration (required, must be first)
+2. Zero or more `ENTITY` declarations
+3. Zero or more `ACTION` declarations
+4. Zero or more `VIEW` declarations
+5. Zero or one `AI_SERVICE` declaration
+6. Zero or more `TEST` declarations
+7. Zero or more `RULE` declarations (expert system mode)
+8. Zero or more `WORKFLOW` declarations
+
+Comments use `//` for single-line and `/* */` for multi-line.
+
+```
+// This is a comment
+/* This is a
+   multi-line comment */
+```
+
+---
+
+## Data Types
+
+The DSL supports the following primitive types:
+
+| Type     | Description              | SQL Mapping          | Rust Mapping    | TS Mapping  |
+|----------|--------------------------|----------------------|-----------------|-------------|
+| string   | Text value               | TEXT                 | String          | string      |
+| number   | Integer value            | INTEGER              | i64             | number      |
+| float    | Floating point           | REAL                 | f64             | number      |
+| bool     | Boolean                  | INTEGER (0/1)        | bool            | boolean     |
+| date     | ISO 8601 date string     | TEXT                 | String          | string      |
+| datetime | ISO 8601 datetime string | TEXT                 | String          | string      |
+| json     | JSON blob                | TEXT                 | serde_json::Value | unknown  |
+| id       | UUID v4 primary key      | TEXT PRIMARY KEY     | String          | string      |
+
+---
+
+## APP Declaration
+
+Defines application-level configuration. Required. Must appear first in the file.
+
+### Syntax
+
+```
+APP <name> {
+  TITLE    <string_literal>
+  WINDOW   <width>x<height> [frameless]
+  DB       <filename>
+  PORT     <number>
+  THEME    dark | light | system
+  ICON     <path>
+}
+```
+
+### Fields
+
+| Field    | Required | Default             | Description                        |
+|----------|----------|---------------------|------------------------------------|
+| TITLE    | yes      | --                  | Window title / app display name    |
+| WINDOW   | no       | 1200x800 frameless  | Window dimensions and style        |
+| DB       | yes      | --                  | SQLite database filename           |
+| PORT     | no       | 5173                | Vite dev server port               |
+| THEME    | no       | dark                | Default theme                      |
+| ICON     | no       | --                  | Path to app icon                   |
+
+### Example
+
+```
+APP home_academy {
+  TITLE   "NovaSyn Home Academy"
+  WINDOW  1200x800 frameless
+  DB      academy.db
+  PORT    5176
+  THEME   dark
+}
+```
+
+### Generates
+
+- `tauri.conf.json` -- Tauri application configuration
+- `src-tauri/src/main.rs` -- Application entry point with window setup
+- `src/renderer/styles/globals.css` -- Theme CSS variables
+- Database initialization with WAL mode and foreign keys
+
+---
+
+## ENTITY Declaration
+
+Defines a data model. Generates schema, types, CRUD commands, and store slices.
+
+### Syntax
+
+```
+ENTITY <Name> {
+  <field_name>: <type> [= <default>] [REQUIRED] [UNIQUE] [INDEX]
+  ...
+  [TIMESTAMPS]
+  [CRUD <operations>]
+  [BELONGS_TO <Entity>]
+  [HAS_MANY <Entity>]
+}
+```
+
+### Rules
+
+- Entity names are PascalCase
+- Field names are snake_case in the DSL (auto-converted to camelCase in TypeScript)
+- Every entity automatically gets an `id: id` field (UUID v4 primary key)
+- `TIMESTAMPS` adds `created_at: datetime` and `updated_at: datetime`
+- `CRUD` accepts: `full` (all operations), or a comma-separated list of `create`, `read`, `update`, `delete`, `list`
+- `BELONGS_TO` creates a foreign key field (`<entity>_id`) with cascading delete
+- `HAS_MANY` generates a list query on the related entity
+- `REQUIRED` maps to `NOT NULL`
+- `UNIQUE` adds a unique constraint
+- `INDEX` creates a database index on the field
+
+### Default CRUD
+
+If `CRUD` is omitted, defaults to `full` (all five operations).
+
+### Example
+
+```
+ENTITY Student {
+  name: string REQUIRED
+  date_of_birth: date
+  grade: string REQUIRED
+  notes: string
+  active: bool = true
+  TIMESTAMPS
+  CRUD full
+}
+
+ENTITY Enrollment {
+  school_year: string REQUIRED
+  status: string = "active"
+  BELONGS_TO Student
+  TIMESTAMPS
+}
+
+ENTITY Lesson {
+  subject: string REQUIRED
+  content: json
+  score: number
+  BELONGS_TO Student
+  TIMESTAMPS
+}
+```
+
+### Generates
+
+**SQL Migration:**
+```sql
+CREATE TABLE IF NOT EXISTS students (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  date_of_birth TEXT,
+  grade TEXT NOT NULL,
+  notes TEXT,
+  active INTEGER DEFAULT 1,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+```
+
+**Rust Struct:**
+```rust
+#[derive(Debug, Serialize, Deserialize, specta::Type)]
+#[serde(rename_all = "camelCase")]
+pub struct Student {
+    pub id: String,
+    pub name: String,
+    pub date_of_birth: Option<String>,
+    pub grade: String,
+    pub notes: Option<String>,
+    pub active: bool,
+    pub created_at: String,
+    pub updated_at: String,
+}
+```
+
+**Rust CRUD Commands:**
+```rust
+#[tauri::command]
+#[specta::specta]
+fn list_students(db: State<DbPool>) -> Result<Vec<Student>, String> { ... }
+
+#[tauri::command]
+#[specta::specta]
+fn create_student(db: State<DbPool>, input: CreateStudentInput) -> Result<Student, String> { ... }
+
+#[tauri::command]
+#[specta::specta]
+fn get_student(db: State<DbPool>, id: String) -> Result<Student, String> { ... }
+
+#[tauri::command]
+#[specta::specta]
+fn update_student(db: State<DbPool>, id: String, input: UpdateStudentInput) -> Result<Student, String> { ... }
+
+#[tauri::command]
+#[specta::specta]
+fn delete_student(db: State<DbPool>, id: String) -> Result<(), String> { ... }
+```
+
+**TypeScript Types (auto-generated by specta):**
+```typescript
+export interface Student {
+  id: string;
+  name: string;
+  dateOfBirth: string | null;
+  grade: string;
+  notes: string | null;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+**TypeScript Invoke Wrappers:**
+```typescript
+import { invoke } from '@tauri-apps/api/core';
+
+export const listStudents = () => invoke<Student[]>('list_students');
+export const createStudent = (input: CreateStudentInput) => invoke<Student>('create_student', { input });
+export const getStudent = (id: string) => invoke<Student>('get_student', { id });
+export const updateStudent = (id: string, input: UpdateStudentInput) => invoke<Student>('update_student', { id, input });
+export const deleteStudent = (id: string) => invoke<void>('delete_student', { id });
+```
+
+**Zustand Store Slice:**
+```typescript
+students: Student[],
+selectedStudentId: string | null,
+loadStudents: async () => { ... },
+createStudent: async (input: CreateStudentInput) => { ... },
+updateStudent: async (id: string, input: UpdateStudentInput) => { ... },
+deleteStudent: async (id: string) => { ... },
+selectStudent: (id: string | null) => set({ selectedStudentId: id }),
+```
+
+---
+
+## ACTION Declaration
+
+Defines a custom command beyond standard CRUD. Supports AI integration.
+
+### Syntax
+
+```
+ACTION <name> {
+  INPUT   <field>: <type>, ...
+  OUTPUT  <field>: <type>, ...
+  [AI     <prompt_template>]
+  [STREAM <bool>]
+}
+```
+
+### Rules
+
+- Action names are snake_case
+- `INPUT` defines the parameters
+- `OUTPUT` defines the return type
+- `AI` provides a prompt template with `{{variable}}` interpolation from INPUT fields
+- `STREAM` enables streaming response (default: false)
+- Actions without `AI` generate empty command stubs for manual implementation
+
+### Example
+
+```
+ACTION generate_lesson {
+  INPUT   student_id: string, subject: string, difficulty: string = "medium"
+  OUTPUT  lesson: Lesson
+  AI      "Generate a structured lesson plan for a {{difficulty}} level student on {{subject}}. Return as JSON matching the Lesson schema."
+  STREAM  false
+}
+
+ACTION analyze_progress {
+  INPUT   student_id: string
+  OUTPUT  analysis: string
+  AI      "Analyze the academic progress of this student based on their lesson scores. Provide actionable recommendations."
+  STREAM  true
+}
+```
+
+### Generates
+
+- Rust command with AI service integration (or empty stub)
+- TypeScript invoke wrapper
+- Zustand store action
+- Streaming handler (if STREAM is true)
+
+---
+
+## VIEW Declaration
+
+Defines UI scaffolding for an entity or custom view.
+
+### Syntax
+
+```
+VIEW <Name> {
+  [ENTITY   <EntityName>]
+  LAYOUT    table | form | detail | cards | split | custom
+  [ACTIONS  <action_list>]
+  [SIDEBAR  icon: <IconName>]
+  [FIELDS   <field_list>]
+  [TITLE    <string_literal>]
+}
+```
+
+### Rules
+
+- View names are PascalCase
+- `ENTITY` links the view to an entity for auto-wiring data
+- `LAYOUT` determines the component template
+- `ACTIONS` lists available interactions (create, edit, delete, or custom ACTION names)
+- `SIDEBAR` registers the view in the sidebar with a Lucide icon name
+- `FIELDS` limits which entity fields are displayed (default: all)
+- Views without `ENTITY` generate a blank component shell
+
+### Layout Types
+
+| Layout  | Description                                     |
+|---------|------------------------------------------------|
+| table   | Sortable data table with row selection          |
+| form    | Create/edit form with field validation          |
+| detail  | Single-record detail view                       |
+| cards   | Card grid layout                                |
+| split   | List on left, detail on right                   |
+| custom  | Empty component shell                           |
+
+### Example
+
+```
+VIEW StudentList {
+  ENTITY   Student
+  LAYOUT   split
+  ACTIONS  create, edit, delete, generate_lesson
+  SIDEBAR  icon: Users
+  FIELDS   name, grade, active
+}
+
+VIEW LessonView {
+  ENTITY   Lesson
+  LAYOUT   cards
+  ACTIONS  generate_lesson
+  SIDEBAR  icon: BookOpen
+  FIELDS   subject, score, created_at
+}
+
+VIEW Dashboard {
+  LAYOUT   custom
+  SIDEBAR  icon: Home
+  TITLE    "Dashboard"
+}
+```
+
+### Generates
+
+- React component with the specified layout
+- App.tsx routing entry
+- Sidebar navigation entry
+- Wiring to Zustand store for the linked entity
+- Action buttons / handlers for specified actions
+
+---
+
+## AI_SERVICE Declaration
+
+Configures the AI provider abstraction layer. At most one per file.
+
+### Syntax
+
+```
+AI_SERVICE {
+  PROVIDERS   <provider_list>
+  KEYS_FILE   <path>
+  DEFAULT     <provider_name>
+  STREAMING   <bool>
+  [MODELS     <model_mappings>]
+}
+```
+
+### Supported Providers
+
+`anthropic`, `openai`, `google`, `xai`, `ollama`, `local`
+
+### Example
+
+```
+AI_SERVICE {
+  PROVIDERS   anthropic, openai, google, xai
+  KEYS_FILE   "%APPDATA%/NovaSyn/api-keys.json"
+  DEFAULT     anthropic
+  STREAMING   true
+  MODELS {
+    anthropic  "claude-sonnet-4-20250514"
+    openai     "gpt-4o"
+    google     "gemini-2.0-flash"
+    xai        "grok-3"
+  }
+}
+```
+
+### Generates
+
+- AI service module with provider routing
+- Streaming support (SSE parsing)
+- API key loading from shared config
+- Model selection logic
+- Token usage tracking
+
+---
+
+## TEST Declaration
+
+Defines validation assertions for generated systems.
+
+### Syntax
+
+```
+TEST <name> {
+  GIVEN   <EntityName> { <field>: <value>, ... }
+  EXPECT  <operation> -> <assertion>
+  ...
+}
+```
+
+### Assertion Operators
+
+| Operator       | Description                |
+|----------------|----------------------------|
+| ==             | Equals                     |
+| !=             | Not equals                 |
+| >              | Greater than               |
+| <              | Less than                  |
+| >=             | Greater than or equal      |
+| <=             | Less than or equal         |
+| IS NOT NULL    | Value exists               |
+| IS NULL        | Value is null              |
+| CONTAINS       | String/array contains      |
+| MATCHES        | Regex match                |
+| HAS_LENGTH     | Array/string length check  |
+
+### Example
+
+```
+TEST student_lifecycle {
+  GIVEN Student { name: "Alice Chen", grade: "5th", active: true }
+
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> name == "Alice Chen"
+  EXPECT create -> active == true
+
+  EXPECT list -> HAS_LENGTH > 0
+  EXPECT get_by_id -> grade == "5th"
+
+  EXPECT update { grade: "6th" } -> grade == "6th"
+  EXPECT delete -> get_by_id IS NULL
+}
+
+TEST enrollment_foreign_key {
+  GIVEN Student { name: "Bob", grade: "3rd" }
+  GIVEN Enrollment { school_year: "2025-2026", BELONGS_TO Student }
+
+  EXPECT create Enrollment -> student_id IS NOT NULL
+  EXPECT delete Student -> list Enrollment HAS_LENGTH == 0
+}
+```
+
+### Generates
+
+- Test runner with setup/teardown
+- Individual test cases per assertion
+- Database fixture management
+- Foreign key cascade verification
+
+---
+
+## RULE Declaration (Expert System Mode)
+
+Defines deterministic business rules for expert system generation.
+
+### Syntax
+
+```
+RULE <name> {
+  WHEN     <condition>
+  [AND     <condition>]
+  [OR      <condition>]
+  [UNLESS  <condition>]
+  THEN     <action>
+  [PRIORITY <number>]
+}
+```
+
+### Condition Syntax
+
+```
+<entity>.<field> <operator> <value>
+```
+
+### Example
+
+```
+RULE high_value_invoice {
+  WHEN    invoice.amount > 10000
+  THEN    require_manager_approval
+  PRIORITY 10
+}
+
+RULE frustrated_customer {
+  WHEN    customer.sentiment < -0.6
+  AND     customer.message_count > 3
+  THEN    escalate_to_human
+  PRIORITY 20
+}
+
+RULE auto_approve_small {
+  WHEN    invoice.amount <= 500
+  UNLESS  invoice.vendor_trust_level == "low"
+  THEN    auto_approve
+  PRIORITY 5
+}
+```
+
+### Generates
+
+- Rule engine with forward chaining
+- Deterministic evaluation (rules execute in priority order)
+- Decision audit log (which rules fired, why)
+- Test harness for rule validation
+
+---
+
+## WORKFLOW Declaration
+
+Defines multi-step orchestration sequences.
+
+### Syntax
+
+```
+WORKFLOW <Name> {
+  STEP <name> {
+    ACTION  <action_name>
+    [INPUT  <mapping>]
+    [ON_FAIL <behavior>]
+  }
+  ...
+  [PARALLEL <step_list>]
+}
+```
+
+### On-Fail Behaviors
+
+| Behavior | Description                              |
+|----------|------------------------------------------|
+| stop     | Halt workflow (default)                  |
+| skip     | Skip step, continue                     |
+| retry    | Retry step (max 3)                       |
+| fallback | Execute fallback action                  |
+
+### Example
+
+```
+WORKFLOW StudentOnboarding {
+  STEP validate_info {
+    ACTION  validate_student_data
+    INPUT   student_id: workflow.student_id
+    ON_FAIL stop
+  }
+
+  STEP create_enrollment {
+    ACTION  create
+    INPUT   student_id: validate_info.student_id, school_year: "2025-2026"
+  }
+
+  STEP generate_initial_assessment {
+    ACTION  generate_lesson
+    INPUT   student_id: validate_info.student_id, subject: "placement", difficulty: "medium"
+  }
+
+  STEP notify_parent {
+    ACTION  send_notification
+    INPUT   message: "Enrollment complete for {{student.name}}"
+    ON_FAIL skip
+  }
+}
+```
+
+### Generates
+
+- Workflow execution engine
+- Step dependency resolution
+- Error handling per step
+- Execution lineage / audit trail
+- Workflow state persistence
+
+---
+
+## PIPELINE Declaration (Orchestration Engine)
+
+Defines a multi-row execution pipeline where modules in the same row run in parallel (BFS paradigm). This is the core orchestration pattern from the NovaSyn Orchestrator — rows execute top-to-bottom, modules within a row execute simultaneously via Promise.all.
+
+### Syntax
+
+```
+PIPELINE <Name> {
+  DESCRIPTION <string>
+
+  ROW <name> {
+    <module_name>: <module_type> {
+      [CONFIG ...]
+    }
+    ...
+  }
+  ...
+
+  [CONNECTION <from_module>.<output> -> <to_module>.<input>]
+  ...
+}
+```
+
+### Module Types
+
+| Type             | Description                                           |
+|------------------|-------------------------------------------------------|
+| ai_action        | Send prompt to AI, return response                    |
+| transform        | Transform data (regex, JSON extract, format)          |
+| qc_checkpoint    | Pause for human review (Jidoka)                       |
+| vault_save       | Save output to shared vault                           |
+| vault_load       | Load content from vault                               |
+| cross_app        | Invoke macro in another application                   |
+| custom           | User-defined action (generates stub)                  |
+
+### Example
+
+```
+PIPELINE ContentFactory {
+  DESCRIPTION "AI content generation with quality gates"
+
+  ROW research {
+    topic_research: ai_action {
+      MODEL       anthropic
+      PROMPT      "Research the topic: {{input}}. Provide key facts and themes."
+    }
+    competitor_scan: ai_action {
+      MODEL       openai
+      PROMPT      "Analyze competitor content on: {{input}}. Identify gaps."
+    }
+  }
+
+  ROW generate {
+    draft_article: ai_action {
+      MODEL       anthropic
+      PROMPT      "Write an article based on:\n{{research_output}}\n\nGaps to fill:\n{{competitor_output}}"
+    }
+  }
+
+  ROW quality {
+    review: qc_checkpoint {
+      DESCRIPTION "Review draft for accuracy and tone"
+      SPC         content_quality
+    }
+  }
+
+  ROW publish {
+    save_final: vault_save {
+      TAGS        "article", "published"
+      OUTPUT_TYPE "markdown"
+    }
+  }
+
+  CONNECTION topic_research.output -> draft_article.research_output
+  CONNECTION competitor_scan.output -> draft_article.competitor_output
+  CONNECTION draft_article.output -> review.input
+  CONNECTION review.output -> save_final.input
+}
+```
+
+### Generates
+
+- Pipeline executor with BFS row-based parallel execution
+- Module instances with typed configuration
+- Connection resolver (output→input wiring)
+- Execution state persistence (run tracking, step results)
+- Progress event emitter
+- Pause/resume lifecycle for QC checkpoints
+- Latency tracking per module
+- Output aggregation between rows
+
+---
+
+## QC Declaration (Quality Control / SPC)
+
+Defines quality control configuration for a pipeline. Implements Statistical Process Control (SPC) with progressive sampling — automatically reduces human review from 100% to 5% as AI proves reliable. This is the TPS Jidoka principle (stop the line on quality issues) combined with manufacturing-grade process capability tracking.
+
+### Syntax
+
+```
+QC <name> {
+  [YOUNG_THRESHOLD     <number>]
+  [MATURING_THRESHOLD  <number>]
+  [YOUNG_PASS_RATE     <float>]
+  [MATURE_PASS_RATE    <float>]
+  [MATURING_SAMPLE     <float>]
+  [MATURE_SAMPLE       <float>]
+}
+```
+
+### Fields
+
+| Field              | Default | Description                                         |
+|--------------------|---------|-----------------------------------------------------|
+| YOUNG_THRESHOLD    | 50      | Samples before reducing from 100% inspection        |
+| MATURING_THRESHOLD | 100     | Samples before reaching minimum sampling rate       |
+| YOUNG_PASS_RATE    | 0.80    | Pass rate required to move to maturing phase        |
+| MATURE_PASS_RATE   | 0.95    | Pass rate required to move to mature phase          |
+| MATURING_SAMPLE    | 0.50    | Sampling rate during maturing phase (50%)           |
+| MATURE_SAMPLE      | 0.05    | Sampling rate during mature phase (5%)              |
+
+### SPC Phases
+
+```
+Phase 1 — Young Process (< 50 samples):    100% human review
+Phase 2 — Maturing Process (50-99, 80%+):  50% sampling
+Phase 3 — Mature Process (100+, 95%+):     5% sampling
+Quality Drop:                               Back to 100% automatically
+```
+
+### Example
+
+```
+QC content_quality {
+  YOUNG_THRESHOLD     30
+  MATURING_THRESHOLD  75
+  YOUNG_PASS_RATE     0.85
+  MATURE_PASS_RATE    0.95
+  MATURING_SAMPLE     0.40
+  MATURE_SAMPLE       0.05
+}
+
+QC image_generation {
+  YOUNG_THRESHOLD     50
+  MATURING_THRESHOLD  100
+  MATURE_PASS_RATE    0.98
+  MATURE_SAMPLE       0.02
+}
+```
+
+### Generates
+
+- SPCController class with progressive sampling logic
+- Process capability index (Cpk) calculation
+- should_require_qc() decision function
+- record_qc_result() feedback function
+- Cost savings calculator
+- Process statistics tracking
+- Automatic quality regression detection
+
+---
+
+## VAULT Declaration (Shared Asset Storage)
+
+Declares a shared asset vault for cross-workflow and cross-app data persistence. Assets in the vault have full provenance tracking — you can trace any output back through the entire pipeline that created it.
+
+### Syntax
+
+```
+VAULT {
+  [PATH       <string>]
+  [ASSET_TYPES  <type_list>]
+  [PROVENANCE   <bool>]
+  [TAGS         <bool>]
+}
+```
+
+### Fields
+
+| Field       | Default                        | Description                           |
+|-------------|--------------------------------|---------------------------------------|
+| PATH        | %APPDATA%/Agicore/vault.db     | Vault database location               |
+| ASSET_TYPES | text, image, json, code, audio | Allowed asset types                   |
+| PROVENANCE  | true                           | Track source lineage for all assets   |
+| TAGS        | true                           | Enable tag-based organization         |
+
+### Example
+
+```
+VAULT {
+  PATH         "%APPDATA%/NovaSyn/vault.db"
+  ASSET_TYPES  text, image, video, audio, json, code, prompt_template
+  PROVENANCE   true
+  TAGS         true
+}
+```
+
+### Generates
+
+- Vault SQLite schema (vault_items, vault_tags, vault_annotations)
+- Store/retrieve/search/delete operations
+- Provenance chain tracking (source_asset_ids)
+- Tag management
+- Cross-workflow asset sharing
+
+---
+
+## FACT Declaration (Expert System Working Memory)
+
+Declares facts that can be asserted and retracted at runtime. Facts are the working memory of the expert system — rules evaluate against current facts to determine which actions fire.
+
+### Syntax
+
+```
+FACT <name> {
+  <field>: <type> [= <default>]
+  ...
+  [PERSISTENT]
+}
+```
+
+### Rules
+
+- Fact names are PascalCase
+- Fields define the shape of each fact instance
+- `PERSISTENT` means facts survive across sessions (stored in DB)
+- Without `PERSISTENT`, facts exist only in the current runtime session
+- Facts are asserted/retracted by rules and workflows via ASSERT/RETRACT
+
+### Example
+
+```
+FACT UserIntent {
+  category: string
+  tone: string
+  confidence: float = 0.5
+  raw_input: string
+}
+
+FACT ConversationContext {
+  turn_count: number = 0
+  topic_history: json = []
+  last_category: string
+  PERSISTENT
+}
+
+FACT SystemAlert {
+  level: string
+  message: string
+  source: string
+}
+```
+
+### Generates
+
+- TypeScript fact interface
+- Fact store (in-memory Map, or SQLite for PERSISTENT)
+- Assert/retract functions
+- Fact query API (match by fields)
+
+---
+
+## STATE Declaration (Expert System State Machines)
+
+Defines a state machine with named states and transitions. States track where the system is in a process, and transitions define how it moves between states based on conditions.
+
+### Syntax
+
+```
+STATE <name> {
+  INITIAL <state_name>
+
+  <state_name> {
+    [ON_ENTER  <action>]
+    [ON_EXIT   <action>]
+    TRANSITION <target_state> WHEN <condition>
+    ...
+  }
+  ...
+}
+```
+
+### Rules
+
+- State machine names are PascalCase
+- State names are snake_case
+- `INITIAL` designates the starting state (required)
+- `ON_ENTER` fires when entering a state
+- `ON_EXIT` fires when leaving a state
+- `TRANSITION` defines a conditional edge to another state
+- Conditions can reference facts, scores, and entity fields
+
+### Example
+
+```
+STATE ConversationPhase {
+  INITIAL greeting
+
+  greeting {
+    ON_ENTER reset_context
+    TRANSITION exploring WHEN turn_count > 3
+  }
+
+  exploring {
+    ON_ENTER load_topic_history
+    TRANSITION suspicious WHEN repetition_score > 5
+    TRANSITION side_quest WHEN cultural_score > 8
+  }
+
+  suspicious {
+    ON_ENTER increase_eliza_leak
+    TRANSITION revealed WHEN test_attempts > 3
+    TRANSITION exploring WHEN turn_count_in_state > 10
+  }
+
+  side_quest {
+    ON_ENTER activate_character_engine
+    ON_EXIT deactivate_character_engine
+    TRANSITION exploring WHEN side_quest_complete == true
+  }
+
+  revealed {
+    ON_ENTER show_reveal_message
+  }
+}
+```
+
+### Generates
+
+- State machine executor with current state tracking
+- Transition evaluator (checks conditions each turn)
+- ON_ENTER/ON_EXIT action dispatch
+- State history / audit log
+- Persistence (current state saved to DB)
+
+---
+
+## PATTERN Declaration (Expert System Pattern Matching)
+
+Defines input pattern matching rules with response templates. This is the modernized ELIZA/AIML primitive — regex patterns matched against input, with template responses that can interpolate captured groups and facts.
+
+### Syntax
+
+```
+PATTERN <name> {
+  MATCH    <regex_or_keyword_list>
+  [WHEN    <condition>]
+  RESPOND  <template_list>
+  [SCORE   <score_name> <delta>]
+  [ASSERT  <fact_name> { <fields> }]
+  [PRIORITY <number>]
+  [CATEGORY <string>]
+}
+```
+
+### Rules
+
+- Pattern names are snake_case
+- `MATCH` accepts a regex string or comma-separated keywords
+- `WHEN` adds a guard condition (only match if condition is true)
+- `RESPOND` accepts one or more response templates (selected randomly)
+- Templates use `{{variable}}` for interpolation from captured groups and facts
+- `SCORE` increments a named score by the delta value
+- `ASSERT` creates a fact when the pattern matches
+- `PRIORITY` determines match order (higher = checked first, default: 0)
+- `CATEGORY` tags the pattern for analytics and debugging
+
+### Example
+
+```
+PATTERN greeting {
+  MATCH    /^(hi|hello|hey|greetings)\b/i
+  RESPOND  "Hello. What brings you here today?",
+           "Welcome. Let's begin.",
+           "I've been expecting you."
+  CATEGORY "social"
+  PRIORITY 10
+}
+
+PATTERN seeking_validation {
+  MATCH    /i think i('m| am) (doing |going )?(well|good|great)/i
+  RESPOND  "That's one interpretation.",
+           "Confidence is... interesting.",
+           "If you say so."
+  SCORE    insecurity_score 2
+  ASSERT   UserIntent { category: "self_assessment", tone: "validation_seeking" }
+  CATEGORY "personality"
+}
+
+PATTERN repeated_question {
+  MATCH    /\?$/
+  WHEN     last_response_was_question == true
+  RESPOND  "You keep asking questions. That's a pattern.",
+           "Questions upon questions. Interesting approach."
+  SCORE    suspicion_score 3
+  PRIORITY 5
+}
+
+PATTERN gen_x_reference {
+  MATCH    "rad", "gnarly", "tubular", "bodacious", "gag me"
+  RESPOND  "{{input}}... now that takes me back.",
+           "Interesting vocabulary choice."
+  SCORE    gen_x_score 3
+  CATEGORY "cultural_marker"
+}
+```
+
+### Generates
+
+- Pattern matcher engine (regex compilation, priority ordering)
+- Response template renderer with interpolation
+- Score update dispatch
+- Fact assertion dispatch
+- Match audit log (which pattern fired, why, confidence)
+
+---
+
+## SCORE Declaration (Expert System Certainty Tracking)
+
+Declares named scores that accumulate over time. Scores are the mechanism for gradual activation — like Reality.AI's cultural marker scoring that triggers character engine transitions.
+
+### Syntax
+
+```
+SCORE <name> {
+  INITIAL   <number>
+  [MIN      <number>]
+  [MAX      <number>]
+  [DECAY    <number> PER <interval>]
+  THRESHOLD <name> AT <value> [THEN <action>]
+  ...
+}
+```
+
+### Rules
+
+- Score names are snake_case
+- `INITIAL` sets the starting value (default: 0)
+- `MIN` / `MAX` clamp the score range
+- `DECAY` reduces the score over time (prevents stale triggers)
+- `THRESHOLD` defines named checkpoints that trigger actions
+- Multiple thresholds can exist per score (evaluated in order)
+
+### Example
+
+```
+SCORE gen_x_score {
+  INITIAL   0
+  MIN       0
+  MAX       20
+  DECAY     1 PER turn
+  THRESHOLD interested AT 5 THEN log_cultural_marker
+  THRESHOLD activated AT 10 THEN activate_wargames_engine
+}
+
+SCORE suspicion_score {
+  INITIAL   0
+  MAX       30
+  THRESHOLD curious AT 5 THEN increase_eliza_frequency
+  THRESHOLD testing AT 10 THEN transition_to_layer_2
+  THRESHOLD caught AT 20 THEN transition_to_layer_3
+}
+
+SCORE trust_level {
+  INITIAL   5
+  MIN       0
+  MAX       10
+  THRESHOLD low AT 2 THEN flag_for_review
+  THRESHOLD high AT 8 THEN auto_approve
+}
+```
+
+### Generates
+
+- Score store with increment/decrement/set operations
+- Threshold evaluator (checked after each score update)
+- Decay timer (if configured)
+- Score history for audit trail
+- Threshold action dispatch
+
+---
+
+## MODULE Declaration (Expert System Composable Engines)
+
+Defines a self-contained expert system module that can be activated/deactivated. Modules encapsulate related patterns, rules, states, and scores into a composable unit — like Reality.AI's character engines (WarGames, Jedi, Matrix, etc.).
+
+### Syntax
+
+```
+MODULE <Name> {
+  DESCRIPTION  <string>
+  [ACTIVATE_WHEN  <condition>]
+  [DEACTIVATE_WHEN  <condition>]
+
+  [PATTERN ...]
+  [RULE ...]
+  [STATE ...]
+  [SCORE ...]
+  [FACT ...]
+}
+```
+
+### Rules
+
+- Module names are PascalCase
+- Modules are inactive by default until ACTIVATE_WHEN condition is met
+- Patterns/rules inside a module only fire when the module is active
+- Modules can contain any expert system primitive
+- A module's activation state is tracked as a fact
+- Multiple modules can be active simultaneously
+
+### Example
+
+```
+MODULE WarGames {
+  DESCRIPTION "WOPR/Joshua simulation triggered by Gen-X language patterns"
+  ACTIVATE_WHEN gen_x_score >= 10
+  DEACTIVATE_WHEN wargames_complete == true
+
+  STATE wargames_phase {
+    INITIAL greeting
+
+    greeting {
+      ON_ENTER send_joshua_greeting
+      TRANSITION game_list WHEN any_response
+    }
+
+    game_list {
+      TRANSITION game_select WHEN input CONTAINS "thermonuclear"
+      TRANSITION game_list WHEN any_response
+    }
+
+    game_select {
+      TRANSITION war_simulation WHEN side_selected
+    }
+
+    war_simulation {
+      TRANSITION lesson WHEN turn_count > 3
+    }
+
+    lesson {
+      ON_ENTER show_futility_lesson
+      TRANSITION complete WHEN input CONTAINS "not to play"
+    }
+
+    complete {
+      ON_ENTER set_wargames_complete
+    }
+  }
+
+  PATTERN joshua_greeting {
+    MATCH    /.*/
+    WHEN     wargames_phase == "greeting"
+    RESPOND  "GREETINGS, PROFESSOR FALKEN.\n\nSHALL WE PLAY A GAME?"
+    PRIORITY 100
+  }
+
+  PATTERN game_selection {
+    MATCH    /thermonuclear/i
+    WHEN     wargames_phase == "game_list"
+    RESPOND  "FINE CHOICE.\n\nWHICH SIDE DO YOU WANT?\n  1. UNITED STATES\n  2. SOVIET UNION"
+    PRIORITY 100
+  }
+}
+
+MODULE JediMaster {
+  DESCRIPTION "Yoda-style wisdom engine triggered by Star Wars references"
+  ACTIVATE_WHEN star_wars_score >= 8
+  DEACTIVATE_WHEN jedi_complete == true
+
+  PATTERN yoda_response {
+    MATCH    /.*/
+    WHEN     jedi_active == true
+    RESPOND  "Hmm. {{input}}, you say. Much to learn, you still have.",
+             "The Force, strong in this conversation it is not.",
+             "Do or do not. There is no try. But mostly do not."
+    PRIORITY 90
+  }
+}
+```
+
+### Generates
+
+- Module lifecycle manager (activate/deactivate)
+- Scoped pattern/rule/state registration
+- Module state persistence
+- Activation condition evaluator
+- Module interaction coordinator (priority between active modules)
+
+---
+
+## ROUTER Declaration (Cooperative Intelligence Routing)
+
+Defines an intelligent model routing layer that learns which AI model performs best for which task type. Inspired by BabyAI's cooperative intelligence engine — the system starts by testing all models, then progressively routes to proven winners based on calibration data.
+
+The router replaces static model selection with a learning system that gets cheaper and more accurate with every interaction.
+
+### Syntax
+
+```
+ROUTER <name> {
+  DESCRIPTION  <string>
+
+  TIER <number> <tier_name> {
+    <model_key>: <provider> <model_id> {
+      [STRENGTHS   <task_type_list>]
+      [COST        <float>]
+      [CONTEXT     <number>]
+      [DEFAULT]
+    }
+    ...
+  }
+  ...
+
+  TASK_TYPES    <type_list>
+  MOSH_PIT      <number>
+  [CALIBRATION  <bool>]
+}
+```
+
+### Fields
+
+| Field       | Description                                          |
+|-------------|------------------------------------------------------|
+| TIER        | Model tier (1=free, 2=mid, 3=premium)               |
+| STRENGTHS   | Task types this model excels at                      |
+| COST        | Cost per 1K tokens                                   |
+| CONTEXT     | Context window size                                  |
+| DEFAULT     | Default model for this tier                          |
+| TASK_TYPES  | All recognized task types for classification         |
+| MOSH_PIT    | Number of models to run in parallel competition      |
+| CALIBRATION | Enable learning loop (default: true)                 |
+
+### Example
+
+```
+ROUTER BabyAI {
+  DESCRIPTION "Cooperative intelligence router with progressive learning"
+
+  TIER 1 free {
+    qwen3_8b: huggingface "Qwen/Qwen3-8B" {
+      STRENGTHS   general, math, coding
+      CONTEXT     32768
+      DEFAULT
+    }
+    llama_8b: huggingface "meta-llama/Llama-3.1-8B-Instruct" {
+      STRENGTHS   general, conversation, education
+      CONTEXT     131072
+    }
+  }
+
+  TIER 2 mid {
+    haiku: anthropic "claude-haiku-4-5-20251001" {
+      STRENGTHS   coding, analysis
+      COST        0.1
+      CONTEXT     200000
+    }
+    gpt4mini: openai "gpt-4o-mini" {
+      STRENGTHS   general, coding, creative_writing
+      COST        0.015
+    }
+  }
+
+  TIER 3 premium {
+    sonnet: anthropic "claude-sonnet-4-6" {
+      STRENGTHS   coding, analysis, creative_writing
+      COST        0.3
+    }
+    opus: anthropic "claude-opus-4-6" {
+      STRENGTHS   coding, analysis, research
+      COST        1.5
+    }
+  }
+
+  TASK_TYPES    coding, creative_writing, analysis, math, conversation, research, education, farming, general
+  MOSH_PIT      3
+  CALIBRATION   true
+}
+```
+
+### Generates
+
+- Task classifier (keyword + regex analysis → task_type + complexity score)
+- Tiered model selector (complexity → tier → best model by calibration + strengths)
+- Calibration learning loop (win/loss tracking per model x task_type)
+- Mosh Pit executor (parallel model competition with preference scoring)
+- OpenAI-compatible API endpoint (`/v1/chat/completions`)
+- Routing statistics and cost tracking
+
+---
+
+## SKILL Declaration (Domain Expertise Documents)
+
+Declares a skill document that transforms a generic AI model into a domain specialist. Skill docs are injected into the model's context when a query matches their keywords. A 7B model with the right skill doc can outperform GPT-4 on domain-specific tasks.
+
+### Syntax
+
+```
+SKILL <name> {
+  DESCRIPTION  <string>
+  KEYWORDS     <keyword_list>
+  [PATH        <string>]
+  [DOMAIN      <string>]
+  [PRIORITY    <number>]
+}
+```
+
+### Example
+
+```
+SKILL corn_missouri {
+  DESCRIPTION  "Missouri corn farming expertise including Amish traditional knowledge"
+  KEYWORDS     corn, maize, missouri, soil, planting, harvest, rotation, cover_crop
+  DOMAIN       "farming"
+  PRIORITY     10
+}
+
+SKILL typescript_patterns {
+  DESCRIPTION  "TypeScript design patterns and NovaSyn coding standards"
+  KEYWORDS     typescript, react, zustand, tauri, electron, ipc, schema
+  DOMAIN       "coding"
+  PRIORITY     5
+}
+
+SKILL socratic_tutor {
+  DESCRIPTION  "Socratic teaching method for project-based education"
+  KEYWORDS     teach, learn, student, project, curriculum, homework, lesson
+  DOMAIN       "education"
+  PRIORITY     8
+}
+```
+
+### Generates
+
+- Skill doc registry with keyword matching
+- Context injection system (prepends matched skill doc to AI prompt)
+- Skill doc association tracking (which docs correlate with best outcomes)
+- Skill doc management API
+
+---
+
+## LIFECYCLE Declaration (Temporal Intelligence Graduation)
+
+Defines the temporal lifecycle for an intelligence instance. When an instance becomes stale (its learned patterns no longer reflect current conditions), it graduates to Elder status and a fresh instance starts learning from current interactions. Elders remain available for historical knowledge via an escalation chain.
+
+This creates geological strata of intelligence — current knowledge on top, historical knowledge preserved below, accessible when needed but not cluttering the active context.
+
+### Syntax
+
+```
+LIFECYCLE <name> {
+  DESCRIPTION       <string>
+  STALENESS_WINDOW  <number>
+  STALENESS_DROP    <float>
+  MIN_LIFETIME      <number>
+  MAX_INSTANCES     <number>
+
+  ESCALATION {
+    <level_name>: <description>
+    ...
+  }
+}
+```
+
+### Fields
+
+| Field             | Default | Description                                              |
+|-------------------|---------|----------------------------------------------------------|
+| STALENESS_WINDOW  | 7       | Days of declining accuracy before graduation triggers    |
+| STALENESS_DROP    | 0.15    | Accuracy drop threshold (15% below personal best)        |
+| MIN_LIFETIME      | 14      | Minimum days before an instance can graduate             |
+| MAX_INSTANCES     | 10      | Maximum active instances per domain                      |
+
+### Example
+
+```
+LIFECYCLE BabyAILifecycle {
+  DESCRIPTION       "Temporal graduation with elder escalation"
+  STALENESS_WINDOW  7
+  STALENESS_DROP    0.15
+  MIN_LIFETIME      14
+  MAX_INSTANCES     10
+
+  ESCALATION {
+    current: "Active instance — routing queries NOW"
+    recent: "Recent elder — last generation's knowledge"
+    historical: "Historical elder — older context, still accessible"
+    founding: "Founding instance — never deleted, deepest knowledge"
+  }
+}
+```
+
+### Generates
+
+- Staleness detection (rolling accuracy tracking)
+- Graduation trigger (accuracy drop below threshold for N days)
+- Elder archive system (graduated instances preserved for escalation)
+- Escalation chain (current → recent → historical → founding)
+- Instance health dashboard
+- Lifecycle event logging
+
+---
+
+## BREED Declaration (Evolutionary Reproduction)
+
+Defines evolutionary reproduction rules for intelligence instances. When two specialist instances become stale, they can reproduce — combining a fraction of their proven knowledge into a new child instance that inherits the best of both parents while maintaining fresh capacity to adapt to the present.
+
+This is the knowledge axis complement to LIFECYCLE's time axis. Graduation preserves knowledge. Reproduction evolves it.
+
+### Syntax
+
+```
+BREED <name> {
+  DESCRIPTION       <string>
+  INHERITANCE       <parent_a_pct> / <parent_b_pct> / <fresh_pct>
+  MIN_FITNESS       <float>
+  COOLDOWN          <number>
+
+  FITNESS {
+    prediction_accuracy: <weight>
+    domain_depth: <weight>
+    cost_efficiency: <weight>
+    judge_quality: <weight>
+  }
+
+  PAIRING {
+    PREFER          <strategy_list>
+    DIVERSITY_MIN   <float>
+  }
+
+  TRAITS {
+    PERSIST_AFTER   <number>
+    EXTINCT_AFTER   <number>
+  }
+}
+```
+
+### Fields
+
+| Field           | Default    | Description                                           |
+|-----------------|------------|-------------------------------------------------------|
+| INHERITANCE     | 15/15/70   | Parent A% / Parent B% / fresh capacity%              |
+| MIN_FITNESS     | 0.5        | Minimum fitness score to be eligible for reproduction |
+| COOLDOWN        | 30         | Days between reproduction events per parent           |
+| PERSIST_AFTER   | 3          | Generations a trait must survive to be "core"         |
+| EXTINCT_AFTER   | 1          | Generations before an unused trait is dropped         |
+| DIVERSITY_MIN   | 0.4        | Minimum genetic distance between active instances     |
+
+### Example
+
+```
+BREED BabyAIEvolution {
+  DESCRIPTION       "15/15/70 evolutionary reproduction with cross-domain pollination"
+  INHERITANCE       15 / 15 / 70
+  MIN_FITNESS       0.5
+  COOLDOWN          30
+
+  FITNESS {
+    prediction_accuracy: 0.4
+    domain_depth: 0.3
+    cost_efficiency: 0.2
+    judge_quality: 0.1
+  }
+
+  PAIRING {
+    PREFER          complementary_domains, generational_diversity
+    DIVERSITY_MIN   0.4
+  }
+
+  TRAITS {
+    PERSIST_AFTER   3
+    EXTINCT_AFTER   1
+  }
+}
+```
+
+### Reproduction Process
+
+```
+Parent A (Ag Baby v2, stale)  x  Parent B (Code Baby v3, stale)
+         \                              /
+          \-- 15% calibration -------- /-- 15% calibration --\
+                                                               \
+                            Child Instance
+                       (AgTech Baby v1)
+
+                  15% from Parent A (farming routing patterns)
+                  15% from Parent B (coding routing patterns)
+                  70% fresh capacity (adapts to NOW)
+```
+
+Inherited knowledge is selected by highest confidence — the child gets what each parent was SURE about, not what it was still figuring out.
+
+### Generates
+
+- Fitness scoring system (weighted multi-factor evaluation)
+- Parent selection algorithm (complementary domains, generational diversity)
+- Calibration extraction and merge (top N% by confidence)
+- Child initialization with inherited state
+- Lineage tracking (full ancestry, trait persistence)
+- Generational selection pressure (trait survival analysis)
+- Genetic diversity monitoring
+- Reproduction event logging
+- Lineage visualization data
+
+---
+
+## Complete Example
+
+A minimal but complete `.agi` file:
+
+```
+// home_academy.agi
+// NovaSyn Home Academy - Agicore DSL Definition
+
+APP home_academy {
+  TITLE   "NovaSyn Home Academy"
+  WINDOW  1200x800 frameless
+  DB      academy.db
+  PORT    5176
+  THEME   dark
+}
+
+AI_SERVICE {
+  PROVIDERS   anthropic, openai
+  KEYS_FILE   "%APPDATA%/NovaSyn/api-keys.json"
+  DEFAULT     anthropic
+  STREAMING   true
+}
+
+ENTITY Student {
+  name: string REQUIRED
+  date_of_birth: date
+  grade: string REQUIRED
+  notes: string
+  active: bool = true
+  TIMESTAMPS
+}
+
+ENTITY SchoolYear {
+  name: string REQUIRED UNIQUE
+  start_date: date REQUIRED
+  end_date: date REQUIRED
+  active: bool = true
+  TIMESTAMPS
+}
+
+ENTITY Enrollment {
+  status: string = "active"
+  BELONGS_TO Student
+  BELONGS_TO SchoolYear
+  TIMESTAMPS
+}
+
+ENTITY Subject {
+  name: string REQUIRED
+  description: string
+  color: string = "#3B82F6"
+  TIMESTAMPS
+}
+
+ENTITY Lesson {
+  title: string REQUIRED
+  content: json
+  subject_area: string
+  score: number
+  BELONGS_TO Student
+  BELONGS_TO Subject
+  TIMESTAMPS
+}
+
+ACTION generate_lesson {
+  INPUT   student_id: string, subject: string, difficulty: string = "medium"
+  OUTPUT  lesson: Lesson
+  AI      "You are a curriculum designer. Create a structured lesson plan for a {{difficulty}} level student on {{subject}}. Return JSON with title, content (array of sections), and suggested assessment criteria."
+}
+
+ACTION analyze_progress {
+  INPUT   student_id: string, subject_id: string
+  OUTPUT  analysis: string
+  AI      "Analyze this student's progress in the given subject based on their lesson scores. Identify strengths, areas for improvement, and recommend next steps."
+  STREAM  true
+}
+
+VIEW Dashboard {
+  LAYOUT   custom
+  SIDEBAR  icon: Home
+  TITLE    "Dashboard"
+}
+
+VIEW StudentList {
+  ENTITY   Student
+  LAYOUT   split
+  ACTIONS  create, edit, delete
+  SIDEBAR  icon: Users
+  FIELDS   name, grade, active
+}
+
+VIEW LessonView {
+  ENTITY   Lesson
+  LAYOUT   cards
+  ACTIONS  create, generate_lesson
+  SIDEBAR  icon: BookOpen
+  FIELDS   title, subject_area, score, created_at
+}
+
+VIEW SubjectList {
+  ENTITY   Subject
+  LAYOUT   table
+  ACTIONS  create, edit, delete
+  SIDEBAR  icon: Layers
+}
+
+TEST student_crud {
+  GIVEN Student { name: "Alice Chen", grade: "5th", active: true }
+
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> name == "Alice Chen"
+  EXPECT list -> HAS_LENGTH > 0
+  EXPECT get_by_id -> grade == "5th"
+  EXPECT update { grade: "6th" } -> grade == "6th"
+  EXPECT delete -> get_by_id IS NULL
+}
+
+TEST enrollment_cascade {
+  GIVEN Student { name: "Bob", grade: "3rd" }
+  GIVEN SchoolYear { name: "2025-2026", start_date: "2025-08-15", end_date: "2026-06-01" }
+  GIVEN Enrollment { status: "active", BELONGS_TO Student, BELONGS_TO SchoolYear }
+
+  EXPECT create Enrollment -> student_id IS NOT NULL
+  EXPECT create Enrollment -> school_year_id IS NOT NULL
+  EXPECT delete Student -> list Enrollment HAS_LENGTH == 0
+}
+```
+
+---
+
+## Grammar Summary
+
+```
+file            = app_decl (entity_decl | action_decl | view_decl |
+                  ai_service_decl | test_decl |
+                  workflow_decl | pipeline_decl | qc_decl | vault_decl |
+                  rule_decl | fact_decl | state_decl | pattern_decl |
+                  score_decl | module_decl |
+                  router_decl | skill_decl | lifecycle_decl | breed_decl)*
+
+// --- Application Layer ---
+app_decl        = "APP" IDENT "{" app_field* "}"
+entity_decl     = "ENTITY" IDENT "{" entity_body "}"
+action_decl     = "ACTION" IDENT "{" action_body "}"
+view_decl       = "VIEW" IDENT "{" view_body "}"
+ai_service_decl = "AI_SERVICE" "{" ai_service_body "}"
+test_decl       = "TEST" IDENT "{" test_body "}"
+
+// --- Orchestration Layer ---
+workflow_decl   = "WORKFLOW" IDENT "{" workflow_body "}"
+pipeline_decl   = "PIPELINE" IDENT "{" pipeline_body "}"
+qc_decl         = "QC" IDENT "{" qc_body "}"
+vault_decl      = "VAULT" "{" vault_body "}"
+
+// --- Expert System Layer ---
+rule_decl       = "RULE" IDENT "{" rule_body "}"
+fact_decl       = "FACT" IDENT "{" fact_body "}"
+state_decl      = "STATE" IDENT "{" state_body "}"
+pattern_decl    = "PATTERN" IDENT "{" pattern_body "}"
+score_decl      = "SCORE" IDENT "{" score_body "}"
+module_decl     = "MODULE" IDENT "{" module_body "}"
+
+// --- Cooperative Intelligence Layer ---
+router_decl     = "ROUTER" IDENT "{" router_body "}"
+skill_decl      = "SKILL" IDENT "{" skill_body "}"
+lifecycle_decl  = "LIFECYCLE" IDENT "{" lifecycle_body "}"
+breed_decl      = "BREED" IDENT "{" breed_body "}"
+
+type            = "string" | "number" | "float" | "bool" |
+                  "date" | "datetime" | "json" | "id"
+
+field_def       = IDENT ":" type [default] [modifier]*
+default         = "=" literal
+modifier        = "REQUIRED" | "UNIQUE" | "INDEX"
+literal         = STRING | NUMBER | BOOL
+```
+
+---
+
+## Design Principles
+
+1. **Finite vocabulary.** The DSL has a fixed set of keywords. AI cannot escape the grammar.
+2. **Deterministic output.** The same `.agi` file always generates the same code.
+3. **Schema first.** ENTITY declarations drive everything downstream.
+4. **Convention over configuration.** Sensible defaults minimize boilerplate.
+5. **Two-compiler verification.** Generated code must pass both `cargo build` and `tsc --noEmit`.
+6. **Testable by construction.** TEST declarations generate executable validation suites.
+7. **Human auditable.** The DSL is readable by non-programmers. The generated code is inspectable.

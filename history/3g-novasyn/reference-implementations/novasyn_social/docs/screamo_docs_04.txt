@@ -1,0 +1,377 @@
+SCREAMO MASTER DOCUMENT v1.0
+PART 4 OF N
+
+DATABASE DESIGN
+
+6.1 DATA ARCHITECTURE OVERVIEW
+Screamo uses a hybrid data architecture consisting of:
+
+A relational database (PostgreSQL) for structured data.
+
+A vector database (pgvector or equivalent) for embeddings used in style modeling and knowledge retrieval.
+
+A document store (optional) for raw message bodies if size or format requires.
+
+All data entities adhere to strict normalization rules to ensure consistency and efficient querying.
+
+6.2 ENTITY DEFINITIONS
+
+Entity: Message
+Description: Represents a single inbound communication from any supported channel.
+Attributes:
+
+message_id (UUID)
+
+external_id (string, platform-specific)
+
+channel_type (enum: EMAIL, LINKEDIN_DM, LINKEDIN_COMMENT, YOUTUBE_COMMENT)
+
+sender_name (string)
+
+sender_handle (string)
+
+timestamp_received (datetime)
+
+message_body (text)
+
+thread_id (UUID reference)
+
+classification_id (UUID reference)
+
+priority_score (float)
+
+ingestion_status (enum: NEW, PROCESSED, ERROR)
+
+Entity: Classification
+Description: AI-generated metadata describing the message.
+Attributes:
+
+classification_id (UUID)
+
+opportunity_type (enum)
+
+sentiment (enum)
+
+intent (enum)
+
+topic_alignment (enum)
+
+hostility_level (enum)
+
+confidence (float)
+
+classifier_version (string)
+
+Entity: DraftResponse
+Description: AI-generated draft reply to a message or feed post.
+Attributes:
+
+draft_id (UUID)
+
+message_id (UUID reference)
+
+response_mode (enum: STANDARD, AGREE_AMPLIFY, EDUCATE, BATTLE)
+
+draft_text (text)
+
+style_pass_applied (boolean)
+
+confidence (float)
+
+rationale_text (text)
+
+generated_timestamp (datetime)
+
+Entity: FeedbackEvent
+Description: Captures user edits and training signals.
+Attributes:
+
+feedback_id (UUID)
+
+draft_id (UUID reference)
+
+final_text (text)
+
+edit_distance (float)
+
+edit_classification (enum: TONE, FACTUAL_CORRECTION, STRUCTURAL, OTHER)
+
+user_rating (integer)
+
+timestamp (datetime)
+
+Entity: SPCMetrics
+Description: Tracks SPC variables for automation control.
+Attributes:
+
+metric_id (UUID)
+
+channel_type (enum)
+
+response_mode (enum)
+
+acceptance_rate (float)
+
+light_edit_rate (float)
+
+heavy_edit_rate (float)
+
+misclassification_rate (float)
+
+sample_size (integer)
+
+control_state (enum: IN_CONTROL, OUT_OF_CONTROL, WARNING)
+
+Entity: KBEntry
+Description: Stores text samples embedded for style and knowledge modeling.
+Attributes:
+
+kb_entry_id (UUID)
+
+raw_text (text)
+
+embedding (vector)
+
+category (enum: STYLE, OPINION, GOLD_STANDARD_REPLY)
+
+timestamp_added (datetime)
+
+6.3 TABLE SPECIFICATIONS
+
+Table: messages
+
+Primary key: message_id
+
+Indexes:
+
+idx_messages_timestamp_received
+
+idx_messages_priority_score
+
+idx_messages_channel_type
+
+Table: classifications
+
+Primary key: classification_id
+
+Foreign key: message_id via messages table
+
+Table: draft_responses
+
+Primary key: draft_id
+
+Foreign key: message_id
+
+Index: idx_drafts_mode
+
+Table: feedback_events
+
+Primary key: feedback_id
+
+Foreign key: draft_id
+
+Index: idx_feedback_event_timestamp
+
+Table: spc_metrics
+
+Primary key: metric_id
+
+Unique: (channel_type, response_mode)
+
+Table: kb_entries
+
+Primary key: kb_entry_id
+
+Embedding stored using vector type
+
+6.4 INDEXING STRATEGY
+
+Time-based indexes for ingestion and retrieval speed
+
+Priority index for sorting unified inbox
+
+Vector index for similarity search (using HNSW, IVF, or similar)
+
+6.5 DATA RETENTION AND ARCHIVAL REQUIREMENTS
+
+Message bodies: 180 days minimum
+
+Logs: 90 days minimum
+
+SPC metrics: 1 year
+
+KB entries: permanent unless manually removed
+
+AI MODEL ARCHITECTURE
+
+7.1 MODEL TYPES
+
+The system employs the following model types:
+
+Base LLM
+Used for raw text generation and classification.
+
+Preference Model
+Learns from user feedback to personalize tone, priorities, and style.
+
+Embedding Model
+Creates vector embeddings for KB entries.
+
+RAG Assembly Model
+Combines retrieved KB content with context to produce consistent responses.
+
+Argumentation Model (Battle Mode)
+Specialized model that identifies claims and constructs structured counterarguments.
+
+7.2 DATA SOURCES FOR TRAINING
+
+User-approved emails
+
+LinkedIn posts
+
+Comments made by user
+
+AI drafts and user-edited versions
+
+High-performing messages tagged as gold-standard samples
+
+7.3 RAG (RETRIEVAL-AUGMENTED GENERATION) ARCHITECTURE
+Components:
+
+Embedding store
+
+Retrieval engine (top-k semantic retrieval)
+
+Context assembler
+
+LLM-based generator
+
+Style rewriter
+
+Process:
+
+Input message → classification → retrieval query
+
+Retrieve relevant style examples
+
+Retrieve relevant opinion-based entries
+
+Merge into context window
+
+Generate draft → style pass
+
+Return final draft
+
+7.4 PREFERENCE MODELING
+Preference model uses reinforcement learning from user edits:
+
+Edit distance = reward signal
+
+Edit classification = feature signal
+
+Corrected opportunity types = label correction
+
+Final text stored for later style consolidation
+
+7.5 SAFETY AND GUARDRAIL MECHANISMS
+
+No profanity generation
+
+No personal attacks
+
+Mandatory approval for all battle posts
+
+Topic blacklist enforcement
+
+Maximum posting frequency limit
+
+7.6 MONITORING AND MODEL DRIFT PREVENTION
+
+Weekly comparison of model outputs against gold-standard samples
+
+Drift scoring requires retraining if deviation exceeds threshold
+
+Drift triggers alert in admin console
+
+STATISTICAL PROCESS CONTROL (SPC)
+
+8.1 SPC OBJECTIVES
+The SPC subsystem ensures automation only occurs when the AI performs reliably and consistently within control limits.
+
+Objectives:
+
+Track performance metrics
+
+Detect drift
+
+Determine safe automation boundaries
+
+Prevent over-automation
+
+8.2 CONTROL VARIABLES
+For each channel and response mode:
+
+P1: Acceptance Rate
+
+P2: Light Edit Rate
+
+P3: Heavy Edit Rate
+
+P4: Rejection Rate
+
+P5: Misclassification Rate
+
+8.3 DATA COLLECTION AND SAMPLING
+A rolling window of N samples (configurable, default 30) is used.
+Each sample is a completed message cycle consisting of:
+
+Draft generated
+
+User feedback applied
+
+Final message sent or discarded
+
+8.4 CONTROL CHARTS
+The system maintains p-charts and u-charts:
+
+p-chart: tracks proportion of acceptance vs. rejections
+u-chart: tracks number of errors per opportunity (e.g., misclassifications)
+
+Control calculations:
+
+Upper Control Limit (UCL) = p-bar + 3 * sqrt((p-bar(1−p-bar))/n)
+
+Lower Control Limit (LCL) = p-bar − 3 * sqrt((p-bar(1−p-bar))/n)
+
+8.5 AUTOMATION ESCALATION LOGIC
+Automation increases only if:
+
+Acceptance rate > 80%
+
+Heavy edit rate < 10%
+
+Misclassification rate < 5%
+
+All metrics remain within control limits for the last N samples
+
+Automation tiers:
+
+Tier 0: Manual Only
+Tier 1: Assisted Drafting (no auto-send)
+Tier 2: Auto-sending low-risk replies (only Standard or Agree-and-Amplify)
+Tier 3: Autonomous engagement within safe boundaries (rare, optional)
+
+Battle mode remains at Tier 0.
+
+8.6 OUT-OF-CONTROL ACTION PLANS (OCAP)
+If metrics exceed control limits:
+
+System immediately reverts automation to Tier 0
+
+Flags impacted model for potential retraining
+
+Requires user approval to re-enable any automation tier
+
+8.7 SPC RESET AND RECALIBRATION PROCEDURES
+User may reset SPC baseline, clearing historical samples.
+System will reset automation to Tier 0 until new control limits are established.
