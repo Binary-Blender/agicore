@@ -29,6 +29,14 @@ Skill documents are the mechanism that transforms generic AI models into domain 
 
 ---
 
+Christopher Bender
+
+The window is closing fast. 💀 Implement AI across your organization with TAO, or be left behind by those who do. 🥷
+
+https://www.linkedin.com/in/chrisbender999/
+
+---
+
 ## Contributing
 
 If this project resonates with you:
