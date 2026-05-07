@@ -1,0 +1,36 @@
+# Dependencies
+**/node_modules
+**/package-lock.json
+
+# Build outputs
+**/dist
+**/.next
+
+# Environment files
+**/.env
+**/.env.local
+
+# Generated training songs
+backend/songs/
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Fly.io
+.fly
+
+# Database
+*.db
+*.sqlite
+
+# Temp files
+*.tmp
+.cache

@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for melody-lms-web on 2025-11-10T13:05:44-06:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'melody-lms-web'
+primary_region = 'iad'
+
+[build]
+
+[env]
+  NODE_ENV = 'production'
+  PORT = '3000'
+  NEXT_PUBLIC_API_URL = 'https://melody-lms-api.fly.dev'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
