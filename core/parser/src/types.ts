@@ -611,6 +611,34 @@ export interface ZoneDecl {
   span: SourceSpan;
 }
 
+// --- SESSION Declaration (Semantic Operating Mode) ---
+
+export interface SessionDecl {
+  kind: 'session';
+  name: string;
+  description: string;
+  tools: string[];
+  context: string;
+  memory: string;
+  output: string[];
+  persist: boolean;
+  span: SourceSpan;
+}
+
+// --- COMPILER Declaration (Semantic State Transformation) ---
+
+export interface CompilerDecl {
+  kind: 'compiler';
+  name: string;
+  description: string;
+  from: string;
+  to: string;
+  extract: string[];
+  ai?: string;
+  validate: boolean;
+  span: SourceSpan;
+}
+
 // --- Top-Level AST ---
 
 export type Declaration =
@@ -641,7 +669,9 @@ export type Declaration =
   | FeedDecl
   | NodeDecl
   | SensorDecl
-  | ZoneDecl;
+  | ZoneDecl
+  | SessionDecl
+  | CompilerDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -672,6 +702,8 @@ export interface AgiFile {
   nodes: NodeDecl[];
   sensors: SensorDecl[];
   zones: ZoneDecl[];
+  sessions: SessionDecl[];
+  compilers: CompilerDecl[];
 }
 
 // --- Parse Error ---

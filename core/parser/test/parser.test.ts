@@ -819,6 +819,56 @@ try {
   console.error(`  FAIL: Could not parse basketball_mmo.agi: ${err}`);
 }
 
+// --- Test: Full semantic_workflow.agi ---
+
+section('Full semantic_workflow.agi parsing');
+
+try {
+  const swPath = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../examples/semantic-workflow/semantic_workflow.agi'
+  );
+  const source = readFileSync(swPath, 'utf-8');
+  const result = parse(source);
+
+  assert(result.app.name === 'semantic_workflow', 'App name');
+  assert(result.sessions.length === 6, 'Should have 6 sessions');
+  assert(result.compilers.length === 6, 'Should have 6 compilers');
+  assert(result.entities.length === 2, 'Should have 2 entities');
+
+  // Session details
+  const brainstorm = result.sessions.find(s => s.name === 'brainstorm');
+  assert(brainstorm !== undefined, 'Should have brainstorm session');
+  assert(brainstorm!.tools.length === 4, 'Brainstorm should have 4 tools');
+  assert(brainstorm!.context === 'conversation', 'Context should be conversation');
+  assert(brainstorm!.memory === 'session', 'Memory should be session');
+  assert(brainstorm!.output.length === 3, 'Should have 3 output types');
+
+  const coding = result.sessions.find(s => s.name === 'coding');
+  assert(coding !== undefined, 'Should have coding session');
+  assert(coding!.persist === true, 'Coding should persist');
+  assert(coding!.tools.length === 5, 'Coding should have 5 tools');
+
+  // Compiler details
+  const chatToSkill = result.compilers.find(c => c.name === 'chat_to_skilldoc');
+  assert(chatToSkill !== undefined, 'Should have chat_to_skilldoc compiler');
+  assert(chatToSkill!.from === 'brainstorm', 'From should be brainstorm');
+  assert(chatToSkill!.to === 'skilldoc_editor', 'To should be skilldoc_editor');
+  assert(chatToSkill!.extract.length === 5, 'Should extract 5 things');
+  assert(chatToSkill!.ai !== undefined, 'Should have AI prompt');
+  assert(chatToSkill!.validate === true, 'Should validate');
+
+  const reqToDsl = result.compilers.find(c => c.name === 'requirements_to_dsl');
+  assert(reqToDsl !== undefined, 'Should have requirements_to_dsl');
+  assert(reqToDsl!.from === 'requirements', 'From should be requirements');
+  assert(reqToDsl!.to === 'coding', 'To should be coding');
+
+  console.log(`  Parsed successfully: ${result.sessions.length} sessions, ${result.compilers.length} compilers, ${result.entities.length} entities`);
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: Could not parse semantic_workflow.agi: ${err}`);
+}
+
 // --- Expert System Tests ---
 
 section('FACT parsing');

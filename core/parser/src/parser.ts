@@ -18,6 +18,7 @@ import type {
   NodeDecl, NodeType, AiTier, SafetyLevel,
   SensorDecl, SensorType,
   ZoneDecl,
+  SessionDecl, CompilerDecl,
   StateNode, StateTransition, ScoreThreshold,
   FieldDef, FieldModifier, AgiType, CrudOp, Relationship,
   ActionParam, ActionOutput, LayoutType, ThemeOption,
@@ -73,6 +74,8 @@ export class Parser {
     const nodes: NodeDecl[] = [];
     const sensors: SensorDecl[] = [];
     const zones: ZoneDecl[] = [];
+    const sessions: SessionDecl[] = [];
+    const compilers: CompilerDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -160,12 +163,18 @@ export class Parser {
         case TokenType.ZONE:
           zones.push(this.parseZone());
           break;
+        case TokenType.SESSION:
+          sessions.push(this.parseSession());
+          break;
+        case TokenType.COMPILER_KW:
+          compilers.push(this.parseCompiler());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers };
   }
 
   // --- APP ---
@@ -1839,6 +1848,56 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, span: { start, end } };
+  }
+
+  // --- SESSION ---
+
+  private parseSession(): SessionDecl {
+    const start = this.expectToken(TokenType.SESSION).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '', tools: string[] = [], context = 'conversation';
+    let memory = 'session', output: string[] = [], persist = false;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.TOOLS) { this.advance(); tools = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.CONTEXT) { this.advance(); context = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.MEMORY) { this.advance(); memory = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.OUTPUT) { this.advance(); output = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.PERSIST) { this.advance(); persist = this.parseBoolValue(); continue; }
+      this.error(`Unexpected token in SESSION: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'session', name, description, tools, context, memory, output, persist, span: { start, end } };
+  }
+
+  // --- COMPILER ---
+
+  private parseCompiler(): CompilerDecl {
+    const start = this.expectToken(TokenType.COMPILER_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '', from = '', to = '', extract: string[] = [];
+    let ai: string | undefined, validate = true;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.FROM) { this.advance(); from = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.TO) { this.advance(); to = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.EXTRACT) { this.advance(); extract = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.AI) { this.advance(); ai = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.VALIDATE) { this.advance(); validate = this.parseBoolValue(); continue; }
+      this.error(`Unexpected token in COMPILER: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'compiler', name, description, from, to, extract, ai, validate, span: { start, end } };
   }
 
   // --- NODE ---

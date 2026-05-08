@@ -2157,6 +2157,161 @@ ZONE CornField_North {
 
 ---
 
+## SESSION Declaration (Semantic Operating Mode)
+
+Defines a constrained operational mode — a specialized cognitive environment with its own tools, context model, memory semantics, and output types. Sessions are how NovaSyn (or any Agicore-powered interface) presents different "modes of thinking" to the user without overwhelming them with every capability at once.
+
+The key insight: human thought naturally progresses through operational states (brainstorm, refine, formalize, implement, publish). Each state needs different tools and constraints. Sessions formalize this.
+
+### Syntax
+
+```
+SESSION <name> {
+  DESCRIPTION  <string>
+  [TOOLS       <tool_list>]
+  [CONTEXT     <context_model>]
+  [MEMORY      <memory_mode>]
+  [OUTPUT      <output_type_list>]
+  [PERSIST     <bool>]
+}
+```
+
+### Fields
+
+| Field    | Description                                              |
+|----------|----------------------------------------------------------|
+| TOOLS    | Available tools/capabilities in this session mode        |
+| CONTEXT  | Context model: conversation, structured, minimal         |
+| MEMORY   | Memory mode: session (ephemeral), persistent, inherited  |
+| OUTPUT   | What this session produces: text, skilldoc, requirements, dsl, code, post |
+| PERSIST  | Whether session state survives across app restarts       |
+
+### Example
+
+```
+SESSION brainstorm {
+  DESCRIPTION  "Open-ended ideation and exploration"
+  TOOLS        chat, search, vault_browse
+  CONTEXT      conversation
+  MEMORY       session
+  OUTPUT       text, notes
+}
+
+SESSION skilldoc_editor {
+  DESCRIPTION  "Structured behavioral specification authoring"
+  TOOLS        chat, template, validate, publish
+  CONTEXT      structured
+  MEMORY       persistent
+  OUTPUT       skilldoc
+}
+
+SESSION coding {
+  DESCRIPTION  "Implementation with repo awareness and validation"
+  TOOLS        chat, terminal, file_edit, test_run, type_check
+  CONTEXT      structured
+  MEMORY       persistent
+  OUTPUT       code, tests
+}
+
+SESSION publishing {
+  DESCRIPTION  "Content creation and distribution"
+  TOOLS        chat, editor, media, feed_publish
+  CONTEXT      structured
+  MEMORY       persistent
+  OUTPUT       post, packet
+}
+```
+
+### Generates
+
+- Session mode registry
+- Tool availability filter per session
+- Context model configuration
+- Memory scope management
+- Output type validation
+- Session state persistence (if enabled)
+- UI mode switching support
+
+---
+
+## COMPILER Declaration (Semantic State Transformation)
+
+Defines a transformation rule that converts artifacts from one session type into another. Compilers are the "Send To" buttons — they extract structure from exploratory work and produce formalized artifacts. Chat becomes skill docs. Discussions become requirements. Requirements become DSL. Without manual copy-paste-reprompt ceremonies.
+
+### Syntax
+
+```
+COMPILER <name> {
+  DESCRIPTION  <string>
+  FROM         <SessionName>
+  TO           <SessionName>
+  [EXTRACT     <extraction_list>]
+  [AI          <prompt_template>]
+  [VALIDATE    <bool>]
+}
+```
+
+### Fields
+
+| Field    | Description                                               |
+|----------|-----------------------------------------------------------|
+| FROM     | Source session type                                       |
+| TO       | Target session type                                      |
+| EXTRACT  | What to extract from the source: intent, constraints, entities, workflows, policies, structure |
+| AI       | Prompt template for AI-assisted transformation            |
+| VALIDATE | Whether to validate output against target schema          |
+
+### Example
+
+```
+COMPILER chat_to_skilldoc {
+  DESCRIPTION  "Extract behavioral specifications from brainstorming"
+  FROM         brainstorm
+  TO           skilldoc_editor
+  EXTRACT      policies, constraints, behaviors, triggers
+  AI           "Analyze this conversation and extract all behavioral specifications, runtime policies, operational constraints, and orchestration patterns. Output as a structured skill document."
+  VALIDATE     true
+}
+
+COMPILER chat_to_requirements {
+  DESCRIPTION  "Extract implementation requirements from discussion"
+  FROM         brainstorm
+  TO           coding
+  EXTRACT      features, workflows, entities, dependencies
+  AI           "Analyze this conversation and extract all features, architecture decisions, entity definitions, workflow descriptions, and implementation requirements. Output as a structured requirements document."
+  VALIDATE     true
+}
+
+COMPILER requirements_to_dsl {
+  DESCRIPTION  "Generate Agicore DSL from structured requirements"
+  FROM         coding
+  TO           coding
+  EXTRACT      entities, workflows, rules, pipelines
+  AI           "Convert these requirements into Agicore DSL declarations. Generate ENTITY, WORKFLOW, RULE, PIPELINE, and TEST declarations that implement the specified architecture."
+  VALIDATE     true
+}
+
+COMPILER chat_to_post {
+  DESCRIPTION  "Transform discussion into publishable content"
+  FROM         brainstorm
+  TO           publishing
+  EXTRACT      structure, key_points, narrative
+  AI           "Transform this conversation into a well-structured blog post. Extract key insights, organize into sections, add introduction and conclusion."
+  VALIDATE     false
+}
+```
+
+### Generates
+
+- Transformation pipeline (source session → extraction → AI processing → target session)
+- Extraction rules per source type
+- AI prompt assembly with source context injection
+- Output validation against target session's expected types
+- Artifact lineage tracking (which session produced what)
+- "Send To" UI integration points
+
+---
+
 ## Complete Example
 
 A minimal but complete `.agi` file:
@@ -2298,7 +2453,8 @@ file            = app_decl (entity_decl | action_decl | view_decl |
                   router_decl | skill_decl | lifecycle_decl | breed_decl |
                   packet_decl | authority_decl | channel_decl |
                   identity_decl | feed_decl |
-                  node_decl | sensor_decl | zone_decl)*
+                  node_decl | sensor_decl | zone_decl |
+                  session_decl | compiler_decl)*
 
 // --- Application Layer ---
 app_decl        = "APP" IDENT "{" app_field* "}"
@@ -2339,6 +2495,10 @@ feed_decl       = "FEED" IDENT "{" feed_body "}"
 node_decl       = "NODE" IDENT "{" node_body "}"
 sensor_decl     = "SENSOR" IDENT "{" sensor_body "}"
 zone_decl       = "ZONE" IDENT "{" zone_body "}"
+
+// --- Semantic Operating Environment ---
+session_decl    = "SESSION" IDENT "{" session_body "}"
+compiler_decl   = "COMPILER" IDENT "{" compiler_body "}"
 
 type            = "string" | "number" | "float" | "bool" |
                   "date" | "datetime" | "json" | "id"

@@ -19,6 +19,7 @@ export type {
   NodeDecl, NodeType, AiTier, SafetyLevel,
   SensorDecl, SensorType,
   ZoneDecl,
+  SessionDecl, CompilerDecl,
   StateNode, StateTransition, ScoreThreshold,
   Declaration, FieldDef, AgiType, FieldModifier, CrudOp,
   Relationship, ActionParam, ActionOutput, LayoutType,

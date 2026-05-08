@@ -195,6 +195,17 @@ export enum TokenType {
   CAPACITY = 'CAPACITY',
   HOURS = 'HOURS',
 
+  // Semantic operating environment keywords
+  SESSION = 'SESSION',
+  COMPILER_KW = 'COMPILER_KW',
+  TOOLS = 'TOOLS',
+  MEMORY = 'MEMORY',
+  PERSIST = 'PERSIST',
+  FROM = 'FROM',
+  TO = 'TO',
+  EXTRACT = 'EXTRACT',
+  VALIDATE = 'VALIDATE',
+
   // Type keywords
   TYPE_STRING = 'TYPE_STRING',
   TYPE_NUMBER = 'TYPE_NUMBER',
@@ -417,6 +428,15 @@ const KEYWORDS: Record<string, TokenType> = {
   AMBIENT: TokenType.AMBIENT,
   CAPACITY: TokenType.CAPACITY,
   HOURS: TokenType.HOURS,
+  SESSION: TokenType.SESSION,
+  COMPILER: TokenType.COMPILER_KW,
+  TOOLS: TokenType.TOOLS,
+  MEMORY: TokenType.MEMORY,
+  PERSIST: TokenType.PERSIST,
+  FROM: TokenType.FROM,
+  TO: TokenType.TO,
+  EXTRACT: TokenType.EXTRACT,
+  VALIDATE: TokenType.VALIDATE,
   true: TokenType.TRUE,
   false: TokenType.FALSE,
   full: TokenType.FULL,
