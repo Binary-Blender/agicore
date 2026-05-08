@@ -521,6 +521,44 @@ export interface ChannelDecl {
   span: SourceSpan;
 }
 
+// --- IDENTITY Declaration (Creator-Owned Identity) ---
+
+export interface IdentityProfileField {
+  name: string;
+  type: AgiType;
+  required: boolean;
+}
+
+export interface IdentityDecl {
+  kind: 'identity';
+  name: string;
+  description: string;
+  signingKey: string;
+  domains: string[];
+  discoverable: boolean;
+  portable: boolean;
+  profile: IdentityProfileField[];
+  span: SourceSpan;
+}
+
+// --- FEED Declaration (Semantic Syndication) ---
+
+export type FeedSubscribeMode = 'open' | 'approved' | 'invite';
+
+export interface FeedDecl {
+  kind: 'feed';
+  name: string;
+  description: string;
+  identity: string;
+  packet: string;
+  channel?: string;
+  subscribe: FeedSubscribeMode;
+  syndicate: boolean;
+  maxItems: number;
+  discovery: boolean;
+  span: SourceSpan;
+}
+
 // --- Top-Level AST ---
 
 export type Declaration =
@@ -546,7 +584,9 @@ export type Declaration =
   | BreedDecl
   | PacketDecl
   | AuthorityDecl
-  | ChannelDecl;
+  | ChannelDecl
+  | IdentityDecl
+  | FeedDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -572,6 +612,8 @@ export interface AgiFile {
   packets: PacketDecl[];
   authorities: AuthorityDecl[];
   channels: ChannelDecl[];
+  identities: IdentityDecl[];
+  feeds: FeedDecl[];
 }
 
 // --- Parse Error ---

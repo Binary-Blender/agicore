@@ -695,6 +695,63 @@ try {
   console.error(`  FAIL: Could not parse distributed_orchestration.agi: ${err}`);
 }
 
+// --- Test: Full creator_network.agi ---
+
+section('Full creator_network.agi parsing');
+
+try {
+  const creatorPath = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../examples/creator-network/creator_network.agi'
+  );
+  const source = readFileSync(creatorPath, 'utf-8');
+  const result = parse(source);
+
+  assert(result.app.name === 'creator_network', 'App name');
+  assert(result.identities.length === 2, 'Should have 2 identities');
+  assert(result.feeds.length === 3, 'Should have 3 feeds');
+  assert(result.packets.length === 2, 'Should have 2 packets');
+  assert(result.authorities.length === 1, 'Should have 1 authority');
+  assert(result.channels.length === 3, 'Should have 3 channels');
+  assert(result.entities.length === 3, 'Should have 3 entities');
+
+  // Identity details
+  const creator = result.identities.find(i => i.name === 'CreatorProfile');
+  assert(creator !== undefined, 'Should have CreatorProfile');
+  assert(creator!.signingKey === 'ed25519', 'Signing key should be ed25519');
+  assert(creator!.domains.length === 5, 'Should have 5 domains');
+  assert(creator!.discoverable === true, 'Should be discoverable');
+  assert(creator!.portable === true, 'Should be portable');
+  assert(creator!.profile.length === 7, 'Should have 7 profile fields');
+  assert(creator!.profile[0]!.name === 'display_name', 'First profile field');
+  assert(creator!.profile[0]!.required === true, 'display_name should be required');
+
+  const sysNode = result.identities.find(i => i.name === 'SystemNode');
+  assert(sysNode !== undefined, 'Should have SystemNode');
+  assert(sysNode!.discoverable === false, 'SystemNode should not be discoverable');
+
+  // Feed details
+  const blog = result.feeds.find(f => f.name === 'creator_blog');
+  assert(blog !== undefined, 'Should have creator_blog feed');
+  assert(blog!.identity === 'CreatorProfile', 'Feed identity');
+  assert(blog!.packet === 'BlogPost', 'Feed packet');
+  assert(blog!.channel === 'public_feed', 'Feed channel');
+  assert(blog!.subscribe === 'open', 'Subscribe mode');
+  assert(blog!.syndicate === true, 'Should allow syndication');
+  assert(blog!.maxItems === 500, 'Max items');
+
+  const premium = result.feeds.find(f => f.name === 'premium_content');
+  assert(premium !== undefined, 'Should have premium_content');
+  assert(premium!.subscribe === 'approved', 'Premium should be approved');
+  assert(premium!.syndicate === false, 'Premium should not syndicate');
+  assert(premium!.discovery === false, 'Premium should not be discoverable');
+
+  console.log(`  Parsed successfully: ${result.identities.length} identities, ${result.feeds.length} feeds, ${result.packets.length} packets, ${result.channels.length} channels`);
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: Could not parse creator_network.agi: ${err}`);
+}
+
 // --- Expert System Tests ---
 
 section('FACT parsing');

@@ -13,6 +13,8 @@ import type {
   PacketDecl, PacketField, PacketValidationRule,
   AuthorityDecl, AuthorityLevel, AuthoritySigning,
   ChannelDecl, ChannelProtocol, ChannelDirection,
+  IdentityDecl, IdentityProfileField,
+  FeedDecl, FeedSubscribeMode,
   StateNode, StateTransition, ScoreThreshold,
   FieldDef, FieldModifier, AgiType, CrudOp, Relationship,
   ActionParam, ActionOutput, LayoutType, ThemeOption,
@@ -63,6 +65,8 @@ export class Parser {
     const packets: PacketDecl[] = [];
     const authorities: AuthorityDecl[] = [];
     const channels: ChannelDecl[] = [];
+    const identities: IdentityDecl[] = [];
+    const feeds: FeedDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -135,12 +139,18 @@ export class Parser {
         case TokenType.CHANNEL:
           channels.push(this.parseChannel());
           break;
+        case TokenType.IDENTITY:
+          identities.push(this.parseIdentity());
+          break;
+        case TokenType.FEED:
+          feeds.push(this.parseFeed());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds, packets, authorities, channels };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds, packets, authorities, channels, identities, feeds };
   }
 
   // --- APP ---
@@ -1814,6 +1824,107 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, span: { start, end } };
+  }
+
+  // --- IDENTITY ---
+
+  private parseIdentity(): IdentityDecl {
+    const start = this.expectToken(TokenType.IDENTITY).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let signingKey = 'ed25519';
+    let domains: string[] = ['general'];
+    let discoverable = true;
+    let portable = true;
+    const profile: IdentityProfileField[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.SIGNING_KEY) {
+        this.advance(); signingKey = this.expectIdentifier(); continue;
+      }
+      if (token.value === 'DOMAINS') {
+        this.advance(); domains = this.parseIdentifierList(); continue;
+      }
+      if (token.type === TokenType.DISCOVERABLE) {
+        this.advance(); discoverable = this.parseBoolValue(); continue;
+      }
+      if (token.type === TokenType.PORTABLE) {
+        this.advance(); portable = this.parseBoolValue(); continue;
+      }
+      if (token.type === TokenType.PROFILE) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const fieldName = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const fieldType = this.parseType();
+          let required = false;
+          if (this.check(TokenType.REQUIRED)) { this.advance(); required = true; }
+          profile.push({ name: fieldName, type: fieldType, required });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      this.error(`Unexpected token in IDENTITY: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'identity', name, description, signingKey, domains, discoverable, portable, profile, span: { start, end } };
+  }
+
+  // --- FEED ---
+
+  private parseFeed(): FeedDecl {
+    const start = this.expectToken(TokenType.FEED).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let identity = '';
+    let packet = '';
+    let channel: string | undefined;
+    let subscribe: FeedSubscribeMode = 'open';
+    let syndicate = true;
+    let maxItems = 1000;
+    let discovery = true;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.IDENTITY) {
+        this.advance(); identity = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.PACKET) {
+        this.advance(); packet = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.CHANNEL) {
+        this.advance(); channel = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.SUBSCRIBE) {
+        this.advance(); subscribe = this.expectIdentifier() as FeedSubscribeMode; continue;
+      }
+      if (token.type === TokenType.SYNDICATE) {
+        this.advance(); syndicate = this.parseBoolValue(); continue;
+      }
+      if (token.type === TokenType.MAX_ITEMS) {
+        this.advance(); maxItems = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue;
+      }
+      if (token.type === TokenType.DISCOVERY) {
+        this.advance(); discovery = this.parseBoolValue(); continue;
+      }
+      this.error(`Unexpected token in FEED: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'feed', name, description, identity, packet, channel, subscribe, syndicate, maxItems, discovery, span: { start, end } };
   }
 
   // --- Inline Expression Parser ---

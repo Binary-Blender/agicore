@@ -1795,6 +1795,162 @@ CHANNEL babyai_routing {
 
 ---
 
+## IDENTITY Declaration (Creator-Owned Identity)
+
+Defines a portable, signed identity for participants in the semantic network. Identities are how creators, systems, and organizations establish verifiable presence — they give PACKET signing a concrete principal, CHANNEL communication an authenticated sender, and AUTHORITY chains a real identity to authorize.
+
+Creator-owned identity means the identity travels with the creator, not with the platform.
+
+### Syntax
+
+```
+IDENTITY <name> {
+  DESCRIPTION    <string>
+  SIGNING_KEY    <algorithm>
+  [DOMAINS       <domain_list>]
+  [DISCOVERABLE  <bool>]
+  [PORTABLE      <bool>]
+
+  PROFILE {
+    <field>: <type> [REQUIRED]
+    ...
+  }
+}
+```
+
+### Fields
+
+| Field         | Default  | Description                                       |
+|---------------|----------|---------------------------------------------------|
+| SIGNING_KEY   | ed25519  | Cryptographic algorithm for identity signing      |
+| DOMAINS       | general  | Semantic domains this identity participates in    |
+| DISCOVERABLE  | true     | Whether this identity appears in discovery        |
+| PORTABLE      | true     | Whether this identity can move between systems    |
+
+### Example
+
+```
+IDENTITY CreatorProfile {
+  DESCRIPTION    "Creator identity for the semantic publishing network"
+  SIGNING_KEY    ed25519
+  DOMAINS        farming, coding, education, creative_writing
+  DISCOVERABLE   true
+  PORTABLE       true
+
+  PROFILE {
+    display_name: string REQUIRED
+    bio: string
+    avatar_url: string
+    website: string
+    interests: json
+    joined_at: datetime
+  }
+}
+
+IDENTITY SystemNode {
+  DESCRIPTION    "Machine identity for automated pipeline nodes"
+  SIGNING_KEY    ed25519
+  DOMAINS        orchestration
+  DISCOVERABLE   false
+  PORTABLE       false
+
+  PROFILE {
+    node_name: string REQUIRED
+    node_type: string REQUIRED
+    capabilities: json
+  }
+}
+```
+
+### Generates
+
+- Identity creation and management functions
+- Keypair generation and storage
+- Identity signing/verification functions
+- Profile CRUD operations
+- Discovery registration/deregistration
+- Identity export/import (for portability)
+- Identity-to-authority binding
+
+---
+
+## FEED Declaration (Semantic Syndication)
+
+Defines a subscription-based content feed that distributes semantic packets from an identity through a channel. Feeds are the bridge between infrastructure (packets flowing between systems) and humans (creators publishing content). They bring the retro-web spirit of RSS into the semantic packet era — creator-controlled, subscription-based, no algorithmic manipulation.
+
+### Syntax
+
+```
+FEED <name> {
+  DESCRIPTION  <string>
+  IDENTITY     <IdentityName>
+  PACKET       <PacketName>
+  [CHANNEL     <ChannelName>]
+  [SUBSCRIBE   open | approved | invite]
+  [SYNDICATE   <bool>]
+  [MAX_ITEMS   <number>]
+  [DISCOVERY   <bool>]
+}
+```
+
+### Fields
+
+| Field      | Default | Description                                           |
+|------------|---------|-------------------------------------------------------|
+| IDENTITY   | --      | The identity that owns/publishes this feed            |
+| PACKET     | --      | The packet type this feed distributes                 |
+| CHANNEL    | --      | The channel used for distribution (optional)          |
+| SUBSCRIBE  | open    | Subscription model: open, approved, or invite-only    |
+| SYNDICATE  | true    | Whether this feed can be re-syndicated by others      |
+| MAX_ITEMS  | 1000    | Maximum items retained in the feed                    |
+| DISCOVERY  | true    | Whether this feed appears in semantic discovery       |
+
+### Example
+
+```
+FEED creator_blog {
+  DESCRIPTION  "Creator's personal semantic blog feed"
+  IDENTITY     CreatorProfile
+  PACKET       BlogPost
+  CHANNEL      public_feed
+  SUBSCRIBE    open
+  SYNDICATE    true
+  MAX_ITEMS    500
+  DISCOVERY    true
+}
+
+FEED premium_content {
+  DESCRIPTION  "Premium subscriber-only content feed"
+  IDENTITY     CreatorProfile
+  PACKET       PremiumPost
+  SUBSCRIBE    approved
+  SYNDICATE    false
+  MAX_ITEMS    100
+  DISCOVERY    false
+}
+
+FEED pipeline_results {
+  DESCRIPTION  "Automated feed of pipeline execution results"
+  IDENTITY     SystemNode
+  PACKET       AnalysisResult
+  CHANNEL      analysis_output
+  SUBSCRIBE    invite
+  SYNDICATE    false
+}
+```
+
+### Generates
+
+- Feed registry with metadata
+- Subscription management (subscribe/unsubscribe/approve)
+- Packet publishing (create + distribute through channel)
+- Feed item storage with pagination
+- Syndication support (re-publish to other feeds)
+- Discovery registration
+- Feed export (portable feed data)
+
+---
+
 ## Complete Example
 
 A minimal but complete `.agi` file:
@@ -1934,7 +2090,8 @@ file            = app_decl (entity_decl | action_decl | view_decl |
                   rule_decl | fact_decl | state_decl | pattern_decl |
                   score_decl | module_decl |
                   router_decl | skill_decl | lifecycle_decl | breed_decl |
-                  packet_decl | authority_decl | channel_decl)*
+                  packet_decl | authority_decl | channel_decl |
+                  identity_decl | feed_decl)*
 
 // --- Application Layer ---
 app_decl        = "APP" IDENT "{" app_field* "}"
@@ -1968,6 +2125,8 @@ breed_decl      = "BREED" IDENT "{" breed_body "}"
 packet_decl     = "PACKET" IDENT "{" packet_body "}"
 authority_decl  = "AUTHORITY" IDENT "{" authority_body "}"
 channel_decl    = "CHANNEL" IDENT "{" channel_body "}"
+identity_decl   = "IDENTITY" IDENT "{" identity_body "}"
+feed_decl       = "FEED" IDENT "{" feed_body "}"
 
 type            = "string" | "number" | "float" | "bool" |
                   "date" | "datetime" | "json" | "id"

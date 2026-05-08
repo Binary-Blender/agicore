@@ -14,6 +14,8 @@ export type {
   PacketDecl, PacketField, PacketValidationRule,
   AuthorityDecl, AuthorityLevel, AuthoritySigning,
   ChannelDecl, ChannelProtocol, ChannelDirection,
+  IdentityDecl, IdentityProfileField,
+  FeedDecl, FeedSubscribeMode,
   StateNode, StateTransition, ScoreThreshold,
   Declaration, FieldDef, AgiType, FieldModifier, CrudOp,
   Relationship, ActionParam, ActionOutput, LayoutType,
