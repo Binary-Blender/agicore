@@ -1951,6 +1951,212 @@ FEED pipeline_results {
 
 ---
 
+## NODE Declaration (Ambient Intelligence Edge Device)
+
+Defines a physical edge computing node that embeds AI into the real world. Nodes are the fundamental unit of ambient intelligence — they sense, process, communicate, and act in physical spaces. Based on the NovaSyn Embedded Dev Stack's 5-layer architecture and the Thin the Veil course's 4 node types.
+
+### Syntax
+
+```
+NODE <name> {
+  DESCRIPTION  <string>
+  TYPE         personal | environment | business | actor
+  HARDWARE     <hardware_spec>
+  [AI_TIER     edge | cloud | hybrid]
+  [COMMS       <protocol_list>]
+  [SENSORS     <sensor_ref_list>]
+  [ZONE        <ZoneName>]
+  [OFFLINE     <bool>]
+  [SAFETY      <safety_level>]
+}
+```
+
+### Node Types
+
+| Type        | Description                                                    |
+|-------------|----------------------------------------------------------------|
+| personal    | Smartphone/wearable — knows who you are, adapts to you         |
+| environment | Fixed sensors — knows what's happening in a space              |
+| business    | Environment node + commerce — connects observation to outcomes |
+| actor       | Dumb mobile endpoint — creates interaction by existing         |
+
+### Example
+
+```
+NODE basketball_scorer {
+  DESCRIPTION  "Court-side shot detection and scoring node"
+  TYPE         environment
+  HARDWARE     "rpi5"
+  AI_TIER      edge
+  COMMS        mqtt, ble, wifi
+  SENSORS      court_camera, hoop_sensor
+  ZONE         BasketballCourt
+  OFFLINE      true
+  SAFETY       low
+}
+
+NODE player_phone {
+  DESCRIPTION  "Player's smartphone as personal node"
+  TYPE         personal
+  HARDWARE     "android"
+  AI_TIER      hybrid
+  COMMS        ble, mqtt
+  OFFLINE      true
+}
+
+NODE chase_bot {
+  DESCRIPTION  "Soft-bodied actor robot for interactive gameplay"
+  TYPE         actor
+  HARDWARE     "esp32s3"
+  AI_TIER      edge
+  COMMS        ble
+  ZONE         BasketballCourt
+  SAFETY       high
+}
+```
+
+### Generates
+
+- Node configuration schema
+- Communication client (MQTT, BLE, LoRa as configured)
+- Telemetry reporter (sensor data → BabyAI / vault)
+- Health monitoring and watchdog
+- Offline buffering with sync-on-reconnect
+- Safety mode handlers (for actuator nodes)
+- Device registration with node registry
+
+---
+
+## SENSOR Declaration (Physical World Input)
+
+Defines a sensing capability attached to a node. Sensors are the eyes, ears, and touch of ambient intelligence — they translate the physical world into data the system can reason about. Camera is the default (replaces most specialized sensors), but the declaration supports any input type.
+
+### Syntax
+
+```
+SENSOR <name> {
+  DESCRIPTION  <string>
+  TYPE         camera | microphone | imu | gps | environmental | proximity | custom
+  [MODEL       <string>]
+  [CAPABILITY  <capability_list>]
+  [LATENCY     <number>]
+  [ACCURACY    <float>]
+  [FAILURE     <failure_mode>]
+}
+```
+
+### Sensor Types
+
+| Type          | Examples                                           |
+|---------------|----------------------------------------------------|
+| camera        | USB webcam, RPi camera module, IP camera           |
+| microphone    | USB mic, MEMS array, I2S digital                   |
+| imu           | Accelerometer, gyroscope, magnetometer             |
+| gps           | GPS/GNSS receiver, phone location                  |
+| environmental | Temperature, humidity, pressure, light, soil        |
+| proximity     | Ultrasonic, ToF, IR, BLE beacon                    |
+| custom        | Any specialized sensor                              |
+
+### Example
+
+```
+SENSOR court_camera {
+  DESCRIPTION  "Side-angle camera for basketball shot detection"
+  TYPE         camera
+  MODEL        "USB 1080p webcam"
+  CAPABILITY   shot_detection, player_tracking, pose_estimation
+  LATENCY      150
+  ACCURACY     0.95
+  FAILURE      "flag_unknown"
+}
+
+SENSOR hoop_sensor {
+  DESCRIPTION  "Vibration sensor on hoop rim for shot confirmation"
+  TYPE         custom
+  MODEL        "Piezo vibration sensor"
+  CAPABILITY   impact_detection
+  LATENCY      10
+  ACCURACY     0.99
+}
+
+SENSOR field_environment {
+  DESCRIPTION  "Hex node environmental sensor array"
+  TYPE         environmental
+  MODEL        "BME280 + soil moisture"
+  CAPABILITY   temperature, humidity, pressure, soil_moisture
+  LATENCY      1000
+  ACCURACY     0.97
+}
+```
+
+### Generates
+
+- Sensor interface (read, status, calibrate)
+- Capability registry
+- Data normalization pipeline
+- Failure mode handler
+- Accuracy tracking (feeds SPC)
+- Sensor health reporter
+
+---
+
+## ZONE Declaration (Physical Space)
+
+Defines a physical space where nodes operate and experiences happen. Zones are where the digital and physical worlds meet — they have boundaries, deployed nodes, ambient intelligence rules, and experience definitions. A zone can be a basketball court, a retail store, a farm field, or an entire neighborhood.
+
+### Syntax
+
+```
+ZONE <Name> {
+  DESCRIPTION  <string>
+  [BOUNDS      <string>]
+  [NODES       <node_ref_list>]
+  [AMBIENT     <bool>]
+  [CAPACITY    <number>]
+  [HOURS       <string>]
+}
+```
+
+### Example
+
+```
+ZONE BasketballCourt {
+  DESCRIPTION  "Outdoor basketball court with AI-powered scoring"
+  BOUNDS       "28x15m"
+  NODES        basketball_scorer, chase_bot
+  AMBIENT      true
+  CAPACITY     20
+  HOURS        "06:00-22:00"
+}
+
+ZONE RetailFloor {
+  DESCRIPTION  "Retail store floor with ambient customer intelligence"
+  BOUNDS       "30x20m"
+  NODES        store_camera_1, store_camera_2
+  AMBIENT      true
+  CAPACITY     100
+}
+
+ZONE CornField_North {
+  DESCRIPTION  "Northern corn field with distributed hex sensor coverage"
+  BOUNDS       "400x200m"
+  NODES        hex_soil_01, hex_soil_02, hex_air_01
+  AMBIENT      true
+}
+```
+
+### Generates
+
+- Zone configuration with node registry
+- Spatial awareness (which nodes cover which areas)
+- Capacity management
+- Hours-based activation/deactivation
+- Ambient intelligence coordinator (processes sensor data from all nodes in zone)
+- Zone telemetry aggregator
+- Zone-level event detection
+
+---
+
 ## Complete Example
 
 A minimal but complete `.agi` file:
@@ -2091,7 +2297,8 @@ file            = app_decl (entity_decl | action_decl | view_decl |
                   score_decl | module_decl |
                   router_decl | skill_decl | lifecycle_decl | breed_decl |
                   packet_decl | authority_decl | channel_decl |
-                  identity_decl | feed_decl)*
+                  identity_decl | feed_decl |
+                  node_decl | sensor_decl | zone_decl)*
 
 // --- Application Layer ---
 app_decl        = "APP" IDENT "{" app_field* "}"
@@ -2127,6 +2334,11 @@ authority_decl  = "AUTHORITY" IDENT "{" authority_body "}"
 channel_decl    = "CHANNEL" IDENT "{" channel_body "}"
 identity_decl   = "IDENTITY" IDENT "{" identity_body "}"
 feed_decl       = "FEED" IDENT "{" feed_body "}"
+
+// --- Ambient Intelligence Layer ---
+node_decl       = "NODE" IDENT "{" node_body "}"
+sensor_decl     = "SENSOR" IDENT "{" sensor_body "}"
+zone_decl       = "ZONE" IDENT "{" zone_body "}"
 
 type            = "string" | "number" | "float" | "bool" |
                   "date" | "datetime" | "json" | "id"

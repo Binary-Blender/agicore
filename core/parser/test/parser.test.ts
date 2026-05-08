@@ -752,6 +752,73 @@ try {
   console.error(`  FAIL: Could not parse creator_network.agi: ${err}`);
 }
 
+// --- Test: Full basketball_mmo.agi ---
+
+section('Full basketball_mmo.agi parsing');
+
+try {
+  const bballPath = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../examples/basketball-mmo/basketball_mmo.agi'
+  );
+  const source = readFileSync(bballPath, 'utf-8');
+  const result = parse(source);
+
+  assert(result.app.name === 'basketball_mmo', 'App name');
+  assert(result.sensors.length === 3, 'Should have 3 sensors');
+  assert(result.nodes.length === 2, 'Should have 2 nodes');
+  assert(result.zones.length === 1, 'Should have 1 zone');
+  assert(result.identities.length === 1, 'Should have 1 identity');
+  assert(result.packets.length === 1, 'Should have 1 packet');
+  assert(result.channels.length === 1, 'Should have 1 channel');
+  assert(result.feeds.length === 1, 'Should have 1 feed');
+  assert(result.scores.length === 3, 'Should have 3 scores');
+  assert(result.rules.length === 6, 'Should have 6 rules');
+  assert(result.states.length === 1, 'Should have 1 state machine');
+  assert(result.qcs.length === 1, 'Should have 1 QC');
+  assert(result.entities.length === 4, 'Should have 4 entities');
+  assert(result.views.length === 5, 'Should have 5 views');
+  assert(result.tests.length === 3, 'Should have 3 tests');
+
+  // Node details
+  const scorer = result.nodes.find(n => n.name === 'court_scorer');
+  assert(scorer !== undefined, 'Should have court_scorer node');
+  assert(scorer!.type === 'environment', 'Node type should be environment');
+  assert(scorer!.hardware === 'rpi5', 'Hardware should be rpi5');
+  assert(scorer!.aiTier === 'edge', 'AI tier should be edge');
+  assert(scorer!.sensors.length === 3, 'Should have 3 sensor refs');
+  assert(scorer!.zone === 'MainCourt', 'Zone should be MainCourt');
+  assert(scorer!.offline === true, 'Should work offline');
+
+  // Sensor details
+  const cam = result.sensors.find(s => s.name === 'court_camera');
+  assert(cam !== undefined, 'Should have court_camera sensor');
+  assert(cam!.type === 'camera', 'Sensor type should be camera');
+  assert(cam!.capabilities.length === 4, 'Camera should have 4 capabilities');
+  assert(cam!.latency === 150, 'Latency should be 150ms');
+  assert(cam!.accuracy === 0.95, 'Accuracy should be 0.95');
+
+  // Zone details
+  const court = result.zones[0]!;
+  assert(court.name === 'MainCourt', 'Zone name');
+  assert(court.bounds === '28x15m', 'Court bounds');
+  assert(court.ambient === true, 'Should be ambient');
+  assert(court.capacity === 20, 'Capacity should be 20');
+
+  // Game mechanics
+  assert(result.scores.find(s => s.name === 'player_xp') !== undefined, 'Should have player_xp score');
+  assert(result.scores.find(s => s.name === 'streak_counter') !== undefined, 'Should have streak_counter');
+  assert(result.rules.find(r => r.name === 'made_shot') !== undefined, 'Should have made_shot rule');
+  assert(result.rules.find(r => r.name === 'distance_bonus') !== undefined, 'Should have distance_bonus rule');
+  assert(result.states[0]!.name === 'GamePhase', 'State machine should be GamePhase');
+  assert(result.states[0]!.states.length === 4, 'Should have 4 game states');
+
+  console.log(`  Parsed successfully: ${result.nodes.length} nodes, ${result.sensors.length} sensors, ${result.zones.length} zones, ${result.scores.length} scores, ${result.rules.length} rules, ${result.entities.length} entities`);
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: Could not parse basketball_mmo.agi: ${err}`);
+}
+
 // --- Expert System Tests ---
 
 section('FACT parsing');

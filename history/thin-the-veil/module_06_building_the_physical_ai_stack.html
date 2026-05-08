@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Module 6: Building the Physical AI Stack — Real World MMOs</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 760px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #1a1a1a; }
+h1 { font-size: 1.8em; margin-bottom: 0.2em; }
+h2 { font-size: 1.3em; margin-top: 2em; color: #0f766e; }
+h3 { font-size: 1.1em; margin-top: 1.5em; }
+p { margin: 0.8em 0; }
+ul, ol { margin: 0.8em 0; padding-left: 1.5em; }
+li { margin: 0.4em 0; }
+blockquote { border-left: 4px solid #0f766e; margin: 1.2em 0; padding: 0.8em 1.2em; background: #f0fdfa; }
+blockquote p { margin: 0.3em 0; }
+.intro { font-size: 1.05em; color: #555; margin-bottom: 1.5em; }
+hr { margin: 2em 0; border: none; border-top: 1px solid #e5e5e5; }
+.callout { background: #fffde7; border: 1px solid #fff9c4; padding: 1em 1.2em; border-radius: 8px; margin: 1.2em 0; }
+.callout strong { color: #f57f17; }
+pre { background: #f0fdfa; border: 1px solid #ccfbf1; padding: 1em 1.2em; border-radius: 8px; font-size: 0.92em; line-height: 1.6; margin: 1.2em 0; }
+</style>
+</head>
+<body>
+
+<h1>Module 6: Building the Physical AI Stack</h1>
+<p class="intro">System architecture, MVP sequencing, SPC for physical experience, and the most important concept in this course: ambient AI — intelligence that operates continuously in physical spaces without requiring any action from the people inside them.</p>
+
+<hr>
+
+<h2>System Architecture</h2>
+
+<p>The physical AI stack has four components. Each component has a clear job. Clarity about which component does which job prevents the most expensive architectural mistakes.</p>
+
+<pre>Component 1: Sensing Layer
+  Hardware: cameras, microphones, GPS receivers, weight sensors
+  Job: capture raw signal from the physical environment
+  Principle: dumb hardware, standardized output formats
+
+Component 2: Intelligence Layer
+  Software: computer vision models, NLP, prediction engines, routing logic
+  Job: interpret raw signal, generate decisions, maintain game state
+  Principle: stateless where possible, horizontally scalable
+
+Component 3: Persistence Layer
+  Software: databases, player profiles, location data, event logs
+  Job: store and retrieve everything the system needs to remember
+  Principle: the source of truth for all game state and player history
+
+Component 4: Experience Layer
+  Software: mobile apps, location displays, audio output, admin dashboards
+  Job: translate system decisions into human-facing experiences
+  Principle: all UX decisions live here, not in the intelligence layer</pre>
+
+<h3>The Edge vs. Cloud Decision</h3>
+<p>Some processing must happen at the edge (on-site compute, not in the cloud) for latency reasons. Some processing is better in the cloud for cost and scalability reasons. The decision rule:</p>
+<ul>
+<li><strong>Edge compute:</strong> Any detection where latency above 200ms degrades the experience. Shot scoring, real-time position tracking, immediate feedback triggers. A player who makes a shot and waits two seconds for confirmation has already moved on mentally.</li>
+<li><strong>Cloud compute:</strong> Everything that can tolerate latency. Leaderboard updates, profile analysis, routing decisions for future sessions, analytics, A/B testing. These processes can take seconds or minutes without affecting the experience.</li>
+</ul>
+
+<div class="callout">
+<strong>Mobile endpoints in the sensing layer:</strong> The sensing layer is not limited to fixed cameras and wall-mounted microphones. The same dumb-hardware principle applies to mobile physical agents &mdash; robotic endpoints that move through a space. A soft-bodied robot with an internal drive mechanism and basic collision sensors is a sensing layer device that also participates in the experience layer. It captures interaction data (who pushed it, how hard, where) while simultaneously creating gameplay. The key architectural constraint: the robot remains a dumb endpoint. It executes simple motion commands issued by the central intelligence layer. All behavior logic, all adaptation, all personality lives in the cloud or edge compute &mdash; never on the robot itself. This keeps the mobile hardware cheap, replaceable, and simple. Module 8 formalizes these mobile agents as a fourth node type in the architecture.
+</div>
+
+<hr>
+
+<h2>MVP Sequencing</h2>
+
+<p>The most common mistake in physical AI deployment: building the full system before validating the experience. The full system takes months and costs significantly. The core experience question — does anyone find this engaging enough to return? — can be answered in weeks.</p>
+
+<h3>Stage 1: Manual MVP (Week 1-2)</h3>
+<p>Before writing a line of AI code: set up a basketball challenge using a phone camera and a human scorer watching the feed. Run five to ten people through the challenge. Observe: do they want to go again immediately? Do they ask about a leaderboard? Do they ask when you will be open again? The answers to these questions tell you whether the experience layer works before you spend anything on the technology layer.</p>
+
+<h3>Stage 2: Computer Vision MVP (Week 3-6)</h3>
+<p>Replace the human scorer with a computer vision model for shot detection only. No identity layer. No social layer. No rewards. Just: shoot a basketball, see a score. The technology works or it does not. This is the cheapest possible validation of the sensing layer.</p>
+
+<h3>Stage 3: Identity Layer (Week 7-10)</h3>
+<p>Add accounts, personal bests, and a simple leaderboard. Nothing else. Measure: do players with accounts return more than players without accounts? If yes, the identity layer is working. If no, investigate whether the underlying experience is strong enough before adding more game mechanics on top of it.</p>
+
+<h3>Stage 4: Platform Layer (Week 11-16)</h3>
+<p>Add the business location side: one or two partner locations with rewards for challenge completion. Measure redemption rate, repeat visits, and conversion at the business location. This validates the two-sided model before you invest in building the marketplace infrastructure.</p>
+
+<p>The MVPs do not need to be polished. They need to answer specific questions. Ship the minimum that answers the question. Then use the answer to decide what to build next.</p>
+
+<hr>
+
+<h2>SPC for Physical Experience</h2>
+
+<p>Statistical Process Control was developed for manufacturing: a method for monitoring a process over time, detecting when it drifts from its expected performance, and intervening before customers notice the degradation. The same method applies directly to physical AI systems.</p>
+
+<h3>What to Measure</h3>
+<ul>
+<li><strong>Detection accuracy rate:</strong> The percentage of events (shots, challenge completions, presence detections) that a human reviewer would agree with. Baseline this during initial deployment. Track it weekly. Any drift of more than two standard deviations triggers investigation.</li>
+<li><strong>Session return rate:</strong> Of players who complete a challenge session, what percentage returns within seven days? This is the experience quality metric. A declining return rate is the earliest indicator of an experience problem before it shows up in revenue.</li>
+<li><strong>Loop completion rate:</strong> Of players who start a challenge, what percentage completes it? Low completion rates indicate a difficulty curve problem, an experience layer problem, or a game loop problem.</li>
+<li><strong>Business location conversion rate:</strong> Of players who complete a sponsored challenge, what percentage redeems the associated reward? Declining conversion rates indicate that the matching between player profiles and business types is degrading.</li>
+<li><strong>Latency distribution:</strong> The time between a physical event and the system's response. Track this as a distribution, not an average. A stable average with an increasing tail indicates edge compute issues that will occasionally produce experiences bad enough to remember.</li>
+</ul>
+
+<h3>Control Limits and Drift Detection</h3>
+<p>Set control limits for each metric at the time of initial deployment, based on the first four to six weeks of operation data. Upper and lower control limits at three standard deviations from the mean. Weekly monitoring of all five metrics. Any metric outside its control limits triggers a structured investigation before the next deployment cycle.</p>
+
+<div class="callout">
+<strong>The SPC principle for physical AI:</strong> Your system will degrade. A camera gets nudged. A light bulb burns out. A model drifts as real-world conditions diverge from training data. The question is not whether degradation happens — it is whether you detect it before your users do. SPC answers that question consistently.
+</div>
+
+<hr>
+
+<h2>Dynamic Balancing: The Self-Tuning System</h2>
+
+<p>A physical AI system that requires manual tuning every time player skill levels shift will always be slightly out of calibration. The goal is a system that tunes itself, using the same data it is already collecting.</p>
+
+<h3>Difficulty Balancing</h3>
+<p>Target: 60-70% success rate across all players on standard challenges. If aggregate success rate rises above 75%, increase difficulty parameters. If it falls below 50%, decrease them. This is not a manual process — it is a weekly automated adjustment based on the previous week's completion data.</p>
+
+<h3>Reward Calibration</h3>
+<p>Track the correlation between reward type and return rate per player segment. If free drink rewards drive higher returns from the family segment but have no effect on the competitive adult segment, adjust routing to serve drink rewards to family players and different reward types to competitive players. The system learns what works for each segment and adjusts accordingly.</p>
+
+<h3>Location Balancing</h3>
+<p>Monitor player visit distribution across business locations. If one location is receiving consistently more traffic than its capacity can accommodate (high wait times, low conversion), reduce its routing priority and distribute players to under-utilized locations. The platform maintains balance across the network automatically rather than requiring each location to manage its own traffic.</p>
+
+<hr>
+
+<h2>Ambient AI: The Bigger Picture</h2>
+
+<p>Everything described so far assumes a user who is actively engaged with the system &mdash; choosing to play, opening an app, completing a challenge. But the architecture described in this course enables something more significant: intelligence that operates continuously in physical spaces without requiring any action from the people inside them.</p>
+
+<p>This is ambient AI. The environment is intelligent. The people in it do not need to do anything to benefit from that intelligence. The intelligence runs in the background, observing, analyzing, and acting &mdash; and the people in the space experience better outcomes without knowing exactly how those outcomes were produced.</p>
+
+<h3>The Distinction That Matters</h3>
+<p>User-dependent AI: a player opens an app, scans a QR code, accepts a challenge, completes it, receives a reward. Every value-creating step requires conscious user action.</p>
+
+<p>Ambient AI: a person walks into a space. The system recognizes them, identifies their historical preferences, and adjusts the environment accordingly &mdash; lighting, music, staffing allocation, product recommendations, challenge difficulty &mdash; all before they have done anything except arrive. The value is delivered without friction.</p>
+
+<h3>What This Looks Like in Practice</h3>
+<ul>
+<li>A retail store that detects which product areas have had increasing dwell time this week and adjusts staff allocation accordingly — before sales data would have caught the trend</li>
+<li>A gym that detects when a member's form is degrading on a specific exercise and queues a form tip in the member's app the next time they use that equipment</li>
+<li>A hospital room that monitors patient movement patterns continuously and flags deviations from the established baseline to nursing staff — detecting early deterioration before symptoms are severe enough for the patient to report them</li>
+<li>A city park that tracks usage patterns across different zones and surfaces this data to parks management for maintenance prioritization — without requiring park users to do anything</li>
+</ul>
+
+<h3>The Ambient AI Design Principle</h3>
+<p>The most valuable physical AI systems are the ones where the people in the space do not need to know the AI is there to benefit from it. They just experience a better environment. The friction of conscious interaction is the biggest barrier to adoption in physical AI. Systems that eliminate that friction reach everyone in the space, not just the people who chose to engage.</p>
+
+<p>The Real World MMO is a user-dependent system by design &mdash; the game requires conscious participation. But the same infrastructure that runs the game can run ambient intelligence alongside it: monitoring safety, optimizing environment, routing staff, detecting anomalies. The sensing layer is already deployed. The intelligence layer is already running. Ambient capabilities are an incremental addition to infrastructure that already exists.</p>
+
+<blockquote>
+<p>The user-facing game is what gets people to accept the sensing infrastructure. The ambient intelligence running on that infrastructure is what makes the physical space fundamentally better for everyone in it — whether they play the game or not.</p>
+</blockquote>
+
+<hr>
+
+<p><a href="index.html">Back to Course Index</a> | <a href="module_07_real_world_applications.html">Next: Module 7 &mdash; Real World Applications</a></p>
+
+</body>
+</html>

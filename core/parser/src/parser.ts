@@ -15,6 +15,9 @@ import type {
   ChannelDecl, ChannelProtocol, ChannelDirection,
   IdentityDecl, IdentityProfileField,
   FeedDecl, FeedSubscribeMode,
+  NodeDecl, NodeType, AiTier, SafetyLevel,
+  SensorDecl, SensorType,
+  ZoneDecl,
   StateNode, StateTransition, ScoreThreshold,
   FieldDef, FieldModifier, AgiType, CrudOp, Relationship,
   ActionParam, ActionOutput, LayoutType, ThemeOption,
@@ -67,6 +70,9 @@ export class Parser {
     const channels: ChannelDecl[] = [];
     const identities: IdentityDecl[] = [];
     const feeds: FeedDecl[] = [];
+    const nodes: NodeDecl[] = [];
+    const sensors: SensorDecl[] = [];
+    const zones: ZoneDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -145,12 +151,21 @@ export class Parser {
         case TokenType.FEED:
           feeds.push(this.parseFeed());
           break;
+        case TokenType.NODE:
+          nodes.push(this.parseNode());
+          break;
+        case TokenType.SENSOR_KW:
+          sensors.push(this.parseSensor());
+          break;
+        case TokenType.ZONE:
+          zones.push(this.parseZone());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds, packets, authorities, channels, identities, feeds };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones };
   }
 
   // --- APP ---
@@ -1826,6 +1841,86 @@ export class Parser {
     return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, span: { start, end } };
   }
 
+  // --- NODE ---
+
+  private parseNode(): NodeDecl {
+    const start = this.expectToken(TokenType.NODE).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '', type: NodeType = 'environment', hardware = '', aiTier: AiTier = 'edge';
+    let comms: string[] = [], sensorRefs: string[] = [], zone: string | undefined;
+    let offline = true, safety: SafetyLevel = 'low';
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.TYPE_STRING && token.value === 'TYPE' || token.value === 'TYPE') { this.advance(); type = this.expectIdentifier() as NodeType; continue; }
+      if (token.type === TokenType.HARDWARE) { this.advance(); hardware = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.AI_TIER) { this.advance(); aiTier = this.expectIdentifier() as AiTier; continue; }
+      if (token.type === TokenType.COMMS) { this.advance(); comms = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.SENSORS) { this.advance(); sensorRefs = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.ZONE) { this.advance(); zone = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.OFFLINE) { this.advance(); offline = this.parseBoolValue(); continue; }
+      if (token.type === TokenType.SAFETY) { this.advance(); safety = this.expectIdentifier() as SafetyLevel; continue; }
+      this.error(`Unexpected token in NODE: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'node', name, description, type, hardware, aiTier, comms, sensors: sensorRefs, zone, offline, safety, span: { start, end } };
+  }
+
+  // --- SENSOR ---
+
+  private parseSensor(): SensorDecl {
+    const start = this.expectToken(TokenType.SENSOR_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '', type: SensorType = 'custom', model: string | undefined;
+    let capabilities: string[] = [], latency = 0, accuracy = 0.95, failure: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.value === 'TYPE') { this.advance(); type = this.expectIdentifier() as SensorType; continue; }
+      if (token.type === TokenType.MODEL) { this.advance(); model = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.CAPABILITY) { this.advance(); capabilities = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.LATENCY) { this.advance(); latency = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue; }
+      if (token.type === TokenType.ACCURACY) { this.advance(); accuracy = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue; }
+      if (token.type === TokenType.FAILURE) { this.advance(); failure = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      this.error(`Unexpected token in SENSOR: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'sensor', name, description, type, model, capabilities, latency, accuracy, failure, span: { start, end } };
+  }
+
+  // --- ZONE ---
+
+  private parseZone(): ZoneDecl {
+    const start = this.expectToken(TokenType.ZONE).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '', bounds: string | undefined, nodeRefs: string[] = [];
+    let ambient = true, capacity: number | undefined, hours: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.BOUNDS) { this.advance(); bounds = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.NODES) { this.advance(); nodeRefs = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.AMBIENT) { this.advance(); ambient = this.parseBoolValue(); continue; }
+      if (token.type === TokenType.CAPACITY) { this.advance(); capacity = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue; }
+      if (token.type === TokenType.HOURS) { this.advance(); hours = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      this.error(`Unexpected token in ZONE: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'zone', name, description, bounds, nodes: nodeRefs, ambient, capacity, hours, span: { start, end } };
+  }
+
   // --- IDENTITY ---
 
   private parseIdentity(): IdentityDecl {
@@ -2033,10 +2128,30 @@ export class Parser {
         token.type === TokenType.TYPE_JSON ||
         token.type === TokenType.TYPE_BOOL ||
         token.type === TokenType.TYPE_ID ||
+        token.type === TokenType.TYPE_FLOAT ||
+        token.type === TokenType.TYPE_DATE ||
+        token.type === TokenType.TYPE_DATETIME ||
         token.type === TokenType.STATE ||
         token.type === TokenType.SCORE ||
         token.type === TokenType.PATTERN ||
-        token.type === TokenType.MODULE) {
+        token.type === TokenType.MODULE ||
+        token.type === TokenType.LAYOUT_TABLE ||
+        token.type === TokenType.LAYOUT_FORM ||
+        token.type === TokenType.LAYOUT_DETAIL ||
+        token.type === TokenType.LAYOUT_CARDS ||
+        token.type === TokenType.LAYOUT_SPLIT ||
+        token.type === TokenType.LAYOUT_CUSTOM ||
+        token.type === TokenType.FAIL_STOP ||
+        token.type === TokenType.FAIL_SKIP ||
+        token.type === TokenType.FAIL_RETRY ||
+        token.type === TokenType.FAIL_FALLBACK ||
+        token.type === TokenType.FULL ||
+        token.type === TokenType.NODE ||
+        token.type === TokenType.SENSOR_KW ||
+        token.type === TokenType.ZONE ||
+        token.type === TokenType.CHANNEL ||
+        token.type === TokenType.FEED ||
+        token.type === TokenType.IDENTITY) {
       return this.advance().value;
     }
     this.error(`Expected identifier, got: ${token.type} ('${token.value}')`);

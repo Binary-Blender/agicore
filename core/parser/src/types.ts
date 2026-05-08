@@ -559,6 +559,58 @@ export interface FeedDecl {
   span: SourceSpan;
 }
 
+// --- NODE Declaration (Ambient Intelligence) ---
+
+export type NodeType = 'personal' | 'environment' | 'business' | 'actor';
+export type AiTier = 'edge' | 'cloud' | 'hybrid';
+export type SafetyLevel = 'low' | 'medium' | 'high' | 'critical';
+
+export interface NodeDecl {
+  kind: 'node';
+  name: string;
+  description: string;
+  type: NodeType;
+  hardware: string;
+  aiTier: AiTier;
+  comms: string[];
+  sensors: string[];
+  zone?: string;
+  offline: boolean;
+  safety: SafetyLevel;
+  span: SourceSpan;
+}
+
+// --- SENSOR Declaration (Physical World Input) ---
+
+export type SensorType = 'camera' | 'microphone' | 'imu' | 'gps' | 'environmental' | 'proximity' | 'custom';
+
+export interface SensorDecl {
+  kind: 'sensor';
+  name: string;
+  description: string;
+  type: SensorType;
+  model?: string;
+  capabilities: string[];
+  latency: number;
+  accuracy: number;
+  failure?: string;
+  span: SourceSpan;
+}
+
+// --- ZONE Declaration (Physical Space) ---
+
+export interface ZoneDecl {
+  kind: 'zone';
+  name: string;
+  description: string;
+  bounds?: string;
+  nodes: string[];
+  ambient: boolean;
+  capacity?: number;
+  hours?: string;
+  span: SourceSpan;
+}
+
 // --- Top-Level AST ---
 
 export type Declaration =
@@ -586,7 +638,10 @@ export type Declaration =
   | AuthorityDecl
   | ChannelDecl
   | IdentityDecl
-  | FeedDecl;
+  | FeedDecl
+  | NodeDecl
+  | SensorDecl
+  | ZoneDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -614,6 +669,9 @@ export interface AgiFile {
   channels: ChannelDecl[];
   identities: IdentityDecl[];
   feeds: FeedDecl[];
+  nodes: NodeDecl[];
+  sensors: SensorDecl[];
+  zones: ZoneDecl[];
 }
 
 // --- Parse Error ---

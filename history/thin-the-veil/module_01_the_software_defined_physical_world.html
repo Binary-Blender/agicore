@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Module 1: The Software-Defined Physical World — Real World MMOs</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 760px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #1a1a1a; }
+h1 { font-size: 1.8em; margin-bottom: 0.2em; }
+h2 { font-size: 1.3em; margin-top: 2em; color: #0f766e; }
+h3 { font-size: 1.1em; margin-top: 1.5em; }
+p { margin: 0.8em 0; }
+ul, ol { margin: 0.8em 0; padding-left: 1.5em; }
+li { margin: 0.4em 0; }
+blockquote { border-left: 4px solid #0f766e; margin: 1.2em 0; padding: 0.8em 1.2em; background: #f0fdfa; }
+blockquote p { margin: 0.3em 0; }
+.intro { font-size: 1.05em; color: #555; margin-bottom: 1.5em; }
+hr { margin: 2em 0; border: none; border-top: 1px solid #e5e5e5; }
+.callout { background: #fffde7; border: 1px solid #fff9c4; padding: 1em 1.2em; border-radius: 8px; margin: 1.2em 0; }
+.callout strong { color: #f57f17; }
+pre { background: #f0fdfa; border: 1px solid #ccfbf1; padding: 1em 1.2em; border-radius: 8px; font-size: 0.92em; line-height: 1.6; margin: 1.2em 0; }
+</style>
+</head>
+<body>
+
+<h1>Module 1: The Software-Defined Physical World</h1>
+<p class="intro">Before you build anything, you need the right mental model. This module establishes the core paradigm shift that makes everything in this course possible.</p>
+
+<hr>
+
+<h2>The Old Model</h2>
+
+<p>A traditional arcade machine costs between five thousand and twenty thousand dollars. It has a coin mechanism, a proprietary circuit board, a specialized display, custom controls, and firmware that cannot be updated without a technician. When it breaks &mdash; and it breaks constantly &mdash; you need replacement parts from a manufacturer who may or may not still make them. The machine does one thing. When players stop finding that thing interesting, the machine becomes dead weight.</p>
+
+<p>This is the old model of physical-world intelligence: the smarts are baked into the hardware. The hardware is expensive. The experience is fixed. The maintenance is ongoing and unpredictable. The only way to change what it does is to replace it.</p>
+
+<p>Almost every physical-world system was designed this way. The parking meter. The retail checkout terminal. The gym equipment with the digital readout. The hospital monitoring device. The factory sensor. The traffic light. The school attendance system. All of them: intelligence baked into hardware, hardware is the cost center, experience is fixed by the build.</p>
+
+<hr>
+
+<h2>The Shift</h2>
+
+<p>The basketball hoop principle: a standard basketball hoop costs around two hundred dollars. Add a commodity camera and a network connection, and you have a system that can score shots, track streaks, run timed challenges, detect distance from the line, run leaderboard competitions, and adjust difficulty dynamically. For a fraction of the cost of a single arcade machine, with near-zero maintenance, and with a game library that is as large as your software development ambition.</p>
+
+<p>The hoop is dumb. The camera is cheap. The intelligence lives in software. When you want a new game mode, you write code, not hardware. When something breaks, you replace a forty-dollar camera, not a fifteen-thousand-dollar proprietary unit. When player behavior changes and the system needs rebalancing, you update parameters, not machines.</p>
+
+<p>This is the software-defined physical world: commodity physical components as the sensory and actuator layer, AI as the intelligence layer, software as the experience layer. The physical hardware becomes infrastructure. The intelligence becomes the product.</p>
+
+<blockquote>
+<p>The shift is not from physical to digital. It is from hardware-defined intelligence to software-defined intelligence in a physical space.</p>
+</blockquote>
+
+<hr>
+
+<h2>The Historical Pattern</h2>
+
+<p>This shift has happened before, in every domain where it has been technically possible. Understanding the pattern helps you see where it is about to happen next.</p>
+
+<h3>Telecommunications</h3>
+<p>For most of the 20th century, switching intelligence was baked into hardware. Physical exchanges. Proprietary equipment. A phone call routed through a physical architecture that took decades to build. Then software-defined networking replaced the intelligence layer. The physical wires stayed. The intelligence moved to software. The cost structure changed by orders of magnitude.</p>
+
+<h3>Manufacturing</h3>
+<p>Industrial robots used to be purpose-built for a single task. Change the product, change the robot. The intelligence was in the physical configuration of the machine. Now the physical arm is generic and cheap. The intelligence is software. A single physical unit can be reprogrammed to do a different job overnight.</p>
+
+<h3>The Camera</h3>
+<p>A film camera had intelligence baked into its optical and mechanical design. A digital camera moved the image processing to software. A smartphone moved the entire camera experience to software. The lens is still glass. Everything that determines how a photograph looks is now code. The result: a twelve-hundred-dollar phone outperforms a ten-thousand-dollar camera from fifteen years ago.</p>
+
+<h3>What They Have in Common</h3>
+<p>In every case: the transition happened when the cost of computation dropped below the cost of specialized hardware. When it became cheaper to sense the environment generically and process it intelligently than to build specialized sensing hardware that pre-processed the environment mechanically.</p>
+
+<p>That threshold has now been crossed for most of the physical world. A camera that can see accurately enough for most applications costs thirty dollars. A computer powerful enough to run a serious vision model costs two hundred. A network connection is essentially free. The transition is no longer waiting for cheaper compute. It is waiting for people who know how to design for it.</p>
+
+<hr>
+
+<h2>The Three-Layer Architecture</h2>
+
+<p>Software-defined physical systems have three layers. Understanding each layer and its role prevents the most common design mistakes.</p>
+
+<pre>Layer 1: Physical Layer
+  — Commodity hardware: cameras, sensors, hoops, mats, doors, shelves
+  — Dumb by design. No proprietary logic. Replaceable.
+  — Job: sense and actuate. Nothing more.
+
+Layer 2: Intelligence Layer
+  — AI models: vision, language, prediction, classification
+  — Runs on cloud or edge compute
+  — Job: interpret what the sensors report. Generate decisions.
+
+Layer 3: Experience Layer
+  — Software: mobile apps, displays, speakers, APIs
+  — Job: translate intelligence layer decisions into something a human experiences</pre>
+
+<p>The most common mistake in physical AI systems: putting intelligence in the wrong layer. Building smart hardware when you should be building dumb hardware with smart software. Or putting experience decisions in the intelligence layer when they belong in the application layer.</p>
+
+<p>Keep the layers clean. The physical layer does not know what game it is playing. The intelligence layer does not know what the user interface looks like. The experience layer does not know how the computer vision model works. Clean separation between layers is what makes the system updatable, scalable, and maintainable.</p>
+
+<hr>
+
+<h2>The Real World MMO as a Worked Example</h2>
+
+<p>The Real World MMO is a platform that makes this architecture concrete. Here is how the three layers map to the system:</p>
+
+<h3>Physical Layer</h3>
+<ul>
+<li>Basketball hoops. Agility cones. Bean bag targets. Reaction light walls.</li>
+<li>Commodity cameras mounted at fixed positions</li>
+<li>None of it knows it is part of a game</li>
+</ul>
+
+<h3>Intelligence Layer</h3>
+<ul>
+<li>Computer vision models: shot detection, position tracking, timing</li>
+<li>Game state management: scores, streaks, player history, difficulty parameters</li>
+<li>Personalization engine: challenge routing based on player profile</li>
+<li>Business routing: which locations get which player types</li>
+</ul>
+
+<h3>Experience Layer</h3>
+<ul>
+<li>Player-facing mobile app: challenges, scores, leaderboards, rewards</li>
+<li>Location-facing dashboard: traffic analytics, coupon redemption, player demographics</li>
+<li>Admin interface: game configuration, difficulty tuning, event management</li>
+</ul>
+
+<p>Change the physical layer from a basketball hoop to a climbing wall and the system still works. Change the intelligence layer from shot detection to grip position tracking and the system still works. Change the experience layer from a mobile app to an AR headset and the system still works. The layers are independent. That independence is the source of the system's power.</p>
+
+<hr>
+
+<h2>Why This Is Not Just "Putting AI on Things"</h2>
+
+<p>Adding an AI feature to an existing physical system is not the same as designing a software-defined physical system. The distinction matters because they produce fundamentally different results.</p>
+
+<p>"Putting AI on things" means taking an existing hardware-centric system and adding an AI layer on top without changing the underlying architecture. The result is usually a more expensive version of the original system that is harder to maintain and only marginally more capable.</p>
+
+<p>Software-defined physical design means starting from the intelligence layer and working outward. What does the system need to know? What is the cheapest possible way to sense it? What is the cheapest possible way to act on it? The hardware emerges from the intelligence requirements, not the other way around.</p>
+
+<p>The difference in outcomes: software-defined systems get better over time as the models improve. Hardware-centric systems with AI features get more expensive over time as the AI requirements outpace the fixed hardware's capability.</p>
+
+<div class="callout">
+<strong>Design principle:</strong> Start with the decision the system needs to make. Work backward to the minimum sensing required to make it. Then find the cheapest physical component that provides that sensing. The hardware spec is the last thing you write, not the first.
+</div>
+
+<hr>
+
+<p><a href="index.html">Back to Course Index</a> | <a href="module_02_computer_vision_as_infrastructure.html">Next: Module 2 &mdash; Computer Vision as Infrastructure</a></p>
+
+</body>
+</html>

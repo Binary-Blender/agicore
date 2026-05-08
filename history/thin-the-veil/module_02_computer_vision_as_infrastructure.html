@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Module 2: Computer Vision as Infrastructure — Real World MMOs</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 760px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #1a1a1a; }
+h1 { font-size: 1.8em; margin-bottom: 0.2em; }
+h2 { font-size: 1.3em; margin-top: 2em; color: #0f766e; }
+h3 { font-size: 1.1em; margin-top: 1.5em; }
+p { margin: 0.8em 0; }
+ul, ol { margin: 0.8em 0; padding-left: 1.5em; }
+li { margin: 0.4em 0; }
+blockquote { border-left: 4px solid #0f766e; margin: 1.2em 0; padding: 0.8em 1.2em; background: #f0fdfa; }
+blockquote p { margin: 0.3em 0; }
+.intro { font-size: 1.05em; color: #555; margin-bottom: 1.5em; }
+hr { margin: 2em 0; border: none; border-top: 1px solid #e5e5e5; }
+.callout { background: #fffde7; border: 1px solid #fff9c4; padding: 1em 1.2em; border-radius: 8px; margin: 1.2em 0; }
+.callout strong { color: #f57f17; }
+pre { background: #f0fdfa; border: 1px solid #ccfbf1; padding: 1em 1.2em; border-radius: 8px; font-size: 0.92em; line-height: 1.6; margin: 1.2em 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 0.92em; }
+th { background: #0f766e; color: white; padding: 0.6em 1em; text-align: left; }
+td { padding: 0.6em 1em; border-bottom: 1px solid #e5e5e5; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<h1>Module 2: Computer Vision as Infrastructure</h1>
+<p class="intro">A thirty-dollar camera connected to the right model is a more capable sensing system than most of what industry spent millions building in hardware. This module covers what computer vision can actually do today, where it breaks down, and how to design around its limits.</p>
+
+<hr>
+
+<h2>The Camera as Universal Sensor</h2>
+
+<p>Every specialized physical sensor is measuring something that a camera can also see. A motion sensor detects whether something moved. A scale measures whether weight changed. A barcode scanner reads a code. A heart rate monitor tracks a pulse. A speed radar measures velocity. All of these measurements are properties of the physical world that produce visible signals &mdash; signals a camera with the right model behind it can extract.</p>
+
+<p>This is the economic case for computer vision as infrastructure: one sensor type, trained on different tasks, replaces entire categories of specialized hardware. Not because cameras are magical, but because the intelligence layer can be retrained faster and cheaper than new hardware can be designed, manufactured, and deployed.</p>
+
+<p>The practical implication: in software-defined physical systems, your default sensing layer is a camera. You replace it with a specialized sensor only when a camera demonstrably cannot provide the signal you need at the accuracy level you require. This happens less often than you expect.</p>
+
+<hr>
+
+<h2>What Computer Vision Can Actually Do Today</h2>
+
+<p>These are the capabilities that are production-ready &mdash; not research-stage, not demo-stage, but deployable in real systems with predictable performance.</p>
+
+<h3>Object Detection and Classification</h3>
+<p>Identifying that an object is present, what category it belongs to, and where it is in the frame. A shot going through a hoop. A product on a shelf. A car in a parking space. A person in a room. A ball crossing a line. These tasks are reliable at production quality in most lighting conditions with adequate camera placement.</p>
+
+<h3>Pose Estimation</h3>
+<p>Tracking the positions of body landmarks &mdash; joints, limbs, head, hands &mdash; in real time. Used for: exercise form analysis, sports technique feedback, gesture control, accessibility applications, safety compliance (is the worker wearing required equipment?). Accuracy is high in well-lit environments with clear sight lines.</p>
+
+<h3>Action Recognition</h3>
+<p>Classifying what a person or object is doing from a video sequence. Running vs. walking. Throwing vs. dropping. Falling vs. sitting. This is harder than single-frame detection and requires more compute, but it is production-ready for a defined set of actions in a controlled environment.</p>
+
+<h3>Counting and Tracking</h3>
+<p>How many people are in this zone? How long has this person been at this station? Which path did this object take through this space? Counting and tracking are reliable in most retail, logistics, and entertainment environments.</p>
+
+<h3>Optical Character Recognition</h3>
+<p>Reading text from images. License plates, product labels, handwritten forms, signage. Highly reliable for printed text in decent lighting. Degrades significantly for handwriting in suboptimal conditions.</p>
+
+<h3>Anomaly Detection</h3>
+<p>Flagging when something looks different from normal. A product that does not match the expected shape. A behavior that does not match the expected pattern. A machine component that shows visible wear. This is less reliable than classification (it cannot always tell you what is wrong, only that something is), but valuable as a first-pass alert system.</p>
+
+<hr>
+
+<h2>Where Computer Vision Breaks Down</h2>
+
+<p>Understanding failure modes is as important as understanding capabilities. Systems designed without failure mode awareness produce experiences that lose user trust at exactly the wrong moments.</p>
+
+<table>
+<tr>
+<th>Failure Mode</th>
+<th>When It Occurs</th>
+<th>Design Response</th>
+</tr>
+<tr>
+<td><strong>Lighting failure</strong></td>
+<td>Direct sun glare, deep shadows, rapid light changes</td>
+<td>Control the lighting environment. Mount cameras away from windows. Use consistent artificial light.</td>
+</tr>
+<tr>
+<td><strong>Occlusion</strong></td>
+<td>Objects blocking the camera's view of what it needs to see</td>
+<td>Multi-camera setups for critical detection zones. Design the physical environment to minimize occlusion.</td>
+</tr>
+<tr>
+<td><strong>Out-of-distribution inputs</strong></td>
+<td>Something the model was not trained to see</td>
+<td>Define the operating envelope strictly. Flag out-of-distribution inputs rather than guessing.</td>
+</tr>
+<tr>
+<td><strong>Edge cases at decision boundaries</strong></td>
+<td>A shot that barely grazed the rim. A person at the exact boundary of two zones.</td>
+<td>Design the game or system to make ambiguous cases unimportant. Add a buffer zone at boundaries.</td>
+</tr>
+<tr>
+<td><strong>Latency</strong></td>
+<td>Real-time applications requiring sub-100ms response</td>
+<td>Edge compute for time-critical decisions. Cloud for non-real-time analysis.</td>
+</tr>
+</table>
+
+<hr>
+
+<h2>The Accuracy Problem and the Trust Problem</h2>
+
+<p>In a controlled laboratory environment, a well-trained computer vision model can achieve extremely high accuracy on its target task. In the real world, that accuracy drops &mdash; sometimes significantly &mdash; due to all the variables a lab cannot reproduce.</p>
+
+<p>The mistake most designers make: targeting accuracy perfection. If the system misses 2% of basketball shots, they try to close the gap to 1%. This is the wrong optimization target.</p>
+
+<p>The right target is <em>consistency</em>. A system that is 95% accurate and consistently accurate at that level is more trustworthy than a system that is 99% accurate in ideal conditions and 85% accurate when anything changes. Users calibrate to consistency. They can tolerate the occasional miss if the system behaves predictably. What kills trust is the system that sometimes misses and sometimes does not, with no apparent pattern.</p>
+
+<blockquote>
+<p>A system that is consistently slightly wrong is more trusted than a system that is occasionally very right and occasionally very wrong. Consistency is a design property. Accuracy is a model property. Design for the former.</p>
+</blockquote>
+
+<h3>Designing for Consistency</h3>
+<ul>
+<li><strong>Control the environment.</strong> Reduce variables in the physical setup: fixed camera positions, controlled lighting, defined zones. The more variables you control physically, the more consistent the model's performance.</li>
+<li><strong>Define operating envelopes.</strong> Specify exactly the conditions under which the system is expected to work. Outside those conditions, fail gracefully rather than guess poorly.</li>
+<li><strong>Make incorrect detections forgettable.</strong> Design the game or system so that occasional misses do not significantly affect the outcome. If a single missed shot costs a player dearly, every miss feels like a betrayal. If a streak of ten requires eight makes, a miss is a setback, not a crisis.</li>
+<li><strong>Apply SPC to your detection rates.</strong> Track accuracy over time. Detect when the system is drifting from its baseline. Camera position shift, bulb replacement, seasonal lighting changes &mdash; all of these affect performance gradually. SPC catches the drift before users notice it.</li>
+</ul>
+
+<hr>
+
+<h2>Camera Placement as System Design</h2>
+
+<p>Camera placement is the most underappreciated design decision in physical AI systems. The model you choose matters. The compute you deploy matters. The camera placement often matters more than both.</p>
+
+<p>Principles for camera placement:</p>
+
+<ul>
+<li><strong>Top-down for counting and zones.</strong> An overhead camera sees the floor plan clearly and is unaffected by people blocking each other's line-of-sight. Ideal for occupancy counting, zone tracking, and traffic flow analysis.</li>
+<li><strong>Side-angle for motion and form.</strong> A side-view camera captures the full arc of movement. Ideal for sports scoring, exercise form, and action recognition.</li>
+<li><strong>Eye-level for faces and identity.</strong> Face detection and recognition work best when the camera is at approximately face height and the subject is facing it. Security, check-in, and personalization systems use this placement.</li>
+<li><strong>Multiple cameras for critical detections.</strong> When a single miss has high cost, use two cameras with overlapping fields of view. Require agreement between cameras for a positive detection. This doubles the infrastructure cost of the sensing layer but dramatically improves reliability.</li>
+</ul>
+
+<div class="callout">
+<strong>The site visit principle:</strong> Before finalizing any physical AI deployment, spend two hours at the actual location at different times of day watching how lighting, traffic, and environmental conditions change. The problems that appear in this observation almost never appear in a design document. The problems you discover here are cheaper to fix before installation than after.
+</div>
+
+<hr>
+
+<h2>Beyond Cameras: When to Use Other Sensors</h2>
+
+<p>Cameras are the default. Other sensors are justified when:</p>
+
+<ul>
+<li><strong>Privacy requires it.</strong> A camera in a bathroom or a medical examination room is unacceptable. Pressure sensors, weight sensors, or proximity sensors can provide the needed signal without visual data.</li>
+<li><strong>Darkness is inherent to the environment.</strong> Warehouses at night, outdoor applications in unlit areas. Thermal cameras or LIDAR may provide better signal than optical cameras in these conditions.</li>
+<li><strong>Precision is sub-millimeter.</strong> Computer vision cannot reliably detect changes below a few millimeters. For applications requiring this precision (pharmaceutical filling, precision manufacturing), dedicated sensors are appropriate.</li>
+<li><strong>The signal is not visual.</strong> Sound, vibration, temperature, chemical composition &mdash; these are not visual signals. Use the sensor appropriate to the signal you need.</li>
+</ul>
+
+<p>The test: can a person standing in the camera's position see the thing I need to detect? If yes, a camera with the right model can probably detect it. If no, find the right sensor for what the camera cannot see.</p>
+
+<hr>
+
+<p><a href="index.html">Back to Course Index</a> | <a href="module_03_the_experience_layer.html">Next: Module 3 &mdash; The Experience Layer</a></p>
+
+</body>
+</html>
