@@ -627,6 +627,11 @@ export interface SessionDecl {
 
 // --- COMPILER Declaration (Semantic State Transformation) ---
 
+export interface EnrichOp {
+  operation: string; // infer, suggest, generate, detect, preserve
+  target: string;    // what to enrich
+}
+
 export interface CompilerDecl {
   kind: 'compiler';
   name: string;
@@ -634,6 +639,7 @@ export interface CompilerDecl {
   from: string;
   to: string;
   extract: string[];
+  enrich: EnrichOp[];
   ai?: string;
   validate: boolean;
   span: SourceSpan;

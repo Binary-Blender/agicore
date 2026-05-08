@@ -855,8 +855,18 @@ try {
   assert(chatToSkill!.from === 'brainstorm', 'From should be brainstorm');
   assert(chatToSkill!.to === 'skilldoc_editor', 'To should be skilldoc_editor');
   assert(chatToSkill!.extract.length === 5, 'Should extract 5 things');
+  assert(chatToSkill!.enrich.length === 4, 'Should have 4 enrich operations');
+  assert(chatToSkill!.enrich[0]!.operation === 'INFER', 'First enrich should be INFER');
+  assert(chatToSkill!.enrich[0]!.target === 'implicit_constraints', 'INFER target');
+  assert(chatToSkill!.enrich[1]!.operation === 'DETECT', 'Second enrich should be DETECT');
   assert(chatToSkill!.ai !== undefined, 'Should have AI prompt');
   assert(chatToSkill!.validate === true, 'Should validate');
+
+  const chatToReq = result.compilers.find(c => c.name === 'chat_to_requirements');
+  assert(chatToReq!.enrich.length === 6, 'chat_to_requirements should have 6 enrich ops');
+
+  const reqToDslComp = result.compilers.find(c => c.name === 'requirements_to_dsl');
+  assert(reqToDslComp!.enrich.length === 5, 'requirements_to_dsl should have 5 enrich ops');
 
   const reqToDsl = result.compilers.find(c => c.name === 'requirements_to_dsl');
   assert(reqToDsl !== undefined, 'Should have requirements_to_dsl');

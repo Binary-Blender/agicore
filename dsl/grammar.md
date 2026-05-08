@@ -2246,6 +2246,10 @@ COMPILER <name> {
   FROM         <SessionName>
   TO           <SessionName>
   [EXTRACT     <extraction_list>]
+  [ENRICH {
+    <operation>  <target>
+    ...
+  }]
   [AI          <prompt_template>]
   [VALIDATE    <bool>]
 }
@@ -2257,9 +2261,24 @@ COMPILER <name> {
 |----------|-----------------------------------------------------------|
 | FROM     | Source session type                                       |
 | TO       | Target session type                                      |
-| EXTRACT  | What to extract from the source: intent, constraints, entities, workflows, policies, structure |
+| EXTRACT  | What to extract from the source                          |
+| ENRICH   | Semantic compounding operations (see below)               |
 | AI       | Prompt template for AI-assisted transformation            |
 | VALIDATE | Whether to validate output against target schema          |
+
+### ENRICH Operations (Semantic Compounding)
+
+Traditional transitions lose information (entropy). ENRICH operations reverse this — the artifact **improves** during transformation. Each operation is a named enrichment step the compiler must perform.
+
+| Operation | Description                                             |
+|-----------|---------------------------------------------------------|
+| INFER     | Deduce implicit information not stated explicitly       |
+| SUGGEST   | Propose improvements, patterns, or alternatives         |
+| GENERATE  | Create new artifacts (tests, validations, scaffolding)  |
+| DETECT    | Find gaps, contradictions, missing dependencies         |
+| PRESERVE  | Ensure original intent/context survives transformation  |
+
+This makes transitions **programmable intelligence surfaces** — not just format converters, but semantic enrichment engines. Information compounds across transitions instead of decaying.
 
 ### Example
 

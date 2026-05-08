@@ -15,6 +15,7 @@ import type {
   ChannelDecl, ChannelProtocol, ChannelDirection,
   IdentityDecl, IdentityProfileField,
   FeedDecl, FeedSubscribeMode,
+  EnrichOp,
   NodeDecl, NodeType, AiTier, SafetyLevel,
   SensorDecl, SensorType,
   ZoneDecl,
@@ -1883,6 +1884,7 @@ export class Parser {
     this.expectToken(TokenType.LBRACE);
 
     let description = '', from = '', to = '', extract: string[] = [];
+    const enrich: EnrichOp[] = [];
     let ai: string | undefined, validate = true;
 
     while (!this.check(TokenType.RBRACE)) {
@@ -1891,13 +1893,26 @@ export class Parser {
       if (token.type === TokenType.FROM) { this.advance(); from = this.expectIdentifier(); continue; }
       if (token.type === TokenType.TO) { this.advance(); to = this.expectIdentifier(); continue; }
       if (token.type === TokenType.EXTRACT) { this.advance(); extract = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.ENRICH) {
+        this.advance();
+        this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const opToken = this.current();
+          const operation = opToken.value;
+          this.advance();
+          const target = this.expectIdentifier();
+          enrich.push({ operation, target });
+        }
+        this.expectToken(TokenType.RBRACE);
+        continue;
+      }
       if (token.type === TokenType.AI) { this.advance(); ai = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
       if (token.type === TokenType.VALIDATE) { this.advance(); validate = this.parseBoolValue(); continue; }
       this.error(`Unexpected token in COMPILER: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'compiler', name, description, from, to, extract, ai, validate, span: { start, end } };
+    return { kind: 'compiler', name, description, from, to, extract, enrich, ai, validate, span: { start, end } };
   }
 
   // --- NODE ---
