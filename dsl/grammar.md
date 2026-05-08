@@ -1520,6 +1520,281 @@ Inherited knowledge is selected by highest confidence — the child gets what ea
 
 ---
 
+## PACKET Declaration (Semantic Infrastructure)
+
+Defines a semantic packet — a portable, structured unit of operational intelligence that flows between pipeline stages, systems, and organizations. Unlike raw data, a semantic packet carries its own provenance, validation state, authority chain, and execution lineage.
+
+Semantic packets transform pipelines from "pass data between steps" into "exchange self-describing operational intelligence with full traceability."
+
+### Syntax
+
+```
+PACKET <Name> {
+  DESCRIPTION  <string>
+
+  PAYLOAD {
+    <field>: <type> [REQUIRED]
+    ...
+  }
+
+  METADATA {
+    [PROVENANCE    <bool>]
+    [LINEAGE       <bool>]
+    [SIGNATURES    <bool>]
+    [ADMISSIBILITY <bool>]
+    [TTL           <number>]
+  }
+
+  VALIDATION {
+    <rule_name>: <condition>
+    ...
+  }
+}
+```
+
+### Fields
+
+| Field         | Description                                             |
+|---------------|---------------------------------------------------------|
+| PAYLOAD       | The structured data this packet carries                 |
+| PROVENANCE    | Track origin system, creator, and source chain          |
+| LINEAGE       | Record every transformation this packet has undergone   |
+| SIGNATURES    | Require cryptographic signing at each processing stage  |
+| ADMISSIBILITY | Track whether this packet meets execution requirements  |
+| TTL           | Time-to-live in seconds (0 = no expiry)                |
+| VALIDATION    | Rules that must pass before the packet is admissible    |
+
+### Example
+
+```
+PACKET ClinicalAssessment {
+  DESCRIPTION "Structured clinical assessment flowing through the diagnostic pipeline"
+
+  PAYLOAD {
+    patient_summary: string REQUIRED
+    symptoms: json REQUIRED
+    triage_level: string
+    diagnosis_candidates: json
+    icd_codes: json
+    critic_score: float
+    governance_decision: string
+  }
+
+  METADATA {
+    PROVENANCE    true
+    LINEAGE       true
+    SIGNATURES    true
+    ADMISSIBILITY true
+    TTL           86400
+  }
+
+  VALIDATION {
+    has_symptoms: symptoms IS NOT NULL
+    valid_triage: triage_level != "unknown"
+    minimum_confidence: critic_score >= 0.5
+  }
+}
+
+PACKET WorkflowHandoff {
+  DESCRIPTION "Portable operational state for cross-system workflow coordination"
+
+  PAYLOAD {
+    intent: string REQUIRED
+    context: json REQUIRED
+    constraints: json
+    execution_history: json
+    optimization_attempts: number = 0
+  }
+
+  METADATA {
+    PROVENANCE    true
+    LINEAGE       true
+    SIGNATURES    false
+    ADMISSIBILITY true
+    TTL           0
+  }
+
+  VALIDATION {
+    has_intent: intent IS NOT NULL
+    has_context: context IS NOT NULL
+  }
+}
+```
+
+### Generates
+
+- Packet TypeScript interface with metadata fields
+- Packet factory function (create, validate, sign)
+- Lineage tracker (append-only transformation history)
+- Provenance recorder (origin, creator, source chain)
+- Admissibility checker (run validation rules before execution)
+- Packet serializer/deserializer (for cross-system exchange)
+- Validation rule executor
+
+---
+
+## AUTHORITY Declaration (Trust Infrastructure)
+
+Defines trust chains, signing requirements, and admissibility rules for semantic packets and pipeline execution. Authority declarations establish WHO can create, modify, and execute packets, and WHAT conditions must be met before a packet is considered admissible for execution.
+
+This is the governance layer for distributed AI coordination — ensuring that semantic packets flowing between systems carry verifiable trust.
+
+### Syntax
+
+```
+AUTHORITY <name> {
+  DESCRIPTION  <string>
+
+  LEVELS {
+    <level_name>: <description>
+    ...
+  }
+
+  SIGNING {
+    [REQUIRED       <bool>]
+    [ALGORITHM      <string>]
+    [VERIFY_CHAIN   <bool>]
+  }
+
+  ADMISSIBILITY {
+    <rule_name>: <condition>
+    ...
+  }
+}
+```
+
+### Example
+
+```
+AUTHORITY ClinicalGovernance {
+  DESCRIPTION "Trust framework for clinical AI pipeline decisions"
+
+  LEVELS {
+    system: "Automated system-level authority"
+    reviewer: "Human reviewer authority"
+    supervisor: "Clinical supervisor override authority"
+    admin: "Full administrative authority"
+  }
+
+  SIGNING {
+    REQUIRED       true
+    ALGORITHM      "sha256"
+    VERIFY_CHAIN   true
+  }
+
+  ADMISSIBILITY {
+    governance_passed: governance_decision == "approved"
+    critic_threshold: critic_score >= 0.75
+    human_reviewed: review_status != "pending"
+  }
+}
+
+AUTHORITY OperationalTrust {
+  DESCRIPTION "Trust framework for cross-system workflow coordination"
+
+  LEVELS {
+    local: "Local system operations"
+    partner: "Trusted partner system"
+    external: "External system with limited trust"
+  }
+
+  SIGNING {
+    REQUIRED       false
+    ALGORITHM      "sha256"
+    VERIFY_CHAIN   false
+  }
+
+  ADMISSIBILITY {
+    valid_source: source_system IS NOT NULL
+    within_ttl: packet_age < ttl
+  }
+}
+```
+
+### Generates
+
+- Authority level registry
+- Signing/verification functions (when REQUIRED)
+- Admissibility rule evaluator
+- Authority chain validator
+- Trust level resolver
+- Audit log for authority decisions
+
+---
+
+## CHANNEL Declaration (Semantic Communication)
+
+Defines a communication endpoint for semantic packet exchange between systems. Channels are how distributed Agicore instances coordinate — they define the topology of the semantic network.
+
+### Syntax
+
+```
+CHANNEL <name> {
+  DESCRIPTION  <string>
+  PROTOCOL     <protocol_type>
+  DIRECTION    inbound | outbound | bidirectional
+  PACKET       <PacketName>
+  [AUTHORITY   <AuthorityName>]
+  [ENDPOINT    <string>]
+  [RETRY       <number>]
+  [TIMEOUT     <number>]
+}
+```
+
+### Protocol Types
+
+| Protocol   | Description                                    |
+|------------|------------------------------------------------|
+| local      | In-process communication (same runtime)        |
+| websocket  | WebSocket connection (real-time)               |
+| http       | HTTP/REST endpoint                             |
+| queue      | File-based or message queue (async)            |
+| grpc       | gRPC for high-performance inter-service calls  |
+
+### Example
+
+```
+CHANNEL clinical_intake {
+  DESCRIPTION  "Receives clinical assessments from intake systems"
+  PROTOCOL     http
+  DIRECTION    inbound
+  PACKET       ClinicalAssessment
+  AUTHORITY    ClinicalGovernance
+  ENDPOINT     "/v1/intake"
+  TIMEOUT      30000
+}
+
+CHANNEL partner_handoff {
+  DESCRIPTION  "Exchange workflow state with partner systems"
+  PROTOCOL     websocket
+  DIRECTION    bidirectional
+  PACKET       WorkflowHandoff
+  AUTHORITY    OperationalTrust
+  RETRY        3
+  TIMEOUT      10000
+}
+
+CHANNEL babyai_routing {
+  DESCRIPTION  "Route semantic packets to BabyAI specialist nodes"
+  PROTOCOL     http
+  DIRECTION    outbound
+  PACKET       WorkflowHandoff
+  ENDPOINT     "/v1/chat/completions"
+}
+```
+
+### Generates
+
+- Channel endpoint handler (inbound) or client (outbound)
+- Packet validation on send/receive
+- Authority verification at channel boundary
+- Retry logic with exponential backoff
+- Timeout handling
+- Channel health monitoring
+- Message audit log
+
+---
+
 ## Complete Example
 
 A minimal but complete `.agi` file:
@@ -1658,7 +1933,8 @@ file            = app_decl (entity_decl | action_decl | view_decl |
                   workflow_decl | pipeline_decl | qc_decl | vault_decl |
                   rule_decl | fact_decl | state_decl | pattern_decl |
                   score_decl | module_decl |
-                  router_decl | skill_decl | lifecycle_decl | breed_decl)*
+                  router_decl | skill_decl | lifecycle_decl | breed_decl |
+                  packet_decl | authority_decl | channel_decl)*
 
 // --- Application Layer ---
 app_decl        = "APP" IDENT "{" app_field* "}"
@@ -1687,6 +1963,11 @@ router_decl     = "ROUTER" IDENT "{" router_body "}"
 skill_decl      = "SKILL" IDENT "{" skill_body "}"
 lifecycle_decl  = "LIFECYCLE" IDENT "{" lifecycle_body "}"
 breed_decl      = "BREED" IDENT "{" breed_body "}"
+
+// --- Semantic Infrastructure Layer ---
+packet_decl     = "PACKET" IDENT "{" packet_body "}"
+authority_decl  = "AUTHORITY" IDENT "{" authority_body "}"
+channel_decl    = "CHANNEL" IDENT "{" channel_body "}"
 
 type            = "string" | "number" | "float" | "bool" |
                   "date" | "datetime" | "json" | "id"

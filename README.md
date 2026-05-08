@@ -144,9 +144,13 @@ The result is systems that are:
 
 ## Status
 
-Phases 1 and 2 are complete. The DSL covers 21 declaration types across 4 layers. The parser (253 tests) and compiler (161 tests) generate complete Tauri projects with expert system and orchestration runtimes from `.agi` files.
+Phases 1 and 2 are complete. The DSL covers 24 declaration types across 5 layers:
 
-See [ROADMAP.md](ROADMAP.md) for the full development plan.
+- **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST
+- **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT
+- **Expert System:** RULE, FACT, STATE, PATTERN, SCORE, MODULE
+- **Cooperative Intelligence:** ROUTER, SKILL, LIFECYCLE, BREED
+- **Semantic Infrastructure:** PACKET, AUTHORITY, CHANNEL
 
 ---
 

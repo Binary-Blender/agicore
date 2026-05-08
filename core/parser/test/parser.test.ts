@@ -630,6 +630,71 @@ try {
   console.error(`  FAIL: Could not parse babyai_router.agi: ${err}`);
 }
 
+// --- Test: Full distributed_orchestration.agi ---
+
+section('Full distributed_orchestration.agi parsing');
+
+try {
+  const distPath = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../examples/distributed-orchestration/distributed_orchestration.agi'
+  );
+  const source = readFileSync(distPath, 'utf-8');
+  const result = parse(source);
+
+  assert(result.app.name === 'distributed_orchestration', 'App name');
+  assert(result.packets.length === 3, 'Should have 3 packets');
+  assert(result.authorities.length === 2, 'Should have 2 authorities');
+  assert(result.channels.length === 4, 'Should have 4 channels');
+  assert(result.pipelines.length === 1, 'Should have 1 pipeline');
+  assert(result.qcs.length === 1, 'Should have 1 QC');
+  assert(result.entities.length === 2, 'Should have 2 entities');
+
+  // Packet details
+  const analysisReq = result.packets.find(p => p.name === 'AnalysisRequest');
+  assert(analysisReq !== undefined, 'Should have AnalysisRequest packet');
+  assert(analysisReq!.payload.length === 6, 'AnalysisRequest should have 6 payload fields');
+  assert(analysisReq!.provenance === true, 'Should have provenance');
+  assert(analysisReq!.lineage === true, 'Should have lineage');
+  assert(analysisReq!.validation.length === 2, 'Should have 2 validation rules');
+
+  const analysisResult = result.packets.find(p => p.name === 'AnalysisResult');
+  assert(analysisResult !== undefined, 'Should have AnalysisResult packet');
+  assert(analysisResult!.signatures === true, 'AnalysisResult should require signatures');
+  assert(analysisResult!.validation.length === 3, 'Should have 3 validation rules');
+
+  const handoff = result.packets.find(p => p.name === 'WorkflowHandoff');
+  assert(handoff !== undefined, 'Should have WorkflowHandoff packet');
+  assert(handoff!.ttl === 604800, 'Handoff TTL should be 7 days');
+
+  // Authority details
+  const sysGov = result.authorities.find(a => a.name === 'SystemGovernance');
+  assert(sysGov !== undefined, 'Should have SystemGovernance');
+  assert(sysGov!.levels.length === 4, 'Should have 4 authority levels');
+  assert(sysGov!.signing.required === true, 'Signing should be required');
+  assert(sysGov!.signing.verifyChain === true, 'Verify chain should be true');
+  assert(sysGov!.admissibility.length === 3, 'Should have 3 admissibility rules');
+
+  // Channel details
+  const intake = result.channels.find(c => c.name === 'analysis_intake');
+  assert(intake !== undefined, 'Should have analysis_intake channel');
+  assert(intake!.protocol === 'http', 'Protocol should be http');
+  assert(intake!.direction === 'inbound', 'Direction should be inbound');
+  assert(intake!.packet === 'AnalysisRequest', 'Should reference AnalysisRequest packet');
+  assert(intake!.authority === 'SystemGovernance', 'Should reference SystemGovernance');
+
+  const partner = result.channels.find(c => c.name === 'partner_exchange');
+  assert(partner !== undefined, 'Should have partner_exchange channel');
+  assert(partner!.protocol === 'websocket', 'Protocol should be websocket');
+  assert(partner!.direction === 'bidirectional', 'Direction should be bidirectional');
+  assert(partner!.retry === 5, 'Retry should be 5');
+
+  console.log(`  Parsed successfully: ${result.packets.length} packets, ${result.authorities.length} authorities, ${result.channels.length} channels, ${result.pipelines.length} pipelines`);
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: Could not parse distributed_orchestration.agi: ${err}`);
+}
+
 // --- Expert System Tests ---
 
 section('FACT parsing');

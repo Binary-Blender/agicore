@@ -452,6 +452,75 @@ export interface BreedDecl {
   span: SourceSpan;
 }
 
+// --- PACKET Declaration (Semantic Infrastructure) ---
+
+export interface PacketField {
+  name: string;
+  type: AgiType;
+  required: boolean;
+}
+
+export interface PacketValidationRule {
+  name: string;
+  condition: string;
+}
+
+export interface PacketDecl {
+  kind: 'packet';
+  name: string;
+  description: string;
+  payload: PacketField[];
+  provenance: boolean;
+  lineage: boolean;
+  signatures: boolean;
+  admissibility: boolean;
+  ttl: number;
+  validation: PacketValidationRule[];
+  span: SourceSpan;
+}
+
+// --- AUTHORITY Declaration (Trust Infrastructure) ---
+
+export interface AuthorityLevel {
+  name: string;
+  description: string;
+}
+
+export interface AuthoritySigning {
+  required: boolean;
+  algorithm: string;
+  verifyChain: boolean;
+}
+
+export interface AuthorityDecl {
+  kind: 'authority';
+  name: string;
+  description: string;
+  levels: AuthorityLevel[];
+  signing: AuthoritySigning;
+  admissibility: PacketValidationRule[];
+  span: SourceSpan;
+}
+
+// --- CHANNEL Declaration (Semantic Communication) ---
+
+export type ChannelProtocol = 'local' | 'websocket' | 'http' | 'queue' | 'grpc';
+export type ChannelDirection = 'inbound' | 'outbound' | 'bidirectional';
+
+export interface ChannelDecl {
+  kind: 'channel';
+  name: string;
+  description: string;
+  protocol: ChannelProtocol;
+  direction: ChannelDirection;
+  packet: string;
+  authority?: string;
+  endpoint?: string;
+  retry: number;
+  timeout: number;
+  span: SourceSpan;
+}
+
 // --- Top-Level AST ---
 
 export type Declaration =
@@ -474,7 +543,10 @@ export type Declaration =
   | RouterDecl
   | SkillDecl
   | LifecycleDecl
-  | BreedDecl;
+  | BreedDecl
+  | PacketDecl
+  | AuthorityDecl
+  | ChannelDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -497,6 +569,9 @@ export interface AgiFile {
   skills: SkillDecl[];
   lifecycles: LifecycleDecl[];
   breeds: BreedDecl[];
+  packets: PacketDecl[];
+  authorities: AuthorityDecl[];
+  channels: ChannelDecl[];
 }
 
 // --- Parse Error ---

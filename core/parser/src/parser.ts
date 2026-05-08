@@ -10,6 +10,9 @@ import type {
   RouterDecl, RouterTier, RouterModelDef,
   SkillDecl, LifecycleDecl, LifecycleEscalation,
   BreedDecl, BreedFitness,
+  PacketDecl, PacketField, PacketValidationRule,
+  AuthorityDecl, AuthorityLevel, AuthoritySigning,
+  ChannelDecl, ChannelProtocol, ChannelDirection,
   StateNode, StateTransition, ScoreThreshold,
   FieldDef, FieldModifier, AgiType, CrudOp, Relationship,
   ActionParam, ActionOutput, LayoutType, ThemeOption,
@@ -57,6 +60,9 @@ export class Parser {
     const skills: SkillDecl[] = [];
     const lifecycles: LifecycleDecl[] = [];
     const breeds: BreedDecl[] = [];
+    const packets: PacketDecl[] = [];
+    const authorities: AuthorityDecl[] = [];
+    const channels: ChannelDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -120,12 +126,21 @@ export class Parser {
         case TokenType.BREED:
           breeds.push(this.parseBreed());
           break;
+        case TokenType.PACKET:
+          packets.push(this.parsePacket());
+          break;
+        case TokenType.AUTHORITY_KW:
+          authorities.push(this.parseAuthority());
+          break;
+        case TokenType.CHANNEL:
+          channels.push(this.parseChannel());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds, packets, authorities, channels };
   }
 
   // --- APP ---
@@ -1634,6 +1649,173 @@ export class Parser {
     return { kind: 'breed', name, description, inheritanceA, inheritanceB, inheritanceFresh, minFitness, cooldown, fitness, pairingPreferences, diversityMin, traitPersistAfter, traitExtinctAfter, span: { start, end } };
   }
 
+  // --- PACKET ---
+
+  private parsePacket(): PacketDecl {
+    const start = this.expectToken(TokenType.PACKET).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    const payload: PacketField[] = [];
+    let provenance = false, lineage = false, signatures = false, admissibility = false;
+    let ttl = 0;
+    const validation: PacketValidationRule[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.PAYLOAD) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const fieldName = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const fieldType = this.parseType();
+          let required = false;
+          if (this.check(TokenType.REQUIRED)) { this.advance(); required = true; }
+          payload.push({ name: fieldName, type: fieldType, required });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.value === 'METADATA') {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const field = this.current();
+          if (field.value === 'PROVENANCE') { this.advance(); provenance = this.parseBoolValue(); }
+          else if (field.value === 'LINEAGE') { this.advance(); lineage = this.parseBoolValue(); }
+          else if (field.value === 'SIGNATURES') { this.advance(); signatures = this.parseBoolValue(); }
+          else if (field.value === 'ADMISSIBILITY') { this.advance(); admissibility = this.parseBoolValue(); }
+          else if (field.type === TokenType.TTL) { this.advance(); ttl = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); }
+          else this.error(`Unexpected in METADATA: ${field.value}`);
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.type === TokenType.VALIDATION) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const ruleName = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const condition = this.parseInlineExpression();
+          validation.push({ name: ruleName, condition });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      this.error(`Unexpected token in PACKET: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'packet', name, description, payload, provenance, lineage, signatures, admissibility, ttl, validation, span: { start, end } };
+  }
+
+  // --- AUTHORITY ---
+
+  private parseAuthority(): AuthorityDecl {
+    const start = this.expectToken(TokenType.AUTHORITY_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    const levels: AuthorityLevel[] = [];
+    let signing: AuthoritySigning = { required: false, algorithm: 'sha256', verifyChain: false };
+    const admissibilityRules: PacketValidationRule[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.value === 'LEVELS') {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const level = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const desc = this.expectToken(TokenType.STRING_LITERAL).value;
+          levels.push({ name: level, description: desc });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.type === TokenType.SIGNING) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const field = this.current();
+          if (field.type === TokenType.REQUIRED) { this.advance(); signing.required = this.parseBoolValue(); }
+          else if (field.type === TokenType.ALGORITHM) { this.advance(); signing.algorithm = this.expectToken(TokenType.STRING_LITERAL).value; }
+          else if (field.type === TokenType.VERIFY_CHAIN) { this.advance(); signing.verifyChain = this.parseBoolValue(); }
+          else this.error(`Unexpected in SIGNING: ${field.value}`);
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.value === 'ADMISSIBILITY') {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const ruleName = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const condition = this.parseInlineExpression();
+          admissibilityRules.push({ name: ruleName, condition });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      this.error(`Unexpected token in AUTHORITY: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'authority', name, description, levels, signing, admissibility: admissibilityRules, span: { start, end } };
+  }
+
+  // --- CHANNEL ---
+
+  private parseChannel(): ChannelDecl {
+    const start = this.expectToken(TokenType.CHANNEL).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let protocol: ChannelProtocol = 'local';
+    let direction: ChannelDirection = 'bidirectional';
+    let packet = '';
+    let authority: string | undefined;
+    let endpoint: string | undefined;
+    let retry = 0;
+    let timeout = 30000;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.PROTOCOL) {
+        this.advance(); protocol = this.expectIdentifier() as ChannelProtocol; continue;
+      }
+      if (token.type === TokenType.DIRECTION) {
+        this.advance(); direction = this.expectIdentifier() as ChannelDirection; continue;
+      }
+      if (token.type === TokenType.PACKET) {
+        this.advance(); packet = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.AUTHORITY_KW) {
+        this.advance(); authority = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.ENDPOINT) {
+        this.advance(); endpoint = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.RETRY) {
+        this.advance(); retry = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue;
+      }
+      if (token.type === TokenType.TIMEOUT) {
+        this.advance(); timeout = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue;
+      }
+      this.error(`Unexpected token in CHANNEL: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, span: { start, end } };
+  }
+
   // --- Inline Expression Parser ---
   // Reads tokens until a line-ending context is reached (next keyword or closing brace)
   // Returns the raw expression string for evaluation at runtime
@@ -1667,6 +1849,10 @@ export class Parser {
       !this.check(TokenType.THEN) &&
       !this.check(TokenType.EOF)
     ) {
+      // Lookahead: if current is identifier-like and next is COLON, we're at a new key:value pair — stop
+      const next = this.tokens[this.pos + 1];
+      if (next && next.type === TokenType.COLON) break;
+
       parts.push(this.advance().value);
     }
     return parts.join(' ');
