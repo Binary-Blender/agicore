@@ -695,6 +695,111 @@ try {
   console.error(`  FAIL: Could not parse distributed_orchestration.agi: ${err}`);
 }
 
+// --- Test: SKILLDOC parsing ---
+
+section('SKILLDOC parsing');
+
+const skilldocSrc = `
+APP test {
+  TITLE "Test"
+  DB test.db
+}
+
+SKILLDOC aerospace_qc {
+  DESCRIPTION  "Aerospace QC procedures"
+  VERSION      "2.4.1"
+  DOMAIN       "manufacturing"
+  CONTENT      "skilldocs/aerospace_qc.md"
+  KEYWORDS     aerospace, manufacturing, quality
+  PRIORITY     20
+
+  GOVERNANCE {
+    SIGNED_BY      CorpAuthority
+    REQUIRE        clearance_4, qc_certified
+    EXECUTE_ONLY   secure_node, certified_node
+    DISALLOW       export, modify
+    AUDIT          all_access
+  }
+
+  COMPRESSION {
+    SEMANTIC_DENSITY      0.85
+    INTENT_PRESERVATION   0.95
+    TOKEN_EFFICIENCY      0.7
+  }
+}
+
+SKILLDOC open_skilldoc {
+  DESCRIPTION  "Open community skilldoc"
+  VERSION      "1.0.0"
+}
+`;
+
+const skilldocResult = parse(skilldocSrc);
+assert(skilldocResult.skilldocs.length === 2, 'Should have 2 skilldocs');
+
+const enterprise = skilldocResult.skilldocs[0]!;
+assert(enterprise.name === 'aerospace_qc', 'Enterprise skilldoc name');
+assert(enterprise.version === '2.4.1', 'Version');
+assert(enterprise.domain === 'manufacturing', 'Domain');
+assert(enterprise.content === 'skilldocs/aerospace_qc.md', 'Content path');
+assert(enterprise.keywords.length === 3, 'Should have 3 keywords');
+assert(enterprise.priority === 20, 'Priority');
+assert(enterprise.governance !== undefined, 'Should have governance');
+assert(enterprise.governance!.signedBy === 'CorpAuthority', 'Signed by');
+assert(enterprise.governance!.require.length === 2, 'Should have 2 required clearances');
+assert(enterprise.governance!.executeOnly.length === 2, 'Should have 2 execute targets');
+assert(enterprise.governance!.disallow.length === 2, 'Should have 2 disallow rules');
+assert(enterprise.governance!.audit === 'all_access', 'Audit level');
+assert(enterprise.compression !== undefined, 'Should have compression');
+assert(enterprise.compression!.semanticDensity === 0.85, 'Semantic density');
+assert(enterprise.compression!.intentPreservation === 0.95, 'Intent preservation');
+assert(enterprise.compression!.tokenEfficiency === 0.7, 'Token efficiency');
+
+const open = skilldocResult.skilldocs[1]!;
+assert(open.name === 'open_skilldoc', 'Open skilldoc name');
+assert(open.governance === undefined, 'Open skilldoc has no governance');
+assert(open.compression === undefined, 'Open skilldoc has no compression');
+
+// --- Test: Full cognitive_infrastructure.agi ---
+
+section('Full cognitive_infrastructure.agi parsing');
+
+try {
+  const cogPath = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../examples/cognitive-infrastructure/cognitive_infrastructure.agi'
+  );
+  const source = readFileSync(cogPath, 'utf-8');
+  const result = parse(source);
+
+  assert(result.app.name === 'cognitive_infrastructure', 'App name');
+  assert(result.skilldocs.length === 6, 'Should have 6 skilldocs');
+  assert(result.authorities.length === 2, 'Should have 2 authorities');
+  assert(result.nodes.length === 3, 'Should have 3 nodes');
+  assert(result.zones.length === 1, 'Should have 1 zone');
+  assert(result.routers.length === 1, 'Should have 1 router');
+  assert(result.packets.length === 1, 'Should have 1 packet');
+  assert(result.channels.length === 1, 'Should have 1 channel');
+
+  const aerospace = result.skilldocs.find((s) => s.name === 'aerospace_qc');
+  assert(aerospace !== undefined, 'Should have aerospace_qc skilldoc');
+  assert(aerospace!.governance!.signedBy === 'CorporateAuthority', 'Aerospace signed by');
+  assert(aerospace!.governance!.require.length === 2, 'Aerospace clearances');
+  assert(aerospace!.governance!.executeOnly.length === 2, 'Aerospace execute targets');
+  assert(aerospace!.governance!.audit === 'all_access', 'Aerospace audit level');
+
+  const openSkilldoc = result.skilldocs.find((s) => s.name === 'creative_voice_writing');
+  assert(openSkilldoc !== undefined, 'Should have creative_voice_writing');
+  assert(openSkilldoc!.governance === undefined, 'Open skilldoc has no governance');
+
+  const governedCount = result.skilldocs.filter(s => s.governance).length;
+  const openCount = result.skilldocs.filter(s => !s.governance).length;
+  console.log('  Parsed successfully: ' + result.skilldocs.length + ' skilldocs (' + governedCount + ' governed, ' + openCount + ' open), ' + result.authorities.length + ' authorities, ' + result.nodes.length + ' nodes');
+} catch (err) {
+  failed++;
+  console.error('  FAIL: Could not parse cognitive_infrastructure.agi: ' + err);
+}
+
 // --- Test: Full creator_network.agi ---
 
 section('Full creator_network.agi parsing');

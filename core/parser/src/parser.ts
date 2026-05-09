@@ -8,7 +8,8 @@ import type {
   PipelineDecl, PipelineRow, PipelineModule, PipelineConnection, PipelineModuleType,
   QCDecl, VaultDecl,
   RouterDecl, RouterTier, RouterModelDef,
-  SkillDecl, LifecycleDecl, LifecycleEscalation,
+  SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
+  LifecycleDecl, LifecycleEscalation,
   BreedDecl, BreedFitness,
   PacketDecl, PacketField, PacketValidationRule,
   AuthorityDecl, AuthorityLevel, AuthoritySigning,
@@ -65,6 +66,7 @@ export class Parser {
     const modules: ModuleDecl[] = [];
     const routers: RouterDecl[] = [];
     const skills: SkillDecl[] = [];
+    const skilldocs: SkillDocDecl[] = [];
     const lifecycles: LifecycleDecl[] = [];
     const breeds: BreedDecl[] = [];
     const packets: PacketDecl[] = [];
@@ -134,6 +136,9 @@ export class Parser {
         case TokenType.SKILL:
           skills.push(this.parseSkill());
           break;
+        case TokenType.SKILLDOC:
+          skilldocs.push(this.parseSkillDoc());
+          break;
         case TokenType.LIFECYCLE:
           lifecycles.push(this.parseLifecycle());
           break;
@@ -175,7 +180,7 @@ export class Parser {
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers };
   }
 
   // --- APP ---
@@ -1519,6 +1524,146 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'skill', name, description, keywords, domain, path, priority, span: { start, end } };
+  }
+
+  // --- SKILLDOC (Governed Cognition Infrastructure) ---
+
+  private parseSkillDoc(): SkillDocDecl {
+    const start = this.expectToken(TokenType.SKILLDOC).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let version: string | undefined;
+    let domain: string | undefined;
+    let content: string | undefined;
+    let keywords: string[] = [];
+    let priority = 0;
+    let governance: SkillDocGovernance | undefined;
+    let compression: SkillDocCompression | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance();
+        description = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.VERSION) {
+        this.advance();
+        version = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.DOMAIN) {
+        this.advance();
+        domain = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.CONTENT_KW) {
+        this.advance();
+        content = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.KEYWORDS) {
+        this.advance();
+        keywords = this.parseIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.PRIORITY) {
+        this.advance();
+        priority = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        continue;
+      }
+      if (token.type === TokenType.GOVERNANCE) {
+        this.advance();
+        governance = this.parseSkillDocGovernance();
+        continue;
+      }
+      if (token.type === TokenType.COMPRESSION) {
+        this.advance();
+        compression = this.parseSkillDocCompression();
+        continue;
+      }
+      this.error(`Unexpected token in SKILLDOC: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'skilldoc', name, description, version, domain, content, keywords, priority, governance, compression, span: { start, end } };
+  }
+
+  private parseSkillDocGovernance(): SkillDocGovernance {
+    this.expectToken(TokenType.LBRACE);
+
+    let signedBy: string | undefined;
+    let require: string[] = [];
+    let executeOnly: string[] = [];
+    let disallow: string[] = [];
+    let audit: AuditLevel = 'none';
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.SIGNED_BY) {
+        this.advance();
+        signedBy = this.expectIdentifier();
+        continue;
+      }
+      if (token.type === TokenType.REQUIRE_KW) {
+        this.advance();
+        require = this.parseIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.EXECUTE_ONLY) {
+        this.advance();
+        executeOnly = this.parseIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.DISALLOW) {
+        this.advance();
+        disallow = this.parseIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.AUDIT) {
+        this.advance();
+        audit = this.expectIdentifier() as AuditLevel;
+        continue;
+      }
+      this.error(`Unexpected token in GOVERNANCE: ${token.value}`);
+    }
+
+    this.expectToken(TokenType.RBRACE);
+    return { signedBy, require, executeOnly, disallow, audit };
+  }
+
+  private parseSkillDocCompression(): SkillDocCompression {
+    this.expectToken(TokenType.LBRACE);
+
+    let semanticDensity: number | undefined;
+    let intentPreservation: number | undefined;
+    let tokenEfficiency: number | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.SEMANTIC_DENSITY) {
+        this.advance();
+        semanticDensity = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        continue;
+      }
+      if (token.type === TokenType.INTENT_PRESERVATION) {
+        this.advance();
+        intentPreservation = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        continue;
+      }
+      if (token.type === TokenType.TOKEN_EFFICIENCY) {
+        this.advance();
+        tokenEfficiency = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        continue;
+      }
+      this.error(`Unexpected token in COMPRESSION: ${token.value}`);
+    }
+
+    this.expectToken(TokenType.RBRACE);
+    return { semanticDensity, intentPreservation, tokenEfficiency };
   }
 
   // --- LIFECYCLE ---

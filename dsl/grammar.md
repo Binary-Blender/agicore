@@ -1354,6 +1354,139 @@ SKILL socratic_tutor {
 
 ---
 
+## SKILLDOC Declaration (Governed Cognition Infrastructure)
+
+Defines a deployable cognition module — the next evolution of skill docs from lightweight metadata pointers (SKILL) into governed operational intelligence artifacts. SKILLDOC encodes organizational expertise as signable, auditable, deployable cognition packages that can be deployed to specialized runtime nodes with full authority enforcement.
+
+Where SKILL is "here's some keywords for routing," SKILLDOC is "here's a complete deployable cognition module with provenance, signing, clearance requirements, audit trail, and execution constraints."
+
+This is how organizational intelligence becomes infrastructure.
+
+### Syntax
+
+```
+SKILLDOC <name> {
+  DESCRIPTION  <string>
+  [VERSION     <string>]
+  [DOMAIN      <string>]
+  [CONTENT     <string>]
+  [KEYWORDS    <keyword_list>]
+  [PRIORITY    <number>]
+
+  [GOVERNANCE {
+    [SIGNED_BY     <AuthorityName>]
+    [REQUIRE       <clearance_list>]
+    [EXECUTE_ONLY  <target_list>]
+    [DISALLOW      <action_list>]
+    [AUDIT         <audit_level>]
+  }]
+
+  [COMPRESSION {
+    [SEMANTIC_DENSITY      <float>]
+    [INTENT_PRESERVATION   <float>]
+    [TOKEN_EFFICIENCY      <float>]
+  }]
+}
+```
+
+### Fields
+
+| Field      | Description                                                  |
+|------------|--------------------------------------------------------------|
+| VERSION    | Semantic version of this skilldoc (for lineage tracking)     |
+| DOMAIN     | Operational domain (manufacturing, compliance, engineering)  |
+| CONTENT    | Inline content or path to the skilldoc body                  |
+| KEYWORDS   | Routing keywords (same as SKILL — for discovery)             |
+| PRIORITY   | Routing priority                                             |
+
+### Governance Block
+
+| Field         | Description                                                   |
+|---------------|---------------------------------------------------------------|
+| SIGNED_BY     | AUTHORITY declaration that signs this skilldoc                |
+| REQUIRE       | Required clearance levels for execution                       |
+| EXECUTE_ONLY  | Specific NODEs, ZONEs, or node types where execution allowed  |
+| DISALLOW      | Forbidden actions: export, redistribute, log_external, modify |
+| AUDIT         | Audit level: none, errors, all_access, all_actions            |
+
+### Compression Block
+
+Targets and minimums for semantic optimization passes (used by BabyAI compression pipelines for small-context model deployment):
+
+| Field                | Description                                            |
+|----------------------|--------------------------------------------------------|
+| SEMANTIC_DENSITY     | Target compression ratio (0.0–1.0, higher = denser)    |
+| INTENT_PRESERVATION  | Minimum intent fidelity required (0.0–1.0)             |
+| TOKEN_EFFICIENCY     | Target token efficiency ratio                          |
+
+### Example
+
+```
+SKILLDOC aerospace_qc {
+  DESCRIPTION  "Aerospace manufacturing quality control procedures"
+  VERSION      "2.4.1"
+  DOMAIN       "manufacturing"
+  CONTENT      "skilldocs/aerospace_qc.md"
+  KEYWORDS     aerospace, manufacturing, quality, qc, inspection, compliance
+  PRIORITY     20
+
+  GOVERNANCE {
+    SIGNED_BY      CorporateAuthority
+    REQUIRE        clearance_level_4, manufacturing_certified
+    EXECUTE_ONLY   secure_factory_floor, certified_qc_nodes
+    DISALLOW       export, redistribute, log_external
+    AUDIT          all_access
+  }
+
+  COMPRESSION {
+    SEMANTIC_DENSITY      0.85
+    INTENT_PRESERVATION   0.95
+    TOKEN_EFFICIENCY      0.7
+  }
+}
+
+SKILLDOC novasyn_dev_stack_v2 {
+  DESCRIPTION  "Open NovaSyn dev stack patterns and architectural standards"
+  VERSION      "2.0.0"
+  DOMAIN       "coding"
+  CONTENT      "skilldocs/novasyn_dev_stack.md"
+  KEYWORDS     typescript, react, zustand, tauri, agicore, schema
+  PRIORITY     10
+
+  GOVERNANCE {
+    AUDIT          errors
+  }
+}
+```
+
+### Generates
+
+- SkillDoc registry with full metadata
+- Authority signature verification at load time
+- Clearance checking before execution
+- Execution target validation (NODE/ZONE compatibility)
+- Disallow rule enforcement
+- Audit log integration (writes to PACKET stream when AUDIT is enabled)
+- Compression metric tracking (semantic density, intent preservation)
+- Versioned skilldoc deployment (lineage across versions)
+- Open vs Enterprise mode (governance defaults to open if no GOVERNANCE block)
+
+### Composition With Other Primitives
+
+| Integrates With | Purpose                                              |
+|-----------------|------------------------------------------------------|
+| AUTHORITY       | Signs skilldocs, defines clearance levels            |
+| NODE            | EXECUTE_ONLY targets — restricts deployment surface  |
+| ZONE            | Physical/logical execution boundaries                |
+| PACKET          | Audit trail and skilldoc distribution format         |
+| CHANNEL         | Trusted skilldoc distribution between systems        |
+| ROUTER          | Routes queries to skilldoc-enriched specialist nodes |
+| BREED           | Inherits skilldoc associations across generations    |
+
+This is how a SKILL becomes a SKILLDOC: by gaining provenance, governance, and deployment semantics. Both remain valid — SKILL for lightweight cases, SKILLDOC for governed organizational cognition.
+
+---
+
 ## LIFECYCLE Declaration (Temporal Intelligence Graduation)
 
 Defines the temporal lifecycle for an intelligence instance. When an instance becomes stale (its learned patterns no longer reflect current conditions), it graduates to Elder status and a fresh instance starts learning from current interactions. Elders remain available for historical knowledge via an escalation chain.
@@ -2469,7 +2602,8 @@ file            = app_decl (entity_decl | action_decl | view_decl |
                   workflow_decl | pipeline_decl | qc_decl | vault_decl |
                   rule_decl | fact_decl | state_decl | pattern_decl |
                   score_decl | module_decl |
-                  router_decl | skill_decl | lifecycle_decl | breed_decl |
+                  router_decl | skill_decl | skilldoc_decl |
+                  lifecycle_decl | breed_decl |
                   packet_decl | authority_decl | channel_decl |
                   identity_decl | feed_decl |
                   node_decl | sensor_decl | zone_decl |
@@ -2500,6 +2634,7 @@ module_decl     = "MODULE" IDENT "{" module_body "}"
 // --- Cooperative Intelligence Layer ---
 router_decl     = "ROUTER" IDENT "{" router_body "}"
 skill_decl      = "SKILL" IDENT "{" skill_body "}"
+skilldoc_decl   = "SKILLDOC" IDENT "{" skilldoc_body "}"
 lifecycle_decl  = "LIFECYCLE" IDENT "{" lifecycle_body "}"
 breed_decl      = "BREED" IDENT "{" breed_body "}"
 

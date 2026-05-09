@@ -407,6 +407,38 @@ export interface SkillDecl {
   span: SourceSpan;
 }
 
+// --- SKILLDOC Declaration (Governed Cognition Infrastructure) ---
+
+export type AuditLevel = 'none' | 'errors' | 'all_access' | 'all_actions';
+
+export interface SkillDocGovernance {
+  signedBy?: string;
+  require: string[];
+  executeOnly: string[];
+  disallow: string[];
+  audit: AuditLevel;
+}
+
+export interface SkillDocCompression {
+  semanticDensity?: number;
+  intentPreservation?: number;
+  tokenEfficiency?: number;
+}
+
+export interface SkillDocDecl {
+  kind: 'skilldoc';
+  name: string;
+  description: string;
+  version?: string;
+  domain?: string;
+  content?: string;
+  keywords: string[];
+  priority: number;
+  governance?: SkillDocGovernance;
+  compression?: SkillDocCompression;
+  span: SourceSpan;
+}
+
 // --- LIFECYCLE Declaration (Temporal Graduation) ---
 
 export interface LifecycleEscalation {
@@ -666,6 +698,7 @@ export type Declaration =
   | ModuleDecl
   | RouterDecl
   | SkillDecl
+  | SkillDocDecl
   | LifecycleDecl
   | BreedDecl
   | PacketDecl
@@ -698,6 +731,7 @@ export interface AgiFile {
   modules: ModuleDecl[];
   routers: RouterDecl[];
   skills: SkillDecl[];
+  skilldocs: SkillDocDecl[];
   lifecycles: LifecycleDecl[];
   breeds: BreedDecl[];
   packets: PacketDecl[];
