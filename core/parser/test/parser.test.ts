@@ -800,6 +800,138 @@ try {
   console.error('  FAIL: Could not parse cognitive_infrastructure.agi: ' + err);
 }
 
+// --- Test: REASONER parsing ---
+
+section('REASONER parsing');
+
+const reasonerSrc = `
+APP test_oie {
+  TITLE     "Test"
+  DB        test.db
+  TELEMETRY auto
+}
+
+REASONER daily_reasoner {
+  DESCRIPTION  "Daily reasoning over telemetry"
+
+  INPUT {
+    CHANNEL    telemetry_stream, audit_stream
+    WINDOW     "7d"
+    FILTER     "success = true"
+  }
+
+  USES         organization_analysis
+  TIER         2
+
+  OUTPUT {
+    PACKET     OrgInsight
+    CHANNEL    insight_stream
+  }
+
+  SCHEDULE     daily
+
+  GOVERNANCE {
+    SIGNED_BY    OrgAuthority
+    EXECUTE_ONLY analytics_node
+    REQUIRE      analyst
+    AUDIT        all_actions
+  }
+}
+
+REASONER on_demand_reasoner {
+  DESCRIPTION  "On-demand reasoning"
+
+  INPUT {
+    CHANNEL    telemetry_stream
+    WINDOW     "24h"
+  }
+
+  USES         organization_analysis
+
+  OUTPUT {
+    PACKET     OrgInsight
+  }
+
+  SCHEDULE     on_demand
+}
+`;
+
+const reasonerResult = parse(reasonerSrc);
+assert(reasonerResult.app.telemetry === 'auto', 'APP TELEMETRY auto');
+assert(reasonerResult.reasoners.length === 2, 'Should have 2 reasoners');
+
+const daily = reasonerResult.reasoners[0]!;
+assert(daily.name === 'daily_reasoner', 'Daily reasoner name');
+assert(daily.input.channels.length === 2, 'Daily reasoner: 2 input channels');
+assert(daily.input.window === '7d', 'Daily reasoner window');
+assert(daily.input.filter === 'success = true', 'Daily reasoner filter');
+assert(daily.uses === 'organization_analysis', 'Daily reasoner uses skilldoc');
+assert(daily.tier === 2, 'Daily reasoner tier');
+assert(daily.output.packet === 'OrgInsight', 'Daily reasoner output packet');
+assert(daily.output.channel === 'insight_stream', 'Daily reasoner output channel');
+assert(daily.schedule === 'daily', 'Daily reasoner schedule');
+assert(daily.governance !== undefined, 'Daily reasoner has governance');
+assert(daily.governance!.signedBy === 'OrgAuthority', 'Daily reasoner signed by');
+assert(daily.governance!.executeOnly.length === 1, 'Daily reasoner execute targets');
+assert(daily.governance!.audit === 'all_actions', 'Daily reasoner audit');
+
+const onDemand = reasonerResult.reasoners[1]!;
+assert(onDemand.schedule === 'on_demand', 'On-demand reasoner schedule');
+assert(onDemand.governance === undefined, 'On-demand reasoner has no governance block');
+assert(onDemand.tier === undefined, 'On-demand reasoner has no tier');
+assert(onDemand.input.filter === undefined, 'On-demand reasoner has no filter');
+
+// Cron-style schedule via string literal
+const cronSrc = `
+APP test_cron {
+  TITLE  "Test"
+  DB     test.db
+}
+
+REASONER cron_reasoner {
+  DESCRIPTION  "Cron-scheduled reasoner"
+  INPUT { CHANNEL telemetry_stream WINDOW "1h" }
+  USES         analysis_doc
+  OUTPUT { PACKET OrgInsight }
+  SCHEDULE     "0 6 * * *"
+}
+`;
+const cronResult = parse(cronSrc);
+assert(cronResult.reasoners[0]!.schedule === '0 6 * * *', 'Cron schedule via string literal');
+
+// --- Test: Full organizational_intelligence.agi ---
+
+section('Full organizational_intelligence.agi parsing');
+
+try {
+  const oiePath = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../examples/organizational-intelligence/organizational_intelligence.agi'
+  );
+  const source = readFileSync(oiePath, 'utf-8');
+  const result = parse(source);
+
+  assert(result.app.name === 'organizational_intelligence', 'OIE app name');
+  assert(result.app.telemetry === 'auto', 'OIE app TELEMETRY auto');
+  assert(result.reasoners.length === 2, 'OIE should have 2 reasoners');
+  assert(result.skilldocs.length === 1, 'OIE should have 1 skilldoc');
+  assert(result.packets.length === 2, 'OIE should have 2 packets');
+  assert(result.channels.length === 2, 'OIE should have 2 channels');
+  assert(result.authorities.length === 1, 'OIE should have 1 authority');
+  assert(result.nodes.length === 1, 'OIE should have 1 node');
+
+  const orgReasoner = result.reasoners.find((r) => r.name === 'organization_reasoner');
+  assert(orgReasoner !== undefined, 'Should have organization_reasoner');
+  assert(orgReasoner!.uses === 'organization_analysis', 'Org reasoner uses signed skilldoc');
+  assert(orgReasoner!.input.window === '7d', 'Org reasoner 7d window');
+  assert(orgReasoner!.governance!.signedBy === 'OrgAuthority', 'Org reasoner signed by');
+
+  console.log('  Parsed successfully: ' + result.reasoners.length + ' reasoners, ' + result.skilldocs.length + ' skilldocs, ' + result.packets.length + ' packets, ' + result.channels.length + ' channels');
+} catch (err) {
+  failed++;
+  console.error('  FAIL: Could not parse organizational_intelligence.agi: ' + err);
+}
+
 // --- Test: Full creator_network.agi ---
 
 section('Full creator_network.agi parsing');

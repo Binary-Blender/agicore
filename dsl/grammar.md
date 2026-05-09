@@ -69,14 +69,15 @@ APP <name> {
 
 ### Fields
 
-| Field    | Required | Default             | Description                        |
-|----------|----------|---------------------|------------------------------------|
-| TITLE    | yes      | --                  | Window title / app display name    |
-| WINDOW   | no       | 1200x800 frameless  | Window dimensions and style        |
-| DB       | yes      | --                  | SQLite database filename           |
-| PORT     | no       | 5173                | Vite dev server port               |
-| THEME    | no       | dark                | Default theme                      |
-| ICON     | no       | --                  | Path to app icon                   |
+| Field     | Required | Default             | Description                        |
+|-----------|----------|---------------------|------------------------------------|
+| TITLE     | yes      | --                  | Window title / app display name    |
+| WINDOW    | no       | 1200x800 frameless  | Window dimensions and style        |
+| DB        | yes      | --                  | SQLite database filename           |
+| PORT      | no       | 5173                | Vite dev server port               |
+| THEME     | no       | dark                | Default theme                      |
+| ICON      | no       | --                  | Path to app icon                   |
+| TELEMETRY | no       | off                 | Auto-emission mode: `auto` (every action emits a TelemetryEvent), `explicit` (only marked actions emit), `off` |
 
 ### Example
 
@@ -1487,6 +1488,145 @@ This is how a SKILL becomes a SKILLDOC: by gaining provenance, governance, and d
 
 ---
 
+## REASONER Declaration (Periodic AI Analysis Loop)
+
+A REASONER is a recurring AI job that consumes packets from a CHANNEL over a time window, runs a signed SKILLDOC against them, and emits structured insight packets back to a CHANNEL. It is the runtime form of "AI noticed a pattern the humans hadn't seen" — the cybernetic feedback loop that turns observation into recommendation.
+
+REASONER is the missing primitive for organizational intelligence. It composes naturally with PACKET (input/output shape), CHANNEL (transport), SKILLDOC (the signed cognition module), AUTHORITY (signing), NODE (where it runs), and the APP-level `TELEMETRY auto` flag (which guarantees there is something to reason over).
+
+### Syntax
+
+```
+REASONER name {
+  DESCRIPTION  string
+
+  INPUT {
+    CHANNEL    ident_list
+    WINDOW     string         // "1h", "24h", "7d", "30d"
+    FILTER     string          // optional predicate
+  }
+
+  USES         skilldoc_ident   // signed cognition module that drives analysis
+  TIER         number           // optional ROUTER tier hint
+
+  OUTPUT {
+    PACKET     packet_ident
+    CHANNEL    channel_ident
+  }
+
+  SCHEDULE     identifier | string   // daily | hourly | weekly | on_demand | event_triggered | "0 6 * * *"
+
+  GOVERNANCE { ... }                  // optional, same shape as SKILLDOC
+}
+```
+
+### Fields
+
+| Field         | Required | Description                                                          |
+|---------------|----------|----------------------------------------------------------------------|
+| `DESCRIPTION` | Yes      | One-line description of what the reasoner analyzes                   |
+| `INPUT`       | Yes      | Input source: channels, time window, optional filter predicate       |
+| `USES`        | No       | SKILLDOC reference — the signed cognition that drives the reasoning  |
+| `TIER`        | No       | ROUTER tier hint (1=free, 2=mid, 3=premium)                          |
+| `OUTPUT`      | Yes      | Output target: packet shape and (optional) channel to emit on        |
+| `SCHEDULE`    | Yes      | Cadence: keyword (daily, hourly, weekly, on_demand, event_triggered) or cron string |
+| `GOVERNANCE`  | No       | Signing, clearance, execution, and audit constraints (SKILLDOC shape) |
+
+### Schedules
+
+- `on_demand` — triggered manually (chat command, API call, dashboard button)
+- `event_triggered` — triggered by an inbound packet matching a filter
+- `hourly` / `daily` / `weekly` — fixed cadence
+- `"<cron>"` — explicit cron string for arbitrary cadence
+
+### Example
+
+```
+REASONER organization_reasoner {
+  DESCRIPTION  "Daily reasoning over telemetry: surfaces bottlenecks, automation candidates, risks"
+
+  INPUT {
+    CHANNEL    telemetry_stream
+    WINDOW     "7d"
+    FILTER     "success IS NOT NULL"
+  }
+
+  USES         organization_analysis
+  TIER         2
+
+  OUTPUT {
+    PACKET     OrgInsight
+    CHANNEL    insight_stream
+  }
+
+  SCHEDULE     daily
+
+  GOVERNANCE {
+    SIGNED_BY      OrgAuthority
+    EXECUTE_ONLY   analytics_node
+    REQUIRE        analyst
+    AUDIT          all_actions
+  }
+}
+```
+
+### Generates
+
+- A scheduled job that queries the input CHANNEL(s) for packets within `WINDOW`
+- A windowing layer that aggregates and summarizes telemetry before sending to the LLM
+- An LLM call routed via the ROUTER (at `TIER` if specified) using `USES` SKILLDOC as system prompt
+- A typed packet emitter that publishes `OUTPUT.PACKET` to `OUTPUT.CHANNEL`
+- Cron registration (or event subscription) per `SCHEDULE`
+- Signing and audit hooks per `GOVERNANCE`
+
+### Canonical Packet Shapes
+
+The REASONER pattern works with any packet shapes you define, but two canonical shapes are conventional:
+
+**TelemetryEvent** — input shape, one event per recorded action:
+- `source` (ERP_SERVICE, MCP_TOOL, CHAT, WORKFLOW, SYSTEM)
+- `event_type`, `tool_or_service`, `user_id`, `roles`
+- `input_summary`, `outcome_summary` (redacted, structured — never raw payloads)
+- `success`, `duration_ms`, `correlation_id`, `tenant_id`
+
+**OrgInsight** — output shape, one insight per finding:
+- `category` (BOTTLENECK, AUTOMATION, RISK, TRAINING, SUMMARY)
+- `scope` (GLOBAL, TEAM, USER) + optional `target_id`
+- `title`, `detail`, `confidence`, `impact_score`
+
+The category and scope enums map directly onto AUTHORITY levels for visibility (admin sees GLOBAL, team_lead sees TEAM with matching target_id, user sees USER with matching target_id).
+
+### Composition With Other Primitives
+
+| Primitive | Role in a REASONER                                                  |
+|-----------|----------------------------------------------------------------------|
+| PACKET    | Input event shape and output insight shape                          |
+| CHANNEL   | Transport for both input telemetry and output insights              |
+| SKILLDOC  | The signed system prompt — what "good analysis" means to this org   |
+| AUTHORITY | Signs the output insights so they can be trusted downstream         |
+| NODE      | Constrains where the reasoner runs (`EXECUTE_ONLY`)                 |
+| ROUTER    | Selects the LLM tier per cost/quality/latency policy                |
+| LIFECYCLE | Reasoner outputs can age out, with old insights graduating to Elder |
+| APP       | `TELEMETRY auto` ensures the input stream is populated automatically |
+
+### The Cybernetic Loop
+
+```
+APP TELEMETRY auto
+    └─> emits TelemetryEvent packets to telemetry_stream
+            └─> REASONER reads windowed batch
+                    └─> USES SKILLDOC for analysis context
+                            └─> ROUTER selects LLM tier
+                                    └─> emits OrgInsight packets to insight_stream
+                                            └─> ENTITY persists for dashboards
+                                                    └─> humans act on signals
+                                                            └─> new actions feed back into telemetry_stream
+```
+
+This is Meridian Level 2 made first-class. The AI finds connections you missed; you decide what to do about them.
+
+---
+
 ## LIFECYCLE Declaration (Temporal Intelligence Graduation)
 
 Defines the temporal lifecycle for an intelligence instance. When an instance becomes stale (its learned patterns no longer reflect current conditions), it graduates to Elder status and a fresh instance starts learning from current interactions. Elders remain available for historical knowledge via an escalation chain.
@@ -2602,7 +2742,7 @@ file            = app_decl (entity_decl | action_decl | view_decl |
                   workflow_decl | pipeline_decl | qc_decl | vault_decl |
                   rule_decl | fact_decl | state_decl | pattern_decl |
                   score_decl | module_decl |
-                  router_decl | skill_decl | skilldoc_decl |
+                  router_decl | skill_decl | skilldoc_decl | reasoner_decl |
                   lifecycle_decl | breed_decl |
                   packet_decl | authority_decl | channel_decl |
                   identity_decl | feed_decl |
@@ -2635,6 +2775,7 @@ module_decl     = "MODULE" IDENT "{" module_body "}"
 router_decl     = "ROUTER" IDENT "{" router_body "}"
 skill_decl      = "SKILL" IDENT "{" skill_body "}"
 skilldoc_decl   = "SKILLDOC" IDENT "{" skilldoc_body "}"
+reasoner_decl   = "REASONER" IDENT "{" reasoner_body "}"
 lifecycle_decl  = "LIFECYCLE" IDENT "{" lifecycle_body "}"
 breed_decl      = "BREED" IDENT "{" breed_body "}"
 

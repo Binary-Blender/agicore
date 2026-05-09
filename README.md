@@ -144,12 +144,12 @@ The result is systems that are:
 
 ## Status
 
-Phases 1 and 2 are complete. The DSL covers 32 declaration types across 7 layers:
+Phases 1 and 2 are complete. The DSL covers 33 declaration types across 7 layers:
 
 - **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST
 - **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT
 - **Expert System:** RULE, FACT, STATE, PATTERN, SCORE, MODULE
-- **Cooperative Intelligence:** ROUTER, SKILL, SKILLDOC, LIFECYCLE, BREED
+- **Cooperative Intelligence:** ROUTER, SKILL, SKILLDOC, REASONER, LIFECYCLE, BREED
 - **Semantic Infrastructure:** PACKET, AUTHORITY, CHANNEL, IDENTITY, FEED
 - **Ambient Intelligence:** NODE, SENSOR, ZONE
 - **Semantic Operating Environment:** SESSION, COMPILER

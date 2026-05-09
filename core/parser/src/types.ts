@@ -50,6 +50,8 @@ export interface FieldDef {
 
 // --- APP Declaration ---
 
+export type TelemetryMode = 'auto' | 'explicit' | 'off';
+
 export interface AppDecl {
   kind: 'app';
   name: string;
@@ -63,6 +65,7 @@ export interface AppDecl {
   port?: number;
   theme?: ThemeOption;
   icon?: string;
+  telemetry?: TelemetryMode;
   span: SourceSpan;
 }
 
@@ -439,6 +442,34 @@ export interface SkillDocDecl {
   span: SourceSpan;
 }
 
+// --- REASONER Declaration (Periodic AI Analysis Loop) ---
+
+export type ReasonerSchedule = 'on_demand' | 'event_triggered' | 'hourly' | 'daily' | 'weekly' | string;
+
+export interface ReasonerInput {
+  channels: string[];
+  window?: string;
+  filter?: string;
+}
+
+export interface ReasonerOutput {
+  packet?: string;
+  channel?: string;
+}
+
+export interface ReasonerDecl {
+  kind: 'reasoner';
+  name: string;
+  description: string;
+  input: ReasonerInput;
+  uses?: string;
+  tier?: number;
+  output: ReasonerOutput;
+  schedule: ReasonerSchedule;
+  governance?: SkillDocGovernance;
+  span: SourceSpan;
+}
+
 // --- LIFECYCLE Declaration (Temporal Graduation) ---
 
 export interface LifecycleEscalation {
@@ -699,6 +730,7 @@ export type Declaration =
   | RouterDecl
   | SkillDecl
   | SkillDocDecl
+  | ReasonerDecl
   | LifecycleDecl
   | BreedDecl
   | PacketDecl
@@ -732,6 +764,7 @@ export interface AgiFile {
   routers: RouterDecl[];
   skills: SkillDecl[];
   skilldocs: SkillDocDecl[];
+  reasoners: ReasonerDecl[];
   lifecycles: LifecycleDecl[];
   breeds: BreedDecl[];
   packets: PacketDecl[];

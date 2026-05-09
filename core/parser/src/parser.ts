@@ -9,6 +9,8 @@ import type {
   QCDecl, VaultDecl,
   RouterDecl, RouterTier, RouterModelDef,
   SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
+  ReasonerDecl, ReasonerInput, ReasonerOutput, ReasonerSchedule,
+  TelemetryMode,
   LifecycleDecl, LifecycleEscalation,
   BreedDecl, BreedFitness,
   PacketDecl, PacketField, PacketValidationRule,
@@ -67,6 +69,7 @@ export class Parser {
     const routers: RouterDecl[] = [];
     const skills: SkillDecl[] = [];
     const skilldocs: SkillDocDecl[] = [];
+    const reasoners: ReasonerDecl[] = [];
     const lifecycles: LifecycleDecl[] = [];
     const breeds: BreedDecl[] = [];
     const packets: PacketDecl[] = [];
@@ -139,6 +142,9 @@ export class Parser {
         case TokenType.SKILLDOC:
           skilldocs.push(this.parseSkillDoc());
           break;
+        case TokenType.REASONER:
+          reasoners.push(this.parseReasoner());
+          break;
         case TokenType.LIFECYCLE:
           lifecycles.push(this.parseLifecycle());
           break;
@@ -180,7 +186,7 @@ export class Parser {
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers };
   }
 
   // --- APP ---
@@ -196,6 +202,7 @@ export class Parser {
     let port: number | undefined;
     let theme: ThemeOption | undefined;
     let icon: string | undefined;
+    let telemetry: TelemetryMode | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const field = this.current();
@@ -232,6 +239,10 @@ export class Parser {
           this.advance();
           icon = this.expectString();
           break;
+        case TokenType.TELEMETRY:
+          this.advance();
+          telemetry = this.expectIdentifier() as TelemetryMode;
+          break;
         default:
           this.error(`Unexpected field in APP: ${field.value}`);
       }
@@ -242,7 +253,7 @@ export class Parser {
     if (!title) this.error('APP requires a TITLE field');
     if (!db) this.error('APP requires a DB field');
 
-    return { kind: 'app', name, title, window, db, port, theme, icon, span: { start, end } };
+    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, span: { start, end } };
   }
 
   // --- ENTITY ---
@@ -1664,6 +1675,127 @@ export class Parser {
 
     this.expectToken(TokenType.RBRACE);
     return { semanticDensity, intentPreservation, tokenEfficiency };
+  }
+
+  // --- REASONER ---
+
+  private parseReasoner(): ReasonerDecl {
+    const start = this.expectToken(TokenType.REASONER).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let input: ReasonerInput = { channels: [] };
+    let uses: string | undefined;
+    let tier: number | undefined;
+    let output: ReasonerOutput = {};
+    let schedule: ReasonerSchedule = 'on_demand';
+    let governance: SkillDocGovernance | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance();
+        description = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.INPUT) {
+        this.advance();
+        input = this.parseReasonerInput();
+        continue;
+      }
+      if (token.type === TokenType.USES) {
+        this.advance();
+        uses = this.expectIdentifier();
+        continue;
+      }
+      if (token.type === TokenType.TIER) {
+        this.advance();
+        tier = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        continue;
+      }
+      if (token.type === TokenType.OUTPUT) {
+        this.advance();
+        output = this.parseReasonerOutput();
+        continue;
+      }
+      if (token.type === TokenType.SCHEDULE) {
+        this.advance();
+        // Accept either an identifier (daily, hourly, etc.) or a string literal (cron)
+        if (this.check(TokenType.STRING_LITERAL)) {
+          schedule = this.expectToken(TokenType.STRING_LITERAL).value;
+        } else {
+          schedule = this.expectIdentifier() as ReasonerSchedule;
+        }
+        continue;
+      }
+      if (token.type === TokenType.GOVERNANCE) {
+        this.advance();
+        governance = this.parseSkillDocGovernance();
+        continue;
+      }
+      this.error(`Unexpected token in REASONER: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'reasoner', name, description, input, uses, tier, output, schedule, governance, span: { start, end } };
+  }
+
+  private parseReasonerInput(): ReasonerInput {
+    this.expectToken(TokenType.LBRACE);
+
+    let channels: string[] = [];
+    let window: string | undefined;
+    let filter: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.CHANNEL) {
+        this.advance();
+        channels = this.parseIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.WINDOW) {
+        this.advance();
+        window = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.FILTER) {
+        this.advance();
+        filter = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      this.error(`Unexpected token in REASONER INPUT: ${token.value}`);
+    }
+
+    this.expectToken(TokenType.RBRACE);
+    return { channels, window, filter };
+  }
+
+  private parseReasonerOutput(): ReasonerOutput {
+    this.expectToken(TokenType.LBRACE);
+
+    let packet: string | undefined;
+    let channel: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.PACKET) {
+        this.advance();
+        packet = this.expectIdentifier();
+        continue;
+      }
+      if (token.type === TokenType.CHANNEL) {
+        this.advance();
+        channel = this.expectIdentifier();
+        continue;
+      }
+      this.error(`Unexpected token in REASONER OUTPUT: ${token.value}`);
+    }
+
+    this.expectToken(TokenType.RBRACE);
+    return { packet, channel };
   }
 
   // --- LIFECYCLE ---

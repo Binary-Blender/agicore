@@ -10,6 +10,7 @@ export type {
   QCDecl, VaultDecl,
   RouterDecl, RouterTier, RouterModelDef,
   SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
+  ReasonerDecl, ReasonerInput, ReasonerOutput, ReasonerSchedule, TelemetryMode,
   LifecycleDecl, LifecycleEscalation,
   BreedDecl, BreedFitness,
   PacketDecl, PacketField, PacketValidationRule,
