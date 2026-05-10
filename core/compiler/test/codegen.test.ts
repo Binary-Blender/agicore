@@ -64,7 +64,9 @@ assert(files.has('src-tauri/src/db.rs'), 'Should have db.rs');
 
 const studentRs = files.get('src-tauri/src/commands/student.rs')!;
 assert(studentRs.includes('pub struct Student'), 'Should have Student struct');
-assert(studentRs.includes('#[derive(Debug, Clone, Serialize, Deserialize, specta::Type)]'), 'Should have derives');
+assert(studentRs.includes('#[derive(Debug, Clone, Serialize, Deserialize)]'), 'Should have derives');
+assert(!studentRs.includes('specta::Type'), 'Should NOT derive specta::Type (we generate TS types ourselves)');
+assert(!studentRs.includes('#[specta::specta]'), 'Should NOT decorate commands with #[specta::specta]');
 assert(studentRs.includes('#[serde(rename_all = "camelCase")]'), 'Should have camelCase rename');
 assert(studentRs.includes('pub struct CreateStudentInput'), 'Should have CreateInput');
 assert(studentRs.includes('pub struct UpdateStudentInput'), 'Should have UpdateInput');
@@ -74,9 +76,18 @@ assert(studentRs.includes('pub fn create_student'), 'Should have create command'
 assert(studentRs.includes('pub fn get_student'), 'Should have get command');
 assert(studentRs.includes('pub fn update_student'), 'Should have update command');
 assert(studentRs.includes('pub fn delete_student'), 'Should have delete command');
+assert(studentRs.includes('db.lock()'), 'Should call db.lock() — Mutex<Connection> has no .get() method');
+assert(!studentRs.includes('db.get()'), 'Should not call db.get() — that is the r2d2 pool API, not Mutex');
+
+const dbRs = files.get('src-tauri/src/db.rs')!;
+assert(dbRs.includes('pub fn init_db(db_path: PathBuf)'), 'init_db should accept the db path so it can be resolved via the Tauri 2 AppHandle');
+assert(!dbRs.includes('tauri::api'), 'db.rs must not use the Tauri 1 tauri::api module');
 
 const mainRs = files.get('src-tauri/src/main.rs')!;
 assert(mainRs.includes('tauri::generate_handler!'), 'main.rs should register handlers');
+assert(mainRs.includes('use tauri::Manager'), 'main.rs should import Manager so app.path() works');
+assert(mainRs.includes('.setup('), 'main.rs should init db inside a setup hook so the AppHandle is available');
+assert(mainRs.includes('app.path().app_data_dir()'), 'main.rs should use Tauri 2 path API');
 assert(mainRs.includes('commands::student::list_students'), 'Should register list_students');
 
 // --- TypeScript ---
@@ -150,8 +161,7 @@ assert(files.has('src-tauri/icons/README.md'), 'Should include icons README expl
 const cargo = files.get('src-tauri/Cargo.toml')!;
 assert(cargo.includes('rusqlite'), 'Should depend on rusqlite');
 assert(cargo.includes('serde'), 'Should depend on serde');
-assert(cargo.includes('specta'), 'Should depend on specta');
-assert(/specta\s*=\s*\{\s*version\s*=\s*"=2\.0\.0-rc\./.test(cargo), 'specta must pin to a 2.0.0-rc.x release (no stable 2.x exists yet)');
+assert(!cargo.includes('specta'), 'Should NOT depend on specta — Agicore generates TS types itself, specta is dead weight');
 
 // --- Project Files ---
 section('Project files');

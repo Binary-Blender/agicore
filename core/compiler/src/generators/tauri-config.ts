@@ -63,7 +63,6 @@ serde_json = "1"
 rusqlite = { version = "0.31", features = ["bundled"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-specta = { version = "=2.0.0-rc.20", features = ["derive"] }
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }

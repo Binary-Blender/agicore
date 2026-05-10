@@ -13,7 +13,7 @@ function rustType(agiType: AgiType, required: boolean): string {
       case 'bool':     return 'bool';
       case 'date':     return 'String';
       case 'datetime': return 'String';
-      case 'json':     return 'serde_json::Value';
+      case 'json':     return 'String';
       case 'id':       return 'String';
     }
   })();
@@ -27,7 +27,7 @@ function isRequired(field: FieldDef): boolean {
 function generateStruct(entity: EntityDecl): string {
   const lines: string[] = [];
 
-  lines.push('#[derive(Debug, Clone, Serialize, Deserialize, specta::Type)]');
+  lines.push('#[derive(Debug, Clone, Serialize, Deserialize)]');
   lines.push('#[serde(rename_all = "camelCase")]');
   lines.push(`pub struct ${entity.name} {`);
   lines.push('    pub id: String,');
@@ -57,7 +57,7 @@ function generateCreateInput(entity: EntityDecl): string {
   const lines: string[] = [];
   const name = `Create${entity.name}Input`;
 
-  lines.push('#[derive(Debug, Clone, Deserialize, specta::Type)]');
+  lines.push('#[derive(Debug, Clone, Deserialize)]');
   lines.push('#[serde(rename_all = "camelCase")]');
   lines.push(`pub struct ${name} {`);
 
@@ -82,7 +82,7 @@ function generateUpdateInput(entity: EntityDecl): string {
   const lines: string[] = [];
   const name = `Update${entity.name}Input`;
 
-  lines.push('#[derive(Debug, Clone, Deserialize, specta::Type)]');
+  lines.push('#[derive(Debug, Clone, Deserialize)]');
   lines.push('#[serde(rename_all = "camelCase")]');
   lines.push(`pub struct ${name} {`);
 
@@ -108,9 +108,8 @@ function generateCrudCommands(entity: EntityDecl): string {
   // List
   if (ops.includes('list')) {
     lines.push(`#[tauri::command]`);
-    lines.push(`#[specta::specta]`);
     lines.push(`pub fn list_${table}(db: tauri::State<'_, DbPool>) -> Result<Vec<${name}>, String> {`);
-    lines.push(`    let conn = db.get().map_err(|e| e.to_string())?;`);
+    lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
     lines.push(`    let mut stmt = conn.prepare("SELECT * FROM ${table} ORDER BY created_at DESC")`);
     lines.push(`        .map_err(|e| e.to_string())?;`);
     lines.push(`    let rows = stmt.query_map([], |row| Ok(${name}::from_row(row)))`);
@@ -135,9 +134,8 @@ function generateCrudCommands(entity: EntityDecl): string {
     const colList = allCols.join(', ');
 
     lines.push(`#[tauri::command]`);
-    lines.push(`#[specta::specta]`);
     lines.push(`pub fn create_${snake}(db: tauri::State<'_, DbPool>, input: Create${name}Input) -> Result<${name}, String> {`);
-    lines.push(`    let conn = db.get().map_err(|e| e.to_string())?;`);
+    lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
     lines.push(`    let id = uuid::Uuid::new_v4().to_string();`);
     lines.push(`    let now = chrono::Utc::now().to_rfc3339();`);
     lines.push(`    conn.execute(`);
@@ -174,9 +172,8 @@ function generateCrudCommands(entity: EntityDecl): string {
   // Read
   if (ops.includes('read')) {
     lines.push(`#[tauri::command]`);
-    lines.push(`#[specta::specta]`);
     lines.push(`pub fn get_${snake}(db: tauri::State<'_, DbPool>, id: String) -> Result<${name}, String> {`);
-    lines.push(`    let conn = db.get().map_err(|e| e.to_string())?;`);
+    lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
     lines.push(`    conn.query_row("SELECT * FROM ${table} WHERE id = ?", [&id], |row| {`);
     lines.push(`        Ok(${name}::from_row(row))`);
     lines.push(`    }).map_err(|e| e.to_string())`);
@@ -187,9 +184,8 @@ function generateCrudCommands(entity: EntityDecl): string {
   // Update
   if (ops.includes('update')) {
     lines.push(`#[tauri::command]`);
-    lines.push(`#[specta::specta]`);
     lines.push(`pub fn update_${snake}(db: tauri::State<'_, DbPool>, id: String, input: Update${name}Input) -> Result<${name}, String> {`);
-    lines.push(`    let conn = db.get().map_err(|e| e.to_string())?;`);
+    lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
     lines.push(`    let mut sets: Vec<String> = Vec::new();`);
     lines.push(`    let mut params: Vec<Box<dyn rusqlite::types::ToSql>> = Vec::new();`);
     for (const f of entity.fields) {
@@ -215,9 +211,8 @@ function generateCrudCommands(entity: EntityDecl): string {
   // Delete
   if (ops.includes('delete')) {
     lines.push(`#[tauri::command]`);
-    lines.push(`#[specta::specta]`);
     lines.push(`pub fn delete_${snake}(db: tauri::State<'_, DbPool>, id: String) -> Result<(), String> {`);
-    lines.push(`    let conn = db.get().map_err(|e| e.to_string())?;`);
+    lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
     lines.push(`    conn.execute("DELETE FROM ${table} WHERE id = ?", [&id])`);
     lines.push(`        .map_err(|e| e.to_string())?;`);
     lines.push(`    Ok(())`);
@@ -318,11 +313,18 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     'mod commands;',
     'mod db;',
     '',
-    'fn main() {',
-    '    let pool = db::init_db();',
+    'use tauri::Manager;',
     '',
+    'fn main() {',
     '    tauri::Builder::default()',
-    '        .manage(pool)',
+    '        .setup(|app| {',
+    '            let app_dir = app.path().app_data_dir().expect("failed to resolve app data dir");',
+    '            std::fs::create_dir_all(&app_dir).ok();',
+    `            let db_path = app_dir.join("${ast.app.db}");`,
+    '            let pool = db::init_db(db_path);',
+    '            app.manage(pool);',
+    '            Ok(())',
+    '        })',
     '        .invoke_handler(tauri::generate_handler![',
     ...commandList.map(c => `            ${c},`),
     '        ])',
@@ -337,15 +339,12 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   // Generate db.rs
   const dbRs = [
     'use rusqlite::Connection;',
+    'use std::path::PathBuf;',
     'use std::sync::Mutex;',
     '',
     'pub type DbPool = Mutex<Connection>;',
     '',
-    'pub fn init_db() -> DbPool {',
-    `    let db_path = tauri::api::path::app_data_dir(&tauri::Config::default())`,
-    `        .unwrap_or_default()`,
-    `        .join("${ast.app.db}");`,
-    '',
+    'pub fn init_db(db_path: PathBuf) -> DbPool {',
     '    let conn = Connection::open(&db_path).expect("Failed to open database");',
     '    conn.execute_batch("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;")',
     '        .expect("Failed to set pragmas");',
