@@ -31,8 +31,11 @@ function generateEntityTable(entity: EntityDecl, allEntities: EntityDecl[]): str
 
   lines.push(`CREATE TABLE IF NOT EXISTS ${tableName} (`);
 
-  // Primary key
+  // SQLite requires all columns first, then all table-level constraints
+  // (PRIMARY KEY at the column level is fine; FOREIGN KEY must come last).
   const columns: string[] = [];
+  const constraints: string[] = [];
+
   columns.push('  id TEXT PRIMARY KEY');
 
   // Fields
@@ -45,13 +48,13 @@ function generateEntityTable(entity: EntityDecl, allEntities: EntityDecl[]): str
     columns.push(col);
   }
 
-  // Foreign keys from BELONGS_TO
+  // Foreign-key columns + their table-level constraints
   for (const rel of entity.relationships) {
     if (rel.type === 'BELONGS_TO') {
       const fkCol = toForeignKey(rel.target);
       const targetTable = toTableName(rel.target);
       columns.push(`  ${fkCol} TEXT NOT NULL`);
-      columns.push(`  FOREIGN KEY (${fkCol}) REFERENCES ${targetTable}(id) ON DELETE CASCADE`);
+      constraints.push(`  FOREIGN KEY (${fkCol}) REFERENCES ${targetTable}(id) ON DELETE CASCADE`);
     }
   }
 
@@ -61,7 +64,7 @@ function generateEntityTable(entity: EntityDecl, allEntities: EntityDecl[]): str
     columns.push("  updated_at TEXT DEFAULT (datetime('now'))");
   }
 
-  lines.push(columns.join(',\n'));
+  lines.push([...columns, ...constraints].join(',\n'));
   lines.push(');');
 
   // Indexes

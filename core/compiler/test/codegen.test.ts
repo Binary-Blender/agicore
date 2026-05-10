@@ -53,6 +53,17 @@ assert(sql!.includes('FOREIGN KEY (student_id)'), 'Should have student FK');
 assert(sql!.includes('ON DELETE CASCADE'), 'Should cascade deletes');
 assert(sql!.includes("created_at TEXT DEFAULT (datetime('now'))"), 'Should have timestamps');
 
+// SQLite parses table-level constraints only after all column defs.
+// Verify FOREIGN KEY does not appear before created_at within any CREATE TABLE block.
+for (const block of sql!.matchAll(/CREATE TABLE IF NOT EXISTS \w+ \(([^;]+)\);/g)) {
+  const body = block[1];
+  const fkIdx = body.indexOf('FOREIGN KEY');
+  const tsIdx = body.indexOf('created_at');
+  if (fkIdx !== -1 && tsIdx !== -1) {
+    assert(fkIdx > tsIdx, `FOREIGN KEY must come after column defs (incl. timestamps) in:\n${block[0]}`);
+  }
+}
+
 // --- Rust ---
 section('Rust code generation');
 assert(files.has('src-tauri/src/commands/student.rs'), 'Should have student.rs');
