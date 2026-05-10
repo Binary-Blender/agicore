@@ -78,6 +78,7 @@ assert(studentRs.includes('pub fn update_student'), 'Should have update command'
 assert(studentRs.includes('pub fn delete_student'), 'Should have delete command');
 assert(studentRs.includes('db.lock()'), 'Should call db.lock() — Mutex<Connection> has no .get() method');
 assert(!studentRs.includes('db.get()'), 'Should not call db.get() — that is the r2d2 pool API, not Mutex');
+assert(/conn.*drop\(conn\);\s*\n\s*get_student\(db,/s.test(studentRs), 'create_/update_ must drop the MutexGuard before calling get_ (otherwise db is still borrowed)');
 
 const dbRs = files.get('src-tauri/src/db.rs')!;
 assert(dbRs.includes('pub fn init_db(db_path: PathBuf)'), 'init_db should accept the db path so it can be resolved via the Tauri 2 AppHandle');

@@ -164,6 +164,7 @@ function generateCrudCommands(entity: EntityDecl): string {
     }
     lines.push(`        ],`);
     lines.push(`    ).map_err(|e| e.to_string())?;`);
+    lines.push(`    drop(conn);`);
     lines.push(`    get_${snake}(db, id)`);
     lines.push(`}`);
     lines.push('');
@@ -203,6 +204,7 @@ function generateCrudCommands(entity: EntityDecl): string {
     lines.push(`    let sql = format!("UPDATE ${table} SET {} WHERE id = ?", sets.join(", "));`);
     lines.push(`    let param_refs: Vec<&dyn rusqlite::types::ToSql> = params.iter().map(|p| p.as_ref()).collect();`);
     lines.push(`    conn.execute(&sql, param_refs.as_slice()).map_err(|e| e.to_string())?;`);
+    lines.push(`    drop(conn);`);
     lines.push(`    get_${snake}(db, id)`);
     lines.push(`}`);
     lines.push('');
