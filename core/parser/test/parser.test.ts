@@ -159,6 +159,101 @@ assert(enrollment.relationships[0]!.type === 'BELONGS_TO', 'Should be BELONGS_TO
 assert(enrollment.relationships[0]!.target === 'Student', 'Should belong to Student');
 assert(enrollment.fields[0]!.defaultValue === 'active', 'Status default should be "active"');
 
+// Default ordering: an entity without ORDER must not carry one on the AST,
+// so codegen can apply its DESC default without re-checking the source.
+assert(student.order === undefined, 'Student without ORDER should be undefined on AST');
+assert(enrollment.order === undefined, 'Enrollment without ORDER should be undefined on AST');
+assert(student.seeds === undefined, 'Student without SEED should be undefined on AST');
+
+// --- Test: ENTITY ORDER ASC / DESC ---
+//
+// ORDER is a field-order-independent body keyword. It records the user's
+// intended default sort direction for `list_<entity>` (and the BELONGS_TO+
+// CURRENT filtered variant). Absence => undefined, codegen defaults to DESC.
+section('ENTITY ORDER ASC / DESC');
+
+const orderAsc = parse(`
+APP test { TITLE "T" DB t.db }
+ENTITY ChatMessage {
+  text: string REQUIRED
+  ORDER ASC
+  TIMESTAMPS
+}
+`);
+assert(orderAsc.entities[0]!.order === 'ASC', 'ORDER ASC should parse to "ASC"');
+
+const orderDesc = parse(`
+APP test { TITLE "T" DB t.db }
+ENTITY ChatMessage {
+  text: string REQUIRED
+  ORDER DESC
+  TIMESTAMPS
+}
+`);
+assert(orderDesc.entities[0]!.order === 'DESC', 'ORDER DESC should parse to "DESC"');
+
+// Position-independence: ORDER may appear before fields, between relations,
+// after TIMESTAMPS — wherever, like every other ENTITY body keyword.
+const orderReordered = parse(`
+APP test { TITLE "T" DB t.db }
+ENTITY Msg {
+  ORDER ASC
+  TIMESTAMPS
+  text: string REQUIRED
+}
+`);
+assert(orderReordered.entities[0]!.order === 'ASC', 'ORDER ASC should parse at top of body');
+
+// --- Test: ENTITY SEED block ---
+//
+// SEED { key: value ... } records one row to be INSERT OR IGNORE'd into the
+// table on every migration run. Multiple SEED blocks per entity are allowed.
+section('ENTITY SEED block');
+
+const seedSingle = parse(`
+APP test { TITLE "T" DB t.db }
+ENTITY User {
+  email: string REQUIRED
+  name: string
+  TIMESTAMPS
+
+  SEED {
+    id: "default-user"
+    email: "you@local"
+    name: "You"
+  }
+}
+`);
+const seedUser = seedSingle.entities[0]!;
+assert(Array.isArray(seedUser.seeds), 'SEED should produce an array on the AST');
+assert(seedUser.seeds?.length === 1, 'single SEED block should produce 1 record');
+assert(seedUser.seeds?.[0]!.fields.get('id') === 'default-user', 'SEED id should round-trip');
+assert(seedUser.seeds?.[0]!.fields.get('email') === 'you@local', 'SEED email should round-trip');
+assert(seedUser.seeds?.[0]!.fields.get('name') === 'You', 'SEED name should round-trip');
+
+// Multiple SEED blocks → multiple records, in declaration order.
+const seedMulti = parse(`
+APP test { TITLE "T" DB t.db }
+ENTITY Tag {
+  name: string REQUIRED
+  color: string
+  count: number
+  active: bool
+  TIMESTAMPS
+
+  SEED { id: "tag-1" name: "Red" color: "#f00" count: 0 active: true }
+  SEED { id: "tag-2" name: "Blue" color: "#00f" count: 5 active: false }
+}
+`);
+const seedTag = seedMulti.entities[0]!;
+assert(seedTag.seeds?.length === 2, 'two SEED blocks should produce 2 records');
+assert(seedTag.seeds?.[0]!.fields.get('id') === 'tag-1', 'first SEED id');
+assert(seedTag.seeds?.[1]!.fields.get('id') === 'tag-2', 'second SEED id');
+// Mixed literal types preserved through the parser.
+assert(seedTag.seeds?.[0]!.fields.get('count') === 0, 'SEED number literal preserved');
+assert(seedTag.seeds?.[0]!.fields.get('active') === true, 'SEED true literal preserved');
+assert(seedTag.seeds?.[1]!.fields.get('active') === false, 'SEED false literal preserved');
+
 // --- Test: ACTION ---
 
 section('ACTION parsing');

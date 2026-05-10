@@ -23,6 +23,10 @@ export enum TokenType {
   REQUIRED = 'REQUIRED',
   UNIQUE = 'UNIQUE',
   INDEX = 'INDEX',
+  ORDER = 'ORDER',
+  ASC = 'ASC',
+  DESC = 'DESC',
+  SEED = 'SEED',
 
   // App keywords
   TITLE = 'TITLE',
@@ -311,6 +315,10 @@ const KEYWORDS: Record<string, TokenType> = {
   REQUIRED: TokenType.REQUIRED,
   UNIQUE: TokenType.UNIQUE,
   INDEX: TokenType.INDEX,
+  ORDER: TokenType.ORDER,
+  ASC: TokenType.ASC,
+  DESC: TokenType.DESC,
+  SEED: TokenType.SEED,
   TITLE: TokenType.TITLE,
   WINDOW: TokenType.WINDOW,
   DB: TokenType.DB,

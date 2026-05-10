@@ -486,6 +486,117 @@ assert(miniApi.includes('export const listChatMessages = ()'), 'api.ts retains u
 assert(miniApi.includes('export const listChatMessagesBySession = (sessionId: string) =>'), 'api.ts adds listChatMessagesBySession wrapper with sessionId arg');
 assert(miniApi.includes("invoke<ChatMessage[]>('list_chat_messages_by_session', { sessionId })"), 'api.ts invokes filtered Rust command with sessionId arg');
 
+// --- ORDER ASC on ChatMessage drives ASC ORDER BY in BOTH list queries ---
+//
+// Default behavior (no ORDER) is DESC for back-compat (verified in the
+// existing assertion further up: `SELECT * FROM chat_messages ... ORDER BY created_at DESC`).
+// Here we add a second mini fixture that opts in to ORDER ASC and verify
+// both the unfiltered and the BELONGS_TO+CURRENT filtered list use ASC.
+const miniAsc = `
+APP miniAsc {
+  TITLE "MiniAsc"
+  WINDOW 800x600 frameless
+  DB miniAsc.db
+  PORT 5180
+  THEME dark
+  CURRENT Session
+}
+ENTITY Session { name: string REQUIRED  TIMESTAMPS }
+ENTITY ChatMessage {
+  text: string REQUIRED
+  BELONGS_TO Session
+  ORDER ASC
+  TIMESTAMPS
+}
+`;
+const miniAscRes = compile(miniAsc);
+const miniAscChat = miniAscRes.files.get('src-tauri/src/commands/chat_message.rs')!;
+assert(miniAscChat.includes('SELECT * FROM chat_messages ORDER BY created_at ASC'), 'ORDER ASC drives ASC in unfiltered list query');
+assert(miniAscChat.includes('SELECT * FROM chat_messages WHERE session_id = ? ORDER BY created_at ASC'), 'ORDER ASC drives ASC in BELONGS_TO+CURRENT filtered list query');
+assert(!miniAscChat.includes('ORDER BY created_at DESC'), 'ORDER ASC must not emit any stray DESC in this entity');
+
+// Back-compat: an entity with no ORDER still emits DESC (existing assertion
+// at line ~477 covers chat_messages_by_session DESC for the mini fixture
+// which has no ORDER declared).
+
+// --- SEED on User → INSERT OR IGNORE at end of migration ---
+//
+// Two SEED blocks across two entities; mixed literal types; single-quote
+// escaping must use SQLite-style doubled quotes; TIMESTAMPS-aware
+// auto-fill of created_at/updated_at when omitted.
+const seedMini = `
+APP seedApp {
+  TITLE "Seed"
+  WINDOW 800x600 frameless
+  DB seed.db
+  PORT 5181
+  THEME dark
+}
+ENTITY User {
+  email: string REQUIRED UNIQUE
+  name: string
+  active: bool
+  TIMESTAMPS
+
+  SEED {
+    id: "default-user"
+    email: "you@local"
+    name: "O'Brien"
+    active: true
+  }
+}
+ENTITY Tag {
+  name: string REQUIRED
+  count: number
+  TIMESTAMPS
+
+  SEED { id: "tag-red"  name: "Red"  count: 0 }
+  SEED { id: "tag-blue" name: "Blue" count: 5 }
+}
+`;
+const seedRes = compile(seedMini);
+const seedSql = seedRes.files.get('src-tauri/migrations/001_initial.sql')!;
+assert(seedSql.includes("INSERT OR IGNORE INTO users"), 'SEED on User emits INSERT OR IGNORE INTO users');
+assert(seedSql.includes("INSERT OR IGNORE INTO tags"), 'SEED on Tag emits INSERT OR IGNORE INTO tags');
+// Two Tag SEEDs => two INSERT lines.
+assert((seedSql.match(/INSERT OR IGNORE INTO tags/g) ?? []).length === 2, 'two SEED blocks on Tag yield two INSERT statements');
+// String literals get single-quoted; embedded single-quote doubled.
+assert(seedSql.includes("'default-user'"), 'string SEED values are single-quoted');
+assert(seedSql.includes("'O''Brien'"), "single-quote inside SEED string is escaped as SQLite '' double-up");
+// Bool true → 1, bool false absent here; number bare; numbers are not quoted.
+assert(seedSql.includes(', 1,'), 'bool true literal becomes SQL 1');
+assert(/count\) VALUES \(.*, 0,/.test(seedSql) || seedSql.includes(', 0,'), 'number literal 0 is bare in SQL');
+assert(seedSql.includes(', 5,'), 'number literal 5 is bare in SQL');
+// TIMESTAMPS auto-fill when SEED block doesn't specify created_at/updated_at.
+assert(seedSql.includes("datetime('now')"), 'TIMESTAMPS auto-fill datetime(\'now\') for SEED without explicit timestamps');
+// SEED block must be appended AFTER all CREATE TABLE/INDEX (schema-first).
+const lastCreate = Math.max(seedSql.lastIndexOf('CREATE TABLE'), seedSql.lastIndexOf('CREATE INDEX'));
+const firstInsert = seedSql.indexOf('INSERT OR IGNORE');
+assert(firstInsert > lastCreate, 'INSERT OR IGNORE must appear after every CREATE statement');
+
+// Bool false → 0 (covered in a separate fixture so we can assert both).
+const seedFalse = compile(`
+APP seedBool {
+  TITLE "Seed"
+  DB seedBool.db
+}
+ENTITY Flag {
+  on: bool
+  TIMESTAMPS
+  SEED { id: "off-flag" on: false }
+}
+`);
+const seedFalseSql = seedFalse.files.get('src-tauri/migrations/001_initial.sql')!;
+assert(seedFalseSql.includes(", 0,"), 'bool false literal becomes SQL 0 in SEED row');
+
+// Negative: entity without SEED produces NO INSERT OR IGNORE for that table.
+const noSeed = compile(`
+APP noSeed { TITLE "NoSeed" DB noSeed.db }
+ENTITY Bare { name: string REQUIRED  TIMESTAMPS }
+`);
+const noSeedSql = noSeed.files.get('src-tauri/migrations/001_initial.sql')!;
+assert(!noSeedSql.includes('INSERT OR IGNORE'), 'entity without SEED must produce no INSERT OR IGNORE');
+
 assert(miniStore.includes('loadChatMessagesForCurrentSession: () => Promise<void>'), 'store interface declares loadChatMessagesForCurrentSession');
 assert(miniStore.includes('loadChatMessagesForCurrentSession: async ()'), 'store implements loadChatMessagesForCurrentSession');
 assert(miniStore.includes('const sessionId = get().currentSessionId;'), 'store action reads currentSessionId via get()');

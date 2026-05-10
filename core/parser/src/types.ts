@@ -85,6 +85,26 @@ export interface Relationship {
   span: SourceSpan;
 }
 
+/**
+ * Default-ordering hint for generated `list_<entity>` queries. Drives
+ * `ORDER BY created_at <ASC|DESC>` in both the unfiltered list and the
+ * BELONGS_TO+CURRENT filtered variant. Defaults to `DESC` when omitted
+ * (back-compat with all pre-ORDER entity declarations).
+ */
+export type EntityOrder = 'ASC' | 'DESC';
+
+/**
+ * A SEED block on an ENTITY. Each block emits one `INSERT OR IGNORE INTO
+ * <table> (...) VALUES (...)` in the migration SQL, so the row is created
+ * idempotently on every app boot. The user supplies `id` explicitly (no
+ * UUID generation at seed time). Missing `created_at`/`updated_at` are
+ * filled with `datetime('now')` when the entity has TIMESTAMPS.
+ */
+export interface SeedRecord {
+  fields: Map<string, LiteralValue>;
+  span: SourceSpan;
+}
+
 export interface EntityDecl {
   kind: 'entity';
   name: string;
@@ -92,6 +112,10 @@ export interface EntityDecl {
   timestamps: boolean;
   crud: CrudOp[] | 'full';
   relationships: Relationship[];
+  /** Optional ORDER clause; codegen defaults to 'DESC' when undefined. */
+  order?: EntityOrder;
+  /** Zero or more SEED blocks (each yields one INSERT OR IGNORE). */
+  seeds?: SeedRecord[];
   span: SourceSpan;
 }
 

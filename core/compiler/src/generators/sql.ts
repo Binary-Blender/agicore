@@ -1,8 +1,20 @@
 // SQL Migration Generator
 // Generates SQLite migration files from ENTITY declarations
 
-import type { AgiFile, EntityDecl, FieldDef, AgiType } from '@agicore/parser';
+import type { AgiFile, EntityDecl, FieldDef, AgiType, LiteralValue } from '@agicore/parser';
 import { toTableName, toForeignKey, toSnakeCase } from '../naming.js';
+
+/**
+ * Format a SEED literal value as a SQLite SQL literal.
+ *  - strings: single-quoted; embedded `'` doubled to `''` (SQLite escape).
+ *  - bools:   1 / 0 (SQLite has no native bool — INTEGER, same as bool fields).
+ *  - numbers: bare literal.
+ */
+function sqlSeedLiteral(val: LiteralValue): string {
+  if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
+  if (typeof val === 'boolean') return val ? '1' : '0';
+  return String(val);
+}
 
 function sqlType(agiType: AgiType): string {
   switch (agiType) {
@@ -102,7 +114,35 @@ export function generateSql(ast: AgiFile): Map<string, string> {
 
   // Generate all tables in one migration file
   const tables = ast.entities.map(e => generateEntityTable(e, ast.entities));
-  const migration = pragmas + tables.join('\n\n');
+  let migration = pragmas + tables.join('\n\n');
+
+  // Append SEED-driven INSERT OR IGNORE statements AFTER every CREATE TABLE /
+  // CREATE INDEX, so the migration runs schema-first then seed-second.
+  // `execute_batch`-on-every-boot + INSERT OR IGNORE => idempotent: the row
+  // is created on first run and silently no-ops thereafter.
+  const seedLines: string[] = [];
+  for (const entity of ast.entities) {
+    if (!entity.seeds || entity.seeds.length === 0) continue;
+    const table = toTableName(entity.name);
+    for (const seed of entity.seeds) {
+      // Preserve insertion order so generated SQL is stable across runs.
+      const cols = Array.from(seed.fields.keys());
+      const vals = cols.map(c => sqlSeedLiteral(seed.fields.get(c)!));
+      // Auto-fill timestamps with datetime('now') when the entity has
+      // TIMESTAMPS and the SEED block didn't specify them explicitly.
+      if (entity.timestamps) {
+        if (!seed.fields.has('created_at')) { cols.push('created_at'); vals.push("datetime('now')"); }
+        if (!seed.fields.has('updated_at')) { cols.push('updated_at'); vals.push("datetime('now')"); }
+      }
+      seedLines.push(
+        `INSERT OR IGNORE INTO ${table} (${cols.join(', ')}) VALUES (${vals.join(', ')});`
+      );
+    }
+  }
+  if (seedLines.length > 0) {
+    migration += '\n\n-- SEED: idempotent INSERT OR IGNORE rows from ENTITY SEED blocks\n';
+    migration += seedLines.join('\n');
+  }
 
   files.set('src-tauri/migrations/001_initial.sql', migration);
 

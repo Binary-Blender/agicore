@@ -107,12 +107,17 @@ function generateCrudCommands(entity: EntityDecl, ast: AgiFile): string {
 
   const currentEntities = ast.app.current ?? [];
 
+  // ORDER ASC|DESC on the ENTITY drives BOTH the unfiltered list and the
+  // BELONGS_TO+CURRENT filtered variant. Missing => 'DESC' (back-compat with
+  // every entity declared before ORDER was a DSL keyword).
+  const orderDir = entity.order ?? 'DESC';
+
   // List
   if (ops.includes('list')) {
     lines.push(`#[tauri::command]`);
     lines.push(`pub fn list_${table}(db: tauri::State<'_, DbPool>) -> Result<Vec<${name}>, String> {`);
     lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
-    lines.push(`    let mut stmt = conn.prepare("SELECT * FROM ${table} ORDER BY created_at DESC")`);
+    lines.push(`    let mut stmt = conn.prepare("SELECT * FROM ${table} ORDER BY created_at ${orderDir}")`);
     lines.push(`        .map_err(|e| e.to_string())?;`);
     lines.push(`    let rows = stmt.query_map([], |row| Ok(${name}::from_row(row)))`);
     lines.push(`        .map_err(|e| e.to_string())?`);
@@ -133,7 +138,7 @@ function generateCrudCommands(entity: EntityDecl, ast: AgiFile): string {
       lines.push(`#[tauri::command]`);
       lines.push(`pub fn list_${table}_by_${parentSnake}(db: tauri::State<'_, DbPool>, ${parentSnake}_id: String) -> Result<Vec<${name}>, String> {`);
       lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
-      lines.push(`    let mut stmt = conn.prepare("SELECT * FROM ${table} WHERE ${fk} = ? ORDER BY created_at DESC")`);
+      lines.push(`    let mut stmt = conn.prepare("SELECT * FROM ${table} WHERE ${fk} = ? ORDER BY created_at ${orderDir}")`);
       lines.push(`        .map_err(|e| e.to_string())?;`);
       lines.push(`    let rows = stmt.query_map([&${parentSnake}_id], |row| Ok(${name}::from_row(row)))`);
       lines.push(`        .map_err(|e| e.to_string())?`);

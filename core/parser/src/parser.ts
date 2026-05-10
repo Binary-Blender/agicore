@@ -25,7 +25,7 @@ import type {
   ZoneDecl,
   SessionDecl, CompilerDecl,
   StateNode, StateTransition, ScoreThreshold,
-  FieldDef, FieldModifier, AgiType, CrudOp, Relationship,
+  FieldDef, FieldModifier, AgiType, CrudOp, Relationship, EntityOrder, SeedRecord,
   ActionParam, ActionOutput, LayoutType, ThemeOption,
   ModelMapping, TestGiven, TestExpect, AssertionOp,
   RuleCondition, WorkflowStep, OnFailBehavior,
@@ -287,6 +287,8 @@ export class Parser {
     let timestamps = false;
     let crud: CrudOp[] | 'full' = 'full';
     const relationships: Relationship[] = [];
+    let order: EntityOrder | undefined;
+    const seeds: SeedRecord[] = [];
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -322,12 +324,49 @@ export class Parser {
         continue;
       }
 
+      // ORDER ASC | DESC — drives generated list query default-sort direction.
+      // Missing => undefined here; codegen falls back to DESC for back-compat.
+      if (token.type === TokenType.ORDER) {
+        this.advance();
+        const dirTok = this.current();
+        if (dirTok.type === TokenType.ASC) {
+          order = 'ASC';
+          this.advance();
+        } else if (dirTok.type === TokenType.DESC) {
+          order = 'DESC';
+          this.advance();
+        } else {
+          this.error(`ORDER must be followed by ASC or DESC, got: ${dirTok.value}`);
+        }
+        continue;
+      }
+
+      // SEED { key: value ... } — emits one INSERT OR IGNORE in migration SQL.
+      // Multiple SEED blocks per entity are allowed (each yields one row).
+      if (token.type === TokenType.SEED) {
+        const seedStart = this.advance().location;
+        this.expectToken(TokenType.LBRACE);
+        const fieldsMap = new Map<string, LiteralValue>();
+        while (!this.check(TokenType.RBRACE)) {
+          const key = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const value = this.parseLiteral();
+          fieldsMap.set(key, value);
+        }
+        const seedEnd = this.expectToken(TokenType.RBRACE).location;
+        seeds.push({ fields: fieldsMap, span: { start: seedStart, end: seedEnd } });
+        continue;
+      }
+
       // Must be a field definition: name: type [= default] [modifiers]
       fields.push(this.parseFieldDef());
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'entity', name, fields, timestamps, crud, relationships, span: { start, end } };
+    const decl: EntityDecl = { kind: 'entity', name, fields, timestamps, crud, relationships, span: { start, end } };
+    if (order !== undefined) decl.order = order;
+    if (seeds.length > 0) decl.seeds = seeds;
+    return decl;
   }
 
   private parseFieldDef(): FieldDef {
