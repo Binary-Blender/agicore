@@ -7,15 +7,16 @@ import type {
   FactDecl, StateDecl, PatternDecl, ScoreDecl, ModuleDecl,
   PipelineDecl, PipelineRow, PipelineModule, PipelineConnection, PipelineModuleType,
   QCDecl, VaultDecl,
-  RouterDecl, RouterTier, RouterModelDef,
+  RouterDecl, RouterTier, RouterModelDef, CircuitBreaker,
   SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
   ReasonerDecl, ReasonerInput, ReasonerOutput, ReasonerSchedule,
+  TriggerDecl, TriggerWhen, TriggerFires, TriggerTargetKind,
   TelemetryMode,
   LifecycleDecl, LifecycleEscalation,
   BreedDecl, BreedFitness,
   PacketDecl, PacketField, PacketValidationRule,
   AuthorityDecl, AuthorityLevel, AuthoritySigning,
-  ChannelDecl, ChannelProtocol, ChannelDirection,
+  ChannelDecl, ChannelProtocol, ChannelDirection, ChannelOrdering,
   IdentityDecl, IdentityProfileField,
   FeedDecl, FeedSubscribeMode,
   EnrichOp,
@@ -70,6 +71,7 @@ export class Parser {
     const skills: SkillDecl[] = [];
     const skilldocs: SkillDocDecl[] = [];
     const reasoners: ReasonerDecl[] = [];
+    const triggers: TriggerDecl[] = [];
     const lifecycles: LifecycleDecl[] = [];
     const breeds: BreedDecl[] = [];
     const packets: PacketDecl[] = [];
@@ -145,6 +147,9 @@ export class Parser {
         case TokenType.REASONER:
           reasoners.push(this.parseReasoner());
           break;
+        case TokenType.TRIGGER:
+          triggers.push(this.parseTrigger());
+          break;
         case TokenType.LIFECYCLE:
           lifecycles.push(this.parseLifecycle());
           break;
@@ -186,7 +191,7 @@ export class Parser {
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers };
   }
 
   // --- APP ---
@@ -786,6 +791,7 @@ export class Parser {
 
     const steps: WorkflowStep[] = [];
     let parallel: string[] | undefined;
+    let idempotent: boolean | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -801,11 +807,17 @@ export class Parser {
         continue;
       }
 
-      this.error(`Expected STEP or PARALLEL in WORKFLOW, got: ${token.value}`);
+      if (token.type === TokenType.IDEMPOTENT) {
+        this.advance();
+        idempotent = this.parseBoolValue();
+        continue;
+      }
+
+      this.error(`Expected STEP, PARALLEL, or IDEMPOTENT in WORKFLOW, got: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'workflow', name, steps, parallel, span: { start, end } };
+    return { kind: 'workflow', name, steps, parallel, idempotent, span: { start, end } };
   }
 
   private parseWorkflowStep(): WorkflowStep {
@@ -888,6 +900,7 @@ export class Parser {
     let description = '';
     const rows: PipelineRow[] = [];
     const connections: PipelineConnection[] = [];
+    let idempotent: boolean | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -908,11 +921,17 @@ export class Parser {
         continue;
       }
 
+      if (token.type === TokenType.IDEMPOTENT) {
+        this.advance();
+        idempotent = this.parseBoolValue();
+        continue;
+      }
+
       this.error(`Unexpected token in PIPELINE: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'pipeline', name, description, rows, connections, span: { start, end } };
+    return { kind: 'pipeline', name, description, rows, connections, idempotent, span: { start, end } };
   }
 
   private parsePipelineRow(): PipelineRow {
@@ -1449,8 +1468,14 @@ export class Parser {
     this.expectToken(TokenType.LBRACE);
 
     const models: RouterModelDef[] = [];
+    let circuitBreaker: CircuitBreaker | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
+      if (this.check(TokenType.CIRCUIT_BREAKER)) {
+        this.advance();
+        circuitBreaker = this.parseCircuitBreaker();
+        continue;
+      }
       const key = this.expectIdentifier();
       this.expectToken(TokenType.COLON);
       const provider = this.expectIdentifier();
@@ -1486,7 +1511,38 @@ export class Parser {
     }
 
     this.expectToken(TokenType.RBRACE);
-    return { tier, name, models };
+    return { tier, name, models, circuitBreaker };
+  }
+
+  private parseCircuitBreaker(): CircuitBreaker {
+    this.expectToken(TokenType.LBRACE);
+
+    let threshold = 0.5;
+    let window = '60s';
+    let fallback: number | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.THRESHOLD) {
+        this.advance();
+        threshold = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        continue;
+      }
+      if (token.type === TokenType.WINDOW) {
+        this.advance();
+        window = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.FALLBACK) {
+        this.advance();
+        fallback = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        continue;
+      }
+      this.error(`Unexpected token in CIRCUIT_BREAKER: ${token.value}`);
+    }
+
+    this.expectToken(TokenType.RBRACE);
+    return { threshold, window, fallback };
   }
 
   // --- SKILL ---
@@ -1690,6 +1746,7 @@ export class Parser {
     let tier: number | undefined;
     let output: ReasonerOutput = {};
     let schedule: ReasonerSchedule = 'on_demand';
+    let idempotent: boolean | undefined;
     let governance: SkillDocGovernance | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
@@ -1730,6 +1787,11 @@ export class Parser {
         }
         continue;
       }
+      if (token.type === TokenType.IDEMPOTENT) {
+        this.advance();
+        idempotent = this.parseBoolValue();
+        continue;
+      }
       if (token.type === TokenType.GOVERNANCE) {
         this.advance();
         governance = this.parseSkillDocGovernance();
@@ -1739,7 +1801,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'reasoner', name, description, input, uses, tier, output, schedule, governance, span: { start, end } };
+    return { kind: 'reasoner', name, description, input, uses, tier, output, schedule, idempotent, governance, span: { start, end } };
   }
 
   private parseReasonerInput(): ReasonerInput {
@@ -1796,6 +1858,122 @@ export class Parser {
 
     this.expectToken(TokenType.RBRACE);
     return { packet, channel };
+  }
+
+  // --- TRIGGER ---
+
+  private parseTrigger(): TriggerDecl {
+    const start = this.expectToken(TokenType.TRIGGER).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let when: TriggerWhen = { channels: [] };
+    let fires: TriggerFires = { kind: 'workflow', target: '' };
+    let debounce: string | undefined;
+    let rateLimit: string | undefined;
+    let idempotent: boolean | undefined;
+    let governance: SkillDocGovernance | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance();
+        description = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.WHEN) {
+        this.advance();
+        when = this.parseTriggerWhen();
+        continue;
+      }
+      if (token.type === TokenType.FIRES) {
+        this.advance();
+        fires = this.parseTriggerFires();
+        continue;
+      }
+      if (token.type === TokenType.DEBOUNCE) {
+        this.advance();
+        debounce = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.RATE_LIMIT) {
+        this.advance();
+        rateLimit = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.IDEMPOTENT) {
+        this.advance();
+        idempotent = this.parseBoolValue();
+        continue;
+      }
+      if (token.type === TokenType.GOVERNANCE) {
+        this.advance();
+        governance = this.parseSkillDocGovernance();
+        continue;
+      }
+      this.error(`Unexpected token in TRIGGER: ${token.value}`);
+    }
+
+    if (!fires.target) this.error(`TRIGGER ${name} requires a FIRES target`);
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'trigger', name, description, when, fires, debounce, rateLimit, idempotent, governance, span: { start, end } };
+  }
+
+  private parseTriggerWhen(): TriggerWhen {
+    this.expectToken(TokenType.LBRACE);
+
+    let channels: string[] = [];
+    let packet: string | undefined;
+    let filter: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.CHANNEL) {
+        this.advance();
+        channels = this.parseIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.PACKET) {
+        this.advance();
+        packet = this.expectIdentifier();
+        continue;
+      }
+      if (token.type === TokenType.FILTER) {
+        this.advance();
+        filter = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      this.error(`Unexpected token in TRIGGER WHEN: ${token.value}`);
+    }
+
+    this.expectToken(TokenType.RBRACE);
+    return { channels, packet, filter };
+  }
+
+  private parseTriggerFires(): TriggerFires {
+    // FIRES <kind-keyword> <identifier>
+    // e.g. FIRES WORKFLOW invoice_review
+    const token = this.current();
+    let kind: TriggerTargetKind;
+    if (token.type === TokenType.WORKFLOW) {
+      kind = 'workflow';
+    } else if (token.type === TokenType.REASONER) {
+      kind = 'reasoner';
+    } else if (token.type === TokenType.SESSION) {
+      kind = 'session';
+    } else if (token.type === TokenType.COMPILER_KW) {
+      kind = 'compiler';
+    } else if (token.type === TokenType.PIPELINE) {
+      kind = 'pipeline';
+    } else {
+      this.error(`FIRES expects WORKFLOW | REASONER | SESSION | COMPILER | PIPELINE, got: ${token.value}`);
+      kind = 'workflow';
+    }
+    this.advance();
+    const target = this.expectIdentifier();
+    return { kind, target };
   }
 
   // --- LIFECYCLE ---
@@ -2093,6 +2271,8 @@ export class Parser {
     let endpoint: string | undefined;
     let retry = 0;
     let timeout = 30000;
+    let ordering: ChannelOrdering | undefined;
+    let deadLetter: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -2121,11 +2301,17 @@ export class Parser {
       if (token.type === TokenType.TIMEOUT) {
         this.advance(); timeout = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue;
       }
+      if (token.type === TokenType.ORDERING) {
+        this.advance(); ordering = this.expectIdentifier() as ChannelOrdering; continue;
+      }
+      if (token.type === TokenType.DEAD_LETTER) {
+        this.advance(); deadLetter = this.expectIdentifier(); continue;
+      }
       this.error(`Unexpected token in CHANNEL: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, span: { start, end } };
+    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, ordering, deadLetter, span: { start, end } };
   }
 
   // --- SESSION ---

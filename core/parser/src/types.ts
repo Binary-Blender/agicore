@@ -215,6 +215,7 @@ export interface WorkflowDecl {
   name: string;
   steps: WorkflowStep[];
   parallel?: string[];
+  idempotent?: boolean;
   span: SourceSpan;
 }
 
@@ -256,6 +257,7 @@ export interface PipelineDecl {
   description: string;
   rows: PipelineRow[];
   connections: PipelineConnection[];
+  idempotent?: boolean;
   span: SourceSpan;
 }
 
@@ -380,10 +382,17 @@ export interface RouterModelDef {
   isDefault: boolean;
 }
 
+export interface CircuitBreaker {
+  threshold: number;
+  window: string;
+  fallback?: number;
+}
+
 export interface RouterTier {
   tier: number;
   name: string;
   models: RouterModelDef[];
+  circuitBreaker?: CircuitBreaker;
 }
 
 export interface RouterDecl {
@@ -466,6 +475,35 @@ export interface ReasonerDecl {
   tier?: number;
   output: ReasonerOutput;
   schedule: ReasonerSchedule;
+  idempotent?: boolean;
+  governance?: SkillDocGovernance;
+  span: SourceSpan;
+}
+
+// --- TRIGGER Declaration (Reactive Event Binding) ---
+
+export type TriggerTargetKind = 'workflow' | 'reasoner' | 'session' | 'compiler' | 'pipeline';
+
+export interface TriggerWhen {
+  channels: string[];
+  packet?: string;
+  filter?: string;
+}
+
+export interface TriggerFires {
+  kind: TriggerTargetKind;
+  target: string;
+}
+
+export interface TriggerDecl {
+  kind: 'trigger';
+  name: string;
+  description: string;
+  when: TriggerWhen;
+  fires: TriggerFires;
+  debounce?: string;
+  rateLimit?: string;
+  idempotent?: boolean;
   governance?: SkillDocGovernance;
   span: SourceSpan;
 }
@@ -567,8 +605,9 @@ export interface AuthorityDecl {
 
 // --- CHANNEL Declaration (Semantic Communication) ---
 
-export type ChannelProtocol = 'local' | 'websocket' | 'http' | 'queue' | 'grpc';
+export type ChannelProtocol = 'local' | 'websocket' | 'http' | 'queue' | 'grpc' | 'mqtt';
 export type ChannelDirection = 'inbound' | 'outbound' | 'bidirectional';
+export type ChannelOrdering = 'fifo' | 'keyed' | 'unordered';
 
 export interface ChannelDecl {
   kind: 'channel';
@@ -581,6 +620,8 @@ export interface ChannelDecl {
   endpoint?: string;
   retry: number;
   timeout: number;
+  ordering?: ChannelOrdering;
+  deadLetter?: string;
   span: SourceSpan;
 }
 
@@ -731,6 +772,7 @@ export type Declaration =
   | SkillDecl
   | SkillDocDecl
   | ReasonerDecl
+  | TriggerDecl
   | LifecycleDecl
   | BreedDecl
   | PacketDecl
@@ -765,6 +807,7 @@ export interface AgiFile {
   skills: SkillDecl[];
   skilldocs: SkillDocDecl[];
   reasoners: ReasonerDecl[];
+  triggers: TriggerDecl[];
   lifecycles: LifecycleDecl[];
   breeds: BreedDecl[];
   packets: PacketDecl[];

@@ -1627,6 +1627,160 @@ This is Meridian Level 2 made first-class. The AI finds connections you missed; 
 
 ---
 
+## TRIGGER Declaration (Reactive Event Binding)
+
+A TRIGGER is a first-class subscription that binds an inbound packet pattern to a downstream activation. When a packet matching `WHEN` lands on the named CHANNEL(s), the trigger fires the named target — a WORKFLOW, REASONER, SESSION, COMPILER, or PIPELINE.
+
+This is the missing reactive wire. Combined with `APP TELEMETRY auto`, REASONER's `event_triggered` schedule, and CHANNEL queue semantics, it lets you express event-driven semantic systems without leaving the DSL.
+
+### Syntax
+
+```
+TRIGGER name {
+  DESCRIPTION  string
+
+  WHEN {
+    CHANNEL    ident_list           // one or more input channels
+    PACKET     ident                 // optional: only fire on this packet shape
+    FILTER     string                 // optional predicate over payload
+  }
+
+  FIRES        kind ident             // kind = WORKFLOW | REASONER | SESSION | COMPILER | PIPELINE
+
+  DEBOUNCE     string                 // optional, e.g. "2s" — collapse rapid-fire
+  RATE_LIMIT   string                  // optional, e.g. "30/min" — cap firings
+  IDEMPOTENT   bool                    // optional — safe to re-fire on replay
+
+  GOVERNANCE { ... }                    // optional, SKILLDOC shape
+}
+```
+
+### Fields
+
+| Field        | Required | Description                                                          |
+|--------------|----------|----------------------------------------------------------------------|
+| `DESCRIPTION`| Yes      | One-line description                                                 |
+| `WHEN`       | Yes      | Subscription: channels + optional packet shape + optional filter     |
+| `FIRES`      | Yes      | Activation: target kind keyword followed by an identifier            |
+| `DEBOUNCE`   | No       | Collapse multiple firings within the window (e.g. `"2s"`)            |
+| `RATE_LIMIT` | No       | Cap firings (e.g. `"30/min"`, `"100/hour"`)                          |
+| `IDEMPOTENT` | No       | Marks the activation safe to re-fire — runtime can dedupe replays    |
+| `GOVERNANCE` | No       | Signing, clearance, audit constraints (SKILLDOC shape)               |
+
+### Example
+
+```
+TRIGGER on_rejection {
+  DESCRIPTION  "Fire refinement reasoner whenever a batch rejection lands"
+
+  WHEN {
+    CHANNEL    rejection_queue
+    PACKET     ImageBatchRejected
+    FILTER     "confidence > 0.6"
+  }
+
+  FIRES        REASONER refinement_reasoner
+
+  DEBOUNCE     "2s"
+  RATE_LIMIT   "30/min"
+  IDEMPOTENT   true
+
+  GOVERNANCE {
+    SIGNED_BY    OpsAuthority
+    AUDIT        all_actions
+  }
+}
+```
+
+### Why TRIGGER, not EVENT
+
+PACKET is already the event shape. EVENT would duplicate PACKET. The missing piece was the *binding* — the subscription that ties a packet on a channel to a downstream activation. That's TRIGGER.
+
+### Composition With Other Primitives
+
+| Primitive  | Role with TRIGGER                                                    |
+|------------|----------------------------------------------------------------------|
+| PACKET     | The shape that a TRIGGER's `WHEN` matches against                    |
+| CHANNEL    | The transport TRIGGER subscribes to                                  |
+| WORKFLOW   | A common `FIRES` target for procedural responses                     |
+| REASONER   | A common `FIRES` target for analytical responses                     |
+| SESSION    | A common `FIRES` target for opening a cognition session              |
+| COMPILER   | A `FIRES` target for ENRICH-driven semantic compilation              |
+| PIPELINE   | A `FIRES` target for parallel multi-stage processing                 |
+| AUTHORITY  | Via GOVERNANCE — signs that the trigger fired with proper authority  |
+
+---
+
+## CHANNEL Queue Semantics (ORDERING + DEAD_LETTER)
+
+CHANNEL gains two optional fields for queue-style transport:
+
+| Field         | Description                                                         |
+|---------------|---------------------------------------------------------------------|
+| `ORDERING`    | `fifo` (strict order), `keyed` (per-key order), or `unordered`      |
+| `DEAD_LETTER` | Identifier of another CHANNEL where messages go after RETRY exhausts |
+
+`RETRY` and `TIMEOUT` already existed. With ORDERING and DEAD_LETTER, CHANNEL covers the full queue contract without a separate QUEUE declaration.
+
+```
+CHANNEL rejection_queue {
+  PROTOCOL     queue
+  DIRECTION    bidirectional
+  PACKET       ImageBatchRejected
+  RETRY        3
+  TIMEOUT      30000
+  ORDERING     fifo
+  DEAD_LETTER  rejection_dlq
+}
+```
+
+---
+
+## ROUTER Circuit Breaker
+
+Each ROUTER tier can declare a CIRCUIT_BREAKER block. When the failure rate of that tier's models crosses `THRESHOLD` within `WINDOW`, the router stops routing to that tier and falls back to the tier numbered in `FALLBACK`. After the window passes with healthy probes, the breaker closes and routing resumes.
+
+```
+TIER 1 free {
+  qwen_vl: huggingface "Qwen/Qwen2-VL-7B" { ... }
+
+  CIRCUIT_BREAKER {
+    THRESHOLD   0.5    // fraction of failed calls
+    WINDOW      "60s"  // observation window
+    FALLBACK    2      // tier to route to when tripped
+  }
+}
+```
+
+This makes provider outages, hallucination spikes, and latency degradations isolatable to the failing tier — sessions and pipelines keep flowing through the fallback.
+
+---
+
+## IDEMPOTENT Field (REASONER, WORKFLOW, PIPELINE, TRIGGER)
+
+Marks an activation safe to re-fire. The runtime is then free to retry on transient failure, replay from event-sourced lineage, and dedupe duplicate fires from at-least-once delivery without corrupting state.
+
+```
+REASONER refinement_reasoner {
+  ...
+  IDEMPOTENT true
+}
+
+WORKFLOW regenerate_batch {
+  IDEMPOTENT true
+  ...
+}
+
+TRIGGER on_rejection {
+  ...
+  IDEMPOTENT true
+}
+```
+
+Without idempotency declared, the runtime is forced to assume duplicates would corrupt state — meaning slower, more cautious delivery semantics. Mark what is safe to retry; the platform handles the rest.
+
+---
+
 ## LIFECYCLE Declaration (Temporal Intelligence Graduation)
 
 Defines the temporal lifecycle for an intelligence instance. When an instance becomes stale (its learned patterns no longer reflect current conditions), it graduates to Elder status and a fresh instance starts learning from current interactions. Elders remain available for historical knowledge via an escalation chain.
@@ -2742,7 +2896,7 @@ file            = app_decl (entity_decl | action_decl | view_decl |
                   workflow_decl | pipeline_decl | qc_decl | vault_decl |
                   rule_decl | fact_decl | state_decl | pattern_decl |
                   score_decl | module_decl |
-                  router_decl | skill_decl | skilldoc_decl | reasoner_decl |
+                  router_decl | skill_decl | skilldoc_decl | reasoner_decl | trigger_decl |
                   lifecycle_decl | breed_decl |
                   packet_decl | authority_decl | channel_decl |
                   identity_decl | feed_decl |
@@ -2776,6 +2930,7 @@ router_decl     = "ROUTER" IDENT "{" router_body "}"
 skill_decl      = "SKILL" IDENT "{" skill_body "}"
 skilldoc_decl   = "SKILLDOC" IDENT "{" skilldoc_body "}"
 reasoner_decl   = "REASONER" IDENT "{" reasoner_body "}"
+trigger_decl    = "TRIGGER" IDENT "{" trigger_body "}"
 lifecycle_decl  = "LIFECYCLE" IDENT "{" lifecycle_body "}"
 breed_decl      = "BREED" IDENT "{" breed_body "}"
 

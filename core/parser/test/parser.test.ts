@@ -932,6 +932,228 @@ try {
   console.error('  FAIL: Could not parse organizational_intelligence.agi: ' + err);
 }
 
+// --- Test: TRIGGER parsing ---
+
+section('TRIGGER parsing');
+
+const triggerSrc = `
+APP test_trig {
+  TITLE  "Test"
+  DB     test.db
+}
+
+TRIGGER on_event {
+  DESCRIPTION  "Reactive trigger"
+
+  WHEN {
+    CHANNEL    rejection_queue, audit_stream
+    PACKET     ImageBatchRejected
+    FILTER     "confidence > 0.5"
+  }
+
+  FIRES        REASONER refinement_reasoner
+
+  DEBOUNCE     "2s"
+  RATE_LIMIT   "30/min"
+  IDEMPOTENT   true
+
+  GOVERNANCE {
+    SIGNED_BY    OpsAuthority
+    AUDIT        all_actions
+  }
+}
+
+TRIGGER fires_workflow {
+  DESCRIPTION  "Minimal trigger"
+  WHEN { CHANNEL ch1 }
+  FIRES        WORKFLOW handler_workflow
+}
+
+TRIGGER fires_session {
+  DESCRIPTION  "Session trigger"
+  WHEN { CHANNEL ch2 }
+  FIRES        SESSION creative_session
+}
+`;
+
+const trigResult = parse(triggerSrc);
+assert(trigResult.triggers.length === 3, 'Should have 3 triggers');
+
+const t1 = trigResult.triggers[0]!;
+assert(t1.name === 'on_event', 'Trigger name');
+assert(t1.when.channels.length === 2, 'Trigger 2 channels');
+assert(t1.when.packet === 'ImageBatchRejected', 'Trigger packet filter');
+assert(t1.when.filter === 'confidence > 0.5', 'Trigger filter string');
+assert(t1.fires.kind === 'reasoner', 'Trigger fires kind');
+assert(t1.fires.target === 'refinement_reasoner', 'Trigger fires target');
+assert(t1.debounce === '2s', 'Trigger debounce');
+assert(t1.rateLimit === '30/min', 'Trigger rate limit');
+assert(t1.idempotent === true, 'Trigger idempotent');
+assert(t1.governance!.signedBy === 'OpsAuthority', 'Trigger signed by');
+
+assert(trigResult.triggers[1]!.fires.kind === 'workflow', 'Workflow trigger');
+assert(trigResult.triggers[2]!.fires.kind === 'session', 'Session trigger');
+
+// --- Test: CHANNEL queue fields ---
+
+section('CHANNEL queue fields');
+
+const chanSrc = `
+APP test_ch {
+  TITLE  "Test"
+  DB     test.db
+}
+
+CHANNEL primary_q {
+  DESCRIPTION  "Primary queue"
+  PROTOCOL     queue
+  DIRECTION    bidirectional
+  PACKET       Event
+  RETRY        3
+  TIMEOUT      30000
+  ORDERING     fifo
+  DEAD_LETTER  primary_dlq
+}
+
+CHANNEL primary_dlq {
+  DESCRIPTION  "DLQ"
+  PROTOCOL     queue
+  DIRECTION    inbound
+  PACKET       Event
+}
+`;
+
+const chanResult = parse(chanSrc);
+assert(chanResult.channels.length === 2, 'Should have 2 channels');
+assert(chanResult.channels[0]!.ordering === 'fifo', 'Channel ordering fifo');
+assert(chanResult.channels[0]!.deadLetter === 'primary_dlq', 'Channel dead letter');
+assert(chanResult.channels[0]!.retry === 3, 'Channel retry preserved');
+assert(chanResult.channels[1]!.ordering === undefined, 'DLQ has no ordering set');
+
+// --- Test: ROUTER circuit breaker ---
+
+section('ROUTER circuit breaker');
+
+const routerSrc = `
+APP test_r {
+  TITLE  "Test"
+  DB     test.db
+}
+
+ROUTER MyRouter {
+  DESCRIPTION "Routes with circuit breaker"
+
+  TIER 1 free {
+    m1: huggingface "Q/m" {
+      STRENGTHS  general
+      CONTEXT    32768
+      DEFAULT
+    }
+
+    CIRCUIT_BREAKER {
+      THRESHOLD  0.4
+      WINDOW     "90s"
+      FALLBACK   2
+    }
+  }
+
+  TIER 2 mid {
+    m2: anthropic "claude-haiku-4-5-20251001" {
+      STRENGTHS  general
+      COST       0.1
+      CONTEXT    200000
+    }
+  }
+
+  TASK_TYPES   general
+  MOSH_PIT     3
+  CALIBRATION  true
+}
+`;
+
+const routerResult = parse(routerSrc);
+const tier1 = routerResult.routers[0]!.tiers[0]!;
+assert(tier1.circuitBreaker !== undefined, 'Tier 1 has circuit breaker');
+assert(tier1.circuitBreaker!.threshold === 0.4, 'CB threshold');
+assert(tier1.circuitBreaker!.window === '90s', 'CB window');
+assert(tier1.circuitBreaker!.fallback === 2, 'CB fallback tier');
+assert(routerResult.routers[0]!.tiers[1]!.circuitBreaker === undefined, 'Tier 2 has no CB');
+
+// --- Test: IDEMPOTENT on REASONER/WORKFLOW/PIPELINE ---
+
+section('IDEMPOTENT field');
+
+const idempSrc = `
+APP test_i {
+  TITLE  "Test"
+  DB     test.db
+}
+
+REASONER r1 {
+  DESCRIPTION "Idempotent reasoner"
+  INPUT { CHANNEL ch1 WINDOW "1h" }
+  USES        sd
+  OUTPUT { PACKET P }
+  SCHEDULE    daily
+  IDEMPOTENT  true
+}
+
+WORKFLOW w1 {
+  IDEMPOTENT true
+
+  STEP s1 {
+    ACTION  ActionA
+  }
+}
+`;
+
+const idempResult = parse(idempSrc);
+assert(idempResult.reasoners[0]!.idempotent === true, 'Reasoner idempotent');
+assert(idempResult.workflows[0]!.idempotent === true, 'Workflow idempotent');
+
+// --- Test: Full distributed_cognition.agi ---
+
+section('Full distributed_cognition.agi parsing');
+
+try {
+  const dcPath = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../examples/distributed-cognition/distributed_cognition.agi'
+  );
+  const source = readFileSync(dcPath, 'utf-8');
+  const result = parse(source);
+
+  assert(result.app.telemetry === 'auto', 'DC app telemetry auto');
+  assert(result.triggers.length === 2, 'DC has 2 triggers');
+  assert(result.reasoners.length === 1, 'DC has 1 reasoner');
+  assert(result.channels.length === 3, 'DC has 3 channels');
+  assert(result.routers.length === 1, 'DC has 1 router');
+
+  const onRejection = result.triggers.find((t) => t.name === 'on_rejection');
+  assert(onRejection !== undefined, 'on_rejection trigger exists');
+  assert(onRejection!.fires.kind === 'reasoner', 'on_rejection fires reasoner');
+  assert(onRejection!.fires.target === 'refinement_reasoner', 'on_rejection target');
+  assert(onRejection!.idempotent === true, 'on_rejection idempotent');
+
+  const rejQueue = result.channels.find((c) => c.name === 'rejection_queue');
+  assert(rejQueue !== undefined, 'rejection_queue exists');
+  assert(rejQueue!.ordering === 'fifo', 'rejection_queue is fifo');
+  assert(rejQueue!.deadLetter === 'rejection_dlq', 'rejection_queue has DLQ');
+
+  const visionRouter = result.routers[0]!;
+  assert(visionRouter.tiers[0]!.circuitBreaker !== undefined, 'Tier 1 has CB');
+  assert(visionRouter.tiers[1]!.circuitBreaker !== undefined, 'Tier 2 has CB');
+  assert(visionRouter.tiers[0]!.circuitBreaker!.fallback === 2, 'Tier 1 falls back to tier 2');
+
+  assert(result.reasoners[0]!.idempotent === true, 'Refinement reasoner is idempotent');
+  assert(result.workflows[0]!.idempotent === true, 'Regenerate workflow is idempotent');
+
+  console.log('  Parsed successfully: ' + result.triggers.length + ' triggers, ' + result.channels.filter(c => c.ordering).length + ' queue-ordered channels, ' + result.routers[0]!.tiers.filter(t => t.circuitBreaker).length + ' tiers with circuit breakers');
+} catch (err) {
+  failed++;
+  console.error('  FAIL: Could not parse distributed_cognition.agi: ' + err);
+}
+
 // --- Test: Full creator_network.agi ---
 
 section('Full creator_network.agi parsing');
