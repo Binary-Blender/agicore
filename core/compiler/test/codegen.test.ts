@@ -151,6 +151,7 @@ const cargo = files.get('src-tauri/Cargo.toml')!;
 assert(cargo.includes('rusqlite'), 'Should depend on rusqlite');
 assert(cargo.includes('serde'), 'Should depend on serde');
 assert(cargo.includes('specta'), 'Should depend on specta');
+assert(/specta\s*=\s*\{\s*version\s*=\s*"=2\.0\.0-rc\./.test(cargo), 'specta must pin to a 2.0.0-rc.x release (no stable 2.x exists yet)');
 
 // --- Project Files ---
 section('Project files');
