@@ -95,7 +95,7 @@ function generateUpdateInput(entity: EntityDecl): string {
   return lines.join('\n');
 }
 
-function generateCrudCommands(entity: EntityDecl): string {
+function generateCrudCommands(entity: EntityDecl, ast: AgiFile): string {
   const table = toTableName(entity.name);
   const snake = toSnakeCase(entity.name);
   const name = entity.name;
@@ -104,6 +104,8 @@ function generateCrudCommands(entity: EntityDecl): string {
   const ops = entity.crud === 'full'
     ? ['list', 'create', 'read', 'update', 'delete']
     : entity.crud;
+
+  const currentEntities = ast.app.current ?? [];
 
   // List
   if (ops.includes('list')) {
@@ -119,6 +121,28 @@ function generateCrudCommands(entity: EntityDecl): string {
     lines.push(`    Ok(rows)`);
     lines.push(`}`);
     lines.push('');
+
+    // Filtered list_<entity>_by_<x> — only when X is BELONGS_TO and X is in CURRENT.
+    // Loads only the rows for the active parent (e.g. messages for currentSessionId)
+    // so the SQL planner does the work, not JS post-filtering.
+    for (const rel of entity.relationships) {
+      if (rel.type !== 'BELONGS_TO') continue;
+      if (!currentEntities.includes(rel.target)) continue;
+      const parentSnake = toSnakeCase(rel.target);
+      const fk = toForeignKey(rel.target);
+      lines.push(`#[tauri::command]`);
+      lines.push(`pub fn list_${table}_by_${parentSnake}(db: tauri::State<'_, DbPool>, ${parentSnake}_id: String) -> Result<Vec<${name}>, String> {`);
+      lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
+      lines.push(`    let mut stmt = conn.prepare("SELECT * FROM ${table} WHERE ${fk} = ? ORDER BY created_at DESC")`);
+      lines.push(`        .map_err(|e| e.to_string())?;`);
+      lines.push(`    let rows = stmt.query_map([&${parentSnake}_id], |row| Ok(${name}::from_row(row)))`);
+      lines.push(`        .map_err(|e| e.to_string())?`);
+      lines.push(`        .collect::<Result<Vec<_>, _>>()`);
+      lines.push(`        .map_err(|e| e.to_string())?;`);
+      lines.push(`    Ok(rows)`);
+      lines.push(`}`);
+      lines.push('');
+    }
   }
 
   // Create
@@ -284,7 +308,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       '',
       generateFromRow(entity),
       '',
-      generateCrudCommands(entity),
+      generateCrudCommands(entity, ast),
     ].join('\n');
 
     files.set(`src-tauri/src/commands/${modName}.rs`, content);
@@ -298,15 +322,30 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Generate main.rs
+  const currentEntities = ast.app.current ?? [];
   const commandList = ast.entities.flatMap(e => {
     const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
     const table = toTableName(e.name);
     const snake = toSnakeCase(e.name);
-    return ops.map(op => {
-      if (op === 'list') return `commands::${snake}::list_${table}`;
-      if (op === 'read') return `commands::${snake}::get_${snake}`;
-      return `commands::${snake}::${op}_${snake}`;
-    });
+    const cmds: string[] = [];
+    for (const op of ops) {
+      if (op === 'list') {
+        cmds.push(`commands::${snake}::list_${table}`);
+        // Register the by-<parent> filtered variant alongside the unfiltered list,
+        // for each BELONGS_TO target that's in APP CURRENT.
+        for (const rel of e.relationships) {
+          if (rel.type !== 'BELONGS_TO') continue;
+          if (!currentEntities.includes(rel.target)) continue;
+          const parentSnake = toSnakeCase(rel.target);
+          cmds.push(`commands::${snake}::list_${table}_by_${parentSnake}`);
+        }
+      } else if (op === 'read') {
+        cmds.push(`commands::${snake}::get_${snake}`);
+      } else {
+        cmds.push(`commands::${snake}::${op}_${snake}`);
+      }
+    }
+    return cmds;
   });
 
   const mainRs = [

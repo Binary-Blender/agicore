@@ -431,6 +431,11 @@ ENTITY Session {
   name: string REQUIRED
   TIMESTAMPS
 }
+ENTITY ChatMessage {
+  text: string REQUIRED
+  BELONGS_TO Session
+  TIMESTAMPS
+}
 AI_SERVICE {
   PROVIDERS anthropic, openai
   KEYS_FILE "%APPDATA%/test/keys.json"
@@ -453,6 +458,66 @@ assert(miniStore.includes('currentSessionId: string | null'), 'CURRENT Session a
 assert(miniStore.includes('setCurrentSessionId: (id: string | null) => void'), 'CURRENT Session adds setter type');
 assert(miniStore.includes('currentSessionId: null'), 'currentSessionId initializes to null');
 assert(miniStore.includes('setCurrentSessionId: (id) => set({ currentSessionId: id })'), 'setter implementation');
+
+// --- BELONGS_TO + CURRENT → filtered list pipeline ---
+//
+// ChatMessage BELONGS_TO Session and Session is in CURRENT, so the generator
+// must emit the SQL-pushdown filter pipeline end-to-end:
+//   • Rust:    list_chat_messages_by_session(session_id) command
+//   • TS API:  listChatMessagesBySession wrapper
+//   • Store:   loadChatMessagesForCurrentSession action that reads
+//              currentSessionId via get() and calls the filtered API
+//   • main.rs: registers the new command in invoke_handler
+// The unfiltered list_chat_messages must also remain — both coexist.
+
+const miniChatRs = miniRes.files.get('src-tauri/src/commands/chat_message.rs')!;
+assert(miniChatRs !== undefined, 'mini fixture should generate chat_message.rs');
+assert(miniChatRs.includes('pub fn list_chat_messages('), 'unfiltered list_chat_messages remains');
+assert(miniChatRs.includes('pub fn list_chat_messages_by_session(db: tauri::State<\'_, DbPool>, session_id: String) -> Result<Vec<ChatMessage>, String>'), 'filtered list_chat_messages_by_session emitted with snake_case parent');
+assert(miniChatRs.includes('SELECT * FROM chat_messages WHERE session_id = ? ORDER BY created_at DESC'), 'filtered SQL pushes WHERE session_id = ? to SQLite');
+assert(miniChatRs.includes('stmt.query_map([&session_id]'), 'filtered query binds session_id parameter');
+
+const miniMain = miniRes.files.get('src-tauri/src/main.rs')!;
+assert(miniMain.includes('commands::chat_message::list_chat_messages,'), 'main.rs still registers unfiltered list');
+assert(miniMain.includes('commands::chat_message::list_chat_messages_by_session,'), 'main.rs registers the filtered list command');
+
+const miniApi = miniRes.files.get('src/lib/api.ts')!;
+assert(miniApi.includes('export const listChatMessages = ()'), 'api.ts retains unfiltered listChatMessages');
+assert(miniApi.includes('export const listChatMessagesBySession = (sessionId: string) =>'), 'api.ts adds listChatMessagesBySession wrapper with sessionId arg');
+assert(miniApi.includes("invoke<ChatMessage[]>('list_chat_messages_by_session', { sessionId })"), 'api.ts invokes filtered Rust command with sessionId arg');
+
+assert(miniStore.includes('loadChatMessagesForCurrentSession: () => Promise<void>'), 'store interface declares loadChatMessagesForCurrentSession');
+assert(miniStore.includes('loadChatMessagesForCurrentSession: async ()'), 'store implements loadChatMessagesForCurrentSession');
+assert(miniStore.includes('const sessionId = get().currentSessionId;'), 'store action reads currentSessionId via get()');
+assert(/if \(sessionId\) \{\s*const chatMessages = await listChatMessagesBySession\(sessionId\);\s*set\(\{ chatMessages \}\);\s*\} else \{\s*set\(\{ chatMessages: \[\] \}\);/s.test(miniStore), 'store action calls filtered API when currentSessionId is set, else clears list');
+assert(miniStore.includes('listChatMessagesBySession'), 'store imports listChatMessagesBySession from api');
+
+// Negative: when X is not in CURRENT, by-X variant must NOT be emitted.
+// The mini fixture has no User entity in CURRENT — assert by checking another
+// fixture below where ChatMessage BELONGS_TO User but User isn't current.
+const noCurrentChild = `
+APP nocur {
+  TITLE "NoCur"
+  WINDOW 800x600 frameless
+  DB nocur.db
+  PORT 5176
+  THEME dark
+}
+ENTITY User { email: string REQUIRED  TIMESTAMPS }
+ENTITY Note {
+  text: string REQUIRED
+  BELONGS_TO User
+  TIMESTAMPS
+}
+`;
+const noCurRes = compile(noCurrentChild);
+const noCurNote = noCurRes.files.get('src-tauri/src/commands/note.rs')!;
+assert(noCurNote.includes('pub fn list_notes('), 'unfiltered list still present without CURRENT');
+assert(!noCurNote.includes('list_notes_by_user'), 'must NOT emit list_notes_by_user when User is not in CURRENT');
+const noCurApi = noCurRes.files.get('src/lib/api.ts')!;
+assert(!noCurApi.includes('listNotesByUser'), 'must NOT emit listNotesByUser wrapper when User is not in CURRENT');
+const noCurStore = noCurRes.files.get('src/store/appStore.ts')!;
+assert(!noCurStore.includes('loadNotesForCurrentUser'), 'must NOT emit loadNotesForCurrentUser action when User is not in CURRENT');
 
 // Negative: when AI_SERVICE is absent, store must NOT contain selectedModel.
 // Otherwise consumers would import a non-existent slot from a "lite" build.

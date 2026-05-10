@@ -116,7 +116,7 @@ export function generateTypes(ast: AgiFile): string {
 
 // --- Invoke Wrapper Generation ---
 
-function generateEntityInvokes(entity: EntityDecl): string {
+function generateEntityInvokes(entity: EntityDecl, ast: AgiFile): string {
   const snake = toSnakeCase(entity.name);
   const table = toTableName(entity.name);
   const name = entity.name;
@@ -126,10 +126,25 @@ function generateEntityInvokes(entity: EntityDecl): string {
     ? ['list', 'create', 'read', 'update', 'delete']
     : entity.crud;
 
+  const currentEntities = ast.app.current ?? [];
+
   if (ops.includes('list')) {
     lines.push(`export const list${name}s = () =>`);
     lines.push(`  invoke<${name}[]>('list_${table}');`);
     lines.push('');
+
+    // Filtered list per BELONGS_TO target that's in APP CURRENT — calls the
+    // SQL-pushdown variant emitted by the Rust generator.
+    for (const rel of entity.relationships) {
+      if (rel.type !== 'BELONGS_TO') continue;
+      if (!currentEntities.includes(rel.target)) continue;
+      const parentSnake = toSnakeCase(rel.target);
+      const parentCamel = toCamelCase(parentSnake);
+      const parentName = rel.target;
+      lines.push(`export const list${name}sBy${parentName} = (${parentCamel}Id: string) =>`);
+      lines.push(`  invoke<${name}[]>('list_${table}_by_${parentSnake}', { ${parentCamel}Id });`);
+      lines.push('');
+    }
   }
   if (ops.includes('create')) {
     lines.push(`export const create${name} = (input: Create${name}Input) =>`);
@@ -191,7 +206,7 @@ export function generateInvokes(ast: AgiFile): string {
 
   for (const entity of ast.entities) {
     lines.push(`// --- ${entity.name} ---`);
-    lines.push(generateEntityInvokes(entity));
+    lines.push(generateEntityInvokes(entity, ast));
   }
 
   for (const action of ast.actions) {
@@ -219,7 +234,15 @@ export function generateStore(ast: AgiFile): string {
     ...ast.entities.flatMap(e => {
       const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
       const fns: string[] = [];
-      if (ops.includes('list')) fns.push(`list${e.name}s`);
+      if (ops.includes('list')) {
+        fns.push(`list${e.name}s`);
+        // Pull in the by-<X> variant for any BELONGS_TO whose target is CURRENT.
+        for (const rel of e.relationships) {
+          if (rel.type !== 'BELONGS_TO') continue;
+          if (!(ast.app.current ?? []).includes(rel.target)) continue;
+          fns.push(`list${e.name}sBy${rel.target}`);
+        }
+      }
       if (ops.includes('create')) fns.push(`create${e.name}`);
       if (ops.includes('update')) fns.push(`update${e.name}`);
       if (ops.includes('delete')) fns.push(`delete${e.name}`);
@@ -281,6 +304,13 @@ export function generateStore(ast: AgiFile): string {
     lines.push(`  ${plural}: ${name}[];`);
     lines.push(`  selected${name}Id: string | null;`);
     lines.push(`  load${name}s: () => Promise<void>;`);
+    // Filtered loader per CURRENT parent — reads currentXId from store state and
+    // calls the SQL-pushdown variant when set, else falls back to clearing the list.
+    for (const rel of entity.relationships) {
+      if (rel.type !== 'BELONGS_TO') continue;
+      if (!currentEntities.includes(rel.target)) continue;
+      lines.push(`  load${name}sForCurrent${rel.target}: () => Promise<void>;`);
+    }
     lines.push(`  add${name}: (input: Create${name}Input) => Promise<void>;`);
     lines.push(`  edit${name}: (id: string, input: Update${name}Input) => Promise<void>;`);
     lines.push(`  remove${name}: (id: string) => Promise<void>;`);
@@ -321,6 +351,22 @@ export function generateStore(ast: AgiFile): string {
     lines.push(`    const ${plural} = await list${name}s();`);
     lines.push(`    set({ ${plural} });`);
     lines.push(`  },`);
+    // Filtered loader: read currentXId from state via get(), call the by-X
+    // variant when present, else clear the list (no parent → nothing to show).
+    for (const rel of entity.relationships) {
+      if (rel.type !== 'BELONGS_TO') continue;
+      if (!currentEntities.includes(rel.target)) continue;
+      const parentName = rel.target;
+      lines.push(`  load${name}sForCurrent${parentName}: async () => {`);
+      lines.push(`    const ${parentName.charAt(0).toLowerCase() + parentName.slice(1)}Id = get().current${parentName}Id;`);
+      lines.push(`    if (${parentName.charAt(0).toLowerCase() + parentName.slice(1)}Id) {`);
+      lines.push(`      const ${plural} = await list${name}sBy${parentName}(${parentName.charAt(0).toLowerCase() + parentName.slice(1)}Id);`);
+      lines.push(`      set({ ${plural} });`);
+      lines.push(`    } else {`);
+      lines.push(`      set({ ${plural}: [] });`);
+      lines.push(`    }`);
+      lines.push(`  },`);
+    }
     lines.push(`  add${name}: async (input) => {`);
     lines.push(`    await create${name}(input);`);
     lines.push(`    await get().load${name}s();`);
