@@ -10,7 +10,7 @@ export function generateTauriConfig(ast: AgiFile): Map<string, string> {
   const identifier = `com.agicore.${toSnakeCase(app.name)}`;
 
   const config = {
-    "$schema": "https://raw.githubusercontent.com/nicedoc/tauri/v2/tooling/cli/schema.json",
+    "$schema": "https://schema.tauri.app/config/2",
     productName: app.title,
     version: "0.1.0",
     identifier,
@@ -23,6 +23,7 @@ export function generateTauriConfig(ast: AgiFile): Map<string, string> {
     app: {
       windows: [
         {
+          label: "main",
           title: app.title,
           width: app.window?.width ?? 1200,
           height: app.window?.height ?? 800,
@@ -86,10 +87,14 @@ export function generateProjectFiles(ast: AgiFile): Map<string, string> {
     name: toSnakeCase(ast.app.name),
     version: "0.1.0",
     private: true,
+    type: "module",
     scripts: {
       dev: "vite",
       build: "tsc && vite build",
       "type-check": "tsc --noEmit",
+      tauri: "tauri",
+      "tauri:dev": "tauri dev",
+      "tauri:build": "tauri build",
     },
     dependencies: {
       react: "^18.2.0",
@@ -107,9 +112,43 @@ export function generateProjectFiles(ast: AgiFile): Map<string, string> {
       autoprefixer: "^10.4.16",
       "@types/react": "^18.2.0",
       "@types/react-dom": "^18.2.0",
+      "@tauri-apps/cli": "^2.0.0",
     },
   };
   files.set('package.json', JSON.stringify(pkg, null, 2));
+
+  // src-tauri/capabilities/default.json — Tauri 2 ACL grants
+  const capability = {
+    "$schema": "../gen/schemas/desktop-schema.json",
+    identifier: "default",
+    description: "Default capability granting core permissions to the main window.",
+    windows: ["main"],
+    permissions: [
+      "core:default",
+      "core:window:default",
+      "core:webview:default",
+      "core:event:default",
+    ],
+  };
+  files.set('src-tauri/capabilities/default.json', JSON.stringify(capability, null, 2));
+
+  // src-tauri/icons/README.md — first-time setup note
+  files.set('src-tauri/icons/README.md', `# App icons
+
+Tauri requires icon files at build time. To generate the full icon set from a
+single 1024x1024 PNG:
+
+\`\`\`
+npx @tauri-apps/cli icon path/to/source.png
+\`\`\`
+
+This will produce \`32x32.png\`, \`128x128.png\`, \`128x128@2x.png\`, \`icon.icns\`,
+\`icon.ico\`, and the Windows Store tiles.
+
+Until you generate real icons, placeholder files in this directory keep
+\`tauri build\` from failing.
+`);
+
 
   // tsconfig.json
   const tsconfig = {

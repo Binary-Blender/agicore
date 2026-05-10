@@ -17,6 +17,16 @@ function tsType(agiType: AgiType): string {
   }
 }
 
+const AGI_PRIMITIVES: ReadonlySet<string> = new Set([
+  'string', 'number', 'float', 'bool', 'date', 'datetime', 'json', 'id',
+]);
+
+// Action input/output types may be either an AGI primitive OR an Entity name.
+// Map primitives through tsType; pass entity names through unchanged.
+function tsTypeOrEntity(t: string): string {
+  return AGI_PRIMITIVES.has(t) ? tsType(t as AgiType) : t;
+}
+
 function isRequired(field: FieldDef): boolean {
   return field.modifiers.includes('REQUIRED') || field.defaultValue !== undefined;
 }
@@ -150,11 +160,11 @@ function generateActionInvoke(action: ActionDecl): string {
   const fnName = toCamelCase(action.name);
   const params = action.input.map(p => {
     const optional = p.defaultValue !== undefined ? '?' : '';
-    return `${toCamelCase(p.name)}${optional}: ${tsType(p.type)}`;
+    return `${toCamelCase(p.name)}${optional}: ${tsTypeOrEntity(p.type)}`;
   }).join(', ');
 
   const returnType = action.output.length > 0
-    ? action.output.map(o => o.type).join(' & ')
+    ? action.output.map(o => tsTypeOrEntity(o.type)).join(' & ')
     : 'void';
 
   const argObj = action.input.map(p => toCamelCase(p.name)).join(', ');

@@ -136,6 +136,16 @@ const tauriConf = JSON.parse(files.get('src-tauri/tauri.conf.json')!);
 assert(tauriConf.productName === 'NovaSyn Home Academy', 'Product name should match');
 assert(tauriConf.app.windows[0].width === 1200, 'Window width should be 1200');
 assert(tauriConf.app.windows[0].decorations === false, 'Should be frameless');
+assert(tauriConf.app.windows[0].label === 'main', 'Window should have label "main"');
+assert(tauriConf.$schema === 'https://schema.tauri.app/config/2', 'Should reference real Tauri 2 schema');
+
+assert(files.has('src-tauri/capabilities/default.json'), 'Should generate default capability file');
+const capability = JSON.parse(files.get('src-tauri/capabilities/default.json')!);
+assert(capability.identifier === 'default', 'Capability identifier should be "default"');
+assert(Array.isArray(capability.windows) && capability.windows.includes('main'), 'Capability should target the main window');
+assert(Array.isArray(capability.permissions) && capability.permissions.includes('core:default'), 'Capability should grant core:default');
+
+assert(files.has('src-tauri/icons/README.md'), 'Should include icons README explaining tauri icon CLI');
 
 const cargo = files.get('src-tauri/Cargo.toml')!;
 assert(cargo.includes('rusqlite'), 'Should depend on rusqlite');
@@ -157,6 +167,11 @@ assert(pkg.dependencies.react !== undefined, 'Should depend on react');
 assert(pkg.dependencies.zustand !== undefined, 'Should depend on zustand');
 assert(pkg.dependencies['@tauri-apps/api'] !== undefined, 'Should depend on tauri api');
 assert(pkg.dependencies['lucide-react'] !== undefined, 'Should depend on lucide-react');
+assert(pkg.devDependencies['@tauri-apps/cli'] !== undefined, 'Should devDepend on @tauri-apps/cli so `npm run tauri build` works out of the box');
+assert(pkg.scripts['tauri:dev'] === 'tauri dev', 'Should have tauri:dev script');
+assert(pkg.scripts['tauri:build'] === 'tauri build', 'Should have tauri:build script');
+assert(pkg.dependencies.cargo === undefined, 'Should NOT depend on phantom "cargo" npm package');
+assert(pkg.type === 'module', 'package.json must declare "type": "module" so postcss/tailwind ESM configs load under Node');
 
 const html = files.get('index.html')!;
 assert(html.includes('data-theme="dark"'), 'Should set dark theme');
