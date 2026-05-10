@@ -9,6 +9,7 @@ import { generateComponents } from './generators/components.js';
 import { generateTauriConfig, generateProjectFiles } from './generators/tauri-config.js';
 import { generateExpertSystem } from './generators/expert-system.js';
 import { generateOrchestration } from './generators/orchestration.js';
+import { generateAiService } from './generators/ai-service.js';
 
 export interface CompileResult {
   files: Map<string, string>;
@@ -33,6 +34,7 @@ export function compile(source: string): CompileResult {
     generateProjectFiles(ast),
     generateExpertSystem(ast),
     generateOrchestration(ast),
+    generateAiService(ast),
   ];
 
   for (const gen of generators) {
@@ -52,3 +54,4 @@ export { generateComponents } from './generators/components.js';
 export { generateTauriConfig, generateProjectFiles } from './generators/tauri-config.js';
 export { generateExpertSystem } from './generators/expert-system.js';
 export { generateOrchestration } from './generators/orchestration.js';
+export { generateAiService } from './generators/ai-service.js';
