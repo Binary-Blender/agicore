@@ -59,6 +59,55 @@ assert(fullResult.app.window?.height === 800, 'Window height should be 800');
 assert(fullResult.app.window?.frameless === true, 'Window should be frameless');
 assert(fullResult.app.port === 5176, 'Port should be 5176');
 assert(fullResult.app.theme === 'dark', 'Theme should be dark');
+assert(fullResult.app.current === undefined, 'CURRENT should be undefined when not declared');
+
+// --- Test: APP with CURRENT field ---
+//
+// CURRENT is a navigation-context field — the entities listed here become
+// `current<Entity>Id` slots in the generated Zustand store. The parser
+// itself doesn't validate that the entity names resolve; later passes do.
+section('APP with CURRENT field');
+
+const appWithCurrent = `
+APP nav_app {
+  TITLE   "Nav App"
+  WINDOW  1024x768 frameless
+  DB      nav.db
+  PORT    5177
+  THEME   dark
+  CURRENT Session, User
+}
+`;
+
+const navResult = parse(appWithCurrent);
+assert(Array.isArray(navResult.app.current), 'CURRENT should yield an array');
+assert(navResult.app.current?.length === 2, 'CURRENT should have 2 entries');
+assert(navResult.app.current?.[0] === 'Session', 'first CURRENT entry should be Session');
+assert(navResult.app.current?.[1] === 'User', 'second CURRENT entry should be User');
+
+// Single-entity CURRENT (no comma)
+const singleCurrent = `
+APP single {
+  TITLE "Single"
+  DB    single.db
+  CURRENT Session
+}
+`;
+const singleRes = parse(singleCurrent);
+assert(singleRes.app.current?.length === 1, 'single-entity CURRENT should yield length 1');
+assert(singleRes.app.current?.[0] === 'Session', 'single-entity CURRENT should be Session');
+
+// Field-order independence: CURRENT can appear anywhere in the APP block.
+const reorderedCurrent = `
+APP reordered {
+  CURRENT Session
+  TITLE   "Reordered"
+  DB      reordered.db
+}
+`;
+const reorderedRes = parse(reorderedCurrent);
+assert(reorderedRes.app.current?.[0] === 'Session', 'CURRENT should parse regardless of position');
+assert(reorderedRes.app.title === 'Reordered', 'TITLE should still parse after CURRENT');
 
 // --- Test: ENTITY ---
 

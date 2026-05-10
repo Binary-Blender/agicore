@@ -208,6 +208,7 @@ export class Parser {
     let theme: ThemeOption | undefined;
     let icon: string | undefined;
     let telemetry: TelemetryMode | undefined;
+    let current: string[] | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const field = this.current();
@@ -248,6 +249,20 @@ export class Parser {
           this.advance();
           telemetry = this.expectIdentifier() as TelemetryMode;
           break;
+        case TokenType.CURRENT: {
+          // CURRENT <Ident>(, <Ident>)*
+          // Names are entity references — we don't validate they resolve
+          // here (parser doesn't track entities); we just collect the names
+          // and let later passes / the codegen verify correspondence.
+          this.advance();
+          const names: string[] = [this.expectIdentifier()];
+          while (this.check(TokenType.COMMA)) {
+            this.advance();
+            names.push(this.expectIdentifier());
+          }
+          current = names;
+          break;
+        }
         default:
           this.error(`Unexpected field in APP: ${field.value}`);
       }
@@ -258,7 +273,7 @@ export class Parser {
     if (!title) this.error('APP requires a TITLE field');
     if (!db) this.error('APP requires a DB field');
 
-    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, span: { start, end } };
+    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, current, span: { start, end } };
   }
 
   // --- ENTITY ---

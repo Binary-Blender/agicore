@@ -66,6 +66,14 @@ export interface AppDecl {
   theme?: ThemeOption;
   icon?: string;
   telemetry?: TelemetryMode;
+  /**
+   * Active navigation context — entity names declared via the
+   * `CURRENT <Entity>(, <Entity>)*` field of the APP block. Each entity
+   * named here causes the generated Zustand store to expose
+   * `current<Entity>Id` + `setCurrent<Entity>Id` slots, distinct from the
+   * per-entity `selected<Entity>Id` that drives list-picker UI.
+   */
+  current?: string[];
   span: SourceSpan;
 }
 

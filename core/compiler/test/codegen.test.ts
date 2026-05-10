@@ -410,6 +410,80 @@ const noAiResult = compile(noAiSource);
 assert(!noAiResult.files.has('src-tauri/src/ai_service.rs'), 'Should not emit ai_service.rs when AI_SERVICE is absent');
 assert(noAiResult.ast.aiService === undefined, 'AST aiService should be undefined when absent');
 
+// --- Test: AI_SERVICE → store wiring + APP CURRENT entity slots ---
+//
+// Both features address the same underlying bug shape: state that has to
+// cross component boundaries (model picker ↔ chat composer; sidebar session
+// list ↔ main pane) ends up in local React state and silently desyncs.
+// Codegen-driven store slots make the right-shaped store the path of least
+// resistance.
+section('AI_SERVICE → store + CURRENT entity');
+const mini = `
+APP mini {
+  TITLE "Mini"
+  WINDOW 800x600 frameless
+  DB mini.db
+  PORT 5174
+  THEME dark
+  CURRENT Session
+}
+ENTITY Session {
+  name: string REQUIRED
+  TIMESTAMPS
+}
+AI_SERVICE {
+  PROVIDERS anthropic, openai
+  KEYS_FILE "%APPDATA%/test/keys.json"
+  DEFAULT anthropic
+  STREAMING true
+  MODELS {
+    anthropic "claude-sonnet-4-20250514"
+    openai "gpt-4o"
+  }
+}
+`;
+const miniRes = compile(mini);
+const miniStore = miniRes.files.get('src/store/appStore.ts')!;
+assert(miniStore !== undefined, 'mini fixture should generate appStore.ts');
+assert(miniRes.ast.app.current?.includes('Session') === true, 'AST app.current should contain Session');
+assert(miniStore.includes("selectedModel: 'claude-sonnet-4-20250514'"), 'store seeds selectedModel from AI_SERVICE default');
+assert(miniStore.includes('setSelectedModel: (model: string) => void'), 'store types setSelectedModel');
+assert(miniStore.includes('setSelectedModel: (model) => set({ selectedModel: model })'), 'store implements setSelectedModel');
+assert(miniStore.includes('currentSessionId: string | null'), 'CURRENT Session adds currentSessionId to store interface');
+assert(miniStore.includes('setCurrentSessionId: (id: string | null) => void'), 'CURRENT Session adds setter type');
+assert(miniStore.includes('currentSessionId: null'), 'currentSessionId initializes to null');
+assert(miniStore.includes('setCurrentSessionId: (id) => set({ currentSessionId: id })'), 'setter implementation');
+
+// Negative: when AI_SERVICE is absent, store must NOT contain selectedModel.
+// Otherwise consumers would import a non-existent slot from a "lite" build.
+const noAiStore = noAiResult.files.get('src/store/appStore.ts')!;
+assert(!noAiStore.includes('selectedModel'), 'store should NOT mention selectedModel when AI_SERVICE is absent');
+assert(!noAiStore.includes('setSelectedModel'), 'store should NOT mention setSelectedModel when AI_SERVICE is absent');
+
+// Negative: when CURRENT is absent, no current<Entity>Id slot is emitted.
+assert(!noAiStore.includes('currentNoteId'), 'store should NOT contain currentNoteId when APP CURRENT is absent');
+
+// Multi-entity CURRENT: comma-separated list yields one slot per entity.
+const multiCurrent = `
+APP multi {
+  TITLE "Multi"
+  WINDOW 800x600 frameless
+  DB multi.db
+  PORT 5175
+  THEME dark
+  CURRENT Session, User
+}
+ENTITY Session { name: string REQUIRED  TIMESTAMPS }
+ENTITY User { email: string REQUIRED  TIMESTAMPS }
+`;
+const multiRes = compile(multiCurrent);
+const multiStore = multiRes.files.get('src/store/appStore.ts')!;
+assert(multiRes.ast.app.current?.length === 2, 'AST should record both CURRENT entity names');
+assert(multiStore.includes('currentSessionId: string | null'), 'multi: currentSessionId emitted');
+assert(multiStore.includes('currentUserId: string | null'), 'multi: currentUserId emitted');
+assert(multiStore.includes('setCurrentSessionId: (id) => set({ currentSessionId: id })'), 'multi: Session setter impl');
+assert(multiStore.includes('setCurrentUserId: (id) => set({ currentUserId: id })'), 'multi: User setter impl');
+
 // --- Test: Content Pipeline (Orchestration) ---
 section('Compile content_pipeline.agi');
 

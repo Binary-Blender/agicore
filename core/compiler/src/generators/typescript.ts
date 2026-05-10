@@ -229,11 +229,50 @@ export function generateStore(ast: AgiFile): string {
     '',
   ];
 
+  // Cross-component state slices that aren't tied to a single entity:
+  //
+  //  • selectedModel   — emitted when AI_SERVICE is declared. Seeds from the
+  //                      model declared for the AI_SERVICE's DEFAULT provider.
+  //                      Lives in the store (not local component state) so a
+  //                      model picker in a sidebar and a chat composer in the
+  //                      main pane stay in sync.
+  //  • current<X>Id    — emitted for each entity listed in `APP { CURRENT … }`.
+  //                      This is "active navigation context", distinct from
+  //                      `selected<X>Id` (which is for list-picker UI).
+  const ai = ast.aiService;
+  let aiDefaultModel: string | undefined;
+  if (ai && ai.defaultProvider) {
+    const m = ai.models.find(mm => mm.provider === ai.defaultProvider);
+    if (m) aiDefaultModel = m.model;
+  }
+  // Fall back to the first declared model if no DEFAULT was set, so the store
+  // still has a sensible seed value rather than an empty string.
+  if (ai && !aiDefaultModel && ai.models.length > 0) {
+    aiDefaultModel = ai.models[0]!.model;
+  }
+
+  const currentEntities = ast.app.current ?? [];
+
   // Build the state interface
   lines.push('interface AppState {');
   lines.push("  currentView: string;");
   lines.push("  setCurrentView: (view: string) => void;");
   lines.push('');
+
+  if (ai) {
+    lines.push('  selectedModel: string;');
+    lines.push('  setSelectedModel: (model: string) => void;');
+    lines.push('');
+  }
+
+  for (const entityName of currentEntities) {
+    // The store key is `current<PascalEntity>Id` — no camelCase conversion is
+    // needed since entity names are already PascalCase by convention. The
+    // `id` parameter in the setter accepts the underlying string id.
+    lines.push(`  current${entityName}Id: string | null;`);
+    lines.push(`  setCurrent${entityName}Id: (id: string | null) => void;`);
+    lines.push('');
+  }
 
   for (const entity of ast.entities) {
     const name = entity.name;
@@ -257,6 +296,19 @@ export function generateStore(ast: AgiFile): string {
   lines.push("  currentView: 'Dashboard',");
   lines.push("  setCurrentView: (view) => set({ currentView: view }),");
   lines.push('');
+
+  if (ai) {
+    const seed = aiDefaultModel ?? '';
+    lines.push(`  selectedModel: '${seed}',`);
+    lines.push('  setSelectedModel: (model) => set({ selectedModel: model }),');
+    lines.push('');
+  }
+
+  for (const entityName of currentEntities) {
+    lines.push(`  current${entityName}Id: null,`);
+    lines.push(`  setCurrent${entityName}Id: (id) => set({ current${entityName}Id: id }),`);
+    lines.push('');
+  }
 
   for (const entity of ast.entities) {
     const name = entity.name;
