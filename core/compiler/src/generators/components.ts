@@ -4,13 +4,70 @@
 import type { AgiFile, ViewDecl, EntityDecl } from '@agicore/parser';
 import { toCamelCase, lcFirst } from '../naming.js';
 
-function generateTableView(view: ViewDecl, entity?: EntityDecl): string {
+/**
+ * If an entity has a `BELONGS_TO X` relationship and `X` is in
+ * `ast.app.current ?? []`, return the parent name. The generated list view
+ * should then read `currentXId` from the store and call the SQL-pushdown
+ * `loadEntityForCurrentX` action instead of the unfiltered `loadEntitys`.
+ *
+ * When an entity BELONGS_TO multiple CURRENT entities, the first relationship
+ * in declaration order wins — deterministic, simple, swap in a smarter
+ * heuristic if it ever bites us.
+ */
+function pickCurrentParent(entity: EntityDecl | undefined, ast: AgiFile): string | undefined {
+  if (!entity) return undefined;
+  const currents = ast.app.current ?? [];
+  for (const rel of entity.relationships) {
+    if (rel.type !== 'BELONGS_TO') continue;
+    if (currents.includes(rel.target)) return rel.target;
+  }
+  return undefined;
+}
+
+function generateTableView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
   const name = entity?.name ?? 'Item';
   const camel = lcFirst(name);
   const plural = camel + 's';
   const fields = view.fields.length > 0
     ? view.fields
     : entity?.fields.map(f => f.name) ?? [];
+
+  const parent = pickCurrentParent(entity, ast);
+  if (parent) {
+    return `import { useEffect } from 'react';
+import { useAppStore } from '../store/appStore';
+
+export function ${view.name}() {
+  const ${plural} = useAppStore((s) => s.${plural});
+  const current${parent}Id = useAppStore((s) => s.current${parent}Id);
+  const load = useAppStore((s) => s.load${name}sForCurrent${parent});
+
+  useEffect(() => { load(); }, [current${parent}Id, load]);
+
+  return (
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">${view.title ?? view.name}</h2>
+      </div>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-[var(--border)]">
+${fields.map(f => `            <th className="text-left py-2 px-3">${toCamelCase(f)}</th>`).join('\n')}
+          </tr>
+        </thead>
+        <tbody>
+          {${plural}.map((item) => (
+            <tr key={item.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-hover)]">
+${fields.map(f => `              <td className="py-2 px-3">{String(item.${toCamelCase(f)} ?? '')}</td>`).join('\n')}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+`;
+  }
 
   return `import { useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
@@ -46,13 +103,20 @@ ${fields.map(f => `              <td className="py-2 px-3">{String(item.${toCame
 `;
 }
 
-function generateSplitView(view: ViewDecl, entity?: EntityDecl): string {
+function generateSplitView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
   const name = entity?.name ?? 'Item';
   const camel = lcFirst(name);
   const plural = camel + 's';
   const fields = view.fields.length > 0
     ? view.fields
     : entity?.fields.map(f => f.name) ?? [];
+
+  const parent = pickCurrentParent(entity, ast);
+  const loaderReads = parent
+    ? `  const current${parent}Id = useAppStore((s) => s.current${parent}Id);
+  const load = useAppStore((s) => s.load${name}sForCurrent${parent});`
+    : `  const load = useAppStore((s) => s.load${name}s);`;
+  const effectDeps = parent ? `[current${parent}Id, load]` : `[]`;
 
   return `import { useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
@@ -61,9 +125,9 @@ export function ${view.name}() {
   const ${plural} = useAppStore((s) => s.${plural});
   const selectedId = useAppStore((s) => s.selected${name}Id);
   const select = useAppStore((s) => s.select${name});
-  const load = useAppStore((s) => s.load${name}s);
+${loaderReads}
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, ${effectDeps});
 
   const selected = ${plural}.find((i) => i.id === selectedId);
 
@@ -102,7 +166,7 @@ ${fields.map(f => `            <div className="mb-2"><span className="text-[var(
 `;
 }
 
-function generateCardsView(view: ViewDecl, entity?: EntityDecl): string {
+function generateCardsView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
   const name = entity?.name ?? 'Item';
   const camel = lcFirst(name);
   const plural = camel + 's';
@@ -110,14 +174,21 @@ function generateCardsView(view: ViewDecl, entity?: EntityDecl): string {
     ? view.fields
     : entity?.fields.map(f => f.name) ?? [];
 
+  const parent = pickCurrentParent(entity, ast);
+  const loaderReads = parent
+    ? `  const current${parent}Id = useAppStore((s) => s.current${parent}Id);
+  const load = useAppStore((s) => s.load${name}sForCurrent${parent});`
+    : `  const load = useAppStore((s) => s.load${name}s);`;
+  const effectDeps = parent ? `[current${parent}Id, load]` : `[]`;
+
   return `import { useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 
 export function ${view.name}() {
   const ${plural} = useAppStore((s) => s.${plural});
-  const load = useAppStore((s) => s.load${name}s);
+${loaderReads}
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, ${effectDeps});
 
   return (
     <div className="p-6">
@@ -152,11 +223,11 @@ function generateCustomView(view: ViewDecl): string {
 `;
 }
 
-function generateViewComponent(view: ViewDecl, entity?: EntityDecl): string {
+function generateViewComponent(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
   switch (view.layout) {
-    case 'table':  return generateTableView(view, entity);
-    case 'split':  return generateSplitView(view, entity);
-    case 'cards':  return generateCardsView(view, entity);
+    case 'table':  return generateTableView(view, entity, ast);
+    case 'split':  return generateSplitView(view, entity, ast);
+    case 'cards':  return generateCardsView(view, entity, ast);
     case 'form':
     case 'detail':
     case 'custom':
@@ -343,6 +414,114 @@ export function ModelPicker() {
 `;
 }
 
+/**
+ * Friendly labels + placeholder hints per provider, used by the generated
+ * ApiKeyModal. Anything not in here falls back to {label: provider, placeholder: 'API key'}.
+ * Note: `babyai` is intentionally absent — that's a ROUTER concern, not an
+ * AI_SERVICE provider. If/when ROUTER codegen lands we'll wire it in there.
+ */
+const PROVIDER_REGISTRY: Record<string, { label: string; placeholder: string }> = {
+  anthropic:   { label: 'Anthropic (Claude)', placeholder: 'sk-ant-...' },
+  openai:      { label: 'OpenAI',             placeholder: 'sk-...' },
+  google:      { label: 'Google (Gemini)',    placeholder: 'AIza...' },
+  xai:         { label: 'xAI (Grok)',         placeholder: 'xai-...' },
+  huggingface: { label: 'HuggingFace',        placeholder: 'hf_...' },
+};
+
+/**
+ * Emit `src/components/ApiKeyModal.tsx` — a small modal that lists every
+ * provider declared in AI_SERVICE.providers, loads existing (masked) keys on
+ * mount via `get_api_keys`, and saves changed entries via `set_api_key` on
+ * click. Styling matches NovaSyn Chat's hand-written modal so the swap is a
+ * visual no-op.
+ */
+function generateApiKeyModal(ast: AgiFile): string {
+  const ai = ast.aiService;
+  if (!ai) return '';
+
+  const entries = ai.providers.map(p => {
+    const entry = PROVIDER_REGISTRY[p] ?? { label: p, placeholder: 'API key' };
+    return `  { id: ${JSON.stringify(p)}, label: ${JSON.stringify(entry.label)}, placeholder: ${JSON.stringify(entry.placeholder)} },`;
+  });
+
+  return `import { useEffect, useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
+
+const PROVIDERS = [
+${entries.join('\n')}
+];
+
+export function ApiKeyModal({ onClose }: { onClose: () => void }) {
+  const [keys, setKeys] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    // Existing keys come back masked from the Rust side (round-1 AI_SERVICE
+    // codegen). We surface the masked form as the placeholder hint rather
+    // than the input value so the user can tell which providers are already
+    // configured without ever rendering the raw key.
+    invoke<Record<string, string>>('get_api_keys')
+      .then((existing) => setKeys((prev) => {
+        const next = { ...prev };
+        for (const [k, v] of Object.entries(existing)) {
+          if (!(k in next)) next[k] = '';
+          (next as Record<string, string>)['__existing_' + k] = v;
+        }
+        return next;
+      }))
+      .catch(() => { /* command may not exist yet — silent fail */ });
+  }, []);
+
+  async function handleSave() {
+    for (const p of PROVIDERS) {
+      const value = keys[p.id];
+      if (value && value.trim()) {
+        try {
+          await invoke('set_api_key', { provider: p.id, key: value.trim() });
+        } catch {
+          // silent fail — keep the modal open if individual saves fail? for
+          // now match the hand-written behavior and continue.
+        }
+      }
+    }
+    onClose();
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-slate-800 border border-slate-600 rounded-xl p-6 w-[480px] shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <h2 className="text-lg font-bold mb-4">API Keys</h2>
+        <p className="text-xs text-gray-400 mb-4">Stored locally via the AI_SERVICE keys file.</p>
+        <div className="space-y-3">
+          {PROVIDERS.map((p) => {
+            const existing = (keys as Record<string, string>)['__existing_' + p.id];
+            return (
+              <div key={p.id}>
+                <label className="text-sm text-gray-300 mb-1 block">
+                  {p.label}
+                  {existing ? <span className="text-xs text-gray-500 ml-2">(current: {existing})</span> : null}
+                </label>
+                <input
+                  type="password"
+                  className="w-full bg-slate-700 border border-slate-500 rounded px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  placeholder={p.placeholder}
+                  value={keys[p.id] ?? ''}
+                  onChange={(e) => setKeys((prev) => ({ ...prev, [p.id]: e.target.value }))}
+                />
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex justify-end gap-3 mt-6">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Cancel</button>
+          <button onClick={handleSave} className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition">Save Keys</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+`;
+}
+
 function generateTitleBar(ast: AgiFile): string {
   return `export function TitleBar() {
   return (
@@ -364,7 +543,7 @@ export function generateComponents(ast: AgiFile): Map<string, string> {
     const entity = view.entity
       ? ast.entities.find(e => e.name === view.entity)
       : undefined;
-    files.set(`src/components/${view.name}.tsx`, generateViewComponent(view, entity));
+    files.set(`src/components/${view.name}.tsx`, generateViewComponent(view, entity, ast));
   }
 
   files.set('src/components/App.tsx', generateAppTsx(ast));
@@ -374,8 +553,11 @@ export function generateComponents(ast: AgiFile): Map<string, string> {
   // Emit ModelPicker.tsx only when AI_SERVICE is declared — apps without an
   // AI service have no `selectedModel` slot in the store for the picker to
   // bind to, so emitting the file would be a type error in the user's app.
+  // ApiKeyModal.tsx is also AI_SERVICE-gated: the Rust commands it invokes
+  // (get_api_keys, set_api_key) only exist when ai_service.rs is generated.
   if (ast.aiService) {
     files.set('src/components/ModelPicker.tsx', generateModelPicker(ast));
+    files.set('src/components/ApiKeyModal.tsx', generateApiKeyModal(ast));
   }
 
   return files;

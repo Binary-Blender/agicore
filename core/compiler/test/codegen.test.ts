@@ -761,6 +761,116 @@ const noLabelPicker = noLabelRes.files.get('src/components/ModelPicker.tsx')!;
 // Date suffix stripped, dash split, title-cased.
 assert(noLabelPicker.includes('"Claude Sonnet 4"'), 'derived label strips date suffix and title-cases');
 
+// --- Test: Auto-filter list view by CURRENT parent ---
+//
+// When a generated list view's ENTITY has BELONGS_TO X and X is in CURRENT,
+// the emitted component should bind to the SQL-pushdown loader from the store
+// (load<Entity>sForCurrent<X>) and re-run when current<X>Id changes. When the
+// entity has no such relationship, the existing unfiltered pattern stands.
+
+section('Auto-filter list view by CURRENT parent');
+
+const filteredViewSource = `
+APP filt {
+  TITLE "Filt" WINDOW 800x600 frameless DB f.db PORT 5180 THEME dark
+  CURRENT Session
+}
+ENTITY Session { name: string REQUIRED  TIMESTAMPS }
+ENTITY ChatMessage {
+  text: string REQUIRED
+  BELONGS_TO Session
+  TIMESTAMPS
+}
+ENTITY Tag {
+  name: string REQUIRED
+  TIMESTAMPS
+}
+VIEW ChatMessageList {
+  ENTITY ChatMessage
+  LAYOUT table
+  SIDEBAR icon: MessageSquare
+  FIELDS text
+}
+VIEW TagList {
+  ENTITY Tag
+  LAYOUT table
+  SIDEBAR icon: Hash
+  FIELDS name
+}
+`;
+const filtRes = compile(filteredViewSource);
+const filteredList = filtRes.files.get('src/components/ChatMessageList.tsx')!;
+assert(filteredList !== undefined, 'generated list component exists');
+assert(filteredList.includes('loadChatMessagesForCurrentSession'), 'list calls the for-current-session loader instead of unfiltered list');
+assert(filteredList.includes('current${0}Id'.replace('${0}', 'Session')), 'list reads currentSessionId from store');
+assert(filteredList.includes('useEffect(() => { load(); }, [currentSessionId, load])'), 'useEffect deps include currentSessionId so a switch reloads');
+assert(!filteredList.includes('useAppStore((s) => s.loadChatMessages)'), 'unfiltered loadChatMessages must NOT be bound when CURRENT parent is available');
+
+// Negative: Tag has no BELONGS_TO → keeps the unfiltered pattern.
+const tagList = filtRes.files.get('src/components/TagList.tsx')!;
+assert(tagList.includes('useAppStore((s) => s.loadTags)'), 'entities without CURRENT BELONGS_TO keep the unfiltered loadTags loader');
+assert(tagList.includes('useEffect(() => { load(); }, [])'), 'unfiltered loader keeps empty dep array');
+assert(!tagList.includes('currentSessionId'), 'tag list must not reference unrelated currentSessionId');
+
+// Negative: BELONGS_TO X where X is NOT in CURRENT → unfiltered loader.
+const nonCurrentParent = `
+APP fnp {
+  TITLE "FNP" WINDOW 800x600 frameless DB f.db PORT 5181 THEME dark
+}
+ENTITY User { email: string REQUIRED  TIMESTAMPS }
+ENTITY Note {
+  text: string REQUIRED
+  BELONGS_TO User
+  TIMESTAMPS
+}
+VIEW NoteList {
+  ENTITY Note
+  LAYOUT table
+  SIDEBAR icon: FileText
+  FIELDS text
+}
+`;
+const fnpRes = compile(nonCurrentParent);
+const fnpNoteList = fnpRes.files.get('src/components/NoteList.tsx')!;
+assert(fnpNoteList.includes('useAppStore((s) => s.loadNotes)'), 'BELONGS_TO X without X in CURRENT → unfiltered loadNotes loader');
+assert(!fnpNoteList.includes('loadNotesForCurrentUser'), 'must NOT bind to non-emitted loadNotesForCurrentUser');
+
+// --- Test: ApiKeyModal emission from AI_SERVICE.providers ---
+//
+// AI_SERVICE.providers should drive an ApiKeyModal.tsx with one input per
+// provider, using the registry's friendly labels and placeholders. No
+// AI_SERVICE → no ApiKeyModal.tsx.
+
+section('ApiKeyModal emission from AI_SERVICE.providers');
+
+const apiKeyModalSource = `
+APP km {
+  TITLE "KM" WINDOW 800x600 frameless DB km.db PORT 5182 THEME dark
+}
+AI_SERVICE {
+  PROVIDERS anthropic, openai
+  KEYS_FILE "%APPDATA%/test/keys.json"
+  DEFAULT anthropic
+  MODELS { anthropic "claude-sonnet-4-20250514" }
+}
+`;
+const kmRes = compile(apiKeyModalSource);
+assert(kmRes.files.has('src/components/ApiKeyModal.tsx'), 'AI_SERVICE → ApiKeyModal.tsx is emitted');
+const apiKeyModal = kmRes.files.get('src/components/ApiKeyModal.tsx')!;
+assert(apiKeyModal.includes('export function ApiKeyModal('), 'ApiKeyModal is a named export');
+assert(apiKeyModal.includes("invoke<Record<string, string>>('get_api_keys')"), 'modal loads keys via get_api_keys on mount');
+assert(apiKeyModal.includes("invoke('set_api_key', { provider:"), 'modal saves via set_api_key per provider');
+assert(apiKeyModal.includes('"Anthropic (Claude)"'), 'modal uses registry label for anthropic');
+assert(apiKeyModal.includes('"OpenAI"'), 'modal uses registry label for openai');
+assert(apiKeyModal.includes('"sk-ant-..."'), 'modal uses registry placeholder for anthropic');
+assert(apiKeyModal.includes('"sk-..."'), 'modal uses registry placeholder for openai');
+assert(apiKeyModal.includes('fixed inset-0 bg-black/60'), 'modal mirrors NovaSyn modal overlay classes');
+assert(apiKeyModal.includes('bg-slate-800 border border-slate-600 rounded-xl p-6 w-[480px]'), 'modal mirrors NovaSyn dialog container classes');
+assert(apiKeyModal.includes('type="password"'), 'API key inputs use password type');
+
+// Negative: no AI_SERVICE → no ApiKeyModal.tsx
+assert(!noAiResult.files.has('src/components/ApiKeyModal.tsx'), 'no AI_SERVICE → no ApiKeyModal.tsx');
+
 // --- Test: Content Pipeline (Orchestration) ---
 section('Compile content_pipeline.agi');
 
