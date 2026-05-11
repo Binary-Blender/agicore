@@ -265,13 +265,18 @@ export function generateStore(ast: AgiFile): string {
   const ai = ast.aiService;
   let aiDefaultModel: string | undefined;
   if (ai && ai.defaultProvider) {
-    const m = ai.models.find(mm => mm.provider === ai.defaultProvider);
-    if (m) aiDefaultModel = m.model;
+    // With multi-model MODELS blocks, each provider has its own DEFAULT entry
+    // (either explicit or the first declared). Seed the store from the entry
+    // matching the AI_SERVICE-level DEFAULT provider.
+    const m = ai.models.find(
+      mm => mm.provider === ai.defaultProvider && mm.isDefault
+    );
+    if (m) aiDefaultModel = m.id;
   }
   // Fall back to the first declared model if no DEFAULT was set, so the store
   // still has a sensible seed value rather than an empty string.
   if (ai && !aiDefaultModel && ai.models.length > 0) {
-    aiDefaultModel = ai.models[0]!.model;
+    aiDefaultModel = ai.models[0]!.id;
   }
 
   const currentEntities = ast.app.current ?? [];

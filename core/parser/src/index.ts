@@ -26,7 +26,7 @@ export type {
   StateNode, StateTransition, ScoreThreshold,
   Declaration, FieldDef, AgiType, FieldModifier, CrudOp,
   Relationship, ActionParam, ActionOutput, LayoutType,
-  ThemeOption, ModelMapping, TestGiven, TestExpect,
+  ThemeOption, ModelMapping, ModelEntry, TestGiven, TestExpect,
   AssertionOp, RuleCondition, WorkflowStep, OnFailBehavior,
   LiteralValue, SourceLocation, SourceSpan, ParseError as ParseErrorType,
 } from './types.js';

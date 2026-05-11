@@ -247,6 +247,102 @@ export function Sidebar() {
 `;
 }
 
+/**
+ * Derive a human-friendly display label from a raw model id when the user
+ * didn't supply an explicit LABEL. The strategy is intentionally simple:
+ *
+ *   1. strip a trailing `-YYYY-MM-DD` or `-YYYYMMDD` date stamp,
+ *   2. strip a `latest` suffix,
+ *   3. split on `-` and `_`, drop empty tokens,
+ *   4. title-case each remaining token (preserve digits + dots verbatim),
+ *   5. rejoin with spaces.
+ *
+ * Examples:
+ *   claude-sonnet-4-20250514       -> "Claude Sonnet 4"
+ *   claude-haiku-4-5-20251001      -> "Claude Haiku 4 5"
+ *   gpt-4o                          -> "Gpt 4o"
+ *   gemini-2.5-flash-preview-05-20 -> "Gemini 2.5 Flash Preview"
+ *   grok-3-latest                   -> "Grok 3"
+ */
+function humanizeModelId(id: string): string {
+  let s = id;
+  // Strip trailing -YYYYMMDD
+  s = s.replace(/-\d{8}$/, '');
+  // Strip trailing -YYYY-MM-DD
+  s = s.replace(/-\d{4}-\d{2}-\d{2}$/, '');
+  // Strip trailing -MM-DD (e.g. preview-05-20)
+  s = s.replace(/-\d{2}-\d{2}$/, '');
+  // Strip trailing -latest
+  s = s.replace(/-latest$/i, '');
+  // Tokenize on - or _
+  const tokens = s.split(/[-_]+/).filter(Boolean);
+  return tokens
+    .map(t => {
+      // Preserve tokens that already contain digits/dots verbatim except for
+      // capitalizing the leading letter.
+      if (/^[a-zA-Z][a-zA-Z]*$/.test(t)) {
+        return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+      }
+      // Mixed alphanumeric: just capitalize the first char if it's a letter.
+      if (/^[a-zA-Z]/.test(t)) {
+        return t.charAt(0).toUpperCase() + t.slice(1);
+      }
+      return t;
+    })
+    .join(' ');
+}
+
+/**
+ * Emit `src/components/ModelPicker.tsx` — a small dropdown bound to
+ * `selectedModel` / `setSelectedModel` in the generated Zustand store.
+ *
+ * The MODELS array literal mirrors the AI_SERVICE.MODELS block one-for-one
+ * (same order as declared in the .agi source). Each entry resolves its label
+ * either from the explicit LABEL or via `humanizeModelId()`.
+ *
+ * The className strings here match what NovaSyn Chat's hand-written picker
+ * was using so swapping in `<ModelPicker />` is a visual no-op.
+ */
+function generateModelPicker(ast: AgiFile): string {
+  const ai = ast.aiService;
+  // generateModelPicker is only invoked when ai is set — but be defensive.
+  if (!ai) return '';
+
+  const entries = ai.models.map(m => {
+    const label = m.label ?? humanizeModelId(m.id);
+    // JSON.stringify gives us correct JS string escaping for ids that might
+    // contain quotes, backslashes, etc.
+    return `  { id: ${JSON.stringify(m.id)}, label: ${JSON.stringify(label)}, provider: ${JSON.stringify(m.provider)} },`;
+  });
+
+  return `import { useAppStore } from '../store/appStore';
+
+const MODELS = [
+${entries.join('\n')}
+];
+
+export function ModelPicker() {
+  const selectedModel = useAppStore((s) => s.selectedModel);
+  const setSelectedModel = useAppStore((s) => s.setSelectedModel);
+
+  return (
+    <div className="px-3 py-2 border-b border-slate-700">
+      <label className="text-xs text-gray-500 block mb-1">Model</label>
+      <select
+        value={selectedModel}
+        onChange={(e) => setSelectedModel(e.target.value)}
+        className="w-full bg-slate-700 border border-slate-600 text-white text-xs px-2 py-1.5 rounded focus:outline-none focus:border-blue-500"
+      >
+        {MODELS.map((m) => (
+          <option key={m.id} value={m.id}>{m.label}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+`;
+}
+
 function generateTitleBar(ast: AgiFile): string {
   return `export function TitleBar() {
   return (
@@ -274,6 +370,13 @@ export function generateComponents(ast: AgiFile): Map<string, string> {
   files.set('src/components/App.tsx', generateAppTsx(ast));
   files.set('src/components/Sidebar.tsx', generateSidebar(ast));
   files.set('src/components/TitleBar.tsx', generateTitleBar(ast));
+
+  // Emit ModelPicker.tsx only when AI_SERVICE is declared — apps without an
+  // AI service have no `selectedModel` slot in the store for the picker to
+  // bind to, so emitting the file would be a type error in the user's app.
+  if (ast.aiService) {
+    files.set('src/components/ModelPicker.tsx', generateModelPicker(ast));
+  }
 
   return files;
 }

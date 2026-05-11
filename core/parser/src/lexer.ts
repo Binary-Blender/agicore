@@ -55,6 +55,7 @@ export enum TokenType {
   DEFAULT = 'DEFAULT',
   STREAMING = 'STREAMING',
   MODELS = 'MODELS',
+  LABEL = 'LABEL',
 
   // Test keywords
   GIVEN = 'GIVEN',
@@ -339,6 +340,7 @@ const KEYWORDS: Record<string, TokenType> = {
   DEFAULT: TokenType.DEFAULT,
   STREAMING: TokenType.STREAMING,
   MODELS: TokenType.MODELS,
+  LABEL: TokenType.LABEL,
   GIVEN: TokenType.GIVEN,
   EXPECT: TokenType.EXPECT,
   IS: TokenType.IS,

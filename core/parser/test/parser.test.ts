@@ -351,7 +351,116 @@ assert(aiResult.aiService!.providers.length === 2, 'Should have 2 providers');
 assert(aiResult.aiService!.defaultProvider === 'anthropic', 'Default should be anthropic');
 assert(aiResult.aiService!.streaming === true, 'Streaming should be true');
 assert(aiResult.aiService!.models.length === 2, 'Should have 2 model mappings');
-assert(aiResult.aiService!.models[0]!.model === 'claude-sonnet-4-20250514', 'First model should be claude');
+assert(aiResult.aiService!.models[0]!.id === 'claude-sonnet-4-20250514', 'First model id should be claude');
+assert(aiResult.aiService!.models[0]!.provider === 'anthropic', 'First model provider should be anthropic');
+// Back-compat: single entry per provider with no DEFAULT modifier becomes the implicit default.
+assert(aiResult.aiService!.models[0]!.isDefault === true, 'Sole anthropic entry should be implicit default');
+assert(aiResult.aiService!.models[1]!.isDefault === true, 'Sole openai entry should be implicit default');
+assert(aiResult.aiService!.models[0]!.label === undefined, 'No LABEL → label should be undefined');
+
+// --- Test: AI_SERVICE multi-model with LABEL + DEFAULT modifiers ---
+
+section('AI_SERVICE multi-model parsing');
+
+const multiModelTest = `
+APP test {
+  TITLE "Test"
+  DB test.db
+}
+
+AI_SERVICE {
+  PROVIDERS   anthropic, openai
+  KEYS_FILE   "k.json"
+  DEFAULT     anthropic
+  STREAMING   true
+  MODELS {
+    anthropic  "claude-sonnet-4-20250514"   LABEL "Claude Sonnet 4"   DEFAULT
+    anthropic  "claude-haiku-4-5-20251001"  LABEL "Claude Haiku 4.5"
+    openai     "gpt-4o"                     LABEL "GPT-4o"            DEFAULT
+    openai     "gpt-4o-mini"                LABEL "GPT-4o Mini"
+  }
+}
+`;
+const multiResult = parse(multiModelTest);
+assert(multiResult.aiService!.models.length === 4, 'Multi-model: should have 4 entries');
+assert(multiResult.aiService!.models[0]!.id === 'claude-sonnet-4-20250514', 'Multi: entry 0 id');
+assert(multiResult.aiService!.models[0]!.label === 'Claude Sonnet 4', 'Multi: entry 0 label');
+assert(multiResult.aiService!.models[0]!.isDefault === true, 'Multi: entry 0 is DEFAULT');
+assert(multiResult.aiService!.models[1]!.isDefault === false, 'Multi: entry 1 (haiku) is not default');
+assert(multiResult.aiService!.models[1]!.label === 'Claude Haiku 4.5', 'Multi: entry 1 label');
+assert(multiResult.aiService!.models[2]!.isDefault === true, 'Multi: entry 2 (gpt-4o) is DEFAULT');
+assert(multiResult.aiService!.models[3]!.provider === 'openai', 'Multi: entry 3 provider is openai');
+assert(multiResult.aiService!.models[3]!.isDefault === false, 'Multi: entry 3 (gpt-4o-mini) is not default');
+
+// --- Test: AI_SERVICE multi-model — no explicit DEFAULT means first wins ---
+
+section('AI_SERVICE multi-model implicit default');
+
+const implicitDefaultTest = `
+APP test { TITLE "Test" DB test.db }
+AI_SERVICE {
+  PROVIDERS anthropic
+  KEYS_FILE "k.json"
+  DEFAULT   anthropic
+  MODELS {
+    anthropic "claude-sonnet-4-20250514" LABEL "Sonnet"
+    anthropic "claude-haiku-4-5-20251001" LABEL "Haiku"
+  }
+}
+`;
+const implicitResult = parse(implicitDefaultTest);
+assert(implicitResult.aiService!.models[0]!.isDefault === true, 'Implicit: first entry becomes default');
+assert(implicitResult.aiService!.models[1]!.isDefault === false, 'Implicit: second entry is not default');
+
+// --- Test: AI_SERVICE multi-model — LABEL/DEFAULT modifier ordering ---
+
+section('AI_SERVICE multi-model LABEL/DEFAULT ordering');
+
+// LABEL and DEFAULT can appear in either order on the same line. Use one
+// DEFAULT per provider so the validation rule isn't tripped.
+const orderingTest = `
+APP test { TITLE "Test" DB test.db }
+AI_SERVICE {
+  PROVIDERS anthropic, openai
+  KEYS_FILE "k.json"
+  DEFAULT   anthropic
+  MODELS {
+    anthropic "claude-a" DEFAULT LABEL "A label"
+    openai    "gpt-x"    LABEL "X label" DEFAULT
+  }
+}
+`;
+const orderingResult = parse(orderingTest);
+assert(orderingResult.aiService!.models[0]!.isDefault === true, 'Ordering: DEFAULT first then LABEL works');
+assert(orderingResult.aiService!.models[0]!.label === 'A label', 'Ordering: label parsed after DEFAULT');
+assert(orderingResult.aiService!.models[1]!.isDefault === true, 'Ordering: LABEL first then DEFAULT works');
+assert(orderingResult.aiService!.models[1]!.label === 'X label', 'Ordering: label parsed before DEFAULT');
+
+// --- Test: AI_SERVICE multi-model — two DEFAULTs for same provider is an error ---
+
+section('AI_SERVICE multi-model duplicate DEFAULT error');
+
+const dupDefaultTest = `
+APP test { TITLE "Test" DB test.db }
+AI_SERVICE {
+  PROVIDERS anthropic
+  KEYS_FILE "k.json"
+  DEFAULT   anthropic
+  MODELS {
+    anthropic "claude-a" DEFAULT
+    anthropic "claude-b" DEFAULT
+  }
+}
+`;
+let dupErrorMsg = '';
+try {
+  parse(dupDefaultTest);
+} catch (err) {
+  dupErrorMsg = String((err as Error).message);
+}
+assert(dupErrorMsg.length > 0, 'Two DEFAULTs for same provider should throw');
+assert(dupErrorMsg.includes('multiple DEFAULT') || dupErrorMsg.includes('DEFAULT'), 'Error message mentions DEFAULT');
+assert(dupErrorMsg.includes('anthropic'), 'Error message names the provider');
 
 // --- Test: TEST ---
 

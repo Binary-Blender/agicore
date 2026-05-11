@@ -158,9 +158,30 @@ export interface ViewDecl {
 
 // --- AI_SERVICE Declaration ---
 
+/**
+ * @deprecated kept for backwards compatibility with external consumers; prefer
+ * `ModelEntry`. ModelMapping carried only `{provider, model}` — the new
+ * multi-model MODELS block carries an ordered list of `ModelEntry` with
+ * optional display labels and an explicit DEFAULT marker per provider.
+ */
 export interface ModelMapping {
   provider: string;
   model: string;
+}
+
+/**
+ * One entry inside an `AI_SERVICE.MODELS { ... }` block. Multiple entries per
+ * provider are allowed. `isDefault` is true for the entry that should be used
+ * when that provider is selected (each provider has exactly one default —
+ * either explicitly marked or the first declared).
+ */
+export interface ModelEntry {
+  provider: string;
+  /** The model id sent to the provider API (e.g. `claude-sonnet-4-20250514`). */
+  id: string;
+  /** Optional human-friendly display label; derived from the id if omitted. */
+  label?: string;
+  isDefault: boolean;
 }
 
 export interface AiServiceDecl {
@@ -169,7 +190,8 @@ export interface AiServiceDecl {
   keysFile: string;
   defaultProvider?: string;
   streaming: boolean;
-  models: ModelMapping[];
+  /** Ordered list of provider+model entries as declared in the source. */
+  models: ModelEntry[];
   span: SourceSpan;
 }
 

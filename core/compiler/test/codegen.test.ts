@@ -660,6 +660,107 @@ assert(multiStore.includes('currentUserId: string | null'), 'multi: currentUserI
 assert(multiStore.includes('setCurrentSessionId: (id) => set({ currentSessionId: id })'), 'multi: Session setter impl');
 assert(multiStore.includes('setCurrentUserId: (id) => set({ currentUserId: id })'), 'multi: User setter impl');
 
+// --- Test: AI_SERVICE multi-model → ModelPicker.tsx emission ---
+//
+// When AI_SERVICE.MODELS declares multiple entries per provider with optional
+// LABEL/DEFAULT markers, codegen must emit a ModelPicker component that lists
+// every entry (preserving declaration order) and wires the <select> through
+// the store's selectedModel/setSelectedModel slots.
+//
+// The component is omitted entirely when AI_SERVICE is absent — the store
+// has no selectedModel slot for the picker to bind to.
+
+section('AI_SERVICE multi-model → ModelPicker.tsx');
+
+const multiPickerSource = `
+APP picker_app {
+  TITLE "Picker"
+  WINDOW 800x600 frameless
+  DB picker.db
+  PORT 5176
+  THEME dark
+}
+AI_SERVICE {
+  PROVIDERS anthropic, openai, google, xai
+  KEYS_FILE "%APPDATA%/test/keys.json"
+  DEFAULT   anthropic
+  STREAMING true
+  MODELS {
+    anthropic "claude-sonnet-4-20250514"   LABEL "Claude Sonnet 4"   DEFAULT
+    anthropic "claude-haiku-4-5-20251001"  LABEL "Claude Haiku 4.5"
+    openai    "gpt-4o"                     LABEL "GPT-4o"            DEFAULT
+    openai    "gpt-4o-mini"                LABEL "GPT-4o Mini"
+    google    "gemini-2.5-flash-preview-05-20" LABEL "Gemini 2.5 Flash" DEFAULT
+    xai       "grok-3-latest"              LABEL "Grok 3"            DEFAULT
+  }
+}
+`;
+const pickerRes = compile(multiPickerSource);
+
+assert(pickerRes.files.has('src/components/ModelPicker.tsx'), 'AI_SERVICE → ModelPicker.tsx is emitted');
+const picker = pickerRes.files.get('src/components/ModelPicker.tsx')!;
+assert(picker.includes("import { useAppStore } from '../store/appStore'"), 'ModelPicker imports useAppStore');
+assert(picker.includes('export function ModelPicker()'), 'ModelPicker is named export');
+assert(picker.includes('const MODELS = ['), 'MODELS array literal is emitted');
+
+// All six entries appear in the MODELS array, with id + label + provider.
+assert(picker.includes('"claude-sonnet-4-20250514"'), 'MODELS contains Sonnet id');
+assert(picker.includes('"Claude Sonnet 4"'), 'MODELS contains Sonnet label');
+assert(picker.includes('"claude-haiku-4-5-20251001"'), 'MODELS contains Haiku id');
+assert(picker.includes('"Claude Haiku 4.5"'), 'MODELS contains Haiku label');
+assert(picker.includes('"gpt-4o"'), 'MODELS contains GPT-4o id');
+assert(picker.includes('"gpt-4o-mini"'), 'MODELS contains GPT-4o Mini id');
+assert(picker.includes('"gemini-2.5-flash-preview-05-20"'), 'MODELS contains Gemini id');
+assert(picker.includes('"grok-3-latest"'), 'MODELS contains Grok id');
+assert(picker.includes('"anthropic"'), 'MODELS rows include anthropic provider');
+assert(picker.includes('"xai"'), 'MODELS rows include xai provider');
+
+// Visual / behavioral parity with the user's hand-written picker.
+assert(picker.includes('value={selectedModel}'), 'select is bound to store.selectedModel');
+assert(picker.includes('onChange={(e) => setSelectedModel(e.target.value)}'), 'onChange calls setSelectedModel');
+assert(picker.includes('px-3 py-2 border-b border-slate-700'), 'wrapper classes match Sidebar styling');
+assert(picker.includes('bg-slate-700 border border-slate-600 text-white text-xs px-2 py-1.5 rounded'), 'select classes match Sidebar styling');
+
+// Store seeds selectedModel from the DEFAULT entry of the DEFAULT provider.
+const pickerStore = pickerRes.files.get('src/store/appStore.ts')!;
+assert(pickerStore.includes("selectedModel: 'claude-sonnet-4-20250514'"), 'store seeds from DEFAULT provider DEFAULT model');
+
+// MODELS order matches the AI_SERVICE.MODELS declaration order.
+const sonnetIdx = picker.indexOf('claude-sonnet-4-20250514');
+const haikuIdx  = picker.indexOf('claude-haiku-4-5-20251001');
+const gptIdx    = picker.indexOf('"gpt-4o"');
+const grokIdx   = picker.indexOf('grok-3-latest');
+assert(sonnetIdx < haikuIdx, 'order: Sonnet appears before Haiku in MODELS array');
+assert(haikuIdx < gptIdx, 'order: Haiku appears before gpt-4o in MODELS array');
+assert(gptIdx < grokIdx, 'order: gpt-4o appears before grok-3-latest in MODELS array');
+
+// --- Test: ModelPicker NOT emitted when AI_SERVICE is absent ---
+
+section('AI_SERVICE absence → no ModelPicker.tsx');
+assert(!noAiResult.files.has('src/components/ModelPicker.tsx'), 'no AI_SERVICE → no ModelPicker.tsx');
+
+// --- Test: ModelPicker label fallback (no explicit LABEL) ---
+
+section('ModelPicker label derivation from id');
+
+const noLabelSource = `
+APP nolabel {
+  TITLE "NoLabel" WINDOW 800x600 frameless DB n.db PORT 5177 THEME dark
+}
+AI_SERVICE {
+  PROVIDERS anthropic
+  KEYS_FILE "k.json"
+  DEFAULT anthropic
+  MODELS {
+    anthropic "claude-sonnet-4-20250514"
+  }
+}
+`;
+const noLabelRes = compile(noLabelSource);
+const noLabelPicker = noLabelRes.files.get('src/components/ModelPicker.tsx')!;
+// Date suffix stripped, dash split, title-cased.
+assert(noLabelPicker.includes('"Claude Sonnet 4"'), 'derived label strips date suffix and title-cases');
+
 // --- Test: Content Pipeline (Orchestration) ---
 section('Compile content_pipeline.agi');
 

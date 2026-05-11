@@ -27,7 +27,7 @@ import type {
   StateNode, StateTransition, ScoreThreshold,
   FieldDef, FieldModifier, AgiType, CrudOp, Relationship, EntityOrder, SeedRecord,
   ActionParam, ActionOutput, LayoutType, ThemeOption,
-  ModelMapping, TestGiven, TestExpect, AssertionOp,
+  ModelEntry, TestGiven, TestExpect, AssertionOp,
   RuleCondition, WorkflowStep, OnFailBehavior,
   LiteralValue, SourceLocation, SourceSpan,
 } from './types.js';
@@ -579,7 +579,7 @@ export class Parser {
     let keysFile = '';
     let defaultProvider: string | undefined;
     let streaming = true;
-    let models: ModelMapping[] = [];
+    let models: ModelEntry[] = [];
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -613,15 +613,77 @@ export class Parser {
     return { kind: 'ai_service', providers, keysFile, defaultProvider, streaming, models, span: { start, end } };
   }
 
-  private parseModels(): ModelMapping[] {
+  /**
+   * Parse the MODELS block of AI_SERVICE. Each line is:
+   *
+   *   <provider-ident> <"model-id-string"> [LABEL "..."]? [DEFAULT]?
+   *
+   * LABEL and DEFAULT modifiers may appear in either order and either may be
+   * omitted. Multiple entries per provider are allowed. At most ONE entry per
+   * provider may carry the DEFAULT marker — if none is marked, the first
+   * entry for that provider becomes the implicit default.
+   */
+  private parseModels(): ModelEntry[] {
     this.expectToken(TokenType.LBRACE);
-    const models: ModelMapping[] = [];
+    const models: ModelEntry[] = [];
     while (!this.check(TokenType.RBRACE)) {
+      const lineLocation = this.current().location;
       const provider = this.expectIdentifier();
-      const model = this.expectToken(TokenType.STRING_LITERAL).value;
-      models.push({ provider, model });
+      const id = this.expectToken(TokenType.STRING_LITERAL).value;
+
+      let label: string | undefined;
+      let isDefault = false;
+
+      // LABEL and DEFAULT can appear in any order, each at most once on the
+      // line. Stop reading modifiers when we see anything that isn't one of
+      // them — the next provider identifier or the closing brace.
+      while (this.check(TokenType.LABEL) || this.check(TokenType.DEFAULT)) {
+        if (this.check(TokenType.LABEL)) {
+          if (label !== undefined) {
+            this.error(`Duplicate LABEL for model '${id}'`);
+          }
+          this.advance();
+          label = this.expectToken(TokenType.STRING_LITERAL).value;
+        } else {
+          // DEFAULT modifier
+          if (isDefault) {
+            this.error(`Duplicate DEFAULT marker on model '${id}'`);
+          }
+          this.advance();
+          isDefault = true;
+        }
+      }
+
+      models.push({ provider, id, label, isDefault });
+      // Validate: at most one DEFAULT per provider
+      if (isDefault) {
+        const existingDefault = models.find(
+          m => m.provider === provider && m.isDefault && m.id !== id
+        );
+        if (existingDefault) {
+          throw new ParseError(
+            `Provider '${provider}' has multiple DEFAULT models ('${existingDefault.id}' and '${id}') — only one is allowed`,
+            lineLocation
+          );
+        }
+      }
     }
     this.expectToken(TokenType.RBRACE);
+
+    // Promote first-declared-per-provider to default when no explicit DEFAULT
+    // was given. Iterate in source order so the first occurrence wins.
+    const seenProviders = new Set<string>();
+    const providersWithExplicitDefault = new Set(
+      models.filter(m => m.isDefault).map(m => m.provider)
+    );
+    for (const m of models) {
+      if (providersWithExplicitDefault.has(m.provider)) continue;
+      if (!seenProviders.has(m.provider)) {
+        m.isDefault = true;
+        seenProviders.add(m.provider);
+      }
+    }
+
     return models;
   }
 
