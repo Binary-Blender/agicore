@@ -115,10 +115,22 @@ agicore/
 |   |-- promptcore/
 |   +-- agicore-foundation/
 |
-|-- examples/                  # Working examples
+|-- examples/                  # Compact .agi demos of individual DSL features
+|-- apps/                      # Real applications built on Agicore
+|   +-- novasyn-chat/          # First flagship: multi-provider AI chat client
 |-- docs/                      # Technical documentation
 +-- prompts/                   # AI compiler prompt templates
 ```
+
+---
+
+## Reference Application: NovaSyn Chat 2.0
+
+The `apps/novasyn-chat/` directory contains the first real application built on Agicore — a multi-provider AI chat client with conversation context, folder-based knowledge, and tag-driven retrieval. It is generated from a single `.agi` source file with hand-written extensions for UI shell.
+
+This app drives Agicore's evolution: every recurring bug encountered while building it became a framework fix; every hand-extension is a candidate for future codegen. The commit history of this repository tracks the framework hardening alongside the app's needs.
+
+See [`apps/novasyn-chat/README.md`](apps/novasyn-chat/README.md) for setup and architecture notes.
 
 ---
 
