@@ -171,7 +171,7 @@ function emitProviderFromModel(providers: string[]): string {
   return lines.join('\n');
 }
 
-function emitSendChat(providers: string[]): string {
+function emitSendChat(providers: string[], skipped: string[]): string {
   const lines: string[] = [];
   lines.push('#[tauri::command]');
   lines.push('pub async fn send_chat(');
@@ -187,6 +187,15 @@ function emitSendChat(providers: string[]): string {
   lines.push('    };');
   lines.push('    let api_key = api_key.ok_or_else(|| format!("No API key configured for {}", provider))?;');
   lines.push('');
+  // Document any AI_SERVICE.PROVIDERS that we are skipping here — they have
+  // no chat dispatch template but we still want their API keys stored so the
+  // ROUTER tier can use them. Anyone reading the generated send_chat shouldn't
+  // be surprised by the missing match arm.
+  for (const p of skipped) {
+    lines.push(`    // Note: \`${p}\` is declared in AI_SERVICE.PROVIDERS but has no chat`);
+    lines.push(`    // dispatch template — it is treated as key-storage-only. Routing to`);
+    lines.push(`    // the ${p} endpoint happens through the ROUTER tier, not send_chat.`);
+  }
   lines.push('    match provider {');
   for (const p of providers) {
     lines.push(`        "${p}" => call_${p}(request, request_id, window, api_key).await,`);
@@ -1092,8 +1101,12 @@ export function generateAiService(ast: AgiFile): Map<string, string> {
   if (!ai) return files;
 
   const providers = ai.providers.filter(p => PROVIDER_TEMPLATES[p] !== undefined);
-  // Note any unknown providers as a comment in the output
-  const unknown = ai.providers.filter(p => !PROVIDER_TEMPLATES[p]);
+  // Providers declared in AI_SERVICE.PROVIDERS that have no chat dispatch
+  // template. These are still useful: the renderer's ApiKeyModal collects keys
+  // for them, and the ROUTER tier routes to them by tier/strength, not by
+  // model-name prefix. We surface this as a comment in send_chat rather than
+  // erroring out.
+  const skipped = ai.providers.filter(p => !PROVIDER_TEMPLATES[p]);
 
   const sections: string[] = [];
   sections.push(PRELUDE);
@@ -1102,14 +1115,10 @@ export function generateAiService(ast: AgiFile): Map<string, string> {
   sections.push(KEYS_HELPERS);
   sections.push(emitProviderFromModel(providers));
   sections.push('');
-  sections.push(emitSendChat(providers));
+  sections.push(emitSendChat(providers, skipped));
   sections.push('');
   for (const p of providers) {
     sections.push(PROVIDER_TEMPLATES[p]);
-    sections.push('');
-  }
-  if (unknown.length > 0) {
-    sections.push(`// Note: skipped unknown providers: ${unknown.join(', ')}`);
     sections.push('');
   }
   sections.push(MODEL_DISCOVERY);

@@ -417,15 +417,20 @@ export function ModelPicker() {
 /**
  * Friendly labels + placeholder hints per provider, used by the generated
  * ApiKeyModal. Anything not in here falls back to {label: provider, placeholder: 'API key'}.
- * Note: `babyai` is intentionally absent — that's a ROUTER concern, not an
- * AI_SERVICE provider. If/when ROUTER codegen lands we'll wire it in there.
+ *
+ * `babyai` is in this registry as a key-storage-only entry: it has no chat
+ * dispatch template in ai-service.ts (no `call_babyai` is emitted), but the
+ * BabyAI HuggingFace endpoint still needs an API key, and the user's muscle
+ * memory expects "BabyAI (HuggingFace)" as the dropdown label. The ROUTER
+ * tier consults this key at routing time.
  */
 const PROVIDER_REGISTRY: Record<string, { label: string; placeholder: string }> = {
-  anthropic:   { label: 'Anthropic (Claude)', placeholder: 'sk-ant-...' },
-  openai:      { label: 'OpenAI',             placeholder: 'sk-...' },
-  google:      { label: 'Google (Gemini)',    placeholder: 'AIza...' },
-  xai:         { label: 'xAI (Grok)',         placeholder: 'xai-...' },
-  huggingface: { label: 'HuggingFace',        placeholder: 'hf_...' },
+  anthropic:   { label: 'Anthropic (Claude)',   placeholder: 'sk-ant-...' },
+  openai:      { label: 'OpenAI',               placeholder: 'sk-...' },
+  google:      { label: 'Google (Gemini)',      placeholder: 'AIza...' },
+  xai:         { label: 'xAI (Grok)',           placeholder: 'xai-...' },
+  huggingface: { label: 'HuggingFace',          placeholder: 'hf_...' },
+  babyai:      { label: 'BabyAI (HuggingFace)', placeholder: 'hf_...' },
 };
 
 /**

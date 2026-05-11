@@ -871,6 +871,83 @@ assert(apiKeyModal.includes('type="password"'), 'API key inputs use password typ
 // Negative: no AI_SERVICE → no ApiKeyModal.tsx
 assert(!noAiResult.files.has('src/components/ApiKeyModal.tsx'), 'no AI_SERVICE → no ApiKeyModal.tsx');
 
+// --- Test: babyai = key-storage-only provider ---
+//
+// `babyai` is declared in AI_SERVICE.PROVIDERS but has no chat dispatch
+// template — its API key is stored in the same keys file and consumed by the
+// ROUTER tier, not by send_chat. So the ApiKeyModal MUST surface a 5th input
+// (and the BabyAI label) when babyai is in providers, but the Rust emitter
+// MUST skip the call_babyai arm and the provider_from_model prefix mapping,
+// while leaving a comment in send_chat explaining the absence.
+
+section('babyai key-storage-only provider');
+
+const babyaiSource = `
+APP babyaiApp {
+  TITLE "Baby" WINDOW 800x600 frameless DB b.db PORT 5183 THEME dark
+}
+AI_SERVICE {
+  PROVIDERS anthropic, babyai
+  KEYS_FILE "%APPDATA%/test/keys.json"
+  DEFAULT anthropic
+  MODELS { anthropic "claude-sonnet-4-20250514" }
+}
+`;
+const babyaiRes = compile(babyaiSource);
+
+// ApiKeyModal must include a row per provider — 2 here, since the AST lists
+// anthropic + babyai. The BabyAI row uses the registry's friendly label.
+const babyaiModal = babyaiRes.files.get('src/components/ApiKeyModal.tsx')!;
+assert(babyaiModal !== undefined, 'babyai fixture should emit ApiKeyModal.tsx');
+assert(babyaiModal.includes('"BabyAI (HuggingFace)"'), 'modal uses "BabyAI (HuggingFace)" label for babyai');
+assert(babyaiModal.includes('id: "babyai"'), 'modal lists babyai as a provider entry');
+assert(babyaiModal.includes('"hf_..."'), 'modal uses hf_ placeholder for babyai');
+// Count actual <input> tags rendered for providers. The PROVIDERS map drives
+// one input per entry, so 2 providers → 2 inputs.
+const babyaiInputCount = (babyaiModal.match(/type="password"/g) ?? []).length;
+assert(babyaiInputCount === 1, `BabyAI modal renders 1 password input element (template is shared across providers via .map), got ${babyaiInputCount}`);
+// Spec sanity: the PROVIDERS list must enumerate both entries.
+assert((babyaiModal.match(/id: "anthropic"|id: "babyai"/g) ?? []).length === 2,
+       'modal PROVIDERS array contains both anthropic and babyai entries');
+
+// Five-provider variant (matching the user's app) — verify modal lists every
+// configured provider verbatim including babyai last.
+const fiveProviderSource = `
+APP five { TITLE "Five" WINDOW 800x600 frameless DB f.db PORT 5184 THEME dark }
+AI_SERVICE {
+  PROVIDERS anthropic, openai, google, xai, babyai
+  KEYS_FILE "%APPDATA%/test/keys.json"
+  DEFAULT anthropic
+  MODELS { anthropic "claude-sonnet-4-20250514" }
+}
+`;
+const fiveRes = compile(fiveProviderSource);
+const fiveModal = fiveRes.files.get('src/components/ApiKeyModal.tsx')!;
+const fiveProviders = (fiveModal.match(/id: "(anthropic|openai|google|xai|babyai)"/g) ?? []);
+assert(fiveProviders.length === 5, `five-provider fixture: modal PROVIDERS array has 5 entries, got ${fiveProviders.length}`);
+assert(fiveModal.includes('"BabyAI (HuggingFace)"'), 'five-provider fixture: BabyAI label present');
+assert(fiveModal.includes('"xAI (Grok)"'), 'five-provider fixture: xAI label still present');
+
+// Rust emitter behavior: babyai is in providers but has no template, so the
+// generator emits call_anthropic but NOT call_babyai. send_chat must contain
+// the key-storage-only comment so anyone reading the file understands why
+// there's no "babyai" => arm in the dispatch match.
+const babyaiAiRs = babyaiRes.files.get('src-tauri/src/ai_service.rs')!;
+assert(babyaiAiRs.includes('async fn call_anthropic'), 'Rust: anthropic dispatcher still emitted');
+assert(!babyaiAiRs.includes('async fn call_babyai'), 'Rust: no call_babyai template is emitted');
+assert(babyaiAiRs.includes('key-storage-only'),
+       'Rust: send_chat carries a "key-storage-only" comment explaining the absence of the babyai arm');
+assert(babyaiAiRs.includes('`babyai` is declared in AI_SERVICE.PROVIDERS but has no chat'),
+       'Rust: comment names babyai specifically');
+// provider_from_model must NOT add a prefix arm for babyai — babyai is
+// tier-routed (via ROUTER), not name-prefix-routed. Specifically there must
+// be no `"babyai"` literal anywhere in provider_from_model's body.
+const pfm = babyaiAiRs.match(/fn provider_from_model[\s\S]*?^}/m)?.[0] ?? '';
+assert(pfm.length > 0, 'Rust: provider_from_model fn is emitted');
+assert(!pfm.includes('"babyai"'), 'Rust: provider_from_model has no babyai prefix arm (tier-routed, not name-routed)');
+// And the dispatch match should have no `"babyai" =>` arm.
+assert(!/"babyai"\s*=>/.test(babyaiAiRs), 'Rust: send_chat match has no "babyai" => arm');
+
 // --- Test: Content Pipeline (Orchestration) ---
 section('Compile content_pipeline.agi');
 

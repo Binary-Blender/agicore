@@ -362,10 +362,11 @@ export function generateStore(ast: AgiFile): string {
       if (rel.type !== 'BELONGS_TO') continue;
       if (!currentEntities.includes(rel.target)) continue;
       const parentName = rel.target;
+      const parentVar = lcFirst(parentName) + 'Id';
       lines.push(`  load${name}sForCurrent${parentName}: async () => {`);
-      lines.push(`    const ${parentName.charAt(0).toLowerCase() + parentName.slice(1)}Id = get().current${parentName}Id;`);
-      lines.push(`    if (${parentName.charAt(0).toLowerCase() + parentName.slice(1)}Id) {`);
-      lines.push(`      const ${plural} = await list${name}sBy${parentName}(${parentName.charAt(0).toLowerCase() + parentName.slice(1)}Id);`);
+      lines.push(`    const ${parentVar} = get().current${parentName}Id;`);
+      lines.push(`    if (${parentVar}) {`);
+      lines.push(`      const ${plural} = await list${name}sBy${parentName}(${parentVar});`);
       lines.push(`      set({ ${plural} });`);
       lines.push(`    } else {`);
       lines.push(`      set({ ${plural}: [] });`);

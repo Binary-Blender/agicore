@@ -37,7 +37,7 @@ function sqlDefault(field: FieldDef): string {
   return ` DEFAULT '${val}'`;
 }
 
-function generateEntityTable(entity: EntityDecl, allEntities: EntityDecl[]): string {
+function generateEntityTable(entity: EntityDecl): string {
   const tableName = toTableName(entity.name);
   const lines: string[] = [];
 
@@ -113,7 +113,7 @@ export function generateSql(ast: AgiFile): Map<string, string> {
   ].join('\n');
 
   // Generate all tables in one migration file
-  const tables = ast.entities.map(e => generateEntityTable(e, ast.entities));
+  const tables = ast.entities.map(e => generateEntityTable(e));
   let migration = pragmas + tables.join('\n\n');
 
   // Append SEED-driven INSERT OR IGNORE statements AFTER every CREATE TABLE /
