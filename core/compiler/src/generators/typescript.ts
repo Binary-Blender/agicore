@@ -214,6 +214,100 @@ export function generateInvokes(ast: AgiFile): string {
     lines.push(generateActionInvoke(action));
   }
 
+  // AI service key management — not in ast.actions, emitted by ai-service.ts
+  if (ast.aiService) {
+    lines.push(
+      '// --- AI key management ---',
+      "export const getApiKeys = () =>",
+      "  invoke<Record<string, string>>('get_api_keys');",
+      '',
+      "export const setApiKey = (provider: string, key: string) =>",
+      "  invoke<void>('set_api_key', { provider, key });",
+      '',
+    );
+  }
+
+  // Vault commands — emitted by vault.ts, not in ast.actions
+  if (ast.vault) {
+    lines.push(
+      '// --- Vault ---',
+      "export interface VaultAsset {",
+      "  id: string; assetType: string; title: string; content: string;",
+      "  metadata?: string; createdAt: string; updatedAt: string;",
+      "}",
+      "export interface SaveVaultAssetInput {",
+      "  assetType: string; title: string; content: string; metadata?: string;",
+      "}",
+      "export const vaultListAssets = () =>",
+      "  invoke<VaultAsset[]>('vault_list_assets');",
+      "export const vaultGetAsset = (id: string) =>",
+      "  invoke<VaultAsset>('vault_get_asset', { id });",
+      "export const vaultSaveAsset = (input: SaveVaultAssetInput) =>",
+      "  invoke<VaultAsset>('vault_save_asset', { input });",
+      "export const vaultUpdateAsset = (id: string, content: string, title?: string) =>",
+      "  invoke<VaultAsset>('vault_update_asset', { id, content, title });",
+      "export const vaultDeleteAsset = (id: string) =>",
+      "  invoke<void>('vault_delete_asset', { id });",
+      "export const vaultSearchAssets = (query: string, assetType?: string) =>",
+      "  invoke<VaultAsset[]>('vault_search_assets', { query, assetType });",
+      '',
+    );
+    if (ast.vault.tags) {
+      lines.push(
+        "export const vaultListTags = () =>",
+        "  invoke<{id: string; name: string}[]>('vault_list_tags');",
+        "export const vaultTagAsset = (assetId: string, tagName: string) =>",
+        "  invoke<void>('vault_tag_asset', { assetId, tagName });",
+        '',
+      );
+    }
+    if (ast.vault.provenance) {
+      lines.push(
+        "export const vaultRecordProvenance = (assetId: string, action: string, source?: string, actor?: string) =>",
+        "  invoke<void>('vault_record_provenance', { assetId, action, source, actor });",
+        "export const vaultGetProvenance = (assetId: string) =>",
+        "  invoke<unknown[]>('vault_get_provenance', { assetId });",
+        '',
+      );
+    }
+  }
+
+  // Compiler commands — emitted by compiler.ts, not in ast.actions
+  if (ast.compilers.length > 0) {
+    lines.push(
+      '// --- Document file I/O ---',
+      "export interface ScannedDocument {",
+      "  path: string; title: string; size: number; modifiedAt: string;",
+      "}",
+      "export const readDocumentContent = (filePath: string) =>",
+      "  invoke<string>('read_document_content', { filePath });",
+      "export const writeDocumentContent = (filePath: string, content: string) =>",
+      "  invoke<void>('write_document_content', { filePath, content });",
+      "export const scanDocumentsDir = (dir: string) =>",
+      "  invoke<ScannedDocument[]>('scan_documents_dir', { dir });",
+      '',
+      '// --- Send To (Semantic Compilers) ---',
+    );
+    for (const compiler of ast.compilers) {
+      const fnName = toCamelCase(compiler.name);
+      const structName = compiler.name
+        .split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+      if (compiler.ai && compiler.to === 'document') {
+        lines.push(
+          `export const ${fnName} = (messageIds: string[], model: string, title: string, outputPath: string) =>`,
+          `  invoke<{id: string; title: string; filePath: string; content: string}>('${compiler.name}', { messageIds, model, title, outputPath });`,
+          '',
+        );
+      } else {
+        lines.push(
+          `export const ${fnName} = (messageIds: string[]) =>`,
+          `  invoke<unknown>('${compiler.name}', { messageIds });`,
+          '',
+        );
+      }
+    }
+  }
+
   return lines.join('\n');
 }
 

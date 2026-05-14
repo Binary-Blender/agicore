@@ -52,8 +52,12 @@ export function generateTauriConfig(ast: AgiFile): Map<string, string> {
   files.set('src-tauri/tauri.conf.json', JSON.stringify(config, null, 2));
 
   // Cargo.toml
+  const hasVault = ast.vault !== undefined && ast.vault !== null;
   const aiServiceDeps = hasAiService
     ? `reqwest = { version = "0.12", features = ["json", "stream"] }\ntokio = { version = "1", features = ["full"] }\nfutures-util = "0.3"\n`
+    : '';
+  const vaultDeps = hasVault
+    ? `dirs = "5"\n`
     : '';
   const cargoToml = `[package]
 name = "${toSnakeCase(app.name)}"
@@ -67,7 +71,7 @@ serde_json = "1"
 rusqlite = { version = "0.31", features = ["bundled"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-${aiServiceDeps}
+${aiServiceDeps}${vaultDeps}
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 `;
