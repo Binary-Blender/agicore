@@ -1466,6 +1466,114 @@ assert(!noCompilerFiles.get('src-tauri/src/main.rs')!.includes('mod compiler;'),
 // Full novasyn_chat.agi should generate compiler.rs with all 5 compilers
 // (we already have it parsed at the top as novasynFiles — check if it has compiler.rs)
 
+// --- VAULT emitter ---
+section('VAULT emitter — vault.rs asset storage + optional tags + provenance');
+
+const vaultSrc = `
+APP vault_test {
+  TITLE "Vault Test"
+  DB    vault_test.db
+  THEME dark
+}
+ENTITY User { email: string REQUIRED TIMESTAMPS }
+VAULT {
+  PATH         "%APPDATA%/Test/vault.db"
+  ASSET_TYPES  text, json, code, prompt_template
+  PROVENANCE   true
+  TAGS         true
+}
+`;
+const { files: vaultFiles } = compile(vaultSrc);
+
+const vaultRs = vaultFiles.get('src-tauri/src/vault.rs');
+assert(vaultRs !== undefined, 'Should generate vault.rs when VAULT declared');
+assert(vaultRs!.includes('pub type VaultPool = Mutex<Connection>'), 'vault.rs should define VaultPool type alias');
+assert(vaultRs!.includes('pub fn init_vault('), 'vault.rs should have init_vault function');
+assert(vaultRs!.includes('resolve_vault_path'), 'vault.rs should have %APPDATA% path resolver');
+assert(vaultRs!.includes('pub struct VaultAsset'), 'vault.rs should define VaultAsset struct');
+assert(vaultRs!.includes('pub fn vault_list_assets('), 'vault.rs should have vault_list_assets command');
+assert(vaultRs!.includes('pub fn vault_get_asset('), 'vault.rs should have vault_get_asset command');
+assert(vaultRs!.includes('pub fn vault_save_asset('), 'vault.rs should have vault_save_asset command');
+assert(vaultRs!.includes('pub fn vault_update_asset('), 'vault.rs should have vault_update_asset command');
+assert(vaultRs!.includes('pub fn vault_delete_asset('), 'vault.rs should have vault_delete_asset command');
+assert(vaultRs!.includes('pub fn vault_search_assets('), 'vault.rs should have vault_search_assets command');
+
+// Tags (TAGS true)
+assert(vaultRs!.includes('pub fn vault_list_tags('), 'vault.rs should have vault_list_tags when TAGS true');
+assert(vaultRs!.includes('pub fn vault_tag_asset('), 'vault.rs should have vault_tag_asset when TAGS true');
+assert(vaultRs!.includes('vault_asset_tags'), 'vault.rs should reference junction table when TAGS true');
+
+// Provenance (PROVENANCE true)
+assert(vaultRs!.includes('pub fn vault_record_provenance('), 'vault.rs should have vault_record_provenance when PROVENANCE true');
+assert(vaultRs!.includes('pub fn vault_get_provenance('), 'vault.rs should have vault_get_provenance when PROVENANCE true');
+assert(vaultRs!.includes('pub struct ProvenanceRecord'), 'vault.rs should define ProvenanceRecord struct');
+
+// SQL schema
+const vaultSql = vaultFiles.get('src-tauri/vault_schema.sql');
+assert(vaultSql !== undefined, 'Should generate vault_schema.sql');
+assert(vaultSql!.includes('vault_assets'), 'vault_schema.sql should define vault_assets table');
+assert(vaultSql!.includes("'text'"), 'vault_schema.sql should include declared asset types');
+assert(vaultSql!.includes("'prompt_template'"), 'vault_schema.sql should include prompt_template asset type');
+assert(vaultSql!.includes('vault_tags'), 'vault_schema.sql should define vault_tags table when TAGS true');
+assert(vaultSql!.includes('vault_provenance'), 'vault_schema.sql should define vault_provenance table when PROVENANCE true');
+
+// main.rs integration
+const vaultMainRs = vaultFiles.get('src-tauri/src/main.rs');
+assert(vaultMainRs!.includes('mod vault;'), 'main.rs should declare mod vault when VAULT declared');
+assert(vaultMainRs!.includes('vault::init_vault'), 'main.rs should call vault::init_vault in setup');
+assert(vaultMainRs!.includes('vault::resolve_vault_path'), 'main.rs should resolve vault path');
+assert(vaultMainRs!.includes('vault::vault_list_assets'), 'main.rs should register vault commands');
+assert(vaultMainRs!.includes('vault::vault_tag_asset'), 'main.rs should register vault tag commands');
+assert(vaultMainRs!.includes('vault::vault_record_provenance'), 'main.rs should register provenance commands');
+assert(vaultMainRs!.includes('%APPDATA%/Test/vault.db'), 'main.rs should embed vault path from VAULT declaration');
+
+// No VAULT → no vault.rs
+const noVaultSrc = `APP no_vault { TITLE "No Vault" DB sqlite } ENTITY User { email: string REQUIRED TIMESTAMPS }`;
+const { files: noVaultFiles } = compile(noVaultSrc);
+assert(!noVaultFiles.has('src-tauri/src/vault.rs'), 'Should NOT emit vault.rs when no VAULT declared');
+assert(!noVaultFiles.get('src-tauri/src/main.rs')!.includes('mod vault;'), 'main.rs should NOT include mod vault when no VAULT');
+
+// --- SKILL emitter ---
+section('SKILL emitter — src/lib/skills.ts keyword-based injection registry');
+
+const skillSrc = `
+APP skill_test { TITLE "Skill Test" DB skill.db }
+ENTITY User { email: string REQUIRED TIMESTAMPS }
+SKILL novasyn_dev {
+  DESCRIPTION  "NovaSyn development patterns"
+  KEYWORDS     typescript, react, tauri, component
+  DOMAIN       "coding"
+  PRIORITY     10
+}
+SKILL creative_writing {
+  DESCRIPTION  "Author voice and narrative techniques"
+  KEYWORDS     write, story, novel, character, plot
+  DOMAIN       "creative_writing"
+  PRIORITY     7
+}
+`;
+const { files: skillFiles } = compile(skillSrc);
+
+const skillsTs = skillFiles.get('src/lib/skills.ts');
+assert(skillsTs !== undefined, 'Should generate src/lib/skills.ts when SKILL blocks declared');
+assert(skillsTs!.includes('export interface SkillDef'), 'skills.ts should export SkillDef interface');
+assert(skillsTs!.includes('export const SKILL_REGISTRY'), 'skills.ts should export SKILL_REGISTRY array');
+assert(skillsTs!.includes("name: 'novasyn_dev'"), 'skills.ts should include novasyn_dev skill');
+assert(skillsTs!.includes("name: 'creative_writing'"), 'skills.ts should include creative_writing skill');
+assert(skillsTs!.includes("'typescript'"), 'skills.ts should include typescript keyword');
+assert(skillsTs!.includes("'story'"), 'skills.ts should include story keyword');
+assert(skillsTs!.includes("priority: 10"), 'skills.ts should include priority 10');
+assert(skillsTs!.includes("priority: 7"), 'skills.ts should include priority 7');
+assert(skillsTs!.includes('export function matchSkills('), 'skills.ts should export matchSkills function');
+assert(skillsTs!.includes('export function buildSkillContext('), 'skills.ts should export buildSkillContext function');
+assert(skillsTs!.includes('export function skillDomains('), 'skills.ts should export skillDomains function');
+assert(skillsTs!.includes('sort((a, b) => b.priority - a.priority)'), 'matchSkills should rank by priority descending');
+
+// No SKILL blocks → no skills.ts
+const noSkillSrc = `APP no_skills { TITLE "No Skills" DB sqlite } ENTITY User { email: string REQUIRED TIMESTAMPS }`;
+const { files: noSkillFiles } = compile(noSkillSrc);
+assert(!noSkillFiles.has('src/lib/skills.ts'), 'Should NOT emit skills.ts when no SKILL blocks declared');
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

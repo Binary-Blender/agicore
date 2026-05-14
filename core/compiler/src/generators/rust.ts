@@ -6,6 +6,7 @@ import { toSnakeCase, toTableName, toForeignKey, toPascalCase, toCamelCase } fro
 import { actionCommandNames } from './actions.js';
 import { routerCommandNames } from './router.js';
 import { compilerCommandNames } from './compiler.js';
+import { vaultCommandNames, vaultPath } from './vault.js';
 
 function rustType(agiType: AgiType, required: boolean): string {
   const base = (() => {
@@ -337,6 +338,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const currentEntities = ast.app.current ?? [];
   const hasAiService = ast.aiService !== null && ast.aiService !== undefined;
   const hasRouter = ast.routers !== undefined && ast.routers.length > 0;
+  const hasVault = ast.vault !== undefined && ast.vault !== null;
 
   const entityCommandList = ast.entities.flatMap(e => {
     const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
@@ -378,7 +380,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const hasCompilers = ast.compilers !== undefined && ast.compilers.length > 0;
   const compilerCmds = hasCompilers ? compilerCommandNames(ast) : [];
 
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds];
+  // VAULT commands
+  const vaultCmds = hasVault ? vaultCommandNames(ast) : [];
+
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
@@ -389,6 +394,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasAiService) mainRsLines.push('mod ai_service;');
   if (hasRouter) mainRsLines.push('mod router;');
   if (hasCompilers) mainRsLines.push('mod compiler;');
+  if (hasVault) mainRsLines.push('mod vault;');
   mainRsLines.push(
     '',
     'use std::sync::Mutex;',
@@ -407,6 +413,14 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     mainRsLines.push(
       '            let api_keys = Mutex::new(ai_service::load_api_keys());',
       '            app.manage(api_keys);',
+    );
+  }
+  if (hasVault) {
+    const rawPath = vaultPath(ast).replace(/\\/g, '/');
+    mainRsLines.push(
+      `            let vault_path = vault::resolve_vault_path("${rawPath}");`,
+      '            let vault_pool = vault::init_vault(vault_path);',
+      '            app.manage(vault_pool);',
     );
   }
   mainRsLines.push(

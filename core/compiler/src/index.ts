@@ -13,6 +13,8 @@ import { generateAiService } from './generators/ai-service.js';
 import { generateActions } from './generators/actions.js';
 import { generateRouter } from './generators/router.js';
 import { generateCompiler } from './generators/compiler.js';
+import { generateVault } from './generators/vault.js';
+import { generateSkills } from './generators/skills.js';
 
 export interface CompileResult {
   files: Map<string, string>;
@@ -41,6 +43,8 @@ export function compile(source: string): CompileResult {
     generateActions(ast),
     generateRouter(ast),
     generateCompiler(ast),
+    generateVault(ast),
+    generateSkills(ast),
   ];
 
   for (const gen of generators) {
@@ -64,3 +68,5 @@ export { generateAiService } from './generators/ai-service.js';
 export { generateActions } from './generators/actions.js';
 export { generateRouter } from './generators/router.js';
 export { generateCompiler } from './generators/compiler.js';
+export { generateVault } from './generators/vault.js';
+export { generateSkills } from './generators/skills.js';
