@@ -5,6 +5,7 @@ import type { AgiFile, EntityDecl, FieldDef, AgiType } from '@agicore/parser';
 import { toSnakeCase, toTableName, toForeignKey, toPascalCase, toCamelCase } from '../naming.js';
 import { actionCommandNames } from './actions.js';
 import { routerCommandNames } from './router.js';
+import { compilerCommandNames } from './compiler.js';
 
 function rustType(agiType: AgiType, required: boolean): string {
   const base = (() => {
@@ -373,7 +374,11 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   // ROUTER commands (broadcast_chat, council_chat)
   const routerCmds = hasRouter ? routerCommandNames(ast) : [];
 
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds];
+  // COMPILER commands (file I/O + Send To transitions)
+  const hasCompilers = ast.compilers !== undefined && ast.compilers.length > 0;
+  const compilerCmds = hasCompilers ? compilerCommandNames(ast) : [];
+
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
@@ -383,6 +388,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   ];
   if (hasAiService) mainRsLines.push('mod ai_service;');
   if (hasRouter) mainRsLines.push('mod router;');
+  if (hasCompilers) mainRsLines.push('mod compiler;');
   mainRsLines.push(
     '',
     'use std::sync::Mutex;',

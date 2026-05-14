@@ -1345,6 +1345,127 @@ const { files: noRouterFiles } = compile(noRouterSrc);
 assert(!noRouterFiles.has('src-tauri/src/router.rs'), 'Should NOT emit router.rs when no ROUTER block');
 assert(!noRouterFiles.get('src-tauri/src/main.rs')!.includes('mod router;'), 'main.rs should NOT include mod router when no ROUTER');
 
+// --- COMPILER emitter ---
+section('COMPILER emitter — compiler.rs document file I/O + Send To transitions');
+
+const compilerSrc = `
+APP compiler_test {
+  TITLE "Compiler Test"
+  DB    compiler.db
+  THEME dark
+}
+AI_SERVICE {
+  PROVIDERS   anthropic
+  KEYS_FILE   "%APPDATA%/test/keys.json"
+  DEFAULT     anthropic
+  STREAMING   true
+  MODELS {
+    anthropic "claude-sonnet-4-6"
+  }
+}
+ENTITY User {
+  email: string REQUIRED
+  TIMESTAMPS
+}
+ENTITY Session {
+  name: string REQUIRED
+  BELONGS_TO User
+  TIMESTAMPS
+}
+ENTITY ChatMessage {
+  user_message: string REQUIRED
+  ai_message: string REQUIRED
+  BELONGS_TO User
+  BELONGS_TO Session
+  TIMESTAMPS
+}
+ENTITY Document {
+  title: string REQUIRED
+  file_path: string REQUIRED
+  language: string = "markdown"
+  TIMESTAMPS
+}
+COMPILER chat_to_skilldoc {
+  DESCRIPTION  "Extract behavioral specifications from conversation"
+  FROM         chat
+  TO           document
+  EXTRACT      policies, constraints, behaviors, patterns
+  AI           "Analyze this conversation and extract all behavioral specifications."
+  VALIDATE     true
+}
+COMPILER chat_to_requirements {
+  DESCRIPTION  "Extract implementation requirements from discussion"
+  FROM         chat
+  TO           document
+  EXTRACT      features, entities, workflows
+  AI           "Extract all implementation requirements from this conversation."
+  VALIDATE     true
+}
+COMPILER chat_to_exchange {
+  DESCRIPTION  "Save a valuable chat exchange for reuse"
+  FROM         chat
+  TO           chat
+  EXTRACT      prompt, response, model
+  VALIDATE     true
+}
+`;
+const { files: compilerFiles } = compile(compilerSrc);
+
+// compiler.rs should be generated
+const compilerRs = compilerFiles.get('src-tauri/src/compiler.rs');
+assert(compilerRs !== undefined, 'Should generate compiler.rs when COMPILER blocks declared');
+
+// Document file I/O commands
+assert(compilerRs!.includes('pub fn read_document_content('), 'compiler.rs should have read_document_content command');
+assert(compilerRs!.includes('pub fn write_document_content('), 'compiler.rs should have write_document_content command');
+assert(compilerRs!.includes('pub fn scan_documents_dir('), 'compiler.rs should have scan_documents_dir command');
+assert(compilerRs!.includes('pub struct ScannedDocument'), 'compiler.rs should define ScannedDocument struct');
+assert(compilerRs!.includes('scan_recursive'), 'compiler.rs should include recursive directory scanner');
+assert(compilerRs!.includes('"md"'), 'scanner should match .md files');
+assert(compilerRs!.includes('"markdown"'), 'scanner should match .markdown files');
+
+// AI call helper
+assert(compilerRs!.includes('compiler_call_ai'), 'compiler.rs should define compiler_call_ai when AI_SERVICE present');
+assert(compilerRs!.includes('starts_with("claude-")'), 'compiler_call_ai should dispatch anthropic models');
+assert(compilerRs!.includes('starts_with("gemini-")'), 'compiler_call_ai should dispatch google models');
+
+// AI-powered compile commands (TO = document with AI prompt)
+assert(compilerRs!.includes('pub async fn chat_to_skilldoc('), 'compiler.rs should have chat_to_skilldoc command');
+assert(compilerRs!.includes('pub async fn chat_to_requirements('), 'compiler.rs should have chat_to_requirements command');
+assert(compilerRs!.includes('pub struct CompileChatToSkilldocInput'), 'compiler.rs should have input struct for chat_to_skilldoc');
+assert(compilerRs!.includes('pub struct CompileChatToRequirementsInput'), 'compiler.rs should have input struct for chat_to_requirements');
+
+// Should use correct chat_messages table name derived from ChatMessage entity
+assert(compilerRs!.includes('FROM chat_messages WHERE id'), 'compiler.rs should query chat_messages table');
+// Should use correct documents table name
+assert(compilerRs!.includes('INSERT INTO documents'), 'compiler.rs should insert into documents table');
+
+// Non-AI compiler (TO = chat, no AI prompt) → stub
+assert(compilerRs!.includes('pub async fn chat_to_exchange('), 'compiler.rs should have chat_to_exchange stub');
+assert(compilerRs!.includes('"chat_to_exchange: not yet implemented"'), 'non-AI compiler should emit stub error');
+
+// main.rs should declare mod compiler and register commands
+const compilerMainRs = compilerFiles.get('src-tauri/src/main.rs');
+assert(compilerMainRs!.includes('mod compiler;'), 'main.rs should declare mod compiler when COMPILER blocks declared');
+assert(compilerMainRs!.includes('compiler::read_document_content'), 'main.rs should register read_document_content');
+assert(compilerMainRs!.includes('compiler::write_document_content'), 'main.rs should register write_document_content');
+assert(compilerMainRs!.includes('compiler::scan_documents_dir'), 'main.rs should register scan_documents_dir');
+assert(compilerMainRs!.includes('compiler::chat_to_skilldoc'), 'main.rs should register chat_to_skilldoc');
+assert(compilerMainRs!.includes('compiler::chat_to_requirements'), 'main.rs should register chat_to_requirements');
+assert(compilerMainRs!.includes('compiler::chat_to_exchange'), 'main.rs should register chat_to_exchange');
+
+// No COMPILER blocks → no compiler.rs
+const noCompilerSrc = `
+APP no_compiler { TITLE "No Compiler" DB sqlite }
+ENTITY User { email: string REQUIRED TIMESTAMPS }
+`;
+const { files: noCompilerFiles } = compile(noCompilerSrc);
+assert(!noCompilerFiles.has('src-tauri/src/compiler.rs'), 'Should NOT emit compiler.rs when no COMPILER blocks');
+assert(!noCompilerFiles.get('src-tauri/src/main.rs')!.includes('mod compiler;'), 'main.rs should NOT include mod compiler when no COMPILER blocks');
+
+// Full novasyn_chat.agi should generate compiler.rs with all 5 compilers
+// (we already have it parsed at the top as novasynFiles — check if it has compiler.rs)
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);
