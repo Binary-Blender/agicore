@@ -8,6 +8,9 @@ import { toSnakeCase, toPascalCase } from '../naming.js';
 // These are emitted by ai-service.ts — skip here to avoid duplicate Tauri commands.
 const AI_SERVICE_OWNED = new Set(['send_chat']);
 
+// These are emitted by router.ts — skip here to avoid duplicate Tauri commands.
+const ROUTER_OWNED = new Set(['broadcast_chat', 'council_chat']);
+
 function rustParamType(type: AgiType): string {
   switch (type) {
     case 'string':   return 'String';
@@ -82,7 +85,7 @@ function generateCommand(action: ActionDecl): string[] {
 export function generateActions(ast: AgiFile): Map<string, string> {
   const files = new Map<string, string>();
 
-  const actions = ast.actions.filter(a => !AI_SERVICE_OWNED.has(a.name));
+  const actions = ast.actions.filter(a => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name));
   if (actions.length === 0) return files;
 
   const lines: string[] = [
@@ -116,6 +119,6 @@ export function generateActions(ast: AgiFile): Map<string, string> {
  */
 export function actionCommandNames(ast: AgiFile): string[] {
   return ast.actions
-    .filter(a => !AI_SERVICE_OWNED.has(a.name))
+    .filter(a => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name))
     .map(a => `commands::actions::${toSnakeCase(a.name)}`);
 }

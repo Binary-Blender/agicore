@@ -4,6 +4,7 @@
 import type { AgiFile, EntityDecl, FieldDef, AgiType } from '@agicore/parser';
 import { toSnakeCase, toTableName, toForeignKey, toPascalCase, toCamelCase } from '../naming.js';
 import { actionCommandNames } from './actions.js';
+import { routerCommandNames } from './router.js';
 
 function rustType(agiType: AgiType, required: boolean): string {
   const base = (() => {
@@ -325,14 +326,16 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     const modName = toSnakeCase(e.name);
     return `pub mod ${modName};`;
   });
-  // Include actions module when ACTION declarations exist (beyond send_chat)
-  const hasActions = ast.actions.some(a => a.name !== 'send_chat');
+  // Include actions module when ACTION declarations exist (beyond send_chat and router-owned)
+  const routerOwnedNames = new Set(['broadcast_chat', 'council_chat']);
+  const hasActions = ast.actions.some(a => a.name !== 'send_chat' && !routerOwnedNames.has(a.name));
   if (hasActions) modLines.push('pub mod actions;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Generate main.rs
   const currentEntities = ast.app.current ?? [];
   const hasAiService = ast.aiService !== null && ast.aiService !== undefined;
+  const hasRouter = ast.routers !== undefined && ast.routers.length > 0;
 
   const entityCommandList = ast.entities.flatMap(e => {
     const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
@@ -364,10 +367,13 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     ? ['ai_service::send_chat', 'ai_service::get_api_keys', 'ai_service::set_api_key']
     : [];
 
-  // ACTION commands (all non-send_chat actions)
+  // ACTION commands (all non-send_chat, non-router actions)
   const actionCmds = hasActions ? actionCommandNames(ast) : [];
 
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds];
+  // ROUTER commands (broadcast_chat, council_chat)
+  const routerCmds = hasRouter ? routerCommandNames(ast) : [];
+
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
@@ -376,6 +382,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     'mod db;',
   ];
   if (hasAiService) mainRsLines.push('mod ai_service;');
+  if (hasRouter) mainRsLines.push('mod router;');
   mainRsLines.push(
     '',
     'use std::sync::Mutex;',

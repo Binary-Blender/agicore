@@ -1228,6 +1228,123 @@ VIEW ItemSettings {
 const settingsContent = noAiChatFiles.get('src/components/ItemSettings.tsx')!;
 assert(settingsContent.includes('Custom view'), 'Non-chat custom views should still emit the stub placeholder');
 
+// --- ROUTER emitter ---
+section('ROUTER emitter — router.rs broadcast_chat + council_chat');
+
+const routerSrc = `
+APP router_test {
+  TITLE "Router Test"
+  DB    router.db
+  THEME dark
+}
+AI_SERVICE {
+  PROVIDERS   anthropic, openai
+  KEYS_FILE   "%APPDATA%/test/keys.json"
+  DEFAULT     anthropic
+  STREAMING   true
+  MODELS {
+    anthropic "claude-sonnet-4-6"
+    openai    "gpt-4o"
+  }
+}
+ACTION broadcast_chat {
+  INPUT   user_message: string, model_ids: json, system_prompt: string, context_folder_ids: json
+  OUTPUT  results: json
+  STREAM  false
+}
+ACTION council_chat {
+  INPUT   user_message: string, model_ids: json, system_prompt: string, synthesis_model: string
+  OUTPUT  synthesized: json
+  STREAM  true
+}
+ACTION web_search {
+  INPUT  query: string, num_results: number = 5
+  OUTPUT results: json
+}
+ROUTER BabyAI {
+  DESCRIPTION "Test router"
+  TIER 1 free {
+    qwen3_8b: huggingface "Qwen/Qwen3-8B" {
+      STRENGTHS   general
+      CONTEXT     32768
+      DEFAULT
+    }
+  }
+  TIER 2 mid {
+    haiku: anthropic "claude-haiku-4-5-20251001" {
+      STRENGTHS   coding
+      COST        0.1
+      CONTEXT     200000
+    }
+  }
+  TIER 3 premium {
+    sonnet: anthropic "claude-sonnet-4-6" {
+      STRENGTHS   coding, analysis
+      COST        0.3
+      CONTEXT     200000
+    }
+  }
+  TASK_TYPES  coding, general
+  MOSH_PIT    3
+  CALIBRATION true
+}
+ENTITY User {
+  email: string REQUIRED
+  TIMESTAMPS
+}
+`;
+const { files: routerFiles } = compile(routerSrc);
+
+// router.rs should be generated when ROUTER block is present
+const routerRs = routerFiles.get('src-tauri/src/router.rs');
+assert(routerRs !== undefined, 'Should generate router.rs when ROUTER block declared');
+assert(routerRs!.includes('pub struct ModelResult'), 'router.rs should define ModelResult struct');
+assert(routerRs!.includes('pub async fn broadcast_chat('), 'router.rs should have broadcast_chat command');
+assert(routerRs!.includes('pub async fn council_chat('), 'router.rs should have council_chat command');
+assert(routerRs!.includes('#[tauri::command]'), 'router.rs should use tauri command attribute');
+assert(routerRs!.includes('pub struct BroadcastChatInput'), 'router.rs should have BroadcastChatInput struct');
+assert(routerRs!.includes('pub struct CouncilChatInput'), 'router.rs should have CouncilChatInput struct');
+
+// Provider call functions should be emitted
+assert(routerRs!.includes('call_anthropic_sync'), 'router.rs should include anthropic sync caller');
+assert(routerRs!.includes('call_openai_compat_sync'), 'router.rs should include openai-compat sync caller');
+assert(routerRs!.includes('call_google_sync'), 'router.rs should include google sync caller');
+assert(routerRs!.includes('call_model_sync'), 'router.rs should include dispatch function');
+
+// HuggingFace models should appear in provider_from_model
+assert(routerRs!.includes('"Qwen/Qwen3-8B"'), 'router.rs provider_from_model should match HuggingFace model IDs');
+assert(routerRs!.includes('router.huggingface.co'), 'router.rs should use HuggingFace router endpoint');
+
+// broadcast_chat should use tokio::spawn for parallelism
+assert(routerRs!.includes('tokio::spawn'), 'broadcast_chat should spawn parallel tasks');
+
+// council_chat should emit a council-result event
+assert(routerRs!.includes('council-result'), 'council_chat should emit council-result event');
+
+// broadcast_chat and council_chat should NOT appear in actions.rs
+const routerActionsRs = routerFiles.get('src-tauri/src/commands/actions.rs');
+assert(routerActionsRs !== undefined, 'actions.rs should still exist for web_search');
+assert(!routerActionsRs!.includes('broadcast_chat'), 'actions.rs should NOT include broadcast_chat (owned by router)');
+assert(!routerActionsRs!.includes('council_chat'), 'actions.rs should NOT include council_chat (owned by router)');
+assert(routerActionsRs!.includes('web_search'), 'actions.rs should still include non-router actions like web_search');
+
+// main.rs should register router commands
+const routerMainRs = routerFiles.get('src-tauri/src/main.rs');
+assert(routerMainRs!.includes('mod router;'), 'main.rs should declare mod router when ROUTER declared');
+assert(routerMainRs!.includes('router::broadcast_chat'), 'main.rs should register router::broadcast_chat');
+assert(routerMainRs!.includes('router::council_chat'), 'main.rs should register router::council_chat');
+assert(!routerMainRs!.includes('commands::actions::broadcast_chat'), 'main.rs should NOT double-register broadcast_chat');
+assert(!routerMainRs!.includes('commands::actions::council_chat'), 'main.rs should NOT double-register council_chat');
+
+// No ROUTER → no router.rs
+const noRouterSrc = `
+APP no_router { TITLE "No Router" DB sqlite }
+ENTITY User { email: string REQUIRED TIMESTAMPS }
+`;
+const { files: noRouterFiles } = compile(noRouterSrc);
+assert(!noRouterFiles.has('src-tauri/src/router.rs'), 'Should NOT emit router.rs when no ROUTER block');
+assert(!noRouterFiles.get('src-tauri/src/main.rs')!.includes('mod router;'), 'main.rs should NOT include mod router when no ROUTER');
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

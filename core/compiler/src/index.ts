@@ -11,6 +11,7 @@ import { generateExpertSystem } from './generators/expert-system.js';
 import { generateOrchestration } from './generators/orchestration.js';
 import { generateAiService } from './generators/ai-service.js';
 import { generateActions } from './generators/actions.js';
+import { generateRouter } from './generators/router.js';
 
 export interface CompileResult {
   files: Map<string, string>;
@@ -37,6 +38,7 @@ export function compile(source: string): CompileResult {
     generateOrchestration(ast),
     generateAiService(ast),
     generateActions(ast),
+    generateRouter(ast),
   ];
 
   for (const gen of generators) {
@@ -58,3 +60,4 @@ export { generateExpertSystem } from './generators/expert-system.js';
 export { generateOrchestration } from './generators/orchestration.js';
 export { generateAiService } from './generators/ai-service.js';
 export { generateActions } from './generators/actions.js';
+export { generateRouter } from './generators/router.js';
