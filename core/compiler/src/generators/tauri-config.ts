@@ -65,6 +65,9 @@ export function generateTauriConfig(ast: AgiFile): Map<string, string> {
   const hotkeyDep = hasHotkey
     ? `tauri-plugin-global-shortcut = "2"\n`
     : '';
+  const dialogDep = ast.app.workspaces
+    ? `tauri-plugin-dialog = "2"\n`
+    : '';
   const cargoToml = `[package]
 name = "${toSnakeCase(app.name)}"
 version = "0.1.0"
@@ -77,7 +80,7 @@ serde_json = "1"
 rusqlite = { version = "0.31", features = ["bundled"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-${aiServiceDeps}${vaultDeps}${hotkeyDep}
+${aiServiceDeps}${vaultDeps}${hotkeyDep}${dialogDep}
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 `;
@@ -115,6 +118,7 @@ export function generateProjectFiles(ast: AgiFile): Map<string, string> {
       zustand: "^4.4.7",
       "@tauri-apps/api": "^2.0.0",
       "lucide-react": "^0.400.0",
+      ...(ast.app.workspaces ? { "@tauri-apps/plugin-dialog": "^2.0.0" } : {}),
     },
     devDependencies: {
       typescript: "^5.3.3",
@@ -132,12 +136,14 @@ export function generateProjectFiles(ast: AgiFile): Map<string, string> {
 
   // src-tauri/capabilities/default.json — Tauri 2 ACL grants
   const hasHotkey = typeof ast.app.hotkey === 'string' && ast.app.hotkey.length > 0;
+  const hasWorkspaces = ast.app.workspaces === true;
   const capabilityPermissions = [
     "core:default",
     "core:window:default",
     "core:webview:default",
     "core:event:default",
     ...(hasHotkey ? ["global-shortcut:default"] : []),
+    ...(hasWorkspaces ? ["dialog:default"] : []),
   ];
   const capability = {
     "$schema": "../gen/schemas/desktop-schema.json",

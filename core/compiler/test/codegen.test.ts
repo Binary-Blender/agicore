@@ -1775,6 +1775,28 @@ assert(!noWsFiles.has('src-tauri/src/commands/workspace.rs'), 'Should NOT emit w
 assert(!noWsFiles.get('src-tauri/src/db.rs')!.includes('DbPath'), 'db.rs should NOT have DbPath without WORKSPACES');
 assert(!noWsFiles.get('src-tauri/src/commands/mod.rs')!.includes('workspace'), 'mod.rs should NOT declare workspace without WORKSPACES');
 
+// WorkspaceSwitcher.tsx — UI component gated on WORKSPACES
+const wsSwitcher = wsFiles.get('src/components/WorkspaceSwitcher.tsx');
+assert(wsSwitcher !== undefined, 'Should generate WorkspaceSwitcher.tsx when WORKSPACES declared');
+assert(wsSwitcher!.includes('get_db_path'), 'WorkspaceSwitcher should invoke get_db_path');
+assert(wsSwitcher!.includes('switch_db'), 'WorkspaceSwitcher should invoke switch_db');
+assert(wsSwitcher!.includes('@tauri-apps/plugin-dialog'), 'WorkspaceSwitcher should use plugin-dialog for file picker');
+assert(wsSwitcher!.includes('window.location.reload()'), 'WorkspaceSwitcher should reload on workspace switch');
+assert(!noWsFiles.has('src/components/WorkspaceSwitcher.tsx'), 'Should NOT emit WorkspaceSwitcher.tsx without WORKSPACES');
+
+// Cargo.toml — dialog plugin dep when WORKSPACES
+const wsCargo = wsFiles.get('src-tauri/Cargo.toml');
+assert(wsCargo!.includes('tauri-plugin-dialog'), 'Cargo.toml should add dialog dep when WORKSPACES declared');
+
+// capabilities — dialog:default when WORKSPACES
+const wsCapability = JSON.parse(wsFiles.get('src-tauri/capabilities/default.json')!);
+assert(wsCapability.permissions.includes('dialog:default'), 'capability should include dialog:default when WORKSPACES declared');
+
+// package.json — plugin-dialog npm dep when WORKSPACES
+const wsPkg = JSON.parse(wsFiles.get('package.json')!);
+assert(wsPkg.dependencies['@tauri-apps/plugin-dialog'] !== undefined, 'package.json should add plugin-dialog when WORKSPACES declared');
+assert(noWsFiles.get('package.json') !== undefined && !JSON.parse(noWsFiles.get('package.json')!).dependencies['@tauri-apps/plugin-dialog'], 'package.json should NOT have plugin-dialog without WORKSPACES');
+
 // --- QC emitter ---
 section('QC emitter — src/lib/qc.ts SPC tracker from QC declarations');
 

@@ -17,6 +17,7 @@ use tauri_plugin_global_shortcut::GlobalShortcutExt;
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
             let app_dir = app.path().app_data_dir().expect("failed to resolve app data dir");
             std::fs::create_dir_all(&app_dir).ok();

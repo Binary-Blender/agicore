@@ -463,6 +463,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     'fn main() {',
     '    tauri::Builder::default()',
     ...(hasHotkey ? ['        .plugin(tauri_plugin_global_shortcut::Builder::new().build())'] : []),
+    ...(hasWorkspaces ? ['        .plugin(tauri_plugin_dialog::init())'] : []),
     '        .setup(|app| {',
     '            let app_dir = app.path().app_data_dir().expect("failed to resolve app data dir");',
     '            std::fs::create_dir_all(&app_dir).ok();',
