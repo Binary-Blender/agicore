@@ -217,8 +217,11 @@ function generateCrudCommands(entity: EntityDecl, ast: AgiFile): string {
 
   // Update
   if (ops.includes('update')) {
+    // Suppress unused-variable warning for junction tables that have no updatable fields.
+    const hasUpdateableFields = entity.fields.length > 0;
+    const inputParam = hasUpdateableFields ? `input: Update${name}Input` : `_input: Update${name}Input`;
     lines.push(`#[tauri::command]`);
-    lines.push(`pub fn update_${snake}(db: tauri::State<'_, DbPool>, id: String, input: Update${name}Input) -> Result<${name}, String> {`);
+    lines.push(`pub fn update_${snake}(db: tauri::State<'_, DbPool>, id: String, ${inputParam}) -> Result<${name}, String> {`);
     lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
     lines.push(`    let mut sets: Vec<String> = Vec::new();`);
     lines.push(`    let mut params: Vec<Box<dyn rusqlite::types::ToSql>> = Vec::new();`);

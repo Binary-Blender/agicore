@@ -93,7 +93,7 @@ export function generateActions(ast: AgiFile): Map<string, string> {
     '// Re-run `agicore generate` to regenerate.',
     '// Action commands generated from ACTION declarations.',
     '',
-    '#![allow(unused_variables)]',
+    '#![allow(unused_variables, unused_imports)]',
     '',
     'use serde::{Deserialize, Serialize};',
     'use crate::db::DbPool;',

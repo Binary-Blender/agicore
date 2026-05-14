@@ -57,7 +57,7 @@ function header(): string[] {
     '#![allow(unused_variables, dead_code)]',
     '',
     'use serde::{Deserialize, Serialize};',
-    'use tauri::Window;',
+    'use tauri::{Emitter, Window};',
     'use crate::ai_service::ApiKeyStore;',
     'use std::collections::HashMap;',
     '',

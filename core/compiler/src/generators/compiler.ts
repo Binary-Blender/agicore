@@ -235,7 +235,7 @@ function generateAiCompileCommand(
       '        guard.clone()',
       '    };',
       `    let system = "${systemPrompt}";`,
-      `    let user_msg = format!("Conversation to analyze:\\n\\n{{}}", conversation);`,
+      `    let user_msg = format!("Conversation to analyze:\\n\\n{}", conversation);`,
       '    let content = compiler_call_ai(&input.model, system, &user_msg, &keys).await?;',
       '',
     );
