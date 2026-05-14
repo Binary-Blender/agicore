@@ -1652,6 +1652,65 @@ const { files: noTestFiles } = compile(noTestSrc);
 assert(!noTestFiles.has('src-tauri/src/tests.rs'), 'Should NOT emit tests.rs when no TEST blocks');
 assert(!noTestFiles.get('src-tauri/src/main.rs')!.includes('mod tests;'), 'main.rs should NOT include mod tests when no TEST blocks');
 
+// --- QC emitter ---
+section('QC emitter — src/lib/qc.ts SPC tracker from QC declarations');
+
+const qcSrc = `
+APP qc_app { TITLE "QC App" DB qc.db }
+ENTITY Item { name: string REQUIRED TIMESTAMPS }
+QC response_quality {
+  YOUNG_THRESHOLD     50
+  MATURING_THRESHOLD  200
+  YOUNG_PASS_RATE     0.85
+  MATURE_PASS_RATE    0.95
+  MATURING_SAMPLE     0.30
+  MATURE_SAMPLE       0.05
+}
+QC transcription_quality {
+  YOUNG_THRESHOLD     20
+  MATURING_THRESHOLD  100
+  YOUNG_PASS_RATE     0.90
+  MATURE_PASS_RATE    0.98
+  MATURING_SAMPLE     0.20
+  MATURE_SAMPLE       0.02
+}
+`;
+const { files: qcFiles } = compile(qcSrc);
+
+const qcTs = qcFiles.get('src/lib/qc.ts');
+assert(qcTs !== undefined, 'Should generate src/lib/qc.ts when QC blocks declared');
+assert(qcTs!.includes('class QCTracker'), 'qc.ts should define QCTracker class');
+assert(qcTs!.includes('shouldSample'), 'qc.ts should export shouldSample method');
+assert(qcTs!.includes('recordResult'), 'qc.ts should export recordResult method');
+assert(qcTs!.includes('export const qc'), 'qc.ts should export singleton qc instance');
+
+// Config seeding from QC blocks
+assert(qcTs!.includes("'response_quality'"), 'qc.ts should seed response_quality config');
+assert(qcTs!.includes('youngThreshold: 50'), 'qc.ts should use YOUNG_THRESHOLD 50');
+assert(qcTs!.includes('maturingThreshold: 200'), 'qc.ts should use MATURING_THRESHOLD 200');
+assert(qcTs!.includes('youngPassRate: 0.85'), 'qc.ts should use YOUNG_PASS_RATE 0.85');
+assert(qcTs!.includes('matureSampleRate: 0.05'), 'qc.ts should use MATURE_SAMPLE 0.05');
+assert(qcTs!.includes("'transcription_quality'"), 'qc.ts should seed transcription_quality config');
+assert(qcTs!.includes('youngThreshold: 20'), 'qc.ts should use YOUNG_THRESHOLD 20');
+
+// localStorage persistence
+assert(qcTs!.includes('localStorage'), 'qc.ts should use localStorage for persistence');
+assert(qcTs!.includes('STORAGE_KEY'), 'qc.ts should define a storage key constant');
+
+// Report and reset
+assert(qcTs!.includes('report()'), 'qc.ts should have report() method');
+assert(qcTs!.includes('reset('), 'qc.ts should have reset() method');
+assert(qcTs!.includes('QCReport'), 'qc.ts should export QCReport interface');
+
+// Stage tracking
+assert(qcTs!.includes('getStage'), 'qc.ts should have getStage method');
+assert(qcTs!.includes('"young" | "maturing" | "mature"'), 'qc.ts should type the three SPC stages');
+
+// No QC blocks → no qc.ts
+const noQcSrc = `APP no_qc { TITLE "No QC" DB sqlite } ENTITY User { email: string REQUIRED TIMESTAMPS }`;
+const { files: noQcFiles } = compile(noQcSrc);
+assert(!noQcFiles.has('src/lib/qc.ts'), 'Should NOT emit qc.ts when no QC blocks declared');
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

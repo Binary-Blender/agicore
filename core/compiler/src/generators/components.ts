@@ -2,7 +2,7 @@
 // Generates React components, App.tsx routing, and Sidebar from VIEW declarations
 
 import type { AgiFile, ViewDecl, EntityDecl } from '@agicore/parser';
-import { toCamelCase, lcFirst, toSnakeCase } from '../naming.js';
+import { toCamelCase, lcFirst, toSnakeCase, humanizeModelId } from '../naming.js';
 
 /**
  * If an entity has a `BELONGS_TO X` relationship and `X` is in
@@ -1146,34 +1146,6 @@ export function Sidebar() {
  *   gemini-2.5-flash-preview-05-20 -> "Gemini 2.5 Flash Preview"
  *   grok-3-latest                   -> "Grok 3"
  */
-function humanizeModelId(id: string): string {
-  let s = id;
-  // Strip trailing -YYYYMMDD
-  s = s.replace(/-\d{8}$/, '');
-  // Strip trailing -YYYY-MM-DD
-  s = s.replace(/-\d{4}-\d{2}-\d{2}$/, '');
-  // Strip trailing -MM-DD (e.g. preview-05-20)
-  s = s.replace(/-\d{2}-\d{2}$/, '');
-  // Strip trailing -latest
-  s = s.replace(/-latest$/i, '');
-  // Tokenize on - or _
-  const tokens = s.split(/[-_]+/).filter(Boolean);
-  return tokens
-    .map(t => {
-      // Preserve tokens that already contain digits/dots verbatim except for
-      // capitalizing the leading letter.
-      if (/^[a-zA-Z][a-zA-Z]*$/.test(t)) {
-        return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
-      }
-      // Mixed alphanumeric: just capitalize the first char if it's a letter.
-      if (/^[a-zA-Z]/.test(t)) {
-        return t.charAt(0).toUpperCase() + t.slice(1);
-      }
-      return t;
-    })
-    .join(' ');
-}
-
 /**
  * Emit `src/components/ModelPicker.tsx` — a small dropdown bound to
  * `selectedModel` / `setSelectedModel` in the generated Zustand store.

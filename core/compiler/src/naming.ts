@@ -43,6 +43,23 @@ export function toForeignKey(entityName: string): string {
   return toSnakeCase(entityName) + '_id';
 }
 
+/** Convert a model ID like "claude-3-5-sonnet-20241022" into a human-readable label. */
+export function humanizeModelId(id: string): string {
+  let s = id;
+  s = s.replace(/-\d{8}$/, '');        // trailing -YYYYMMDD
+  s = s.replace(/-\d{4}-\d{2}-\d{2}$/, ''); // trailing -YYYY-MM-DD
+  s = s.replace(/-\d{2}-\d{2}$/, '');  // trailing -MM-DD (e.g. preview-05-20)
+  s = s.replace(/-latest$/i, '');
+  const tokens = s.split(/[-_]+/).filter(Boolean);
+  return tokens
+    .map(t => {
+      if (/^[a-zA-Z][a-zA-Z]*$/.test(t)) return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+      if (/^[a-zA-Z]/.test(t)) return t.charAt(0).toUpperCase() + t.slice(1);
+      return t;
+    })
+    .join(' ');
+}
+
 /** Generate a Rust command name from entity + operation: "Student" + "list" -> "list_students" */
 export function toCommandName(entityName: string, op: string): string {
   const table = toTableName(entityName);
