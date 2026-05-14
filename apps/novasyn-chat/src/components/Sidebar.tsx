@@ -86,9 +86,7 @@ export function Sidebar() {
   const setCurrentSessionId = useAppStore((s) => s.setCurrentSessionId);
   const [showApiKeys, setShowApiKeys] = useState(false);
 
-  useEffect(() => {
-    loadSessions();
-  }, []);
+  useEffect(() => { loadSessions(); }, []);
 
   useEffect(() => {
     if (!currentSessionId && sessions.length > 0) {
@@ -101,9 +99,7 @@ export function Sidebar() {
     try {
       await invoke('create_session', { input: { name, userId: 'default-user' } });
       await loadSessions();
-    } catch (err) {
-      console.error('Create session failed:', err);
-    }
+    } catch (err) { console.error('Create session failed:', err); }
   }
 
   async function handleRenameSession(id: string, name: string) {
@@ -111,9 +107,7 @@ export function Sidebar() {
     try {
       await invoke('update_session', { id, input: { name: name.trim() } });
       await loadSessions();
-    } catch (err) {
-      console.error('Rename failed:', err);
-    }
+    } catch (err) { console.error('Rename failed:', err); }
   }
 
   async function handleDeleteSession(id: string) {
@@ -121,17 +115,13 @@ export function Sidebar() {
       await invoke('delete_session', { id });
       await loadSessions();
       if (currentSessionId === id) setCurrentSessionId(null);
-    } catch (err) {
-      console.error('Delete failed:', err);
-    }
+    } catch (err) { console.error('Delete failed:', err); }
   }
 
   return (
     <>
       {showApiKeys && <ApiKeyModal onClose={() => setShowApiKeys(false)} />}
-
       <aside className="w-64 bg-slate-900/50 border-r border-slate-700 flex flex-col flex-shrink-0">
-        {/* Header */}
         <div className="px-3 py-3 border-b border-slate-700 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-white">NovaSyn Chat</h2>
           <button
@@ -142,11 +132,7 @@ export function Sidebar() {
             <Key size={14} />
           </button>
         </div>
-
-        {/* Model Picker (generated from AI_SERVICE.MODELS in novasyn_chat.agi) */}
         <ModelPicker />
-
-        {/* Sessions */}
         <div className="flex-1 overflow-y-auto py-2">
           <div className="px-3 mb-1 flex items-center justify-between">
             <span className="text-xs text-gray-500 uppercase tracking-wide">Conversations</span>
@@ -158,14 +144,11 @@ export function Sidebar() {
               <Plus size={14} />
             </button>
           </div>
-
           {sessions.length === 0 && (
             <p className="text-xs text-gray-600 px-3 py-4 text-center">
-              No conversations yet.<br />
-              Click + to start one.
+              No conversations yet.<br />Click + to start one.
             </p>
           )}
-
           {sessions.map((session) => (
             <SessionItem
               key={session.id}
@@ -177,8 +160,6 @@ export function Sidebar() {
             />
           ))}
         </div>
-
-        {/* Footer */}
         <div className="px-3 py-2 border-t border-slate-700 text-xs text-gray-600">
           <span>Built on Agicore</span>
         </div>

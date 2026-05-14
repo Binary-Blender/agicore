@@ -1091,6 +1091,85 @@ assert(!noAiFiles.has('src-tauri/src/commands/actions.rs'), 'Should NOT emit act
 assert(!noAiFiles.get('src-tauri/src/commands/mod.rs')!.includes('pub mod actions;'), 'mod.rs should NOT include actions when empty');
 assert(!noAiFiles.get('src-tauri/src/main.rs')!.includes('mod ai_service;'), 'main.rs should NOT include mod ai_service when no AI_SERVICE declared');
 
+// --- Session sidebar + AI chat view generation ---
+section('Session sidebar — full session management when AI_SERVICE + CURRENT declared');
+// Re-use the base src from the beginning of this file (novasyn_home_academy with AI_SERVICE + CURRENT Student)
+// For session sidebar we need a Session-like CURRENT entity — use the NovaSyn Chat-like fixture.
+const sessionSidebarSrc = `
+APP NovaSynChatTest {
+  TITLE "Test Chat"
+  DB sqlite
+  CURRENT Session
+}
+AI_SERVICE {
+  PROVIDERS anthropic
+  KEYS_FILE "%APPDATA%/test/keys.json"
+  DEFAULT anthropic
+  STREAMING true
+  MODELS {
+    anthropic "claude-sonnet-4-6"
+  }
+}
+ENTITY Session {
+  name: string REQUIRED
+  BELONGS_TO User
+  TIMESTAMPS
+}
+ENTITY User {
+  email: string REQUIRED
+  TIMESTAMPS
+}
+ENTITY ChatMessage {
+  user_message: string REQUIRED
+  ai_message: string REQUIRED
+  user_tokens: number
+  ai_tokens: number
+  BELONGS_TO Session
+  BELONGS_TO User
+  TIMESTAMPS
+}
+VIEW ChatView {
+  LAYOUT custom
+  SIDEBAR icon: MessageSquare
+  TITLE "Chat"
+}
+`;
+const { files: chatFiles } = compile(sessionSidebarSrc);
+
+const sidebarContent = chatFiles.get('src/components/Sidebar.tsx')!;
+assert(sidebarContent !== undefined, 'Should emit Sidebar.tsx');
+assert(sidebarContent.includes('SessionItem'), 'Sidebar should include SessionItem component when Session CURRENT declared');
+assert(sidebarContent.includes('ModelPicker'), 'Sidebar should include ModelPicker when AI_SERVICE declared');
+assert(sidebarContent.includes('ApiKeyModal'), 'Sidebar should include ApiKeyModal when AI_SERVICE declared');
+assert(sidebarContent.includes('create_session'), 'Sidebar should invoke create_session');
+assert(sidebarContent.includes('update_session'), 'Sidebar should invoke update_session for rename');
+assert(sidebarContent.includes('delete_session'), 'Sidebar should invoke delete_session');
+assert(sidebarContent.includes('loadSessions'), 'Sidebar should call loadSessions on mount');
+assert(!sidebarContent.includes('NAV_ITEMS'), 'Session sidebar should NOT emit nav rail when session management is active');
+
+const chatViewContent = chatFiles.get('src/components/ChatView.tsx')!;
+assert(chatViewContent !== undefined, 'Should emit ChatView.tsx');
+assert(chatViewContent.includes('send_chat'), 'ChatView should invoke send_chat command');
+assert(chatViewContent.includes('create_chat_message'), 'ChatView should persist messages via create_chat_message');
+assert(chatViewContent.includes('chat-stream'), 'ChatView should listen to chat-stream event for streaming');
+assert(chatViewContent.includes('streamingContent'), 'ChatView should have streaming state');
+assert(chatViewContent.includes('ChatMessageItem'), 'ChatView should render ChatMessageItem component');
+assert(chatViewContent.includes('MarkdownRenderer'), 'ChatView should use MarkdownRenderer for AI responses');
+assert(chatViewContent.includes('loadChatMessagesForCurrentSession'), 'ChatView should use session-scoped message loader');
+assert(chatViewContent.includes('MessageInput'), 'ChatView should render MessageInput component');
+
+// Non-chat custom views should still get the stub
+const { files: noAiChatFiles } = compile(`
+APP SimpleApp { TITLE "Simple" DB sqlite }
+ENTITY Item { name: string REQUIRED TIMESTAMPS }
+VIEW ItemSettings {
+  LAYOUT custom
+  TITLE "Settings"
+}
+`);
+const settingsContent = noAiChatFiles.get('src/components/ItemSettings.tsx')!;
+assert(settingsContent.includes('Custom view'), 'Non-chat custom views should still emit the stub placeholder');
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

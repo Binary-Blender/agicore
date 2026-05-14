@@ -9,11 +9,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import type { ChatMessage } from '../lib/types';
 
-interface StreamDelta {
-  requestId: string;
-  delta: string;
-  done: boolean;
-}
+interface StreamDelta { requestId: string; delta: string; done: boolean; }
 
 export function ChatView() {
   const chatMessages = useAppStore((s) => s.chatMessages);
@@ -26,63 +22,34 @@ export function ChatView() {
   const [streamingContent, setStreamingContent] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<ChatMessage[] | null>(null);
   const [showSearch, setShowSearch] = useState(false);
-
   const [selectedFolderItems] = useState<string[]>([]);
   const [folderItemsMap] = useState<Record<string, any>>({});
-
-  // SQL-pushdown load: chatMessages in the store is already scoped to the
-  // current session, so no client-side filter is needed.
-  useEffect(() => {
-    loadChatMessagesForCurrentSession();
-  }, [currentSessionId, loadChatMessagesForCurrentSession]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages, streamingContent, currentSessionId]);
-
-  // ORDER ASC at the SQL layer means newest already at the end — no .reverse() needed.
-  // Session filter is now applied at the SQL layer via loadChatMessagesForCurrentSession.
-  const displayMessages = searchResults ?? chatMessages;
-
   const selectedModel = useAppStore((s) => s.selectedModel);
+
+  useEffect(() => { loadChatMessagesForCurrentSession(); }, [currentSessionId, loadChatMessagesForCurrentSession]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages, streamingContent, currentSessionId]);
+
+  const displayMessages = searchResults ?? chatMessages;
 
   const handleSend = useCallback(async (text: string) => {
     const requestId = crypto.randomUUID();
     setStreamingContent('');
-
-    // Listen for stream deltas
     const unlisten = await listen<StreamDelta>('chat-stream', (event) => {
       const { requestId: rid, delta, done } = event.payload;
-      if (rid !== requestId) return;
-      if (done) return;
+      if (rid !== requestId || done) return;
       setStreamingContent((prev) => (prev ?? '') + delta);
     });
-
     try {
-      // Build conversation history from the current session's messages,
-      // oldest-to-newest. chatMessages is already session-scoped at the SQL
-      // layer, so no .filter on sessionId here.
       const history = [...chatMessages]
         .filter((m) => !m.isExcluded && !m.isArchived)
         .flatMap((m) => [
           { role: 'user', content: m.userMessage },
           { role: 'assistant', content: m.aiMessage },
         ]);
-
-      const messages = [...history, { role: 'user', content: text }];
-
       const response = await invoke<{
         content: string; model: string; provider: string;
         inputTokens: number; outputTokens: number;
-      }>('send_chat', {
-        request: {
-          messages,
-          model: selectedModel,
-        },
-        requestId,
-      });
-
-      // Persist to database
+      }>('send_chat', { request: { messages: [...history, { role: 'user', content: text }], model: selectedModel }, requestId });
       await invoke('create_chat_message', {
         input: {
           userMessage: text,
@@ -96,47 +63,36 @@ export function ChatView() {
           sessionId: currentSessionId,
         },
       });
-
       setStreamingContent(null);
       await loadChatMessagesForCurrentSession();
     } catch (err) {
       console.error('Send failed:', err);
       setStreamingContent(`Error: ${err}`);
       setTimeout(() => setStreamingContent(null), 5000);
-    } finally {
-      unlisten();
-    }
+    } finally { unlisten(); }
   }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, currentSessionId]);
 
   return (
     <div className="flex flex-col h-full">
-      {/* Search Bar (toggle with Ctrl+F) */}
       {showSearch && (
         <SearchBar
           onResults={(results) => setSearchResults(results)}
           onClear={() => setSearchResults(null)}
         />
       )}
-
-      {/* Toggle search with keyboard */}
-      <div className="hidden" onKeyDown={(e) => { if (e.ctrlKey && e.key === 'f') { e.preventDefault(); setShowSearch(!showSearch); } }} />
-
-      {/* Message List */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {displayMessages.length === 0 && !streamingContent && (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <h2 className="text-xl font-semibold text-gray-400 mb-2">NovaSyn Chat 2.0</h2>
+              <h2 className="text-xl font-semibold text-gray-400 mb-2">NovaSyn Chat</h2>
               <p className="text-sm text-gray-600">Built on Agicore. Start a conversation.</p>
               <p className="text-xs text-gray-700 mt-2">Ctrl+F to search</p>
             </div>
           </div>
         )}
-
         {displayMessages.map((msg) => (
           <ChatMessageItem key={msg.id} message={msg} folders={folders} tags={tags} sessions={sessions} onRefresh={loadChatMessagesForCurrentSession} />
         ))}
-
         {streamingContent && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-4">
             <div className="flex items-start gap-3">
@@ -148,23 +104,16 @@ export function ChatView() {
             </div>
           </div>
         )}
-
         <div ref={messagesEndRef} />
       </div>
-
       <ContextBar selectedFolderItems={selectedFolderItems} folderItemsMap={folderItemsMap} onRemove={() => {}} />
       <MessageInput onSend={handleSend} />
     </div>
   );
 }
 
-// --- Chat Message with full context menu ---
-
 function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }: {
-  message: ChatMessage;
-  folders: any[];
-  tags: any[];
-  sessions: any[];
+  message: ChatMessage; folders: any[]; tags: any[]; sessions: any[];
   onRefresh: () => Promise<void>;
 }) {
   const [copied, setCopied] = useState(false);
@@ -181,50 +130,34 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
 
   async function handleCopy() {
     await navigator.clipboard.writeText(message.aiMessage);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    setCopied(true); setTimeout(() => setCopied(false), 1500);
   }
-
   async function handleToggleExclude() {
     await invoke('update_chat_message', { id: message.id, input: { isExcluded: !message.isExcluded } });
-    await onRefresh();
-    setMenuOpen(false);
+    await onRefresh(); setMenuOpen(false);
   }
-
   async function handleToggleArchive() {
     await invoke('update_chat_message', { id: message.id, input: { isArchived: !message.isArchived } });
-    await onRefresh();
-    setMenuOpen(false);
+    await onRefresh(); setMenuOpen(false);
   }
-
   async function handleDelete() {
-    await invoke('delete_chat_message', { id: message.id });
-    await onRefresh();
+    await invoke('delete_chat_message', { id: message.id }); await onRefresh();
   }
-
   async function handleSaveToFolder(folderId: string) {
     try {
       await invoke('create_folder_item', { input: { content: message.aiMessage, tokens: message.aiTokens, itemType: 'ai-response', folderId } });
-      setSavedFolderId(folderId);
-      setShowFolderPicker(false);
-      setMenuOpen(false);
+      setSavedFolderId(folderId); setShowFolderPicker(false); setMenuOpen(false);
       setTimeout(() => setSavedFolderId(null), 2000);
-    } catch (err) {
-      console.error('Save to folder failed:', err);
-    }
+    } catch (err) { console.error('Save to folder failed:', err); }
   }
-
   async function handleMoveToSession(targetSessionId: string) {
     await invoke('update_chat_message', { id: message.id, input: { sessionId: targetSessionId } });
-    await onRefresh();
-    setShowMovePicker(false);
-    setMenuOpen(false);
+    await onRefresh(); setShowMovePicker(false); setMenuOpen(false);
   }
 
   return (
     <>
       {showTagPicker && <TagPicker messageId={message.id} onClose={() => setShowTagPicker(false)} onTagged={onRefresh} />}
-
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => setConfirmDelete(false)}>
           <div className="bg-slate-800 rounded-xl border border-slate-700 shadow-2xl w-[22rem] p-5" onClick={(e) => e.stopPropagation()}>
@@ -237,14 +170,12 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
           </div>
         </div>
       )}
-
       <div className={`group relative rounded-xl border transition-all ${
         message.isArchived ? 'opacity-40 border-slate-700 bg-slate-800/30'
           : message.isExcluded ? 'opacity-60 border-slate-700 bg-slate-800/40 border-dashed'
           : message.isPruned ? 'opacity-45 border-orange-700/40 bg-slate-800/30 border-dashed'
           : 'border-slate-700 bg-slate-800/60'
       }`}>
-        {/* Hover controls */}
         <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
           <button onClick={handleCopy} className="text-xs text-gray-500 hover:text-white bg-slate-700 px-2 py-0.5 rounded transition">
             {copied ? '✓' : 'Copy'}
@@ -261,7 +192,6 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
                 </button>
                 <hr className="border-slate-600 my-1" />
                 <button onClick={() => { setShowTagPicker(true); setMenuOpen(false); }} className="w-full text-left px-3 py-1.5 text-sm hover:bg-slate-600 transition">Tag message</button>
-
                 {folders.length > 0 && (
                   <>
                     <hr className="border-slate-600 my-1" />
@@ -277,7 +207,6 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
                     )}
                   </>
                 )}
-
                 {sessions.length > 1 && (
                   <>
                     <hr className="border-slate-600 my-1" />
@@ -293,27 +222,22 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
                     )}
                   </>
                 )}
-
                 <hr className="border-slate-600 my-1" />
                 <button onClick={() => { setConfirmDelete(true); setMenuOpen(false); }} className="w-full text-left px-3 py-1.5 text-sm text-red-400 hover:bg-slate-600 transition">Delete</button>
               </div>
             )}
           </div>
         </div>
-
         {menuOpen && <div className="fixed inset-0 z-0" onClick={() => { setMenuOpen(false); setShowFolderPicker(false); setShowMovePicker(false); }} />}
-
         <div className="p-4">
           <div className="flex items-start gap-3 mb-4">
             <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">U</div>
             <div className="flex-1 min-w-0"><p className="text-sm text-white leading-relaxed whitespace-pre-wrap break-words">{message.userMessage}</p></div>
           </div>
-
           <div className="flex items-start gap-3">
             <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">AI</div>
             <div className="flex-1 min-w-0"><MarkdownRenderer content={message.aiMessage} /></div>
           </div>
-
           <div className="flex items-center gap-3 mt-3 pt-3 border-t border-slate-700/50">
             <span className="text-xs text-gray-600">{timeStr}</span>
             <span className="text-xs text-gray-600 bg-slate-700/50 px-1.5 py-0.5 rounded">{message.model}</span>
