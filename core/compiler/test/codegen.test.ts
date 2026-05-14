@@ -1158,6 +1158,64 @@ assert(chatViewContent.includes('MarkdownRenderer'), 'ChatView should use Markdo
 assert(chatViewContent.includes('loadChatMessagesForCurrentSession'), 'ChatView should use session-scoped message loader');
 assert(chatViewContent.includes('MessageInput'), 'ChatView should render MessageInput component');
 
+// LAYOUT document_editor
+section('LAYOUT document_editor — split list + editor panel');
+const docEditorSrc = `
+APP DocApp { TITLE "Docs" DB sqlite }
+ENTITY Document {
+  title: string REQUIRED
+  file_path: string
+  language: string = "markdown"
+  TIMESTAMPS
+}
+VIEW DocEditor {
+  ENTITY   Document
+  LAYOUT   document_editor
+  TITLE    "Documents"
+}
+`;
+const { files: docFiles } = compile(docEditorSrc);
+const docEditorContent = docFiles.get('src/components/DocEditor.tsx')!;
+assert(docEditorContent !== undefined, 'Should emit DocEditor.tsx');
+assert(docEditorContent.includes('create_document'), 'document_editor should invoke create_document');
+assert(docEditorContent.includes('delete_document'), 'document_editor should invoke delete_document');
+assert(docEditorContent.includes('update_document'), 'document_editor should invoke update_document');
+assert(docEditorContent.includes('loadDocuments'), 'document_editor should call loadDocuments');
+assert(docEditorContent.includes('DocumentListItem'), 'document_editor should render item list component');
+assert(docEditorContent.includes('MarkdownRenderer'), 'document_editor should use MarkdownRenderer');
+assert(docEditorContent.includes('selectedId'), 'document_editor should have selection state');
+
+// LAYOUT settings
+section('LAYOUT settings — API key management + about section');
+const settingsSrc = `
+APP SettingsApp { TITLE "My App" DB sqlite }
+AI_SERVICE {
+  PROVIDERS anthropic, openai
+  KEYS_FILE "%APPDATA%/test/keys.json"
+  DEFAULT anthropic
+  STREAMING true
+  MODELS {
+    anthropic "claude-sonnet-4-6"
+    openai "gpt-4o"
+  }
+}
+ENTITY User { email: string REQUIRED TIMESTAMPS }
+VIEW AppSettings {
+  LAYOUT settings
+  TITLE "Settings"
+}
+`;
+const { files: settingsFiles } = compile(settingsSrc);
+const settingsLayoutContent = settingsFiles.get('src/components/AppSettings.tsx')!;
+assert(settingsLayoutContent !== undefined, 'Should emit AppSettings.tsx');
+assert(settingsLayoutContent.includes("'anthropic'"), 'settings should include anthropic from AI_SERVICE');
+assert(settingsLayoutContent.includes("'openai'"), 'settings should include openai from AI_SERVICE');
+assert(settingsLayoutContent.includes('get_api_keys'), 'settings should invoke get_api_keys');
+assert(settingsLayoutContent.includes('set_api_key'), 'settings should invoke set_api_key');
+assert(settingsLayoutContent.includes('Database'), 'settings should have Database section');
+assert(settingsLayoutContent.includes('About'), 'settings should have About section');
+assert(settingsLayoutContent.includes('My App'), 'settings About section should show app title');
+
 // Non-chat custom views should still get the stub
 const { files: noAiChatFiles } = compile(`
 APP SimpleApp { TITLE "Simple" DB sqlite }

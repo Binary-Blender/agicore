@@ -30,7 +30,7 @@ export type CrudOp = 'create' | 'read' | 'update' | 'delete' | 'list';
 
 export type ThemeOption = 'dark' | 'light' | 'system';
 
-export type LayoutType = 'table' | 'form' | 'detail' | 'cards' | 'split' | 'custom';
+export type LayoutType = 'table' | 'form' | 'detail' | 'cards' | 'split' | 'custom' | 'document_editor' | 'settings';
 
 export type OnFailBehavior = 'stop' | 'skip' | 'retry' | 'fallback';
 

@@ -449,13 +449,13 @@ VIEW ExchangeLibrary {
 
 VIEW DocumentEditor {
   ENTITY   Document
-  LAYOUT   custom
+  LAYOUT   document_editor
   SIDEBAR  icon: FileText
   TITLE    "Documents"
 }
 
 VIEW SettingsView {
-  LAYOUT   custom
+  LAYOUT   settings
   SIDEBAR  icon: Settings
   TITLE    "Settings"
 }

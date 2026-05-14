@@ -245,14 +245,333 @@ function generateViewComponent(view: ViewDecl, entity: EntityDecl | undefined, a
   }
 
   switch (view.layout) {
-    case 'table':  return generateTableView(view, entity, ast);
-    case 'split':  return generateSplitView(view, entity, ast);
-    case 'cards':  return generateCardsView(view, entity, ast);
+    case 'table':           return generateTableView(view, entity, ast);
+    case 'split':           return generateSplitView(view, entity, ast);
+    case 'cards':           return generateCardsView(view, entity, ast);
+    case 'document_editor': return generateDocumentEditorView(view, entity, ast);
+    case 'settings':        return generateSettingsView(view, ast);
     case 'form':
     case 'detail':
     case 'custom':
-    default:       return generateCustomView(view);
+    default:                return generateCustomView(view);
   }
+}
+
+function generateDocumentEditorView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
+  const entityName = entity?.name ?? 'Document';
+  const entityCamel = entityName.charAt(0).toLowerCase() + entityName.slice(1);
+  const entitySnake = toSnakeCase(entityName);
+  const entityPlural = entityCamel + 's';
+  const loadAction = `load${entityName}s`;
+  const titleField = entity?.fields.find(f => f.name === 'title' || f.name === 'name')?.name ?? 'title';
+  const titleCamel = toCamelCase(titleField);
+
+  return `import { useEffect, useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
+import { FileText, Plus, Trash2 } from 'lucide-react';
+import { useAppStore } from '../store/appStore';
+import { MarkdownRenderer } from './MarkdownRenderer';
+import type { ${entityName} } from '../lib/types';
+
+export function ${view.name}() {
+  const ${entityPlural} = useAppStore((s) => s.${entityPlural});
+  const ${loadAction} = useAppStore((s) => s.${loadAction});
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [draft${entityName}Title, setDraft${entityName}Title] = useState('');
+
+  useEffect(() => { ${loadAction}(); }, []);
+
+  const selected = ${entityPlural}.find((d) => d.id === selectedId) ?? null;
+
+  useEffect(() => {
+    if (selected) setDraft${entityName}Title(selected.${titleCamel});
+  }, [selected]);
+
+  async function handleNew() {
+    const name = \`Untitled \${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\`;
+    try {
+      await invoke('create_${entitySnake}', { input: { ${titleCamel}: name, filePath: name, language: 'markdown' } });
+      await ${loadAction}();
+    } catch (err) { console.error('Create failed:', err); }
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      await invoke('delete_${entitySnake}', { id });
+      await ${loadAction}();
+      if (selectedId === id) setSelectedId(null);
+    } catch (err) { console.error('Delete failed:', err); }
+  }
+
+  async function handleSave() {
+    if (!selected) return;
+    try {
+      await invoke('update_${entitySnake}', { id: selected.id, input: { ${titleCamel}: draft${entityName}Title } });
+      await ${loadAction}();
+      setEditing(false);
+    } catch (err) { console.error('Save failed:', err); }
+  }
+
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      <aside className="w-64 border-r border-slate-700 bg-slate-900/40 flex flex-col flex-shrink-0">
+        <div className="px-3 py-3 border-b border-slate-700 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-white">${view.title ?? view.name}</h2>
+          <button onClick={handleNew} className="text-gray-400 hover:text-white p-1 rounded hover:bg-slate-700 transition" title="New">
+            <Plus size={14} />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto py-2">
+          {${entityPlural}.length === 0 && (
+            <p className="text-xs text-gray-600 px-3 py-4 text-center">No items yet.<br />Click + to create one.</p>
+          )}
+          {${entityPlural}.map((item) => (
+            <${entityName}ListItem
+              key={item.id}
+              item={item}
+              isActive={selectedId === item.id}
+              onSelect={() => setSelectedId(item.id)}
+              onDelete={() => handleDelete(item.id)}
+            />
+          ))}
+        </div>
+      </aside>
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {selected ? (
+          <>
+            <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+              {editing ? (
+                <input
+                  type="text"
+                  value={draft${entityName}Title}
+                  onChange={(e) => setDraft${entityName}Title(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false); }}
+                  className="flex-1 bg-slate-700 border border-blue-500 rounded px-3 py-1.5 text-sm text-white focus:outline-none mr-3"
+                  autoFocus
+                />
+              ) : (
+                <h2 className="text-lg font-semibold text-white cursor-pointer" onClick={() => setEditing(true)}>{selected.${titleCamel}}</h2>
+              )}
+              <div className="flex items-center gap-2">
+                {editing ? (
+                  <>
+                    <button onClick={handleSave} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition">Save</button>
+                    <button onClick={() => setEditing(false)} className="text-xs text-gray-400 hover:text-white px-2 py-1 rounded transition">Cancel</button>
+                  </>
+                ) : (
+                  <button onClick={() => setEditing(true)} className="text-xs text-gray-400 hover:text-white px-2 py-1 rounded transition">Edit Title</button>
+                )}
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 max-w-4xl">
+              <MarkdownRenderer content={\`# \${selected.${titleCamel}}\`} />
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <FileText size={32} className="text-gray-600 mx-auto mb-3" />
+              <p className="text-sm text-gray-500">Select a document to view</p>
+              <p className="text-xs text-gray-700 mt-1">or click + to create a new one</p>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+function ${entityName}ListItem({ item, isActive, onSelect, onDelete }: {
+  item: ${entityName}; isActive: boolean; onSelect: () => void; onDelete: () => void;
+}) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  if (confirmDelete) {
+    return (
+      <div className="px-2 py-1.5 bg-red-900/20 border border-red-800/30 rounded mx-1 mb-0.5">
+        <p className="text-xs text-red-300 mb-1.5 truncate">Delete "{item.${titleCamel}}"?</p>
+        <div className="flex gap-1">
+          <button onClick={onDelete} className="text-xs text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded transition">Delete</button>
+          <button onClick={() => setConfirmDelete(false)} className="text-xs text-gray-400 bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded transition">Cancel</button>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div
+      onClick={onSelect}
+      className={\`group flex items-center gap-2 px-2 py-1.5 rounded mx-1 mb-0.5 cursor-pointer transition \${
+        isActive ? 'bg-blue-600/20 text-blue-200' : 'text-gray-300 hover:bg-slate-700/50 hover:text-white'
+      }\`}
+    >
+      <FileText size={14} className="flex-shrink-0 opacity-60" />
+      <span className="text-sm flex-1 truncate">{item.${titleCamel}}</span>
+      <button
+        onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); }}
+        className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 p-0.5 rounded hover:bg-slate-600 transition"
+        title="Delete"
+      >
+        <Trash2 size={11} />
+      </button>
+    </div>
+  );
+}
+`;
+}
+
+function generateSettingsView(view: ViewDecl, ast: AgiFile): string {
+  const hasAiService = ast.aiService !== null && ast.aiService !== undefined;
+  const appTitle = ast.app.title;
+
+  // Build provider list from AI_SERVICE declaration
+  const providers = hasAiService
+    ? (ast.aiService!.providers ?? []).filter((p: any) => typeof p === 'string' ? true : p)
+    : [];
+
+  // Provider metadata — known providers get their label/placeholder/url
+  const PROVIDER_META: Record<string, { label: string; placeholder: string; url: string }> = {
+    anthropic: { label: 'Anthropic (Claude)', placeholder: 'sk-ant-...', url: 'https://console.anthropic.com/settings/keys' },
+    openai:    { label: 'OpenAI (GPT-4o)',    placeholder: 'sk-...',     url: 'https://platform.openai.com/api-keys' },
+    google:    { label: 'Google (Gemini)',     placeholder: 'AIza...',    url: 'https://aistudio.google.com/app/apikey' },
+    xai:       { label: 'xAI (Grok)',          placeholder: 'xai-...',    url: 'https://x.ai/api' },
+    babyai:    { label: 'BabyAI (HuggingFace)', placeholder: 'hf_...',   url: 'https://huggingface.co/settings/tokens' },
+  };
+
+  const providerEntries = providers.map((p: string) => {
+    const meta = PROVIDER_META[p] ?? { label: p, placeholder: 'key...', url: '#' };
+    return `  { id: '${p}', label: '${meta.label}', placeholder: '${meta.placeholder}', url: '${meta.url}' }`;
+  });
+
+  const providersBlock = providerEntries.length > 0
+    ? `const PROVIDERS = [\n${providerEntries.join(',\n')},\n];`
+    : `const PROVIDERS: Array<{ id: string; label: string; placeholder: string; url: string }> = [];`;
+
+  const keysFileHint = hasAiService ? (ast.aiService as any).keysFile ?? '%APPDATA%/app/api-keys.json' : '';
+  const dbName = toSnakeCase(ast.app.name);
+
+  return `import { useEffect, useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
+import { Key, Database, Info } from 'lucide-react';
+
+${providersBlock}
+
+export function ${view.name}() {
+  const [keys, setKeys] = useState<Record<string, string>>({});
+  const [maskedKeys, setMaskedKeys] = useState<Record<string, string>>({});
+  const [editing, setEditing] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+
+  useEffect(() => { loadKeys(); }, []);
+
+  async function loadKeys() {
+    try {
+      const masked = await invoke<Record<string, string>>('get_api_keys');
+      setMaskedKeys(masked);
+    } catch (err) { console.error('Load keys failed:', err); }
+  }
+
+  async function handleSave(provider: string) {
+    const key = keys[provider]?.trim() ?? '';
+    try {
+      await invoke('set_api_key', { provider, key });
+      setEditing(null);
+      setKeys((prev) => ({ ...prev, [provider]: '' }));
+      setSaved(provider);
+      setTimeout(() => setSaved(null), 2000);
+      await loadKeys();
+    } catch (err) { console.error('Save key failed:', err); }
+  }
+
+  async function handleRemove(provider: string) {
+    try {
+      await invoke('set_api_key', { provider, key: '' });
+      await loadKeys();
+    } catch (err) { console.error('Remove key failed:', err); }
+  }
+
+  return (
+    <div className="flex-1 overflow-y-auto p-6 max-w-3xl mx-auto w-full">
+      <h2 className="text-xl font-semibold text-white mb-6">Settings</h2>
+      {PROVIDERS.length > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Key size={16} className="text-blue-400" />
+            <h3 className="text-sm font-medium text-white">API Keys</h3>
+          </div>
+          <p className="text-xs text-gray-500 mb-4">
+            Stored locally in <code className="bg-slate-800 px-1.5 py-0.5 rounded">${keysFileHint}</code>.
+            Never sent anywhere except the provider you're calling.
+          </p>
+          <div className="space-y-3">
+            {PROVIDERS.map((p) => {
+              const isEditing = editing === p.id;
+              const hasKey = Boolean(maskedKeys[p.id]);
+              return (
+                <div key={p.id} className="bg-slate-800/60 border border-slate-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm text-gray-200 font-medium">{p.label}</label>
+                    <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300 transition">Get key →</a>
+                  </div>
+                  {isEditing ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="password"
+                        value={keys[p.id] || ''}
+                        onChange={(e) => setKeys((prev) => ({ ...prev, [p.id]: e.target.value }))}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleSave(p.id); if (e.key === 'Escape') setEditing(null); }}
+                        placeholder={p.placeholder}
+                        className="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        autoFocus
+                      />
+                      <button onClick={() => handleSave(p.id)} className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded transition">Save</button>
+                      <button onClick={() => setEditing(null)} className="text-sm text-gray-400 hover:text-white px-3 py-1.5 rounded transition">Cancel</button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 text-xs text-gray-400 bg-slate-900/50 px-3 py-1.5 rounded">
+                        {hasKey ? maskedKeys[p.id] : 'Not configured'}
+                      </code>
+                      <button onClick={() => setEditing(p.id)} className="text-xs bg-slate-700 hover:bg-slate-600 text-gray-300 hover:text-white px-3 py-1.5 rounded transition">
+                        {hasKey ? 'Update' : 'Add Key'}
+                      </button>
+                      {hasKey && (
+                        <button onClick={() => handleRemove(p.id)} className="text-xs text-red-400 hover:text-red-300 px-2 py-1.5 rounded transition" title="Remove">Remove</button>
+                      )}
+                      {saved === p.id && <span className="text-xs text-green-400">✓ Saved</span>}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+      <section className="mb-8">
+        <div className="flex items-center gap-2 mb-3">
+          <Database size={16} className="text-purple-400" />
+          <h3 className="text-sm font-medium text-white">Database</h3>
+        </div>
+        <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-2 text-sm text-gray-300">
+          <p><span className="text-gray-500">File:</span> <code className="bg-slate-900/50 px-1.5 py-0.5 rounded text-xs">${dbName}.db</code></p>
+        </div>
+      </section>
+      <section>
+        <div className="flex items-center gap-2 mb-3">
+          <Info size={16} className="text-amber-400" />
+          <h3 className="text-sm font-medium text-white">About</h3>
+        </div>
+        <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4 text-sm text-gray-300 space-y-1">
+          <p><span className="text-gray-500">App:</span> ${appTitle}</p>
+          <p><span className="text-gray-500">Framework:</span> Agicore</p>
+          <p className="text-xs text-gray-500 pt-2 border-t border-slate-700/50 mt-2">
+            Generated by Agicore DSL. <a href="https://github.com/Binary-Blender/agicore" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">GitHub</a>
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
+`;
 }
 
 function generateAiChatView(view: ViewDecl, msgEntity: EntityDecl, ast: AgiFile): string {

@@ -284,6 +284,8 @@ export enum TokenType {
   LAYOUT_CARDS = 'LAYOUT_CARDS',
   LAYOUT_SPLIT = 'LAYOUT_SPLIT',
   LAYOUT_CUSTOM = 'LAYOUT_CUSTOM',
+  LAYOUT_DOCUMENT_EDITOR = 'LAYOUT_DOCUMENT_EDITOR',
+  LAYOUT_SETTINGS = 'LAYOUT_SETTINGS',
 
   // On-fail values
   FAIL_STOP = 'FAIL_STOP',
@@ -532,6 +534,8 @@ const KEYWORDS: Record<string, TokenType> = {
   cards: TokenType.LAYOUT_CARDS,
   split: TokenType.LAYOUT_SPLIT,
   custom: TokenType.LAYOUT_CUSTOM,
+  document_editor: TokenType.LAYOUT_DOCUMENT_EDITOR,
+  settings: TokenType.LAYOUT_SETTINGS,
   stop: TokenType.FAIL_STOP,
   skip: TokenType.FAIL_SKIP,
   retry: TokenType.FAIL_RETRY,

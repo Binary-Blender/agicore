@@ -8,39 +8,24 @@ import type { Document } from '../lib/types';
 export function DocumentEditor() {
   const documents = useAppStore((s) => s.documents);
   const loadDocuments = useAppStore((s) => s.loadDocuments);
-
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
-  const [, setDraft] = useState('');
-  const [title, setTitle] = useState('');
+  const [draftDocumentTitle, setDraftDocumentTitle] = useState('');
 
-  useEffect(() => {
-    loadDocuments();
-  }, []);
+  useEffect(() => { loadDocuments(); }, []);
 
   const selected = documents.find((d) => d.id === selectedId) ?? null;
 
   useEffect(() => {
-    if (selected) {
-      setDraft(selected.title); // placeholder — real content in filePath
-      setTitle(selected.title);
-    }
+    if (selected) setDraftDocumentTitle(selected.title);
   }, [selected]);
 
   async function handleNew() {
     const name = `Untitled ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     try {
-      await invoke('create_document', {
-        input: {
-          title: name,
-          filePath: name,
-          language: 'markdown',
-        },
-      });
+      await invoke('create_document', { input: { title: name, filePath: name, language: 'markdown' } });
       await loadDocuments();
-    } catch (err) {
-      console.error('Create document failed:', err);
-    }
+    } catch (err) { console.error('Create failed:', err); }
   }
 
   async function handleDelete(id: string) {
@@ -48,59 +33,42 @@ export function DocumentEditor() {
       await invoke('delete_document', { id });
       await loadDocuments();
       if (selectedId === id) setSelectedId(null);
-    } catch (err) {
-      console.error('Delete failed:', err);
-    }
+    } catch (err) { console.error('Delete failed:', err); }
   }
 
   async function handleSave() {
     if (!selected) return;
     try {
-      await invoke('update_document', {
-        id: selected.id,
-        input: { title },
-      });
+      await invoke('update_document', { id: selected.id, input: { title: draftDocumentTitle } });
       await loadDocuments();
       setEditing(false);
-    } catch (err) {
-      console.error('Save failed:', err);
-    }
+    } catch (err) { console.error('Save failed:', err); }
   }
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      {/* Document list */}
       <aside className="w-64 border-r border-slate-700 bg-slate-900/40 flex flex-col flex-shrink-0">
         <div className="px-3 py-3 border-b border-slate-700 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-white">Documents</h2>
-          <button
-            onClick={handleNew}
-            className="text-gray-400 hover:text-white p-1 rounded hover:bg-slate-700 transition"
-            title="New Document"
-          >
+          <button onClick={handleNew} className="text-gray-400 hover:text-white p-1 rounded hover:bg-slate-700 transition" title="New">
             <Plus size={14} />
           </button>
         </div>
         <div className="flex-1 overflow-y-auto py-2">
           {documents.length === 0 && (
-            <p className="text-xs text-gray-600 px-3 py-4 text-center">
-              No documents yet.<br />
-              Click + to create one, or use the "Open as Document" button on AI responses.
-            </p>
+            <p className="text-xs text-gray-600 px-3 py-4 text-center">No items yet.<br />Click + to create one.</p>
           )}
-          {documents.map((doc) => (
-            <DocumentItem
-              key={doc.id}
-              doc={doc}
-              isActive={selectedId === doc.id}
-              onSelect={() => setSelectedId(doc.id)}
-              onDelete={() => handleDelete(doc.id)}
+          {documents.map((item) => (
+            <DocumentListItem
+              key={item.id}
+              item={item}
+              isActive={selectedId === item.id}
+              onSelect={() => setSelectedId(item.id)}
+              onDelete={() => handleDelete(item.id)}
             />
           ))}
         </div>
       </aside>
-
-      {/* Editor */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {selected ? (
           <>
@@ -108,17 +76,16 @@ export function DocumentEditor() {
               {editing ? (
                 <input
                   type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={draftDocumentTitle}
+                  onChange={(e) => setDraftDocumentTitle(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false); }}
                   className="flex-1 bg-slate-700 border border-blue-500 rounded px-3 py-1.5 text-sm text-white focus:outline-none mr-3"
                   autoFocus
                 />
               ) : (
-                <h2 className="text-lg font-semibold text-white" onClick={() => setEditing(true)}>{selected.title}</h2>
+                <h2 className="text-lg font-semibold text-white cursor-pointer" onClick={() => setEditing(true)}>{selected.title}</h2>
               )}
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">{selected.language}</span>
                 {editing ? (
                   <>
                     <button onClick={handleSave} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition">Save</button>
@@ -130,7 +97,7 @@ export function DocumentEditor() {
               </div>
             </div>
             <div className="flex-1 overflow-y-auto p-6 max-w-4xl">
-              <MarkdownRenderer content={`# ${selected.title}\n\n*Document content storage coming soon. Currently storing metadata only.*\n\nThe DocumentEditor view is wired to the database. To make it fully functional, add a \`content\` field to the Document entity in \`novasyn_chat.agi\` and regenerate.`} />
+              <MarkdownRenderer content={`# ${selected.title}`} />
             </div>
           </>
         ) : (
@@ -147,18 +114,14 @@ export function DocumentEditor() {
   );
 }
 
-function DocumentItem({ doc, isActive, onSelect, onDelete }: {
-  doc: Document;
-  isActive: boolean;
-  onSelect: () => void;
-  onDelete: () => void;
+function DocumentListItem({ item, isActive, onSelect, onDelete }: {
+  item: Document; isActive: boolean; onSelect: () => void; onDelete: () => void;
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
-
   if (confirmDelete) {
     return (
       <div className="px-2 py-1.5 bg-red-900/20 border border-red-800/30 rounded mx-1 mb-0.5">
-        <p className="text-xs text-red-300 mb-1.5 truncate">Delete "{doc.title}"?</p>
+        <p className="text-xs text-red-300 mb-1.5 truncate">Delete "{item.title}"?</p>
         <div className="flex gap-1">
           <button onClick={onDelete} className="text-xs text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded transition">Delete</button>
           <button onClick={() => setConfirmDelete(false)} className="text-xs text-gray-400 bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded transition">Cancel</button>
@@ -166,7 +129,6 @@ function DocumentItem({ doc, isActive, onSelect, onDelete }: {
       </div>
     );
   }
-
   return (
     <div
       onClick={onSelect}
@@ -175,7 +137,7 @@ function DocumentItem({ doc, isActive, onSelect, onDelete }: {
       }`}
     >
       <FileText size={14} className="flex-shrink-0 opacity-60" />
-      <span className="text-sm flex-1 truncate">{doc.title}</span>
+      <span className="text-sm flex-1 truncate">{item.title}</span>
       <button
         onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); }}
         className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 p-0.5 rounded hover:bg-slate-600 transition"

@@ -553,6 +553,8 @@ export class Parser {
       [TokenType.LAYOUT_CARDS]: 'cards',
       [TokenType.LAYOUT_SPLIT]: 'split',
       [TokenType.LAYOUT_CUSTOM]: 'custom',
+      [TokenType.LAYOUT_DOCUMENT_EDITOR]: 'document_editor',
+      [TokenType.LAYOUT_SETTINGS]: 'settings',
     };
     const lt = layoutMap[token.type];
     if (!lt) this.error(`Expected layout type, got: ${token.value}`);
@@ -2794,6 +2796,8 @@ export class Parser {
         token.type === TokenType.LAYOUT_CARDS ||
         token.type === TokenType.LAYOUT_SPLIT ||
         token.type === TokenType.LAYOUT_CUSTOM ||
+        token.type === TokenType.LAYOUT_DOCUMENT_EDITOR ||
+        token.type === TokenType.LAYOUT_SETTINGS ||
         token.type === TokenType.FAIL_STOP ||
         token.type === TokenType.FAIL_SKIP ||
         token.type === TokenType.FAIL_RETRY ||
