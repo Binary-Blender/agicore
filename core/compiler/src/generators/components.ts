@@ -618,6 +618,11 @@ export function ${view.name}() {
 
   useEffect(() => { ${loadAction}(); }, [${currentIdField}, ${loadAction}]);
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [${msgPlural}, streamingContent, ${currentIdField}]);
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.ctrlKey && e.key === 'f') { e.preventDefault(); setShowSearch((v) => !v); } };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   const displayMessages = searchResults ?? ${msgPlural};
 
