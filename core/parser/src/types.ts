@@ -75,6 +75,8 @@ export interface AppDecl {
    */
   current?: string[];
   workspaces?: boolean;
+  tray?: boolean;
+  hotkey?: string;
   span: SourceSpan;
 }
 

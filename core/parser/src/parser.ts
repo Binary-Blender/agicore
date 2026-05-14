@@ -210,6 +210,8 @@ export class Parser {
     let telemetry: TelemetryMode | undefined;
     let current: string[] | undefined;
     let workspaces: boolean | undefined;
+    let tray: boolean | undefined;
+    let hotkey: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const field = this.current();
@@ -268,6 +270,14 @@ export class Parser {
           this.advance();
           workspaces = true;
           break;
+        case TokenType.TRAY:
+          this.advance();
+          tray = true;
+          break;
+        case TokenType.HOTKEY:
+          this.advance();
+          hotkey = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
         default:
           this.error(`Unexpected field in APP: ${field.value}`);
       }
@@ -278,7 +288,7 @@ export class Parser {
     if (!title) this.error('APP requires a TITLE field');
     if (!db) this.error('APP requires a DB field');
 
-    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, current, workspaces, span: { start, end } };
+    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, current, workspaces, tray, hotkey, span: { start, end } };
   }
 
   // --- ENTITY ---

@@ -53,11 +53,17 @@ export function generateTauriConfig(ast: AgiFile): Map<string, string> {
 
   // Cargo.toml
   const hasVault = ast.vault !== undefined && ast.vault !== null;
+  const hasTray = app.tray === true;
+  const hasHotkey = typeof app.hotkey === 'string' && app.hotkey.length > 0;
+  const tauriFeatures = hasTray ? `["tray-icon"]` : `[]`;
   const aiServiceDeps = hasAiService
     ? `reqwest = { version = "0.12", features = ["json", "stream"] }\ntokio = { version = "1", features = ["full"] }\nfutures-util = "0.3"\n`
     : '';
   const vaultDeps = hasVault
     ? `dirs = "5"\n`
+    : '';
+  const hotkeyDep = hasHotkey
+    ? `tauri-plugin-global-shortcut = "2"\n`
     : '';
   const cargoToml = `[package]
 name = "${toSnakeCase(app.name)}"
@@ -65,13 +71,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ${tauriFeatures} }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 rusqlite = { version = "0.31", features = ["bundled"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-${aiServiceDeps}${vaultDeps}
+${aiServiceDeps}${vaultDeps}${hotkeyDep}
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 `;
@@ -125,17 +131,20 @@ export function generateProjectFiles(ast: AgiFile): Map<string, string> {
   files.set('package.json', JSON.stringify(pkg, null, 2));
 
   // src-tauri/capabilities/default.json — Tauri 2 ACL grants
+  const hasHotkey = typeof ast.app.hotkey === 'string' && ast.app.hotkey.length > 0;
+  const capabilityPermissions = [
+    "core:default",
+    "core:window:default",
+    "core:webview:default",
+    "core:event:default",
+    ...(hasHotkey ? ["global-shortcut:default"] : []),
+  ];
   const capability = {
     "$schema": "../gen/schemas/desktop-schema.json",
     identifier: "default",
     description: "Default capability granting core permissions to the main window.",
     windows: ["main"],
-    permissions: [
-      "core:default",
-      "core:window:default",
-      "core:webview:default",
-      "core:event:default",
-    ],
+    permissions: capabilityPermissions,
   };
   files.set('src-tauri/capabilities/default.json', JSON.stringify(capability, null, 2));
 

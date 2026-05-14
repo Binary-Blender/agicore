@@ -1667,6 +1667,57 @@ const { files: noTestFiles } = compile(noTestSrc);
 assert(!noTestFiles.has('src-tauri/src/tests.rs'), 'Should NOT emit tests.rs when no TEST blocks');
 assert(!noTestFiles.get('src-tauri/src/main.rs')!.includes('mod tests;'), 'main.rs should NOT include mod tests when no TEST blocks');
 
+// --- TRAY + HOTKEY emitter ---
+section('TRAY + HOTKEY — system tray + global shortcut in main.rs / Cargo.toml');
+
+const traySrc = `
+APP tray_app {
+  TITLE  "Tray App"
+  WINDOW 1200x800 frameless
+  DB     tray.db
+  PORT   5215
+  THEME  dark
+  TRAY
+  HOTKEY "Ctrl+Shift+N"
+}
+ENTITY Note { title: string REQUIRED TIMESTAMPS }
+`;
+const { files: trayFiles } = compile(traySrc);
+
+// Cargo.toml — tray-icon feature + global-shortcut dep
+const trayCargo = trayFiles.get('src-tauri/Cargo.toml')!;
+assert(trayCargo.includes('["tray-icon"]'), 'Cargo.toml should enable tray-icon feature when TRAY declared');
+assert(trayCargo.includes('tauri-plugin-global-shortcut'), 'Cargo.toml should add global-shortcut dep when HOTKEY declared');
+
+// capabilities/default.json — global-shortcut permission
+const trayCapability = JSON.parse(trayFiles.get('src-tauri/capabilities/default.json')!);
+assert(trayCapability.permissions.includes('global-shortcut:default'), 'capability should include global-shortcut:default when HOTKEY declared');
+
+// main.rs — tray setup + hotkey plugin + shortcut handler
+const trayMainRs = trayFiles.get('src-tauri/src/main.rs')!;
+assert(trayMainRs.includes('TrayIconBuilder'), 'main.rs should build system tray when TRAY declared');
+assert(trayMainRs.includes('tauri::tray::'), 'main.rs should import tray types');
+assert(trayMainRs.includes('Menu::with_items'), 'main.rs should create tray context menu');
+assert(trayMainRs.includes('"show"'), 'tray menu should have Show item');
+assert(trayMainRs.includes('"quit"'), 'tray menu should have Quit item');
+assert(trayMainRs.includes('app.exit(0)'), 'Quit menu item should call app.exit');
+assert(trayMainRs.includes('tauri_plugin_global_shortcut::Builder'), 'main.rs should register global-shortcut plugin');
+assert(trayMainRs.includes('GlobalShortcutExt'), 'main.rs should import GlobalShortcutExt');
+assert(trayMainRs.includes('on_shortcut("Ctrl+Shift+N"'), 'main.rs should register the declared hotkey');
+assert(trayMainRs.includes('w.hide()'), 'hotkey handler should toggle window hide');
+assert(trayMainRs.includes('w.show()'), 'hotkey handler should toggle window show');
+
+// Without TRAY — no tray features
+const noTrayFiles = compile(`APP nt { TITLE "NT" DB nt.db PORT 5216 THEME dark WINDOW 1200x800 frameless } ENTITY X { name: string REQUIRED TIMESTAMPS }`).files;
+const noTrayCargo = noTrayFiles.get('src-tauri/Cargo.toml')!;
+assert(noTrayCargo.includes('features = []'), 'Cargo.toml should have empty features without TRAY');
+assert(!noTrayCargo.includes('global-shortcut'), 'Cargo.toml should NOT add global-shortcut without HOTKEY');
+const noTrayCapability = JSON.parse(noTrayFiles.get('src-tauri/capabilities/default.json')!);
+assert(!noTrayCapability.permissions.includes('global-shortcut:default'), 'capability should NOT include global-shortcut without HOTKEY');
+const noTrayMain = noTrayFiles.get('src-tauri/src/main.rs')!;
+assert(!noTrayMain.includes('TrayIconBuilder'), 'main.rs should NOT have tray setup without TRAY');
+assert(!noTrayMain.includes('GlobalShortcutExt'), 'main.rs should NOT have shortcut setup without HOTKEY');
+
 // --- WORKSPACES emitter ---
 section('WORKSPACES — runtime DB switching commands + api.ts wrappers');
 

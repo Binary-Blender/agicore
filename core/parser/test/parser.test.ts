@@ -1856,6 +1856,53 @@ const noWsApp = `APP nows { TITLE "No WS" DB nows.db }`;
 const noWsResult = parse(noWsApp);
 assert(!noWsResult.app.workspaces, 'workspaces should be undefined when not declared');
 
+// --- Test: TRAY and HOTKEY fields on APP ---
+
+section('APP TRAY and HOTKEY fields');
+
+const trayApp = `
+APP tray_app {
+  TITLE  "Tray App"
+  DB     tray.db
+  TRAY
+  HOTKEY "Ctrl+Shift+N"
+}
+`;
+const trayResult = parse(trayApp);
+assert(trayResult.app.tray === true, 'TRAY flag should be true when declared');
+assert(trayResult.app.hotkey === 'Ctrl+Shift+N', 'HOTKEY should capture the shortcut string');
+
+// TRAY without HOTKEY
+const trayOnlyApp = `APP tonly { TITLE "T" DB t.db TRAY }`;
+const trayOnlyResult = parse(trayOnlyApp);
+assert(trayOnlyResult.app.tray === true, 'TRAY can be declared alone');
+assert(!trayOnlyResult.app.hotkey, 'hotkey should be undefined when HOTKEY not declared');
+
+// HOTKEY without TRAY
+const hotkeyOnlyApp = `APP honly { TITLE "H" DB h.db HOTKEY "Ctrl+Alt+N" }`;
+const hotkeyOnlyResult = parse(hotkeyOnlyApp);
+assert(!hotkeyOnlyResult.app.tray, 'tray should be undefined when TRAY not declared');
+assert(hotkeyOnlyResult.app.hotkey === 'Ctrl+Alt+N', 'HOTKEY alone should parse correctly');
+
+// All APP fields together
+const fullApp2 = `
+APP full2 {
+  TITLE      "Full 2"
+  WINDOW     1200x800 frameless
+  DB         full2.db
+  PORT       5201
+  THEME      dark
+  CURRENT    Session
+  WORKSPACES
+  TRAY
+  HOTKEY     "Ctrl+Shift+Space"
+}
+`;
+const full2Result = parse(fullApp2);
+assert(full2Result.app.tray === true, 'TRAY coexists with all other APP fields');
+assert(full2Result.app.hotkey === 'Ctrl+Shift+Space', 'HOTKEY coexists with all other APP fields');
+assert(full2Result.app.workspaces === true, 'WORKSPACES still parses alongside TRAY+HOTKEY');
+
 // WORKSPACES can appear alongside CURRENT and WINDOW
 const fullWsApp = `
 APP full_ws {

@@ -16,6 +16,8 @@ APP novasyn_chat {
   THEME      dark
   CURRENT    Session
   WORKSPACES
+  TRAY
+  HOTKEY     "Ctrl+Shift+N"
 }
 
 // ===================================================================
