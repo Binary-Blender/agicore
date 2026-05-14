@@ -25,79 +25,273 @@ function pickCurrentParent(entity: EntityDecl | undefined, ast: AgiFile): string
   return undefined;
 }
 
+// --- Field rendering helpers ---
+
+function entityFieldType(entity: EntityDecl | undefined, fieldName: string): string {
+  if (!entity) return 'string';
+  const snakeName = toSnakeCase(fieldName);
+  const f = entity.fields.find(fd => fd.name === fieldName || fd.name === snakeName);
+  return f?.type ?? 'string';
+}
+
+// Returns a TSX snippet (no backticks) for displaying a field value.
+// objVar = 'item' | 'selected' — the variable holding the record.
+function fieldDisplayJsx(fieldName: string, fieldType: string, objVar: string): string {
+  const camel = toCamelCase(fieldName);
+  const val = `${objVar}.${camel}`;
+  if (camel === 'color' || camel.endsWith('Color')) {
+    return `<span className="flex items-center gap-1.5"><span style={{background: String(${val} || '#888')}} className="inline-block w-3 h-3 rounded-full border border-[var(--border)] flex-shrink-0" /><span>{String(${val} ?? '')}</span></span>`;
+  }
+  if (camel === 'rating') {
+    return `<span className="text-yellow-400">{'★'.repeat(Math.min(5, Number(${val}) || 0))}{'☆'.repeat(Math.max(0, 5 - (Number(${val}) || 0)))}</span>`;
+  }
+  if (fieldType === 'number' || fieldType === 'float') {
+    return `<span>{${val} != null ? Number(${val}).toLocaleString() : '—'}</span>`;
+  }
+  if (fieldType === 'bool') {
+    return `<span className={${val} ? 'px-1.5 py-0.5 rounded text-xs font-medium bg-green-900/50 text-green-300' : 'px-1.5 py-0.5 rounded text-xs font-medium bg-slate-700 text-gray-400'}>{${val} ? 'Yes' : 'No'}</span>`;
+  }
+  if (fieldType === 'datetime') {
+    return `<span>{${val} ? new Date(String(${val})).toLocaleString() : '—'}</span>`;
+  }
+  if (fieldType === 'date') {
+    return `<span>{${val} ? new Date(String(${val})).toLocaleDateString() : '—'}</span>`;
+  }
+  return `<span className="break-words">{String(${val} ?? '')}</span>`;
+}
+
+// Returns a JSX input element (no backticks) referencing `form`/`setForm` from component scope.
+function fieldFormInputJsx(fieldName: string, fieldType: string): string {
+  const camel = toCamelCase(fieldName);
+  const base = `bg-[var(--bg-hover)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--text-primary)] focus:outline-none focus:border-blue-500`;
+  const onChange = `(e) => setForm((p) => ({...p, ${camel}: e.target.value}))`;
+  if (camel === 'color' || camel.endsWith('Color')) {
+    return `<div className="flex gap-2 items-center"><input type="color" value={form.${camel} || '#3B82F6'} onChange={${onChange}} className="h-8 w-12 rounded border border-[var(--border)] bg-[var(--bg-hover)] cursor-pointer p-0.5 flex-shrink-0" /><input type="text" value={form.${camel} || ''} onChange={${onChange}} placeholder="#3B82F6" className="flex-1 ${base}" /></div>`;
+  }
+  if (camel === 'rating') {
+    return `<input type="number" min="1" max="5" value={form.${camel} || ''} onChange={${onChange}} placeholder="1–5" className="w-full ${base}" />`;
+  }
+  if (fieldType === 'number' || fieldType === 'float') {
+    return `<input type="number" value={form.${camel} || ''} onChange={${onChange}} className="w-full ${base}" />`;
+  }
+  if (fieldType === 'bool') {
+    return `<label className="flex items-center gap-2 cursor-pointer text-sm text-[var(--text-primary)]"><input type="checkbox" checked={form.${camel} === 'true'} onChange={(e) => setForm((p) => ({...p, ${camel}: String(e.target.checked)}))} className="w-4 h-4 rounded" /><span>Enabled</span></label>`;
+  }
+  return `<input type="text" value={form.${camel} || ''} onChange={${onChange}} className="w-full ${base}" />`;
+}
+
+const SKIP_FORM_FIELDS = new Set(['id', 'total_tokens', 'usage_count', 'created_at', 'updated_at', 'parent_id']);
+
 function generateTableView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
   const name = entity?.name ?? 'Item';
   const camel = lcFirst(name);
   const plural = camel + 's';
-  const fields = view.fields.length > 0
-    ? view.fields
-    : entity?.fields.map(f => f.name) ?? [];
+  const entitySnake = toSnakeCase(name);
+
+  const viewFields = view.fields.length > 0 ? view.fields : (entity?.fields.map(f => f.name) ?? []);
+  const primaryField = viewFields[0] ?? 'id';
+  const primaryCamel = toCamelCase(primaryField);
+
+  const hasCreate = view.actions.includes('create');
+  const hasEdit = view.actions.includes('edit');
+  const hasDelete = view.actions.includes('delete');
+  const hasCrud = hasCreate || hasEdit || hasDelete;
+  const hasModal = hasCreate || hasEdit;
 
   const parent = pickCurrentParent(entity, ast);
-  if (parent) {
-    return `import { useEffect } from 'react';
-import { useAppStore } from '../store/appStore';
+  const loaderBlock = parent
+    ? `  const current${parent}Id = useAppStore((s) => s.current${parent}Id);\n  const load = useAppStore((s) => s.load${name}sForCurrent${parent});`
+    : `  const load = useAppStore((s) => s.load${name}s);`;
+  const effectDeps = parent ? `[current${parent}Id, load]` : `[]`;
 
-export function ${view.name}() {
-  const ${plural} = useAppStore((s) => s.${plural});
-  const current${parent}Id = useAppStore((s) => s.current${parent}Id);
-  const load = useAppStore((s) => s.load${name}sForCurrent${parent});
+  const editableFields = (entity?.fields ?? []).filter(f => !SKIP_FORM_FIELDS.has(f.name));
 
-  useEffect(() => { load(); }, [current${parent}Id, load]);
+  const currents = new Set(ast.app.current ?? []);
+  const fkParts = (entity?.relationships ?? [])
+    .filter(r => r.type === 'BELONGS_TO')
+    .map(r => {
+      if (parent && r.target === parent) return `${lcFirst(r.target)}Id: current${r.target}Id ?? ''`;
+      return `${lcFirst(r.target)}Id: 'default-user'`;
+    });
 
-  return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">${view.title ?? view.name}</h2>
-      </div>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-[var(--border)]">
-${fields.map(f => `            <th className="text-left py-2 px-3">${toCamelCase(f)}</th>`).join('\n')}
-          </tr>
-        </thead>
-        <tbody>
-          {${plural}.map((item) => (
-            <tr key={item.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-hover)]">
-${fields.map(f => `              <td className="py-2 px-3">{String(item.${toCamelCase(f)} ?? '')}</td>`).join('\n')}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-`;
+  function buildCreateInput(): string {
+    const parts = editableFields.map(f => {
+      const c = toCamelCase(f.name);
+      if (f.type === 'number' || f.type === 'float') return `${c}: Number(form.${c}) || 0`;
+      if (f.type === 'bool') return `${c}: form.${c} === 'true'`;
+      return `${c}: form.${c} ?? ''`;
+    });
+    return [...parts, ...fkParts].join(', ');
   }
 
-  return `import { useEffect } from 'react';
-import { useAppStore } from '../store/appStore';
+  function buildUpdateInput(): string {
+    return editableFields.map(f => {
+      const c = toCamelCase(f.name);
+      if (f.type === 'number' || f.type === 'float') return `${c}: Number(form.${c}) || 0`;
+      if (f.type === 'bool') return `${c}: form.${c} === 'true'`;
+      return `${c}: form.${c} ?? ''`;
+    }).join(', ');
+  }
+
+  const formSeedFromItem = '{' + editableFields.map(f => `${toCamelCase(f.name)}: String(item.${toCamelCase(f.name)} ?? '')`).join(', ') + '}';
+
+  const imports = [
+    `import { useEffect, useState } from 'react';`,
+    hasCrud ? `import { invoke } from '@tauri-apps/api/core';` : null,
+    `import { useAppStore } from '../store/appStore';`,
+  ].filter(Boolean).join('\n');
+
+  const stateLines: string[] = [
+    `  const [search, setSearch] = useState('');`,
+  ];
+  if (hasModal) stateLines.push(`  const [modalMode, setModalMode] = useState<'create' | 'edit' | null>(null);`);
+  if (hasCrud) stateLines.push(`  const [form, setForm] = useState<Record<string, string>>({});`);
+  if (hasEdit) stateLines.push(`  const [editingId, setEditingId] = useState<string | null>(null);`);
+  if (hasDelete) stateLines.push(`  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);`);
+
+  const handlerLines: string[] = [];
+  if (hasCreate) {
+    handlerLines.push(`
+  async function handleCreate() {
+    try {
+      await invoke('create_${entitySnake}', { input: { ${buildCreateInput()} } });
+      await load();
+      setModalMode(null);
+      setForm({});
+    } catch (err) { console.error('Create failed:', err); }
+  }`);
+  }
+  if (hasEdit) {
+    handlerLines.push(`
+  async function handleUpdate() {
+    if (!editingId) return;
+    try {
+      await invoke('update_${entitySnake}', { id: editingId, input: { ${buildUpdateInput()} } });
+      await load();
+      setModalMode(null);
+      setEditingId(null);
+    } catch (err) { console.error('Update failed:', err); }
+  }`);
+  }
+  if (hasDelete) {
+    handlerLines.push(`
+  async function handleDelete(id: string) {
+    try {
+      await invoke('delete_${entitySnake}', { id });
+      await load();
+      setConfirmDeleteId(null);
+    } catch (err) { console.error('Delete failed:', err); }
+  }`);
+  }
+
+  const modalSubmitOnClick = hasCreate && hasEdit
+    ? `async () => { if (modalMode === 'create') { await handleCreate(); } else { await handleUpdate(); } }`
+    : hasCreate ? `handleCreate` : `handleUpdate`;
+
+  const formFieldsJsx = editableFields.map(f => `            <div className="mb-3">
+              <label className="block text-xs text-[var(--text-secondary)] mb-1">${toCamelCase(f.name)}</label>
+              ${fieldFormInputJsx(f.name, f.type)}
+            </div>`).join('\n');
+
+  const tableHeaderCells = viewFields.map(f =>
+    `            <th className="text-left py-2 px-3 text-xs font-medium text-[var(--text-secondary)]">${toCamelCase(f)}</th>`
+  ).join('\n');
+
+  const tableDataCells = viewFields.map(f => {
+    const type = entityFieldType(entity, f);
+    return `              <td className="py-2.5 px-3 text-sm">${fieldDisplayJsx(f, type, 'item')}</td>`;
+  }).join('\n');
+
+  const rowActionsHeader = (hasEdit || hasDelete) ? `\n            <th className="w-24"></th>` : '';
+  const rowActionsJsx = (hasEdit || hasDelete) ? `
+              <td className="py-2.5 px-3">
+                <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition">
+                  ${hasEdit ? `<button onClick={(e) => { e.stopPropagation(); setEditingId(item.id); setModalMode('edit'); setForm(${formSeedFromItem}); }} className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-hover)] px-2 py-0.5 rounded transition">Edit</button>` : ''}
+                  ${hasDelete ? `<button onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(item.id); }} className="text-xs text-red-400 hover:text-red-300 hover:bg-red-900/20 px-2 py-0.5 rounded transition">Delete</button>` : ''}
+                </div>
+              </td>` : '';
+
+  const colSpan = viewFields.length + (hasEdit || hasDelete ? 1 : 0);
+  const emptyMsg = hasCreate ? `No items yet. Click + New to create one.` : `No items yet.`;
+
+  return `${imports}
 
 export function ${view.name}() {
   const ${plural} = useAppStore((s) => s.${plural});
-  const load = useAppStore((s) => s.load${name}s);
+${loaderBlock}
+${stateLines.join('\n')}
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, ${effectDeps});
 
+  const filtered = search
+    ? ${plural}.filter((i) => String(i.${primaryCamel} ?? '').toLowerCase().includes(search.toLowerCase()))
+    : ${plural};
+${handlerLines.join('')}
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">${view.title ?? view.name}</h2>
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 p-4 border-b border-[var(--border)] flex-shrink-0">
+        <h2 className="text-lg font-semibold flex-shrink-0">${view.title ?? view.name}</h2>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search..."
+          className="flex-1 bg-[var(--bg-hover)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--text-primary)] focus:outline-none focus:border-blue-500"
+        />
+        ${hasCreate ? `<button
+          onClick={() => { setModalMode('create'); setForm({}); }}
+          className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded transition flex-shrink-0"
+        >+ New</button>` : ''}
       </div>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-[var(--border)]">
-${fields.map(f => `            <th className="text-left py-2 px-3">${toCamelCase(f)}</th>`).join('\n')}
-          </tr>
-        </thead>
-        <tbody>
-          {${plural}.map((item) => (
-            <tr key={item.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-hover)]">
-${fields.map(f => `              <td className="py-2 px-3">{String(item.${toCamelCase(f)} ?? '')}</td>`).join('\n')}
+      <div className="flex-1 overflow-y-auto">
+        <table className="w-full text-sm">
+          <thead className="sticky top-0 bg-[var(--bg-page)] z-10">
+            <tr className="border-b border-[var(--border)]">
+${tableHeaderCells}${rowActionsHeader}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={${colSpan}} className="text-center py-8 text-[var(--text-secondary)] text-sm">
+                  {search ? 'No results.' : '${emptyMsg}'}
+                </td>
+              </tr>
+            )}
+            {filtered.map((item) => (
+              <tr key={item.id} className="group border-b border-[var(--border)] hover:bg-[var(--bg-hover)] transition">
+${tableDataCells}${rowActionsJsx}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      ${hasModal ? `{modalMode !== null && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => setModalMode(null)}>
+          <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-xl shadow-2xl w-96 p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-sm font-semibold mb-4">{modalMode === 'create' ? 'New ${name}' : 'Edit ${name}'}</h3>
+${formFieldsJsx}
+            <div className="flex justify-end gap-2 mt-4">
+              <button onClick={() => setModalMode(null)} className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-hover)] px-4 py-1.5 rounded transition">Cancel</button>
+              <button onClick={${modalSubmitOnClick}} className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded transition">{modalMode === 'create' ? 'Create' : 'Save'}</button>
+            </div>
+          </div>
+        </div>
+      )}` : ''}
+
+      ${hasDelete ? `{confirmDeleteId && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => setConfirmDeleteId(null)}>
+          <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-xl shadow-2xl w-72 p-5" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-sm font-semibold mb-2">Delete this ${name.toLowerCase()}?</h3>
+            <p className="text-xs text-[var(--text-secondary)] mb-4">This action cannot be undone.</p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setConfirmDeleteId(null)} className="text-xs text-[var(--text-secondary)] bg-[var(--bg-hover)] hover:text-[var(--text-primary)] px-3 py-1.5 rounded transition">Cancel</button>
+              <button onClick={() => handleDelete(confirmDeleteId)} className="text-xs text-white bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded transition">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}` : ''}
     </div>
   );
 }
@@ -108,59 +302,246 @@ function generateSplitView(view: ViewDecl, entity: EntityDecl | undefined, ast: 
   const name = entity?.name ?? 'Item';
   const camel = lcFirst(name);
   const plural = camel + 's';
-  const fields = view.fields.length > 0
-    ? view.fields
-    : entity?.fields.map(f => f.name) ?? [];
+  const entitySnake = toSnakeCase(name);
+
+  const viewFields = view.fields.length > 0 ? view.fields : (entity?.fields.map(f => f.name) ?? []);
+  const primaryField = viewFields[0] ?? 'id';
+  const primaryCamel = toCamelCase(primaryField);
+  const primaryType = entityFieldType(entity, primaryField);
+
+  const hasCreate = view.actions.includes('create');
+  const hasEdit = view.actions.includes('edit');
+  const hasDelete = view.actions.includes('delete');
+  const hasCrud = hasCreate || hasEdit || hasDelete;
 
   const parent = pickCurrentParent(entity, ast);
-  const loaderReads = parent
-    ? `  const current${parent}Id = useAppStore((s) => s.current${parent}Id);
-  const load = useAppStore((s) => s.load${name}sForCurrent${parent});`
+  const loaderBlock = parent
+    ? `  const current${parent}Id = useAppStore((s) => s.current${parent}Id);\n  const load = useAppStore((s) => s.load${name}sForCurrent${parent});`
     : `  const load = useAppStore((s) => s.load${name}s);`;
   const effectDeps = parent ? `[current${parent}Id, load]` : `[]`;
 
-  return `import { useEffect } from 'react';
-import { useAppStore } from '../store/appStore';
+  const editableFields = (entity?.fields ?? []).filter(f => !SKIP_FORM_FIELDS.has(f.name));
+
+  const currents = new Set(ast.app.current ?? []);
+  const fkParts = (entity?.relationships ?? [])
+    .filter(r => r.type === 'BELONGS_TO')
+    .map(r => {
+      if (parent && r.target === parent) return `${lcFirst(r.target)}Id: current${r.target}Id ?? ''`;
+      return `${lcFirst(r.target)}Id: 'default-user'`;
+    });
+
+  function buildInputObj(prefix: string): string {
+    const parts = editableFields.map(f => {
+      const c = toCamelCase(f.name);
+      if (f.type === 'number' || f.type === 'float') return `${c}: Number(${prefix}${c}) || 0`;
+      if (f.type === 'bool') return `${c}: ${prefix}${c} === 'true'`;
+      return `${c}: ${prefix}${c} ?? ''`;
+    });
+    return [...parts, ...fkParts].join(', ');
+  }
+
+  const formSeedFromSelected = '{' + editableFields.map(f =>
+    `${toCamelCase(f.name)}: String(selected.${toCamelCase(f.name)} ?? '')`
+  ).join(', ') + '}';
+
+  const imports = [
+    `import { useEffect, useState } from 'react';`,
+    hasCrud ? `import { invoke } from '@tauri-apps/api/core';` : null,
+    `import { useAppStore } from '../store/appStore';`,
+  ].filter(Boolean).join('\n');
+
+  const stateLines: string[] = [
+    `  const [search, setSearch] = useState('');`,
+  ];
+  if (hasCrud) stateLines.push(`  const [form, setForm] = useState<Record<string, string>>({});`);
+  if (hasCreate) stateLines.push(`  const [creating, setCreating] = useState(false);`);
+  if (hasEdit) stateLines.push(`  const [editingId, setEditingId] = useState<string | null>(null);`);
+  if (hasDelete) stateLines.push(`  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);`);
+
+  const handlerLines: string[] = [];
+  if (hasCreate) {
+    handlerLines.push(`
+  async function handleCreate() {
+    try {
+      await invoke('create_${entitySnake}', { input: { ${buildInputObj('form.')} } });
+      await load();
+      setCreating(false);
+      setForm({});
+    } catch (err) { console.error('Create failed:', err); }
+  }`);
+  }
+  if (hasEdit) {
+    handlerLines.push(`
+  async function handleUpdate(id: string) {
+    try {
+      await invoke('update_${entitySnake}', { id, input: { ${buildInputObj('form.')} } });
+      await load();
+      setEditingId(null);
+    } catch (err) { console.error('Update failed:', err); }
+  }`);
+  }
+  if (hasDelete) {
+    handlerLines.push(`
+  async function handleDelete(id: string) {
+    try {
+      await invoke('delete_${entitySnake}', { id });
+      if (selectedId === id) select(null);
+      await load();
+      setConfirmDeleteId(null);
+    } catch (err) { console.error('Delete failed:', err); }
+  }`);
+  }
+
+  const createFormFieldsJsx = editableFields.map(f => `            <div className="mb-2">
+              <label className="block text-xs text-[var(--text-secondary)] mb-1">${toCamelCase(f.name)}</label>
+              ${fieldFormInputJsx(f.name, f.type)}
+            </div>`).join('\n');
+
+  const editFormFieldsJsx = editableFields.map(f => `              <div className="mb-3">
+                <label className="block text-xs text-[var(--text-secondary)] mb-1">${toCamelCase(f.name)}</label>
+                ${fieldFormInputJsx(f.name, f.type)}
+              </div>`).join('\n');
+
+  const detailFieldsJsx = viewFields.map(f => {
+    const type = entityFieldType(entity, f);
+    return `              <div className="flex items-start gap-3 py-2.5 border-b border-[var(--border)]/40 last:border-0">
+                <span className="text-[var(--text-secondary)] text-xs w-32 flex-shrink-0 pt-0.5">${toCamelCase(f)}</span>
+                <div className="text-sm flex-1 min-w-0">${fieldDisplayJsx(f, type, 'selected')}</div>
+              </div>`;
+  }).join('\n');
+
+  const listSecondaryJsx = viewFields.slice(1, 3).map(f => {
+    const type = entityFieldType(entity, f);
+    return `                <div className="flex items-center gap-1">${fieldDisplayJsx(f, type, 'item')}</div>`;
+  }).join('\n');
+
+  const detailActionBtns: string[] = [];
+  if (hasEdit) detailActionBtns.push(`{editingId !== selected.id && <button onClick={() => { setEditingId(selected.id); setForm(${formSeedFromSelected}); }} className="text-xs bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-primary)] px-3 py-1.5 rounded transition">Edit</button>}`);
+  if (hasDelete) {
+    const deleteBtn = `<button onClick={() => setConfirmDeleteId(selected.id)} className="text-xs text-red-400 hover:text-red-300 hover:bg-red-900/20 px-3 py-1.5 rounded transition">Delete</button>`;
+    detailActionBtns.push(hasEdit ? `{editingId !== selected.id && ${deleteBtn}}` : deleteBtn);
+  }
+
+  const detailActionsJsx = detailActionBtns.length > 0
+    ? `\n            <div className="flex gap-2 mb-4">\n              ${detailActionBtns.join('\n              ')}\n            </div>`
+    : '';
+
+  const detailBodyJsx = hasEdit ? `
+            {editingId === selected.id ? (
+              <div>
+${editFormFieldsJsx}
+                <div className="flex gap-2 mt-4">
+                  <button onClick={() => handleUpdate(selected.id)} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded transition">Save</button>
+                  <button onClick={() => setEditingId(null)} className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-hover)] px-3 py-1.5 rounded transition">Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <div>
+${detailFieldsJsx}
+              </div>
+            )}` : `
+            <div>
+${detailFieldsJsx}
+            </div>`;
+
+  const listItemDeleteBtn = hasDelete ? `
+              <button
+                onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(item.id); }}
+                className="opacity-0 group-hover:opacity-100 text-[var(--text-secondary)] hover:text-red-400 p-0.5 rounded hover:bg-[var(--bg-hover)] transition flex-shrink-0 text-xs ml-1"
+                title="Delete"
+              >✕</button>` : '';
+
+  const noItemsMsg = hasCreate ? `No items. Click + to create.` : `No items yet.`;
+
+  return `${imports}
 
 export function ${view.name}() {
   const ${plural} = useAppStore((s) => s.${plural});
   const selectedId = useAppStore((s) => s.selected${name}Id);
   const select = useAppStore((s) => s.select${name});
-${loaderReads}
+${loaderBlock}
+${stateLines.join('\n')}
 
   useEffect(() => { load(); }, ${effectDeps});
 
-  const selected = ${plural}.find((i) => i.id === selectedId);
-
+  const selected = ${plural}.find((i) => i.id === selectedId) ?? null;
+  const filtered = search
+    ? ${plural}.filter((i) => String(i.${primaryCamel} ?? '').toLowerCase().includes(search.toLowerCase()))
+    : ${plural};
+${handlerLines.join('')}
   return (
-    <div className="flex h-full">
-      {/* List */}
-      <div className="w-64 border-r border-[var(--border)] overflow-y-auto">
-        {${plural}.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => select(item.id)}
-            className={\`p-3 cursor-pointer border-b border-[var(--border)] \${
-              item.id === selectedId ? 'bg-[var(--bg-active)]' : 'hover:bg-[var(--bg-hover)]'
-            }\`}
-          >
-            <div className="font-medium">{String(item.${toCamelCase(fields[0] ?? 'id')})}</div>
-${fields.slice(1, 3).map(f => `            <div className="text-xs text-[var(--text-secondary)]">{String(item.${toCamelCase(f)} ?? '')}</div>`).join('\n')}
+    <div className="flex h-full relative">
+      {/* List pane */}
+      <div className="w-64 border-r border-[var(--border)] flex flex-col flex-shrink-0">
+        <div className="flex items-center gap-1 p-2 border-b border-[var(--border)]">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search..."
+            className="flex-1 bg-[var(--bg-hover)] border border-[var(--border)] rounded px-2 py-1 text-xs text-[var(--text-primary)] focus:outline-none focus:border-blue-500"
+          />
+          ${hasCreate ? `<button
+            onClick={() => { setCreating(true); setForm({}); }}
+            className="w-6 h-6 flex items-center justify-center rounded hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-lg leading-none flex-shrink-0"
+            title="New"
+          >+</button>` : ''}
+        </div>
+        ${hasCreate ? `{creating && (
+          <div className="border-b border-[var(--border)] p-3 bg-[var(--bg-panel)]/50">
+${createFormFieldsJsx}
+            <div className="flex gap-2 mt-2">
+              <button onClick={handleCreate} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition">Create</button>
+              <button onClick={() => { setCreating(false); setForm({}); }} className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-2 py-1 rounded transition">Cancel</button>
+            </div>
           </div>
-        ))}
+        )}` : ''}
+        <div className="flex-1 overflow-y-auto">
+          {filtered.length === 0 && (
+            <p className="text-xs text-[var(--text-secondary)] px-3 py-4 text-center">
+              {search ? 'No results.' : '${noItemsMsg}'}
+            </p>
+          )}
+          {filtered.map((item) => (
+            <div
+              key={item.id}
+              onClick={() => select(item.id)}
+              className={\`group flex items-center gap-1 px-3 py-2 cursor-pointer border-b border-[var(--border)] \${item.id === selectedId ? 'bg-[var(--bg-active)]' : 'hover:bg-[var(--bg-hover)]'}\`}
+            >
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium truncate">${fieldDisplayJsx(primaryField, primaryType, 'item')}</div>
+${listSecondaryJsx}
+              </div>
+${listItemDeleteBtn}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Detail */}
-      <div className="flex-1 p-6">
+      {/* Detail pane */}
+      <div className="flex-1 p-6 overflow-y-auto">
         {selected ? (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">{String(selected.${toCamelCase(fields[0] ?? 'id')})}</h2>
-${fields.map(f => `            <div className="mb-2"><span className="text-[var(--text-secondary)]">${toCamelCase(f)}:</span> {String(selected.${toCamelCase(f)} ?? '')}</div>`).join('\n')}
+          <div>${detailActionsJsx}${detailBodyJsx}
           </div>
         ) : (
-          <div className="text-[var(--text-secondary)]">Select an item to view details</div>
+          <div className="flex items-center justify-center h-full">
+            <p className="text-[var(--text-secondary)] text-sm">Select an item to view details</p>
+          </div>
         )}
       </div>
+
+      ${hasDelete ? `{confirmDeleteId && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => setConfirmDeleteId(null)}>
+          <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-xl shadow-2xl w-72 p-5" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-sm font-semibold mb-2">Delete this item?</h3>
+            <p className="text-xs text-[var(--text-secondary)] mb-4">This action cannot be undone.</p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setConfirmDeleteId(null)} className="text-xs text-[var(--text-secondary)] bg-[var(--bg-hover)] hover:text-[var(--text-primary)] px-3 py-1.5 rounded transition">Cancel</button>
+              <button onClick={() => handleDelete(confirmDeleteId)} className="text-xs text-white bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded transition">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}` : ''}
     </div>
   );
 }
