@@ -209,6 +209,7 @@ export class Parser {
     let icon: string | undefined;
     let telemetry: TelemetryMode | undefined;
     let current: string[] | undefined;
+    let workspaces: boolean | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const field = this.current();
@@ -263,6 +264,10 @@ export class Parser {
           current = names;
           break;
         }
+        case TokenType.WORKSPACES:
+          this.advance();
+          workspaces = true;
+          break;
         default:
           this.error(`Unexpected field in APP: ${field.value}`);
       }
@@ -273,7 +278,7 @@ export class Parser {
     if (!title) this.error('APP requires a TITLE field');
     if (!db) this.error('APP requires a DB field');
 
-    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, current, span: { start, end } };
+    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, current, workspaces, span: { start, end } };
   }
 
   // --- ENTITY ---

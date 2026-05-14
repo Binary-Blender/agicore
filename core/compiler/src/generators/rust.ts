@@ -335,7 +335,47 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const routerOwnedNames = new Set(['broadcast_chat', 'council_chat']);
   const hasActions = ast.actions.some(a => a.name !== 'send_chat' && !routerOwnedNames.has(a.name));
   if (hasActions) modLines.push('pub mod actions;');
+  const hasWorkspaces = ast.app.workspaces === true;
+  if (hasWorkspaces) modLines.push('pub mod workspace;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
+
+  // Emit commands/workspace.rs when WORKSPACES declared
+  if (hasWorkspaces) {
+    const workspaceRs = [
+      '// Agicore Generated — DO NOT EDIT BY HAND',
+      '// Workspace runtime DB switching commands.',
+      '',
+      'use crate::db::{DbPool, DbPath};',
+      'use rusqlite::Connection;',
+      'use std::path::PathBuf;',
+      '',
+      '#[tauri::command]',
+      'pub fn get_db_path(path: tauri::State<\'_, DbPath>) -> String {',
+      '    path.lock().map(|p| p.display().to_string()).unwrap_or_default()',
+      '}',
+      '',
+      '#[tauri::command]',
+      'pub fn switch_db(',
+      '    pool: tauri::State<\'_, DbPool>,',
+      '    path_state: tauri::State<\'_, DbPath>,',
+      '    new_path: String,',
+      ') -> Result<(), String> {',
+      '    let new_pb = PathBuf::from(&new_path);',
+      '    let new_conn = Connection::open(&new_pb).map_err(|e| e.to_string())?;',
+      '    new_conn.execute_batch("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;")',
+      '        .map_err(|e| e.to_string())?;',
+      '    let migration = include_str!("../../migrations/001_initial.sql");',
+      '    new_conn.execute_batch(migration).map_err(|e| e.to_string())?;',
+      '    let mut conn = pool.lock().map_err(|e| e.to_string())?;',
+      '    let mut path = path_state.lock().map_err(|e| e.to_string())?;',
+      '    *conn = new_conn;',
+      '    *path = new_pb;',
+      '    Ok(())',
+      '}',
+      '',
+    ].join('\n');
+    files.set('src-tauri/src/commands/workspace.rs', workspaceRs);
+  }
 
   // Generate main.rs
   const currentEntities = ast.app.current ?? [];
@@ -386,7 +426,12 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   // VAULT commands
   const vaultCmds = hasVault ? vaultCommandNames(ast) : [];
 
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds];
+  // WORKSPACE commands
+  const workspaceCmds = hasWorkspaces
+    ? ['commands::workspace::get_db_path', 'commands::workspace::switch_db']
+    : [];
+
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
@@ -410,8 +455,14 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     '            let app_dir = app.path().app_data_dir().expect("failed to resolve app data dir");',
     '            std::fs::create_dir_all(&app_dir).ok();',
     `            let db_path = app_dir.join("${ast.app.db}");`,
-    '            let pool = db::init_db(db_path);',
-    '            app.manage(pool);',
+    ...(hasWorkspaces ? [
+      '            let pool = db::init_db(db_path.clone());',
+      '            app.manage(pool);',
+      '            app.manage(Mutex::new(db_path));',
+    ] : [
+      '            let pool = db::init_db(db_path);',
+      '            app.manage(pool);',
+    ]),
   );
   if (hasAiService) {
     mainRsLines.push(
@@ -448,6 +499,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     'use std::sync::Mutex;',
     '',
     'pub type DbPool = Mutex<Connection>;',
+    ...(hasWorkspaces ? ['pub type DbPath = Mutex<PathBuf>;'] : []),
     '',
     'pub fn init_db(db_path: PathBuf) -> DbPool {',
     '    let conn = Connection::open(&db_path).expect("Failed to open database");',

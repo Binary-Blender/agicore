@@ -74,6 +74,7 @@ export interface AppDecl {
    * per-entity `selected<Entity>Id` that drives list-picker UI.
    */
   current?: string[];
+  workspaces?: boolean;
   span: SourceSpan;
 }
 

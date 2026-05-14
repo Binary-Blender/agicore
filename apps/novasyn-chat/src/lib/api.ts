@@ -334,3 +334,10 @@ export const chatToRequirements = (messageIds: string[], model: string, title: s
 
 export const chatToPost = (messageIds: string[], model: string, title: string, outputPath: string) =>
   invoke<{id: string; title: string; filePath: string; content: string}>('chat_to_post', { messageIds, model, title, outputPath });
+
+// --- Workspace DB switching ---
+export const getDbPath = () =>
+  invoke<string>('get_db_path');
+
+export const switchDb = (newPath: string) =>
+  invoke<void>('switch_db', { newPath });

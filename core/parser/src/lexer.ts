@@ -36,6 +36,7 @@ export enum TokenType {
   THEME = 'THEME',
   ICON = 'ICON',
   CURRENT = 'CURRENT',
+  WORKSPACES = 'WORKSPACES',
 
   // Action keywords
   INPUT = 'INPUT',
@@ -329,6 +330,7 @@ const KEYWORDS: Record<string, TokenType> = {
   THEME: TokenType.THEME,
   ICON: TokenType.ICON,
   CURRENT: TokenType.CURRENT,
+  WORKSPACES: TokenType.WORKSPACES,
   INPUT: TokenType.INPUT,
   OUTPUT: TokenType.OUTPUT,
   AI: TokenType.AI,

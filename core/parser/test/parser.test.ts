@@ -1837,6 +1837,42 @@ try {
   console.error(`  FAIL: Could not parse conversation_engine.agi: ${err}`);
 }
 
+// --- Test: WORKSPACES field on APP ---
+
+section('APP WORKSPACES field');
+
+const workspaceApp = `
+APP ws_app {
+  TITLE "Workspace App"
+  DB    ws.db
+  WORKSPACES
+}
+`;
+const wsResult = parse(workspaceApp);
+assert(wsResult.app.workspaces === true, 'WORKSPACES flag should be true when declared');
+
+// Not declared → undefined (falsy)
+const noWsApp = `APP nows { TITLE "No WS" DB nows.db }`;
+const noWsResult = parse(noWsApp);
+assert(!noWsResult.app.workspaces, 'workspaces should be undefined when not declared');
+
+// WORKSPACES can appear alongside CURRENT and WINDOW
+const fullWsApp = `
+APP full_ws {
+  TITLE     "Full WS"
+  WINDOW    1200x800 frameless
+  DB        full.db
+  PORT      5199
+  THEME     dark
+  CURRENT   Session
+  WORKSPACES
+}
+`;
+const fullWsResult = parse(fullWsApp);
+assert(fullWsResult.app.workspaces === true, 'WORKSPACES should coexist with other APP fields');
+assert(fullWsResult.app.current?.[0] === 'Session', 'CURRENT should still parse alongside WORKSPACES');
+assert(fullWsResult.app.window?.frameless === true, 'WINDOW frameless should still parse alongside WORKSPACES');
+
 // --- Summary ---
 
 console.log(`\n========================================`);

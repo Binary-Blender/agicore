@@ -9,12 +9,13 @@
 // What is now: one .agi file → complete Tauri application
 
 APP novasyn_chat {
-  TITLE   "NovaSyn Chat"
-  WINDOW  1400x900 frameless
-  DB      novasyn_chat.db
-  PORT    5173
-  THEME   dark
-  CURRENT Session
+  TITLE      "NovaSyn Chat"
+  WINDOW     1400x900 frameless
+  DB         novasyn_chat.db
+  PORT       5173
+  THEME      dark
+  CURRENT    Session
+  WORKSPACES
 }
 
 // ===================================================================

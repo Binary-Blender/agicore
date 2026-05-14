@@ -1667,6 +1667,63 @@ const { files: noTestFiles } = compile(noTestSrc);
 assert(!noTestFiles.has('src-tauri/src/tests.rs'), 'Should NOT emit tests.rs when no TEST blocks');
 assert(!noTestFiles.get('src-tauri/src/main.rs')!.includes('mod tests;'), 'main.rs should NOT include mod tests when no TEST blocks');
 
+// --- WORKSPACES emitter ---
+section('WORKSPACES — runtime DB switching commands + api.ts wrappers');
+
+const workspaceSrc = `
+APP ws_app {
+  TITLE "Workspace App"
+  WINDOW 1200x800 frameless
+  DB    ws.db
+  PORT  5210
+  THEME dark
+  WORKSPACES
+}
+ENTITY Note {
+  title: string REQUIRED
+  content: string
+  TIMESTAMPS
+}
+`;
+const { files: wsFiles } = compile(workspaceSrc);
+
+// commands/workspace.rs
+const workspaceRs = wsFiles.get('src-tauri/src/commands/workspace.rs');
+assert(workspaceRs !== undefined, 'Should generate commands/workspace.rs when WORKSPACES declared');
+assert(workspaceRs!.includes('pub fn get_db_path'), 'workspace.rs should have get_db_path command');
+assert(workspaceRs!.includes('pub fn switch_db'), 'workspace.rs should have switch_db command');
+assert(workspaceRs!.includes('DbPool'), 'switch_db should access DbPool for connection swap');
+assert(workspaceRs!.includes('DbPath'), 'switch_db should access DbPath to track current path');
+assert(workspaceRs!.includes('new_conn.execute_batch(migration)'), 'switch_db should run migrations on new DB');
+
+// commands/mod.rs
+const modRs = wsFiles.get('src-tauri/src/commands/mod.rs');
+assert(modRs!.includes('pub mod workspace;'), 'commands/mod.rs should declare workspace module');
+
+// db.rs gets DbPath type alias
+const wsDbRs = wsFiles.get('src-tauri/src/db.rs');
+assert(wsDbRs!.includes('pub type DbPath = Mutex<PathBuf>;'), 'db.rs should export DbPath type alias');
+
+// main.rs registers workspace commands + manages DbPath state
+const wsMainRs = wsFiles.get('src-tauri/src/main.rs');
+assert(wsMainRs!.includes('commands::workspace::get_db_path'), 'main.rs should register get_db_path');
+assert(wsMainRs!.includes('commands::workspace::switch_db'), 'main.rs should register switch_db');
+assert(wsMainRs!.includes('app.manage(Mutex::new(db_path))'), 'main.rs should manage DbPath state');
+
+// api.ts gets workspace wrappers
+const wsApiTs = wsFiles.get('src/lib/api.ts');
+assert(wsApiTs!.includes("export const getDbPath"), 'api.ts should export getDbPath');
+assert(wsApiTs!.includes("export const switchDb"), 'api.ts should export switchDb');
+assert(wsApiTs!.includes("invoke<string>('get_db_path')"), 'getDbPath should invoke get_db_path');
+assert(wsApiTs!.includes("invoke<void>('switch_db'"), 'switchDb should invoke switch_db');
+
+// Without WORKSPACES — no workspace.rs, no DbPath, no workspace commands in main.rs
+const noWsSrc = `APP nows { TITLE "No WS" DB nows.db PORT 5211 THEME dark WINDOW 1200x800 frameless } ENTITY Item { name: string REQUIRED TIMESTAMPS }`;
+const { files: noWsFiles } = compile(noWsSrc);
+assert(!noWsFiles.has('src-tauri/src/commands/workspace.rs'), 'Should NOT emit workspace.rs without WORKSPACES');
+assert(!noWsFiles.get('src-tauri/src/db.rs')!.includes('DbPath'), 'db.rs should NOT have DbPath without WORKSPACES');
+assert(!noWsFiles.get('src-tauri/src/commands/mod.rs')!.includes('workspace'), 'mod.rs should NOT declare workspace without WORKSPACES');
+
 // --- QC emitter ---
 section('QC emitter — src/lib/qc.ts SPC tracker from QC declarations');
 

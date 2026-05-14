@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 
 pub type DbPool = Mutex<Connection>;
+pub type DbPath = Mutex<PathBuf>;
 
 pub fn init_db(db_path: PathBuf) -> DbPool {
     let conn = Connection::open(&db_path).expect("Failed to open database");

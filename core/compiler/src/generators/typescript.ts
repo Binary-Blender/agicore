@@ -308,6 +308,19 @@ export function generateInvokes(ast: AgiFile): string {
     }
   }
 
+  // Workspace commands — emitted by rust.ts commands/workspace.rs
+  if (ast.app.workspaces) {
+    lines.push(
+      '// --- Workspace DB switching ---',
+      "export const getDbPath = () =>",
+      "  invoke<string>('get_db_path');",
+      '',
+      "export const switchDb = (newPath: string) =>",
+      "  invoke<void>('switch_db', { newPath });",
+      '',
+    );
+  }
+
   return lines.join('\n');
 }
 

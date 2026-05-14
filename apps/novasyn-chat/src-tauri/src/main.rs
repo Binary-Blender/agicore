@@ -17,8 +17,9 @@ fn main() {
             let app_dir = app.path().app_data_dir().expect("failed to resolve app data dir");
             std::fs::create_dir_all(&app_dir).ok();
             let db_path = app_dir.join("novasyn_chat.db");
-            let pool = db::init_db(db_path);
+            let pool = db::init_db(db_path.clone());
             app.manage(pool);
+            app.manage(Mutex::new(db_path));
             let api_keys = Mutex::new(ai_service::load_api_keys());
             app.manage(api_keys);
             let vault_path = vault::resolve_vault_path("%APPDATA%/NovaSyn/vault.db");
@@ -124,6 +125,8 @@ fn main() {
             vault::vault_tag_asset,
             vault::vault_record_provenance,
             vault::vault_get_provenance,
+            commands::workspace::get_db_path,
+            commands::workspace::switch_db,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
