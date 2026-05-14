@@ -398,6 +398,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasRouter) mainRsLines.push('mod router;');
   if (hasCompilers) mainRsLines.push('mod compiler;');
   if (hasVault) mainRsLines.push('mod vault;');
+  if (ast.tests.length > 0) mainRsLines.push('mod tests;');
   mainRsLines.push(
     '',
     'use std::sync::Mutex;',

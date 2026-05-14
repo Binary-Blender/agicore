@@ -269,3 +269,68 @@ export const webSearch = (query: string, numResults?: number) =>
 // --- export_session_md ---
 export const exportSessionMd = (sessionId: string) =>
   invoke<string>('export_session_md', { sessionId });
+
+// --- AI key management ---
+export const getApiKeys = () =>
+  invoke<Record<string, string>>('get_api_keys');
+
+export const setApiKey = (provider: string, key: string) =>
+  invoke<void>('set_api_key', { provider, key });
+
+// --- Vault ---
+export interface VaultAsset {
+  id: string; assetType: string; title: string; content: string;
+  metadata?: string; createdAt: string; updatedAt: string;
+}
+export interface SaveVaultAssetInput {
+  assetType: string; title: string; content: string; metadata?: string;
+}
+export const vaultListAssets = () =>
+  invoke<VaultAsset[]>('vault_list_assets');
+export const vaultGetAsset = (id: string) =>
+  invoke<VaultAsset>('vault_get_asset', { id });
+export const vaultSaveAsset = (input: SaveVaultAssetInput) =>
+  invoke<VaultAsset>('vault_save_asset', { input });
+export const vaultUpdateAsset = (id: string, content: string, title?: string) =>
+  invoke<VaultAsset>('vault_update_asset', { id, content, title });
+export const vaultDeleteAsset = (id: string) =>
+  invoke<void>('vault_delete_asset', { id });
+export const vaultSearchAssets = (query: string, assetType?: string) =>
+  invoke<VaultAsset[]>('vault_search_assets', { query, assetType });
+
+export const vaultListTags = () =>
+  invoke<{id: string; name: string}[]>('vault_list_tags');
+export const vaultTagAsset = (assetId: string, tagName: string) =>
+  invoke<void>('vault_tag_asset', { assetId, tagName });
+
+export const vaultRecordProvenance = (assetId: string, action: string, source?: string, actor?: string) =>
+  invoke<void>('vault_record_provenance', { assetId, action, source, actor });
+export const vaultGetProvenance = (assetId: string) =>
+  invoke<unknown[]>('vault_get_provenance', { assetId });
+
+// --- Document file I/O ---
+export interface ScannedDocument {
+  path: string; title: string; size: number; modifiedAt: string;
+}
+export const readDocumentContent = (filePath: string) =>
+  invoke<string>('read_document_content', { filePath });
+export const writeDocumentContent = (filePath: string, content: string) =>
+  invoke<void>('write_document_content', { filePath, content });
+export const scanDocumentsDir = (dir: string) =>
+  invoke<ScannedDocument[]>('scan_documents_dir', { dir });
+
+// --- Send To (Semantic Compilers) ---
+export const chatToExchange = (messageIds: string[]) =>
+  invoke<unknown>('chat_to_exchange', { messageIds });
+
+export const chatToFolder = (messageIds: string[]) =>
+  invoke<unknown>('chat_to_folder', { messageIds });
+
+export const chatToSkilldoc = (messageIds: string[], model: string, title: string, outputPath: string) =>
+  invoke<{id: string; title: string; filePath: string; content: string}>('chat_to_skilldoc', { messageIds, model, title, outputPath });
+
+export const chatToRequirements = (messageIds: string[], model: string, title: string, outputPath: string) =>
+  invoke<{id: string; title: string; filePath: string; content: string}>('chat_to_requirements', { messageIds, model, title, outputPath });
+
+export const chatToPost = (messageIds: string[], model: string, title: string, outputPath: string) =>
+  invoke<{id: string; title: string; filePath: string; content: string}>('chat_to_post', { messageIds, model, title, outputPath });

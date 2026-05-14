@@ -15,6 +15,7 @@ import { generateRouter } from './generators/router.js';
 import { generateCompiler } from './generators/compiler.js';
 import { generateVault } from './generators/vault.js';
 import { generateSkills } from './generators/skills.js';
+import { generateTests } from './generators/tests.js';
 
 export interface CompileResult {
   files: Map<string, string>;
@@ -45,6 +46,7 @@ export function compile(source: string): CompileResult {
     generateCompiler(ast),
     generateVault(ast),
     generateSkills(ast),
+    generateTests(ast),
   ];
 
   for (const gen of generators) {
@@ -70,3 +72,4 @@ export { generateRouter } from './generators/router.js';
 export { generateCompiler } from './generators/compiler.js';
 export { generateVault } from './generators/vault.js';
 export { generateSkills } from './generators/skills.js';
+export { generateTests } from './generators/tests.js';

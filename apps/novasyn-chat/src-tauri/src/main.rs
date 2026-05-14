@@ -3,6 +3,10 @@
 mod commands;
 mod db;
 mod ai_service;
+mod router;
+mod compiler;
+mod vault;
+mod tests;
 
 use std::sync::Mutex;
 use tauri::Manager;
@@ -17,6 +21,9 @@ fn main() {
             app.manage(pool);
             let api_keys = Mutex::new(ai_service::load_api_keys());
             app.manage(api_keys);
+            let vault_path = vault::resolve_vault_path("%APPDATA%/NovaSyn/vault.db");
+            let vault_pool = vault::init_vault(vault_path);
+            app.manage(vault_pool);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -94,11 +101,29 @@ fn main() {
             commands::orchestration_run::get_orchestration_run,
             commands::orchestration_run::update_orchestration_run,
             commands::orchestration_run::delete_orchestration_run,
-            commands::actions::broadcast_chat,
-            commands::actions::council_chat,
             commands::actions::search_chats,
             commands::actions::web_search,
             commands::actions::export_session_md,
+            router::broadcast_chat,
+            router::council_chat,
+            compiler::read_document_content,
+            compiler::write_document_content,
+            compiler::scan_documents_dir,
+            compiler::chat_to_exchange,
+            compiler::chat_to_folder,
+            compiler::chat_to_skilldoc,
+            compiler::chat_to_requirements,
+            compiler::chat_to_post,
+            vault::vault_list_assets,
+            vault::vault_get_asset,
+            vault::vault_save_asset,
+            vault::vault_update_asset,
+            vault::vault_delete_asset,
+            vault::vault_search_assets,
+            vault::vault_list_tags,
+            vault::vault_tag_asset,
+            vault::vault_record_provenance,
+            vault::vault_get_provenance,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

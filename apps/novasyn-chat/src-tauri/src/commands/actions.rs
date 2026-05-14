@@ -2,50 +2,10 @@
 // Re-run `agicore generate` to regenerate.
 // Action commands generated from ACTION declarations.
 
-#![allow(unused_variables)]
+#![allow(unused_variables, unused_imports)]
 
 use serde::{Deserialize, Serialize};
 use crate::db::DbPool;
-
-// --- broadcast_chat ---
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct BroadcastChatInput {
-    pub user_message: String,
-    pub model_ids: serde_json::Value,
-    pub system_prompt: String,
-    pub context_folder_ids: serde_json::Value,
-}
-
-#[tauri::command]
-pub async fn broadcast_chat(
-    input: BroadcastChatInput,
-    db: tauri::State<'_, DbPool>,
-) -> Result<serde_json::Value, String> {
-    let _ = (input, db);
-    Err("broadcast_chat: not yet implemented".to_string())
-}
-
-// --- council_chat ---
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct CouncilChatInput {
-    pub user_message: String,
-    pub model_ids: serde_json::Value,
-    pub system_prompt: String,
-    pub synthesis_model: String,
-}
-
-#[tauri::command]
-pub async fn council_chat(
-    input: CouncilChatInput,
-    db: tauri::State<'_, DbPool>,
-) -> Result<serde_json::Value, String> {
-    let _ = (input, db);
-    Err("council_chat: not yet implemented".to_string())
-}
 
 // --- search_chats ---
 

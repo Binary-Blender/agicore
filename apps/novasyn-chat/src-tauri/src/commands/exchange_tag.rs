@@ -78,7 +78,7 @@ pub fn get_exchange_tag(db: tauri::State<'_, DbPool>, id: String) -> Result<Exch
 }
 
 #[tauri::command]
-pub fn update_exchange_tag(db: tauri::State<'_, DbPool>, id: String, input: UpdateExchangeTagInput) -> Result<ExchangeTag, String> {
+pub fn update_exchange_tag(db: tauri::State<'_, DbPool>, id: String, _input: UpdateExchangeTagInput) -> Result<ExchangeTag, String> {
     let conn = db.lock().map_err(|e| e.to_string())?;
     let mut sets: Vec<String> = Vec::new();
     let mut params: Vec<Box<dyn rusqlite::types::ToSql>> = Vec::new();

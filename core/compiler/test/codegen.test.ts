@@ -1574,6 +1574,84 @@ const noSkillSrc = `APP no_skills { TITLE "No Skills" DB sqlite } ENTITY User { 
 const { files: noSkillFiles } = compile(noSkillSrc);
 assert(!noSkillFiles.has('src/lib/skills.ts'), 'Should NOT emit skills.ts when no SKILL blocks declared');
 
+// --- TEST emitter ---
+section('TEST emitter — tests.rs integration tests from TEST declarations');
+
+const testEmitterSrc = `
+APP test_app { TITLE "Test App" DB test.db }
+ENTITY User {
+  email: string REQUIRED UNIQUE
+  name: string
+  TIMESTAMPS
+}
+ENTITY Session {
+  name: string REQUIRED
+  BELONGS_TO User
+  TIMESTAMPS
+}
+ENTITY Tag {
+  name: string REQUIRED
+  color: string = "#FCD34D"
+  usage_count: number = 0
+  BELONGS_TO User
+  TIMESTAMPS
+}
+TEST user_crud {
+  GIVEN User { email: "test@example.com", name: "Test User" }
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> email == "test@example.com"
+}
+TEST session_crud {
+  GIVEN User { email: "test@example.com" }
+  GIVEN Session { name: "Test Session", BELONGS_TO User }
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> name == "Test Session"
+}
+TEST tag_system {
+  GIVEN User { email: "test@example.com" }
+  GIVEN Tag { name: "Important", color: "#EF4444", BELONGS_TO User }
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> color == "#EF4444"
+  EXPECT create -> usage_count == 0
+}
+`;
+const { files: testEmitterFiles } = compile(testEmitterSrc);
+
+const testsRs = testEmitterFiles.get('src-tauri/src/tests.rs');
+assert(testsRs !== undefined, 'Should generate tests.rs when TEST blocks declared');
+assert(testsRs!.includes('#[cfg(test)]'), 'tests.rs should be in a cfg(test) module');
+assert(testsRs!.includes('fn test_db()'), 'tests.rs should have test_db() helper');
+assert(testsRs!.includes('Connection::open_in_memory()'), 'test_db should use in-memory SQLite');
+assert(testsRs!.includes('include_str!("../migrations/001_initial.sql")'), 'test_db should run migrations');
+
+// user_crud test
+assert(testsRs!.includes('#[test]'), 'tests.rs should have test functions');
+assert(testsRs!.includes('fn user_crud()'), 'Should generate user_crud test fn');
+assert(testsRs!.includes('INSERT INTO users'), 'user_crud should insert into users table');
+assert(testsRs!.includes('"test@example.com"'), 'user_crud should use fixture email');
+assert(testsRs!.includes('is_empty()'), 'IS NOT NULL should assert id is not empty');
+assert(testsRs!.includes('assert_eq!(email_val'), 'email == assertion should use assert_eq!');
+
+// session_crud test — BELONGS_TO User dependency
+assert(testsRs!.includes('fn session_crud()'), 'Should generate session_crud test fn');
+assert(testsRs!.includes('INSERT INTO sessions'), 'session_crud should insert into sessions table');
+assert(testsRs!.includes('user_id'), 'session_crud should wire user_id FK from prior GIVEN');
+
+// tag_system test — numeric assertion
+assert(testsRs!.includes('fn tag_system()'), 'Should generate tag_system test fn');
+assert(testsRs!.includes('INSERT INTO tags'), 'tag_system should insert into tags table');
+assert(testsRs!.includes('usage_count'), 'tag_system should assert usage_count field');
+
+// main.rs should include mod tests
+const testMainRs = testEmitterFiles.get('src-tauri/src/main.rs');
+assert(testMainRs!.includes('mod tests;'), 'main.rs should declare mod tests when TEST blocks declared');
+
+// No TEST blocks → no tests.rs
+const noTestSrc = `APP no_tests { TITLE "No Tests" DB sqlite } ENTITY User { email: string REQUIRED TIMESTAMPS }`;
+const { files: noTestFiles } = compile(noTestSrc);
+assert(!noTestFiles.has('src-tauri/src/tests.rs'), 'Should NOT emit tests.rs when no TEST blocks');
+assert(!noTestFiles.get('src-tauri/src/main.rs')!.includes('mod tests;'), 'main.rs should NOT include mod tests when no TEST blocks');
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

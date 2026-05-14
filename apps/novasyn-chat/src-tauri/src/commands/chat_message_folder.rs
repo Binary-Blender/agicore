@@ -78,7 +78,7 @@ pub fn get_chat_message_folder(db: tauri::State<'_, DbPool>, id: String) -> Resu
 }
 
 #[tauri::command]
-pub fn update_chat_message_folder(db: tauri::State<'_, DbPool>, id: String, input: UpdateChatMessageFolderInput) -> Result<ChatMessageFolder, String> {
+pub fn update_chat_message_folder(db: tauri::State<'_, DbPool>, id: String, _input: UpdateChatMessageFolderInput) -> Result<ChatMessageFolder, String> {
     let conn = db.lock().map_err(|e| e.to_string())?;
     let mut sets: Vec<String> = Vec::new();
     let mut params: Vec<Box<dyn rusqlite::types::ToSql>> = Vec::new();
