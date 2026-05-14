@@ -174,6 +174,9 @@ const cargo = files.get('src-tauri/Cargo.toml')!;
 assert(cargo.includes('rusqlite'), 'Should depend on rusqlite');
 assert(cargo.includes('serde'), 'Should depend on serde');
 assert(!cargo.includes('specta'), 'Should NOT depend on specta — Agicore generates TS types itself, specta is dead weight');
+assert(cargo.includes('reqwest'), 'Should include reqwest when AI_SERVICE is declared');
+assert(cargo.includes('tokio'), 'Should include tokio when AI_SERVICE is declared');
+assert(cargo.includes('futures-util'), 'Should include futures-util when AI_SERVICE is declared');
 
 // --- Project Files ---
 section('Project files');
@@ -998,6 +1001,95 @@ assert(orch.includes("'content_brief'"), 'Should have content_brief module');
 // Print file size
 section('Orchestration engine file size');
 console.log(`  orchestration-engine.ts: ${orch.length} bytes (${orch.split('\n').length} lines)`);
+
+// --- ACTION emitter ---
+section('ACTION emitter — actions.rs');
+
+const actionSrc = `
+APP test_actions {
+  TITLE "Action Test"
+  DB    actions.db
+  THEME dark
+}
+AI_SERVICE {
+  PROVIDERS   anthropic
+  KEYS_FILE   "%APPDATA%/test/keys.json"
+  DEFAULT     anthropic
+  STREAMING   true
+}
+ACTION send_chat {
+  INPUT  messages: json, model: string
+  OUTPUT response: json
+  AI     "{{messages}}"
+  STREAM true
+}
+ACTION web_search {
+  INPUT  query: string, num_results: number = 5
+  OUTPUT results: json
+}
+ACTION export_session_md {
+  INPUT  session_id: string
+  OUTPUT markdown: string
+}
+ENTITY User {
+  email: string REQUIRED
+  TIMESTAMPS
+}
+`;
+const { files: actionFiles } = compile(actionSrc);
+
+// actions.rs should exist and contain non-send_chat actions
+const actionsRs = actionFiles.get('src-tauri/src/commands/actions.rs');
+assert(actionsRs !== undefined, 'Should generate actions.rs');
+assert(!actionsRs!.includes('send_chat'), 'actions.rs should NOT include send_chat (owned by ai_service)');
+assert(actionsRs!.includes('pub struct WebSearchInput'), 'Should have WebSearchInput struct');
+assert(actionsRs!.includes('pub struct ExportSessionMdInput'), 'Should have ExportSessionMdInput struct');
+assert(actionsRs!.includes('pub async fn web_search('), 'Should have web_search command');
+assert(actionsRs!.includes('pub async fn export_session_md('), 'Should have export_session_md command');
+assert(actionsRs!.includes('#[tauri::command]'), 'Should have tauri command attribute');
+assert(actionsRs!.includes('#[serde(rename_all = "camelCase")]'), 'Should use camelCase serde rename');
+assert(actionsRs!.includes('Option<i64>'), 'num_results with default should be Option<i64>');
+assert(actionsRs!.includes('pub query: String'), 'query field should be String');
+assert(actionsRs!.includes('pub session_id: String'), 'session_id field should be String');
+
+// mod.rs should include pub mod actions
+const actionModRs = actionFiles.get('src-tauri/src/commands/mod.rs');
+assert(actionModRs!.includes('pub mod actions;'), 'mod.rs should include pub mod actions');
+assert(actionModRs!.includes('pub mod user;'), 'mod.rs should still include user entity module');
+
+// main.rs should include mod ai_service and all registrations
+const actionMainRs = actionFiles.get('src-tauri/src/main.rs');
+assert(actionMainRs!.includes('mod ai_service;'), 'main.rs should include mod ai_service when AI_SERVICE declared');
+assert(actionMainRs!.includes('ai_service::send_chat'), 'main.rs should register ai_service::send_chat');
+assert(actionMainRs!.includes('ai_service::get_api_keys'), 'main.rs should register get_api_keys');
+assert(actionMainRs!.includes('ai_service::set_api_key'), 'main.rs should register set_api_key');
+assert(actionMainRs!.includes('commands::actions::web_search'), 'main.rs should register web_search action');
+assert(actionMainRs!.includes('commands::actions::export_session_md'), 'main.rs should register export_session_md action');
+assert(actionMainRs!.includes('load_api_keys'), 'main.rs should manage api_keys state');
+assert(!actionMainRs!.includes('commands::actions::send_chat'), 'main.rs should NOT double-register send_chat');
+
+// No AI_SERVICE → no actions.rs when all actions are send_chat only
+const noAiSrc = `
+APP no_ai {
+  TITLE "No AI"
+  DB    no_ai.db
+  THEME dark
+}
+ACTION send_chat {
+  INPUT  messages: json, model: string
+  OUTPUT response: json
+  AI     "{{messages}}"
+  STREAM true
+}
+ENTITY User {
+  email: string REQUIRED
+  TIMESTAMPS
+}
+`;
+const { files: noAiFiles } = compile(noAiSrc);
+assert(!noAiFiles.has('src-tauri/src/commands/actions.rs'), 'Should NOT emit actions.rs when only send_chat exists');
+assert(!noAiFiles.get('src-tauri/src/commands/mod.rs')!.includes('pub mod actions;'), 'mod.rs should NOT include actions when empty');
+assert(!noAiFiles.get('src-tauri/src/main.rs')!.includes('mod ai_service;'), 'main.rs should NOT include mod ai_service when no AI_SERVICE declared');
 
 // --- Summary ---
 console.log(`\n========================================`);

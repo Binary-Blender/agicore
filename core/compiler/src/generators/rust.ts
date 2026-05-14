@@ -3,6 +3,7 @@
 
 import type { AgiFile, EntityDecl, FieldDef, AgiType } from '@agicore/parser';
 import { toSnakeCase, toTableName, toForeignKey, toPascalCase, toCamelCase } from '../naming.js';
+import { actionCommandNames } from './actions.js';
 
 function rustType(agiType: AgiType, required: boolean): string {
   const base = (() => {
@@ -324,11 +325,16 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     const modName = toSnakeCase(e.name);
     return `pub mod ${modName};`;
   });
+  // Include actions module when ACTION declarations exist (beyond send_chat)
+  const hasActions = ast.actions.some(a => a.name !== 'send_chat');
+  if (hasActions) modLines.push('pub mod actions;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Generate main.rs
   const currentEntities = ast.app.current ?? [];
-  const commandList = ast.entities.flatMap(e => {
+  const hasAiService = ast.aiService !== null && ast.aiService !== undefined;
+
+  const entityCommandList = ast.entities.flatMap(e => {
     const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
     const table = toTableName(e.name);
     const snake = toSnakeCase(e.name);
@@ -353,12 +359,26 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     return cmds;
   });
 
-  const mainRs = [
+  // AI_SERVICE commands (send_chat + key management)
+  const aiServiceCmds = hasAiService
+    ? ['ai_service::send_chat', 'ai_service::get_api_keys', 'ai_service::set_api_key']
+    : [];
+
+  // ACTION commands (all non-send_chat actions)
+  const actionCmds = hasActions ? actionCommandNames(ast) : [];
+
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds];
+
+  const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
     '',
     'mod commands;',
     'mod db;',
+  ];
+  if (hasAiService) mainRsLines.push('mod ai_service;');
+  mainRsLines.push(
     '',
+    'use std::sync::Mutex;',
     'use tauri::Manager;',
     '',
     'fn main() {',
@@ -369,18 +389,26 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     `            let db_path = app_dir.join("${ast.app.db}");`,
     '            let pool = db::init_db(db_path);',
     '            app.manage(pool);',
+  );
+  if (hasAiService) {
+    mainRsLines.push(
+      '            let api_keys = Mutex::new(ai_service::load_api_keys());',
+      '            app.manage(api_keys);',
+    );
+  }
+  mainRsLines.push(
     '            Ok(())',
     '        })',
     '        .invoke_handler(tauri::generate_handler![',
-    ...commandList.map(c => `            ${c},`),
+    ...allCommandList.map(c => `            ${c},`),
     '        ])',
     '        .run(tauri::generate_context!())',
     '        .expect("error while running tauri application");',
     '}',
     '',
-  ].join('\n');
+  );
 
-  files.set('src-tauri/src/main.rs', mainRs);
+  files.set('src-tauri/src/main.rs', mainRsLines.join('\n'));
 
   // Generate db.rs
   const dbRs = [

@@ -1,5 +1,4 @@
 import { useAppStore } from '../store/appStore';
-import { NavRail } from './NavRail';
 import { Sidebar } from './Sidebar';
 import { TitleBar } from './TitleBar';
 import { ChatView } from './ChatView';
@@ -26,16 +25,12 @@ export function App() {
     }
   };
 
-  // Show conversation Sidebar only on chat-related views
-  const showSessionSidebar = currentView === 'ChatView';
-
   return (
     <div className="h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)]">
       <TitleBar />
       <div className="flex flex-1 overflow-hidden">
-        <NavRail />
-        {showSessionSidebar && <Sidebar />}
-        <main className="flex-1 overflow-hidden flex flex-col">
+        <Sidebar />
+        <main className="flex-1 overflow-y-auto">
           {renderView()}
         </main>
       </div>

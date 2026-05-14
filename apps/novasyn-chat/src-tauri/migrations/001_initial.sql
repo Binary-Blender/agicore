@@ -1,6 +1,6 @@
 -- Agicore Generated Migration
 -- App: novasyn_chat
--- Generated: 2026-05-10
+-- Generated: 2026-05-14
 
 PRAGMA journal_mode = WAL;
 PRAGMA foreign_keys = ON;

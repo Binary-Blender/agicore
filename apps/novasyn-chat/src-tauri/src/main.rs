@@ -14,17 +14,15 @@ fn main() {
             std::fs::create_dir_all(&app_dir).ok();
             let db_path = app_dir.join("novasyn_chat.db");
             let pool = db::init_db(db_path);
-            let api_keys = Mutex::new(ai_service::load_api_keys());
             app.manage(pool);
+            let api_keys = Mutex::new(ai_service::load_api_keys());
             app.manage(api_keys);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            // AI service
             ai_service::send_chat,
             ai_service::get_api_keys,
             ai_service::set_api_key,
-            // Generated CRUD commands
             commands::user::list_users,
             commands::user::create_user,
             commands::user::get_user,
@@ -56,6 +54,7 @@ fn main() {
             commands::tag::update_tag,
             commands::tag::delete_tag,
             commands::chat_message::list_chat_messages,
+            commands::chat_message::list_chat_messages_by_session,
             commands::chat_message::create_chat_message,
             commands::chat_message::get_chat_message,
             commands::chat_message::update_chat_message,
@@ -95,6 +94,11 @@ fn main() {
             commands::orchestration_run::get_orchestration_run,
             commands::orchestration_run::update_orchestration_run,
             commands::orchestration_run::delete_orchestration_run,
+            commands::actions::broadcast_chat,
+            commands::actions::council_chat,
+            commands::actions::search_chats,
+            commands::actions::web_search,
+            commands::actions::export_session_md,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

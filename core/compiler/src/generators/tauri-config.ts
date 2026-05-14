@@ -7,6 +7,7 @@ import { toSnakeCase } from '../naming.js';
 export function generateTauriConfig(ast: AgiFile): Map<string, string> {
   const files = new Map<string, string>();
   const app = ast.app;
+  const hasAiService = ast.aiService !== null && ast.aiService !== undefined;
   const identifier = `com.agicore.${toSnakeCase(app.name)}`;
 
   const config = {
@@ -51,6 +52,9 @@ export function generateTauriConfig(ast: AgiFile): Map<string, string> {
   files.set('src-tauri/tauri.conf.json', JSON.stringify(config, null, 2));
 
   // Cargo.toml
+  const aiServiceDeps = hasAiService
+    ? `reqwest = { version = "0.12", features = ["json", "stream"] }\ntokio = { version = "1", features = ["full"] }\nfutures-util = "0.3"\n`
+    : '';
   const cargoToml = `[package]
 name = "${toSnakeCase(app.name)}"
 version = "0.1.0"
@@ -63,7 +67,7 @@ serde_json = "1"
 rusqlite = { version = "0.31", features = ["bundled"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-
+${aiServiceDeps}
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 `;

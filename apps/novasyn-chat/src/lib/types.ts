@@ -158,8 +158,8 @@ export interface ChatMessage {
   alternatives: unknown | null;
   babyaiRequestId: string | null;
   timestamp: string | null;
-  sessionId: string | null;
   userId: string;
+  sessionId: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -184,8 +184,8 @@ export interface CreateChatMessageInput {
   alternatives?: unknown;
   babyaiRequestId?: string;
   timestamp?: string;
-  sessionId?: string;
   userId: string;
+  sessionId: string;
 }
 
 export interface UpdateChatMessageInput {
@@ -208,7 +208,6 @@ export interface UpdateChatMessageInput {
   alternatives?: unknown;
   babyaiRequestId?: string;
   timestamp?: string;
-  sessionId?: string;
 }
 
 export interface ChatMessageTag {

@@ -9,6 +9,7 @@ pub fn init_db(db_path: PathBuf) -> DbPool {
     conn.execute_batch("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;")
         .expect("Failed to set pragmas");
 
+    // Run migrations
     let migration = include_str!("../migrations/001_initial.sql");
     conn.execute_batch(migration).expect("Failed to run migrations");
 
