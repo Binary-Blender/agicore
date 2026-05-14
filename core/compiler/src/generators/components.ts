@@ -3,6 +3,7 @@
 
 import type { AgiFile, ViewDecl, EntityDecl } from '@agicore/parser';
 import { toCamelCase, lcFirst, toSnakeCase, humanizeModelId } from '../naming.js';
+import { providerMeta } from '../provider-registry.js';
 
 /**
  * If an entity has a `BELONGS_TO X` relationship and `X` is in
@@ -428,17 +429,8 @@ function generateSettingsView(view: ViewDecl, ast: AgiFile): string {
     ? (ast.aiService!.providers ?? []).filter((p: any) => typeof p === 'string' ? true : p)
     : [];
 
-  // Provider metadata — known providers get their label/placeholder/url
-  const PROVIDER_META: Record<string, { label: string; placeholder: string; url: string }> = {
-    anthropic: { label: 'Anthropic (Claude)', placeholder: 'sk-ant-...', url: 'https://console.anthropic.com/settings/keys' },
-    openai:    { label: 'OpenAI (GPT-4o)',    placeholder: 'sk-...',     url: 'https://platform.openai.com/api-keys' },
-    google:    { label: 'Google (Gemini)',     placeholder: 'AIza...',    url: 'https://aistudio.google.com/app/apikey' },
-    xai:       { label: 'xAI (Grok)',          placeholder: 'xai-...',    url: 'https://x.ai/api' },
-    babyai:    { label: 'BabyAI (HuggingFace)', placeholder: 'hf_...',   url: 'https://huggingface.co/settings/tokens' },
-  };
-
   const providerEntries = providers.map((p: string) => {
-    const meta = PROVIDER_META[p] ?? { label: p, placeholder: 'key...', url: '#' };
+    const meta = providerMeta(p);
     return `  { id: '${p}', label: '${meta.label}', placeholder: '${meta.placeholder}', url: '${meta.url}' }`;
   });
 
@@ -1197,24 +1189,6 @@ export function ModelPicker() {
 `;
 }
 
-/**
- * Friendly labels + placeholder hints per provider, used by the generated
- * ApiKeyModal. Anything not in here falls back to {label: provider, placeholder: 'API key'}.
- *
- * `babyai` is in this registry as a key-storage-only entry: it has no chat
- * dispatch template in ai-service.ts (no `call_babyai` is emitted), but the
- * BabyAI HuggingFace endpoint still needs an API key, and the user's muscle
- * memory expects "BabyAI (HuggingFace)" as the dropdown label. The ROUTER
- * tier consults this key at routing time.
- */
-const PROVIDER_REGISTRY: Record<string, { label: string; placeholder: string }> = {
-  anthropic:   { label: 'Anthropic (Claude)',   placeholder: 'sk-ant-...' },
-  openai:      { label: 'OpenAI',               placeholder: 'sk-...' },
-  google:      { label: 'Google (Gemini)',      placeholder: 'AIza...' },
-  xai:         { label: 'xAI (Grok)',           placeholder: 'xai-...' },
-  huggingface: { label: 'HuggingFace',          placeholder: 'hf_...' },
-  babyai:      { label: 'BabyAI (HuggingFace)', placeholder: 'hf_...' },
-};
 
 /**
  * Emit `src/components/ApiKeyModal.tsx` — a small modal that lists every
@@ -1228,8 +1202,8 @@ function generateApiKeyModal(ast: AgiFile): string {
   if (!ai) return '';
 
   const entries = ai.providers.map(p => {
-    const entry = PROVIDER_REGISTRY[p] ?? { label: p, placeholder: 'API key' };
-    return `  { id: ${JSON.stringify(p)}, label: ${JSON.stringify(entry.label)}, placeholder: ${JSON.stringify(entry.placeholder)} },`;
+    const meta = providerMeta(p);
+    return `  { id: ${JSON.stringify(p)}, label: ${JSON.stringify(meta.label)}, placeholder: ${JSON.stringify(meta.placeholder)} },`;
   });
 
   return `import { useEffect, useState } from 'react';

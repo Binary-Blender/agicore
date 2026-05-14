@@ -10,6 +10,7 @@
 // instead of erroring out (matching the 3G TS impl).
 
 import type { AgiFile, AiServiceDecl } from '@agicore/parser';
+import { PROVIDER_REGISTRY } from '../provider-registry.js';
 
 // ─── Path helpers ────────────────────────────────────────────────────────────
 
@@ -1100,13 +1101,13 @@ export function generateAiService(ast: AgiFile): Map<string, string> {
   const ai = ast.aiService;
   if (!ai) return files;
 
-  const providers = ai.providers.filter(p => PROVIDER_TEMPLATES[p] !== undefined);
-  // Providers declared in AI_SERVICE.PROVIDERS that have no chat dispatch
-  // template. These are still useful: the renderer's ApiKeyModal collects keys
-  // for them, and the ROUTER tier routes to them by tier/strength, not by
-  // model-name prefix. We surface this as a comment in send_chat rather than
-  // erroring out.
-  const skipped = ai.providers.filter(p => !PROVIDER_TEMPLATES[p]);
+  // Use PROVIDER_REGISTRY.hasTemplate as the canonical gate — providers without
+  // a dispatch template (e.g. babyai) still get an ApiKeyModal entry but no
+  // call_<provider> fn emitted. We fall back to checking PROVIDER_TEMPLATES
+  // directly so any locally-defined template that isn't yet in the registry
+  // still gets emitted.
+  const providers = ai.providers.filter(p => PROVIDER_REGISTRY[p]?.hasTemplate ?? PROVIDER_TEMPLATES[p] !== undefined);
+  const skipped = ai.providers.filter(p => !(PROVIDER_REGISTRY[p]?.hasTemplate ?? PROVIDER_TEMPLATES[p] !== undefined));
 
   const sections: string[] = [];
   sections.push(PRELUDE);
