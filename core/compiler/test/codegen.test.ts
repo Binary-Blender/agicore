@@ -132,7 +132,7 @@ assert(store.includes('addStudent: async (input)'), 'Should have add action');
 section('React component generation');
 assert(files.has('src/components/App.tsx'), 'Should have App.tsx');
 assert(files.has('src/components/Sidebar.tsx'), 'Should have Sidebar.tsx');
-assert(files.has('src/components/TitleBar.tsx'), 'Should have TitleBar.tsx');
+assert(files.has('src/components/TitleBar.tsx'), 'Should have TitleBar.tsx (frameless app)');
 assert(files.has('src/components/Dashboard.tsx'), 'Should have Dashboard.tsx');
 assert(files.has('src/components/StudentList.tsx'), 'Should have StudentList.tsx');
 assert(files.has('src/components/LessonView.tsx'), 'Should have LessonView.tsx');
@@ -142,7 +142,22 @@ const appTsx = files.get('src/components/App.tsx')!;
 assert(appTsx.includes("import { StudentList }"), 'Should import StudentList');
 assert(appTsx.includes("case 'StudentList'"), 'Should route to StudentList');
 assert(appTsx.includes('<Sidebar />'), 'Should render Sidebar');
-assert(appTsx.includes('<TitleBar />'), 'Should render TitleBar');
+assert(appTsx.includes('<TitleBar />'), 'Should render TitleBar in frameless app');
+
+// TitleBar.tsx — window controls for frameless apps
+const titleBarTsx = files.get('src/components/TitleBar.tsx')!;
+assert(titleBarTsx.includes("getCurrentWindow"), 'TitleBar should use getCurrentWindow from Tauri API');
+assert(titleBarTsx.includes("data-tauri-drag-region"), 'TitleBar should mark the drag region');
+assert(titleBarTsx.includes("win.close()"), 'TitleBar should have close button');
+assert(titleBarTsx.includes("win.minimize()"), 'TitleBar should have minimize button');
+assert(titleBarTsx.includes("win.toggleMaximize()"), 'TitleBar should have maximize button');
+assert(titleBarTsx.includes("WebkitAppRegion: 'no-drag'"), 'Window controls should be no-drag so clicks register');
+
+// Non-frameless app should not emit TitleBar.tsx
+const noFramelessSrc = `APP nf { TITLE "NF" WINDOW 1200x800 DB nf.db PORT 5200 THEME dark } ENTITY Item { name: string REQUIRED TIMESTAMPS }`;
+const { files: nfFiles } = compile(noFramelessSrc);
+assert(!nfFiles.has('src/components/TitleBar.tsx'), 'Non-frameless app should NOT emit TitleBar.tsx');
+assert(!nfFiles.get('src/components/App.tsx')!.includes('<TitleBar'), 'Non-frameless App.tsx should NOT render TitleBar');
 
 const sidebar = files.get('src/components/Sidebar.tsx')!;
 assert(sidebar.includes('lucide-react'), 'Should import from lucide-react');

@@ -843,6 +843,7 @@ function ${msgType}Item({ message, folders, tags: _tags, sessions, onRefresh }: 
 }
 
 function generateAppTsx(ast: AgiFile): string {
+  const frameless = ast.app.window?.frameless ?? false;
   const imports = ast.views.map(v =>
     `import { ${v.name} } from './${v.name}';`
   ).join('\n');
@@ -851,10 +852,12 @@ function generateAppTsx(ast: AgiFile): string {
     `      case '${v.name}': return <${v.name} />;`
   ).join('\n');
 
+  const titleBarImport = frameless ? `import { TitleBar } from './TitleBar';\n` : '';
+  const titleBarJsx = frameless ? `      <TitleBar />\n` : '';
+
   return `import { useAppStore } from '../store/appStore';
 import { Sidebar } from './Sidebar';
-import { TitleBar } from './TitleBar';
-${imports}
+${titleBarImport}${imports}
 
 export function App() {
   const currentView = useAppStore((s) => s.currentView);
@@ -868,8 +871,7 @@ ${cases}
 
   return (
     <div className="h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)]">
-      <TitleBar />
-      <div className="flex flex-1 overflow-hidden">
+${titleBarJsx}      <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-y-auto">
           {renderView()}
@@ -1285,13 +1287,49 @@ export function ApiKeyModal({ onClose }: { onClose: () => void }) {
 }
 
 function generateTitleBar(ast: AgiFile): string {
-  return `export function TitleBar() {
+  return `import { getCurrentWindow } from '@tauri-apps/api/window';
+
+export function TitleBar() {
+  const win = getCurrentWindow();
+
   return (
     <div
-      className="h-9 bg-[var(--bg-titlebar)] flex items-center px-3 select-none"
-      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+      data-tauri-drag-region
+      className="h-9 bg-[var(--bg-titlebar)] flex items-center justify-between px-3 select-none shrink-0"
     >
-      <span className="text-sm font-medium">${ast.app.title}</span>
+      <span className="text-sm font-medium text-[var(--text-secondary)] pointer-events-none">
+        ${ast.app.title}
+      </span>
+      <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+        <button
+          onClick={() => win.minimize()}
+          className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+          aria-label="Minimize"
+        >
+          <svg width="12" height="2" viewBox="0 0 12 2" fill="currentColor">
+            <rect width="12" height="2" rx="1" />
+          </svg>
+        </button>
+        <button
+          onClick={() => win.toggleMaximize()}
+          className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+          aria-label="Maximize"
+        >
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <rect x="0.75" y="0.75" width="9.5" height="9.5" rx="1.25" />
+          </svg>
+        </button>
+        <button
+          onClick={() => win.close()}
+          className="w-7 h-7 flex items-center justify-center rounded hover:bg-red-500/80 text-[var(--text-secondary)] hover:text-white transition-colors"
+          aria-label="Close"
+        >
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <line x1="1" y1="1" x2="10" y2="10" />
+            <line x1="10" y1="1" x2="1" y2="10" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }
@@ -1310,7 +1348,9 @@ export function generateComponents(ast: AgiFile): Map<string, string> {
 
   files.set('src/components/App.tsx', generateAppTsx(ast));
   files.set('src/components/Sidebar.tsx', generateSidebar(ast));
-  files.set('src/components/TitleBar.tsx', generateTitleBar(ast));
+  if (ast.app.window?.frameless) {
+    files.set('src/components/TitleBar.tsx', generateTitleBar(ast));
+  }
 
   // Emit ModelPicker.tsx only when AI_SERVICE is declared — apps without an
   // AI service have no `selectedModel` slot in the store for the picker to
