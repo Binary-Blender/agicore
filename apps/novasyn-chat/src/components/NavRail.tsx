@@ -1,4 +1,4 @@
-import { MessageSquare, Terminal, FolderOpen, Tags, BookMarked, FileText, Settings } from 'lucide-react';
+import { MessageSquare, Terminal, FolderOpen, Tags, BookMarked, FileText, Settings, GitBranch } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 
 const NAV_ITEMS = [
@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { view: 'TagManager', icon: Tags, title: 'Tags' },
   { view: 'ExchangeLibrary', icon: BookMarked, title: 'Exchanges' },
   { view: 'DocumentEditor', icon: FileText, title: 'Documents' },
+  { view: 'WorkflowView', icon: GitBranch, title: 'Workflows' },
   { view: 'SettingsView', icon: Settings, title: 'Settings' },
 ];
 

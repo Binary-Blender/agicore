@@ -7,10 +7,10 @@
 | Milestone | Tests | Status |
 |---|---|---|
 | DSL Parser | 547 passing | Complete |
-| Tauri Codegen | 606 passing | Complete |
-| Static Validator | 20 passing | Complete |
+| Tauri Codegen | 623 passing | Complete |
+| Static Validator | 34 passing | Complete |
 | Reference App (NovaSyn Chat 2.0) | End-to-end verified | **MVP Complete** |
-| **Total** | **1,173 passing, 0 failures** | |
+| **Total** | **1,204 passing, 0 failures** | |
 
 ---
 
@@ -22,7 +22,7 @@ Deliverables:
 - [x] Formal grammar specification (`dsl/grammar.md`) — 34 declaration types across 7 layers
 - [x] DSL parser (TypeScript, `.agi` files → AST) — 547 tests passing
 - [x] 12 working example files
-- [x] Static validator — 12 semantic checks, errors abort generation, warnings continue
+- [x] Static validator — 18 semantic checks, errors abort generation, warnings continue
 
 DSL layers:
 - **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST
@@ -77,23 +77,24 @@ Result: NovaSyn Chat 2.0 (`apps/novasyn-chat/`) — a multi-provider AI chat cli
 
 **Goal:** Extend codegen coverage and eliminate remaining hand-written seams.
 
-Remaining codegen gaps (things currently hand-extended in novasyn-chat):
-- [ ] ACTION emitter — generate Rust AI dispatch from ACTION declarations
-- [ ] VIEW LAYOUT `document_editor` — full document editor scaffold
-- [ ] VIEW LAYOUT `settings` — settings panel with provider/key management
-- [ ] WORKFLOW visual execution trace in UI
+Codegen gaps (completed):
+- [x] ACTION emitter — Rust AI dispatch from ACTION declarations, pattern-based real bodies
+- [x] VIEW LAYOUT `document_editor` — split list + editor panel scaffold
+- [x] VIEW LAYOUT `settings` — API key management + about section
+- [x] WORKFLOW visual execution trace in UI — step-by-step trace with AI-driven step execution
+- [x] Session export as Markdown — browser Blob download, no extra Rust required
+- [x] `/search` slash command — DuckDuckGo web context injection into AI prompt
+
+Validator expansion (completed):
+- [x] Cross-entity referential integrity (HAS_MANY ↔ BELONGS_TO symmetry — check 16)
+- [x] WORKFLOW step action references must be declared ACTIONs (check 14)
+- [x] COMPILER FROM/TO target cross-check against sessions and entities (check 17)
+- [x] COMPILER EXTRACT field cross-check against FROM entity fields (check 18)
+- [x] TRIGGER fires.target cross-check by kind (check 15)
+- [x] AI_SERVICE model provider consistency (check 13)
+
+Remaining in Phase 4:
 - [ ] Multi-window support from a single `.agi` file
-
-Validator expansion:
-- [ ] Cross-entity referential integrity (HAS_MANY ↔ BELONGS_TO symmetry check)
-- [ ] WORKFLOW step action references must be declared ACTIONs
-- [ ] COMPILER EXTRACT field cross-check against entity fields
-- [ ] AI_SERVICE provider-model consistency (model declared for each provider)
-
-Additional example applications:
-- [ ] `home_academy.agi` — full port of NovaSyn Home Academy (23 entities, 5 views)
-- [ ] `invoice_approval.agi` — expert system showcase (RULE/STATE/SCORE)
-- [ ] `content_pipeline.agi` — orchestration showcase (PIPELINE/WORKFLOW/QC)
 
 ---
 

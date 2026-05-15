@@ -9,6 +9,7 @@ import { TagManager } from './TagManager';
 import { ExchangeLibrary } from './ExchangeLibrary';
 import { DocumentEditor } from './DocumentEditor';
 import { SettingsView } from './SettingsView';
+import { WorkflowView } from './WorkflowView';
 
 export function App() {
   const currentView = useAppStore((s) => s.currentView);
@@ -22,6 +23,7 @@ export function App() {
       case 'ExchangeLibrary': return <ExchangeLibrary />;
       case 'DocumentEditor': return <DocumentEditor />;
       case 'SettingsView': return <SettingsView />;
+      case 'WorkflowView': return <WorkflowView />;
       default: return <div className="p-6">Unknown view</div>;
     }
   };
