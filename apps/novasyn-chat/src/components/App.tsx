@@ -10,23 +10,35 @@ import { ExchangeLibrary } from './ExchangeLibrary';
 import { DocumentEditor } from './DocumentEditor';
 import { SettingsView } from './SettingsView';
 import { WorkflowView } from './WorkflowView';
+import { getPopoutView } from '../lib/popout';
+
+function renderView(view: string) {
+  switch (view) {
+    case 'ChatView':         return <ChatView />;
+    case 'TerminalView':     return <TerminalView />;
+    case 'FolderPanel':      return <FolderPanel />;
+    case 'TagManager':       return <TagManager />;
+    case 'ExchangeLibrary':  return <ExchangeLibrary />;
+    case 'DocumentEditor':   return <DocumentEditor />;
+    case 'SettingsView':     return <SettingsView />;
+    case 'WorkflowView':     return <WorkflowView />;
+    default:                 return <div className="p-6 text-gray-500">Unknown view</div>;
+  }
+}
+
+// Popout windows: just the view, no NavRail / Sidebar / TitleBar
+const popoutView = getPopoutView();
 
 export function App() {
   const currentView = useAppStore((s) => s.currentView);
 
-  const renderView = () => {
-    switch (currentView) {
-      case 'ChatView': return <ChatView />;
-      case 'TerminalView': return <TerminalView />;
-      case 'FolderPanel': return <FolderPanel />;
-      case 'TagManager': return <TagManager />;
-      case 'ExchangeLibrary': return <ExchangeLibrary />;
-      case 'DocumentEditor': return <DocumentEditor />;
-      case 'SettingsView': return <SettingsView />;
-      case 'WorkflowView': return <WorkflowView />;
-      default: return <div className="p-6">Unknown view</div>;
-    }
-  };
+  if (popoutView) {
+    return (
+      <div className="h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)] overflow-hidden">
+        {renderView(popoutView)}
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)]">
@@ -35,7 +47,7 @@ export function App() {
         <NavRail />
         <Sidebar />
         <main className="flex-1 overflow-hidden flex flex-col">
-          {renderView()}
+          {renderView(currentView)}
         </main>
       </div>
     </div>

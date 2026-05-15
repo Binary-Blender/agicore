@@ -93,8 +93,9 @@ Validator expansion (completed):
 - [x] TRIGGER fires.target cross-check by kind (check 15)
 - [x] AI_SERVICE model provider consistency (check 13)
 
-Remaining in Phase 4:
-- [ ] Multi-window support from a single `.agi` file
+- [x] Multi-window support — any view can be popped out into a native Tauri window via NavRail
+
+**Phase 4 is complete.**
 
 ---
 
