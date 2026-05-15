@@ -1,5 +1,6 @@
 import { useAppStore } from '../store/appStore';
 import { Sidebar } from './Sidebar';
+import { NavRail } from './NavRail';
 import { TitleBar } from './TitleBar';
 import { ChatView } from './ChatView';
 import { TerminalView } from './TerminalView';
@@ -29,6 +30,7 @@ export function App() {
     <div className="h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)]">
       <TitleBar />
       <div className="flex flex-1 overflow-hidden">
+        <NavRail />
         <Sidebar />
         <main className="flex-1 overflow-hidden flex flex-col">
           {renderView()}
