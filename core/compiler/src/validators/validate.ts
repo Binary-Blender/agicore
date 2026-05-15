@@ -207,6 +207,40 @@ export function validate(ast: AgiFile): ValidationResult[] {
     }
   }
 
+  // 17. COMPILER FROM/TO must reference a declared session or entity
+  const validCompilerTargets = new Set([...entityNames, ...sessionNames]);
+  for (const compiler of ast.compilers) {
+    for (const side of ['from', 'to'] as const) {
+      const target = compiler[side];
+      if (target && !validCompilerTargets.has(target)) {
+        results.push({
+          severity: 'error',
+          message: `Compiler '${compiler.name}': ${side.toUpperCase()} '${target}' is not a declared session or entity`,
+          node: `compiler:${compiler.name}`,
+          span: compiler.span,
+        });
+      }
+    }
+  }
+
+  // 18. COMPILER EXTRACT fields must exist on the FROM entity (warning, only when FROM is an entity)
+  for (const compiler of ast.compilers) {
+    if (!compiler.from || !entityNames.has(compiler.from)) continue;
+    const fromEntity = ast.entities.find((e) => e.name === compiler.from);
+    if (!fromEntity) continue;
+    const entityFieldNames = new Set(fromEntity.fields.map((f) => f.name));
+    for (const field of compiler.extract) {
+      if (!entityFieldNames.has(field)) {
+        results.push({
+          severity: 'warning',
+          message: `Compiler '${compiler.name}': EXTRACT field '${field}' is not declared on entity '${compiler.from}'`,
+          node: `compiler:${compiler.name}`,
+          span: compiler.span,
+        });
+      }
+    }
+  }
+
   return results;
 }
 

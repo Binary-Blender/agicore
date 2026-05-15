@@ -509,6 +509,112 @@ ENTITY Task {
   assert(!hasWarning(results, "BELONGS_TO"), 'Symmetric HAS_MANY / BELONGS_TO should produce no warning');
 }
 
+// ─── COMPILER FROM/TO target and EXTRACT cross-check ─────────────────────────
+
+section('COMPILER FROM referencing undeclared session or entity emits error');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+COMPILER bad_compiler {
+  FROM ghost_session
+  TO   also_ghost
+  EXTRACT name, title
+  AI "extract stuff"
+  VALIDATE false
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasError(results, "FROM 'ghost_session' is not a declared session or entity"), 'Should error when COMPILER FROM is undeclared');
+  assert(hasError(results, "TO 'also_ghost' is not a declared session or entity"), 'Should error when COMPILER TO is undeclared');
+}
+
+section('COMPILER FROM referencing declared session is OK');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+SESSION ideas {
+  TOOLS chat
+  CONTEXT conversation
+  MEMORY session
+  OUTPUT text
+}
+SESSION output_doc {
+  TOOLS chat, template
+  CONTEXT structured
+  MEMORY persistent
+  OUTPUT notes
+}
+COMPILER ideas_to_doc {
+  FROM ideas
+  TO   output_doc
+  EXTRACT concepts, themes
+  AI "extract concepts"
+  VALIDATE false
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasError(results, 'is not a declared'), 'Valid COMPILER FROM/TO should produce no error');
+}
+
+section('COMPILER EXTRACT fields not on FROM entity emit warning');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+ENTITY Document {
+  title: string REQUIRED
+  body: string
+  TIMESTAMPS
+}
+SESSION output_session {
+  TOOLS chat
+  CONTEXT conversation
+  MEMORY session
+  OUTPUT text
+}
+COMPILER doc_compiler {
+  FROM Document
+  TO   output_session
+  EXTRACT title, ghost_field
+  AI "extract fields"
+  VALIDATE false
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasWarning(results, "EXTRACT field 'ghost_field' is not declared on entity 'Document'"), 'Should warn when EXTRACT field is not on FROM entity');
+  assert(!hasWarning(results, "EXTRACT field 'title'"), 'Valid EXTRACT field should not warn');
+}
+
+section('COMPILER EXTRACT fields on FROM entity are OK');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+ENTITY Document {
+  title: string REQUIRED
+  body: string
+  TIMESTAMPS
+}
+SESSION output_session {
+  TOOLS chat
+  CONTEXT conversation
+  MEMORY session
+  OUTPUT text
+}
+COMPILER doc_compiler {
+  FROM Document
+  TO   output_session
+  EXTRACT title, body
+  AI "extract fields"
+  VALIDATE false
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasWarning(results, "EXTRACT field"), 'All valid EXTRACT fields should produce no warning');
+}
+
 // ─── Results ──────────────────────────────────────────────────────────────────
 
 console.log(`\n=== Validator Tests: ${passed} passed, ${failed} failed ===\n`);
