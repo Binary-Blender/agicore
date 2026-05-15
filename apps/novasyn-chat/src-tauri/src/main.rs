@@ -169,6 +169,8 @@ fn main() {
             vault::vault_get_provenance,
             commands::workspaces::get_db_path,
             commands::workspaces::switch_db,
+            commands::shell::shell_run,
+            commands::shell::shell_get_home,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

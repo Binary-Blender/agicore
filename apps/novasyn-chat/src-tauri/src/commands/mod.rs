@@ -14,3 +14,4 @@ pub mod orchestration;
 pub mod orchestration_run;
 pub mod actions;
 pub mod workspaces;
+pub mod shell;
