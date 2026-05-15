@@ -137,11 +137,18 @@ export function generateProjectFiles(ast: AgiFile): Map<string, string> {
   // src-tauri/capabilities/default.json — Tauri 2 ACL grants
   const hasHotkey = typeof ast.app.hotkey === 'string' && ast.app.hotkey.length > 0;
   const hasWorkspaces = ast.app.workspaces === true;
+  const isFrameless = ast.app.window?.frameless === true;
   const capabilityPermissions = [
     "core:default",
     "core:window:default",
     "core:webview:default",
     "core:event:default",
+    ...(isFrameless ? [
+      "core:window:allow-start-dragging",
+      "core:window:allow-minimize",
+      "core:window:allow-toggle-maximize",
+      "core:window:allow-close",
+    ] : []),
     ...(hasHotkey ? ["global-shortcut:default"] : []),
     ...(hasWorkspaces ? ["dialog:default"] : []),
   ];
