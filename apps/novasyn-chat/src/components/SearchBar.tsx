@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useAppStore } from '../store/appStore';
-import { invoke } from '@tauri-apps/api/core';
+import { searchChats } from '../lib/api';
 import type { ChatMessage } from '../lib/types';
 
 interface Props {
@@ -33,12 +33,11 @@ export function SearchBar({ onResults, onClear }: Props) {
     }
     setLoading(true);
     try {
-      // TODO: Wire to Tauri search command with filters
-      const results = await invoke<ChatMessage[]>('list_chat_messages');
-      const filtered = results.filter((m) => {
-        const matchesQuery = !q.trim() || m.userMessage.toLowerCase().includes(q.toLowerCase()) || m.aiMessage.toLowerCase().includes(q.toLowerCase());
-        return matchesQuery;
-      });
+      const results = await searchChats(q.trim() || '*', 'default-user');
+      // Client-side session filter if sessions are selected
+      const filtered = selectedSessionIds.length > 0
+        ? results.filter((m) => selectedSessionIds.includes(m.sessionId))
+        : results;
       setResultCount(filtered.length);
       onResults(filtered);
     } catch (err) {

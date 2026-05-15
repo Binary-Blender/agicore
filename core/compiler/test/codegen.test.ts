@@ -1083,6 +1083,11 @@ assert(actionMainRs!.includes('commands::actions::export_session_md'), 'main.rs 
 assert(actionMainRs!.includes('load_api_keys'), 'main.rs should manage api_keys state');
 assert(!actionMainRs!.includes('commands::actions::send_chat'), 'main.rs should NOT double-register send_chat');
 
+// Real body assertions — not stubs
+assert(!actionsRs!.includes('not yet implemented'), 'actions.rs should emit real bodies, not stubs');
+assert(actionsRs!.includes('duckduckgo.com'), 'web_search should emit DuckDuckGo reqwest call');
+assert(actionsRs!.includes('push_str'), 'export_session_md should build a markdown string');
+
 // No AI_SERVICE → no actions.rs when all actions are send_chat only
 const noAiSrc = `
 APP no_ai {

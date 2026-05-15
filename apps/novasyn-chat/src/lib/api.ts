@@ -260,7 +260,7 @@ export const councilChat = (userMessage: string, modelIds: unknown, systemPrompt
 
 // --- search_chats ---
 export const searchChats = (query: string, userId: string) =>
-  invoke<unknown>('search_chats', { query, userId });
+  invoke<ChatMessage[]>('search_chats', { query, userId });
 
 // --- web_search ---
 export const webSearch = (query: string, numResults?: number) =>
