@@ -17,10 +17,15 @@ import { generateVault } from './generators/vault.js';
 import { generateSkills } from './generators/skills.js';
 import { generateTests } from './generators/tests.js';
 import { generateQc } from './generators/qc.js';
+import { validate } from './validators/validate.js';
+import type { ValidationResult } from './validators/validate.js';
+
+export type { ValidationResult, Severity } from './validators/validate.js';
 
 export interface CompileResult {
   files: Map<string, string>;
   ast: AgiFile;
+  diagnostics: ValidationResult[];
 }
 
 /**
@@ -57,7 +62,9 @@ export function compile(source: string): CompileResult {
     }
   }
 
-  return { files, ast };
+  const diagnostics = validate(ast);
+
+  return { files, ast, diagnostics };
 }
 
 export { parse } from '@agicore/parser';
@@ -76,3 +83,4 @@ export { generateVault } from './generators/vault.js';
 export { generateSkills } from './generators/skills.js';
 export { generateTests } from './generators/tests.js';
 export { generateQc } from './generators/qc.js';
+export { validate } from './validators/validate.js';

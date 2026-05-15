@@ -28,7 +28,23 @@ Options:
 
 function cmdGenerate(inputFile: string, outputDir?: string): void {
   const source = readFileSync(inputFile, 'utf-8');
-  const { files, ast } = compile(source);
+  const { files, ast, diagnostics } = compile(source);
+
+  // Print diagnostics
+  const errors = diagnostics.filter((d) => d.severity === 'error');
+  const warnings = diagnostics.filter((d) => d.severity === 'warning');
+  for (const d of warnings) {
+    const loc = d.span ? ` (${d.span.start.line}:${d.span.start.column})` : '';
+    console.warn(`  warning: ${d.message}${loc}`);
+  }
+  for (const d of errors) {
+    const loc = d.span ? ` (${d.span.start.line}:${d.span.start.column})` : '';
+    console.error(`  error: ${d.message}${loc}`);
+  }
+  if (errors.length > 0) {
+    console.error(`\nAgicore: ${errors.length} error(s) found. Generation aborted.`);
+    process.exit(1);
+  }
 
   const outDir = outputDir ?? resolve(process.cwd(), ast.app.name);
 
