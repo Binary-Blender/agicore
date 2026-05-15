@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Key, MessageSquare } from 'lucide-react';
+import { Plus, Pencil, Trash2, Key, MessageSquare, Download } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { useAppStore } from '../store/appStore';
 import { ModelPicker } from './ModelPicker';
@@ -18,6 +18,21 @@ function SessionItem({ session, isActive, onSelect, onRename, onDelete }: Sessio
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(session.name);
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  async function handleExport() {
+    try {
+      const markdown = await invoke<string>('export_session_md', { sessionId: session.id });
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = session.name.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') + '.md';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) { console.error('Export failed:', err); }
+  }
 
   if (editing) {
     return (
@@ -60,6 +75,13 @@ function SessionItem({ session, isActive, onSelect, onRename, onDelete }: Sessio
       <MessageSquare size={14} className="flex-shrink-0 opacity-60" />
       <span className="text-sm flex-1 truncate">{session.name}</span>
       <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition">
+        <button
+          onClick={(e) => { e.stopPropagation(); handleExport(); }}
+          className="text-gray-500 hover:text-blue-400 p-0.5 rounded hover:bg-slate-600 transition"
+          title="Export as Markdown"
+        >
+          <Download size={11} />
+        </button>
         <button
           onClick={(e) => { e.stopPropagation(); setEditing(true); }}
           className="text-gray-500 hover:text-white p-0.5 rounded hover:bg-slate-600 transition"

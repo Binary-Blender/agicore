@@ -86,8 +86,27 @@ export function MessageInput({ onSend }: Props) {
     }
   }
 
+  const showSlashHint = input === '/' || input.startsWith('/s');
+  const slashCommands = [{ cmd: '/search', desc: 'search the web and inject results as context' }];
+
   return (
     <div className="border-t border-slate-700/50 bg-slate-900/80 backdrop-blur px-4 py-3">
+      {showSlashHint && (
+        <div className="mb-2 bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+          {slashCommands
+            .filter((c) => c.cmd.startsWith(input.split(' ')[0] ?? ''))
+            .map((c) => (
+              <button
+                key={c.cmd}
+                onMouseDown={(e) => { e.preventDefault(); setInput(c.cmd + ' '); }}
+                className="w-full text-left px-3 py-2 text-sm hover:bg-slate-700 transition flex items-baseline gap-2"
+              >
+                <span className="text-blue-400 font-mono">{c.cmd}</span>
+                <span className="text-gray-500 text-xs">{c.desc}</span>
+              </button>
+            ))}
+        </div>
+      )}
       <div className="flex gap-2 items-end">
         <div className="flex-1 relative">
           <textarea
@@ -95,7 +114,7 @@ export function MessageInput({ onSend }: Props) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message... (Enter to send, Shift+Enter for newline)"
+            placeholder="Message… or /search <query> for web context"
             rows={1}
             className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 pr-12 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition caret-white"
           />

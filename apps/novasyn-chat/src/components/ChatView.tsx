@@ -7,7 +7,23 @@ import { SearchBar } from './SearchBar';
 import { TagPicker } from './TagPicker';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { webSearch } from '../lib/api';
 import type { ChatMessage } from '../lib/types';
+
+interface SearchResult { title: string; snippet: string; url: string; source: string; }
+
+const SEARCH_CONTEXT_PREFIX = '[web-search-context]';
+
+function buildSearchContext(query: string, results: SearchResult[]): string {
+  if (!results.length) return `${SEARCH_CONTEXT_PREFIX} No results found for "${query}".`;
+  const body = results.map((r, i) => {
+    const title = r.title?.trim() ? `**${r.title}**` : '';
+    const url = r.url ? `<${r.url}>` : '';
+    const snippet = r.snippet?.trim() ?? '';
+    return [`${i + 1}. ${[title, url].filter(Boolean).join(' ')}`, snippet ? `   ${snippet}` : ''].filter(Boolean).join('\n');
+  }).join('\n\n');
+  return `${SEARCH_CONTEXT_PREFIX}\n[Web search results for "${query}"]\n\n${body}`;
+}
 
 interface StreamDelta { requestId: string; delta: string; done: boolean; }
 
@@ -28,6 +44,7 @@ export function ChatView() {
   const [activeDocCompiler, setActiveDocCompiler] = useState<string | null>(null);
   const [compileTitle, setCompileTitle] = useState('');
   const [compileStatus, setCompileStatus] = useState<string | null>(null);
+  const [webSearching, setWebSearching] = useState(false);
 
   useEffect(() => { loadChatMessagesForCurrentSession(); }, [currentSessionId, loadChatMessagesForCurrentSession]);
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages, streamingContent, currentSessionId]);
@@ -39,7 +56,22 @@ export function ChatView() {
 
   const displayMessages = searchResults ?? chatMessages;
 
-  const handleSend = useCallback(async (text: string) => {
+  const handleSend = useCallback(async (rawText: string) => {
+    // --- /search <query> slash command ---
+    let userText = rawText;
+    let searchContext = '';
+    const searchMatch = rawText.match(/^\/search\s+(.+)/is);
+    if (searchMatch) {
+      const query = searchMatch[1].trim();
+      setWebSearching(true);
+      try {
+        const results = await webSearch(query, 5) as unknown as SearchResult[];
+        searchContext = buildSearchContext(query, results);
+      } catch { searchContext = `${SEARCH_CONTEXT_PREFIX} Web search failed for "${query}".`; }
+      finally { setWebSearching(false); }
+      userText = query;
+    }
+
     const requestId = crypto.randomUUID();
     setStreamingContent('');
     const unlisten = await listen<StreamDelta>('chat-stream', (event) => {
@@ -48,25 +80,37 @@ export function ChatView() {
       setStreamingContent((prev) => (prev ?? '') + delta);
     });
     try {
+      // Reconstruct history — if a past message has search context, include it
       const history = [...chatMessages]
         .filter((m) => !m.isExcluded && !m.isArchived)
-        .flatMap((m) => [
-          { role: 'user', content: m.userMessage },
-          { role: 'assistant', content: m.aiMessage },
-        ]);
+        .flatMap((m) => {
+          const content = m.systemPrompt?.startsWith(SEARCH_CONTEXT_PREFIX)
+            ? `${m.systemPrompt}\n\n---\n\n${m.userMessage}`
+            : m.userMessage;
+          return [
+            { role: 'user', content },
+            { role: 'assistant', content: m.aiMessage },
+          ];
+        });
+
+      // Combine search context + user text for this turn's API call
+      const apiContent = searchContext ? `${searchContext}\n\n---\n\n${userText}` : userText;
+
       const response = await invoke<{
         content: string; model: string; provider: string;
         inputTokens: number; outputTokens: number;
-      }>('send_chat', { request: { messages: [...history, { role: 'user', content: text }], model: selectedModel }, requestId });
+      }>('send_chat', { request: { messages: [...history, { role: 'user', content: apiContent }], model: selectedModel }, requestId });
+
       await invoke('create_chat_message', {
         input: {
-          userMessage: text,
+          userMessage: userText,
           aiMessage: response.content,
-          userTokens: response.inputTokens || Math.ceil(text.length / 4),
+          userTokens: response.inputTokens || Math.ceil(apiContent.length / 4),
           aiTokens: response.outputTokens || Math.ceil(response.content.length / 4),
           totalTokens: (response.inputTokens || 0) + (response.outputTokens || 0),
           model: response.model,
           provider: response.provider,
+          systemPrompt: searchContext || null,
           userId: 'default-user',
           sessionId: currentSessionId,
         },
@@ -116,6 +160,12 @@ export function ChatView() {
         {displayMessages.map((msg) => (
           <ChatMessageItem key={msg.id} message={msg} folders={folders} tags={tags} sessions={sessions} onRefresh={loadChatMessagesForCurrentSession} />
         ))}
+        {webSearching && (
+          <div className="rounded-xl border border-blue-700/40 bg-blue-900/10 p-3 flex items-center gap-2">
+            <span className="animate-spin text-blue-400 text-sm">⟳</span>
+            <span className="text-sm text-blue-300">Searching the web…</span>
+          </div>
+        )}
         {streamingContent && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-4">
             <div className="flex items-start gap-3">
@@ -312,6 +362,9 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
             {message.isPruned && <span className="text-xs text-orange-400 bg-orange-900/30 px-1.5 py-0.5 rounded">pruned</span>}
             {message.isExcluded && <span className="text-xs text-red-400 bg-red-900/30 px-1.5 py-0.5 rounded">excluded</span>}
             {message.isArchived && <span className="text-xs text-gray-500 bg-slate-700/50 px-1.5 py-0.5 rounded">archived</span>}
+            {message.systemPrompt?.startsWith(SEARCH_CONTEXT_PREFIX) && (
+              <span className="text-xs text-blue-400 bg-blue-900/30 px-1.5 py-0.5 rounded">🔍 web</span>
+            )}
             {savedFolderId && <span className="text-xs text-green-400 bg-green-900/30 px-1.5 py-0.5 rounded">✓ saved</span>}
             {savedAsExchange && <span className="text-xs text-yellow-400 bg-yellow-900/30 px-1.5 py-0.5 rounded">★ saved</span>}
           </div>
