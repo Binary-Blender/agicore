@@ -292,10 +292,24 @@ export function generateInvokes(ast: AgiFile): string {
       const fnName = toCamelCase(compiler.name);
       const structName = compiler.name
         .split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+      const isExchange = compiler.extract.includes('prompt') && compiler.extract.includes('response');
+      const isFolder = compiler.extract.includes('content') && !compiler.extract.includes('prompt');
       if (compiler.ai && compiler.to === 'document') {
         lines.push(
           `export const ${fnName} = (messageIds: string[], model: string, title: string, outputPath: string) =>`,
           `  invoke<{id: string; title: string; filePath: string; content: string}>('${compiler.name}', { messageIds, model, title, outputPath });`,
+          '',
+        );
+      } else if (isExchange) {
+        lines.push(
+          `export const ${fnName} = (messageIds: string[], userId: string, rating?: number) =>`,
+          `  invoke<{count: number}>('${compiler.name}', { messageIds, userId, rating });`,
+          '',
+        );
+      } else if (isFolder) {
+        lines.push(
+          `export const ${fnName} = (messageIds: string[], folderId: string) =>`,
+          `  invoke<{count: number}>('${compiler.name}', { messageIds, folderId });`,
           '',
         );
       } else {

@@ -148,6 +148,8 @@ async fn compiler_call_ai(
 #[serde(rename_all = "camelCase")]
 pub struct CompileChatToExchangeInput {
     pub message_ids: serde_json::Value,
+    pub user_id: String,
+    pub rating: Option<i64>,
 }
 
 #[tauri::command]
@@ -155,8 +157,25 @@ pub async fn chat_to_exchange(
     input: CompileChatToExchangeInput,
     db: tauri::State<'_, DbPool>,
 ) -> Result<serde_json::Value, String> {
-    let _ = (input, db);
-    Err("chat_to_exchange: not yet implemented".to_string())
+    let ids: Vec<String> = serde_json::from_value(input.message_ids).map_err(|e| e.to_string())?;
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let mut count = 0i64;
+    for id in &ids {
+        let row: (String, String, String, String) = conn.query_row(
+            "SELECT user_message, ai_message, model, provider FROM chat_messages WHERE id = ?",
+            [id.as_str()],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+        ).map_err(|e| e.to_string())?;
+        let exchange_id = uuid::Uuid::new_v4().to_string();
+        let now = chrono::Utc::now().to_rfc3339();
+        let rating = input.rating.unwrap_or(0);
+        conn.execute(
+            "INSERT INTO exchanges (id, prompt, response, model, provider, rating, success, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            rusqlite::params![exchange_id, row.0, row.1, row.2, row.3, rating, 1i64, input.user_id, now, now],
+        ).map_err(|e| e.to_string())?;
+        count += 1;
+    }
+    Ok(serde_json::json!({ "count": count }))
 }
 
 // ── chat_to_folder ──
@@ -166,6 +185,7 @@ pub async fn chat_to_exchange(
 #[serde(rename_all = "camelCase")]
 pub struct CompileChatToFolderInput {
     pub message_ids: serde_json::Value,
+    pub folder_id: String,
 }
 
 #[tauri::command]
@@ -173,8 +193,24 @@ pub async fn chat_to_folder(
     input: CompileChatToFolderInput,
     db: tauri::State<'_, DbPool>,
 ) -> Result<serde_json::Value, String> {
-    let _ = (input, db);
-    Err("chat_to_folder: not yet implemented".to_string())
+    let ids: Vec<String> = serde_json::from_value(input.message_ids).map_err(|e| e.to_string())?;
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let mut count = 0i64;
+    for id in &ids {
+        let row: (String, i64) = conn.query_row(
+            "SELECT ai_message, ai_tokens FROM chat_messages WHERE id = ?",
+            [id.as_str()],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        ).map_err(|e| e.to_string())?;
+        let item_id = uuid::Uuid::new_v4().to_string();
+        let now = chrono::Utc::now().to_rfc3339();
+        conn.execute(
+            "INSERT INTO folder_items (id, content, tokens, item_type, folder_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            rusqlite::params![item_id, row.0, row.1, "ai-response", input.folder_id, now, now],
+        ).map_err(|e| e.to_string())?;
+        count += 1;
+    }
+    Ok(serde_json::json!({ "count": count }))
 }
 
 // ── chat_to_skilldoc ──

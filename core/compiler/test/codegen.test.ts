@@ -1242,6 +1242,7 @@ VIEW ItemSettings {
 `);
 const settingsContent = noAiChatFiles.get('src/components/ItemSettings.tsx')!;
 assert(settingsContent.includes('Custom view'), 'Non-chat custom views should still emit the stub placeholder');
+assert(settingsContent.includes('@agicore-protected'), 'Custom view stubs should carry the @agicore-protected header');
 
 // --- ROUTER emitter ---
 section('ROUTER emitter — router.rs broadcast_chat + council_chat');
@@ -1365,9 +1366,10 @@ section('COMPILER emitter — compiler.rs document file I/O + Send To transition
 
 const compilerSrc = `
 APP compiler_test {
-  TITLE "Compiler Test"
-  DB    compiler.db
-  THEME dark
+  TITLE   "Compiler Test"
+  DB      compiler.db
+  THEME   dark
+  CURRENT Session
 }
 AI_SERVICE {
   PROVIDERS   anthropic
@@ -1390,6 +1392,11 @@ ENTITY Session {
 ENTITY ChatMessage {
   user_message: string REQUIRED
   ai_message: string REQUIRED
+  user_tokens: number REQUIRED
+  ai_tokens: number REQUIRED
+  total_tokens: number REQUIRED
+  model: string REQUIRED
+  provider: string REQUIRED
   BELONGS_TO User
   BELONGS_TO Session
   TIMESTAMPS
@@ -1399,6 +1406,28 @@ ENTITY Document {
   file_path: string REQUIRED
   language: string = "markdown"
   TIMESTAMPS
+}
+ENTITY Exchange {
+  prompt: string REQUIRED
+  response: string REQUIRED
+  model: string REQUIRED
+  rating: number
+  BELONGS_TO User
+  TIMESTAMPS
+}
+ENTITY Folder {
+  name: string REQUIRED
+  BELONGS_TO User
+  TIMESTAMPS
+}
+ENTITY FolderItem {
+  content: string REQUIRED
+  tokens: number REQUIRED
+  BELONGS_TO Folder
+  TIMESTAMPS
+}
+VIEW ChatView {
+  LAYOUT   custom
 }
 COMPILER chat_to_skilldoc {
   DESCRIPTION  "Extract behavioral specifications from conversation"
@@ -1422,6 +1451,13 @@ COMPILER chat_to_exchange {
   TO           chat
   EXTRACT      prompt, response, model
   VALIDATE     true
+}
+COMPILER chat_to_folder {
+  DESCRIPTION  "Save chat content into a context folder"
+  FROM         chat
+  TO           chat
+  EXTRACT      content, topic
+  VALIDATE     false
 }
 `;
 const { files: compilerFiles } = compile(compilerSrc);
@@ -1455,9 +1491,33 @@ assert(compilerRs!.includes('FROM chat_messages WHERE id'), 'compiler.rs should 
 // Should use correct documents table name
 assert(compilerRs!.includes('INSERT INTO documents'), 'compiler.rs should insert into documents table');
 
-// Non-AI compiler (TO = chat, no AI prompt) → stub
-assert(compilerRs!.includes('pub async fn chat_to_exchange('), 'compiler.rs should have chat_to_exchange stub');
-assert(compilerRs!.includes('"chat_to_exchange: not yet implemented"'), 'non-AI compiler should emit stub error');
+// Exchange compiler (EXTRACT prompt+response, TO = chat) → real implementation saving to exchanges table
+// Exchange compiler (EXTRACT prompt+response) → real implementation
+assert(compilerRs!.includes('pub async fn chat_to_exchange('), 'compiler.rs should have chat_to_exchange command');
+assert(compilerRs!.includes('pub user_id: String'), 'chat_to_exchange input should have user_id field');
+assert(compilerRs!.includes('pub rating: Option<i64>'), 'chat_to_exchange input should have optional rating field');
+assert(compilerRs!.includes('INSERT INTO exchanges'), 'chat_to_exchange should insert into exchanges table');
+
+// Folder compiler (EXTRACT content) → real implementation
+assert(compilerRs!.includes('pub async fn chat_to_folder('), 'compiler.rs should have chat_to_folder command');
+assert(compilerRs!.includes('pub folder_id: String'), 'chat_to_folder input should have folder_id field');
+assert(compilerRs!.includes('INSERT INTO folder_items'), 'chat_to_folder should insert into folder_items table');
+
+// TypeScript API wrappers: exchange has (messageIds, userId, rating?) signature
+const compilerApiTs = compilerFiles.get('src/lib/api.ts');
+assert(compilerApiTs!.includes("chatToExchange = (messageIds: string[], userId: string, rating?: number)"), 'api.ts exchange wrapper should have userId + optional rating params');
+assert(compilerApiTs!.includes("chatToFolder = (messageIds: string[], folderId: string)"), 'api.ts folder wrapper should have folderId param');
+
+// Send To toolbar: ChatView should contain Compile → toolbar if doc compilers present
+const chatViewFile = compilerFiles.get('src/components/ChatView.tsx');
+assert(chatViewFile!.includes('Compile →'), 'ChatView should render Compile → toolbar for doc compilers');
+assert(chatViewFile!.includes('handleDocCompile'), 'ChatView should have handleDocCompile handler');
+assert(chatViewFile!.includes('activeDocCompiler'), 'ChatView should have activeDocCompiler state');
+
+// Exchange save in per-message menu
+assert(chatViewFile!.includes('handleSaveAsExchange'), 'ChatView ChatMessageItem should have handleSaveAsExchange handler');
+assert(chatViewFile!.includes('exchangeRating'), 'ChatView ChatMessageItem should have exchangeRating state');
+assert(chatViewFile!.includes('Save to Exchange Library'), 'ChatView should have exchange save button in menu');
 
 // main.rs should declare mod compiler and register commands
 const compilerMainRs = compilerFiles.get('src-tauri/src/main.rs');

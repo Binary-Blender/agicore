@@ -23,6 +23,29 @@ function findDocumentEntity(ast: AgiFile): EntityDecl | undefined {
   );
 }
 
+function findExchangeEntity(ast: AgiFile): EntityDecl | undefined {
+  return ast.entities.find(e =>
+    e.fields.some(f => f.name === 'prompt') &&
+    e.fields.some(f => f.name === 'response') &&
+    !e.fields.some(f => f.name === 'user_message'),
+  );
+}
+
+function findFolderItemEntity(ast: AgiFile): EntityDecl | undefined {
+  return ast.entities.find(e =>
+    e.fields.some(f => f.name === 'content') &&
+    e.relationships.some(r => r.target === 'Folder'),
+  );
+}
+
+function isExchangeCompiler(compiler: CompilerDecl): boolean {
+  return compiler.extract.includes('prompt') && compiler.extract.includes('response');
+}
+
+function isFolderCompiler(compiler: CompilerDecl): boolean {
+  return compiler.extract.includes('content') && !compiler.extract.includes('prompt');
+}
+
 // ── Document file I/O section ─────────────────────────────────────────────────
 
 function documentFileIo(): string[] {
@@ -278,7 +301,111 @@ function generateAiCompileCommand(
   return lines;
 }
 
-// ── Non-AI compile stub (exchange/folder extraction) ──────────────────────────
+// ── Exchange compile command ──────────────────────────────────────────────────
+
+function generateExchangeCompileCommand(
+  compiler: CompilerDecl,
+  chatTable: string,
+  exchangeTable: string,
+): string[] {
+  const fnName = toSnakeCase(compiler.name);
+  const structName = compiler.name
+    .split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+  const inputStruct = `Compile${structName}Input`;
+
+  return [
+    `// ── ${compiler.name} ──`,
+    `// ${compiler.description}`,
+    '',
+    '#[derive(Debug, Deserialize)]',
+    '#[serde(rename_all = "camelCase")]',
+    `pub struct ${inputStruct} {`,
+    '    pub message_ids: serde_json::Value,',
+    '    pub user_id: String,',
+    '    pub rating: Option<i64>,',
+    '}',
+    '',
+    '#[tauri::command]',
+    `pub async fn ${fnName}(`,
+    `    input: ${inputStruct},`,
+    `    db: tauri::State<'_, DbPool>,`,
+    `) -> Result<serde_json::Value, String> {`,
+    '    let ids: Vec<String> = serde_json::from_value(input.message_ids).map_err(|e| e.to_string())?;',
+    '    let conn = db.lock().map_err(|e| e.to_string())?;',
+    '    let mut count = 0i64;',
+    '    for id in &ids {',
+    '        let row: (String, String, String, String) = conn.query_row(',
+    `            "SELECT user_message, ai_message, model, provider FROM ${chatTable} WHERE id = ?",`,
+    '            [id.as_str()],',
+    '            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),',
+    '        ).map_err(|e| e.to_string())?;',
+    '        let exchange_id = uuid::Uuid::new_v4().to_string();',
+    '        let now = chrono::Utc::now().to_rfc3339();',
+    '        let rating = input.rating.unwrap_or(0);',
+    '        conn.execute(',
+    `            "INSERT INTO ${exchangeTable} (id, prompt, response, model, provider, rating, success, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",`,
+    '            rusqlite::params![exchange_id, row.0, row.1, row.2, row.3, rating, 1i64, input.user_id, now, now],',
+    '        ).map_err(|e| e.to_string())?;',
+    '        count += 1;',
+    '    }',
+    '    Ok(serde_json::json!({ "count": count }))',
+    '}',
+    '',
+  ];
+}
+
+// ── Folder compile command ────────────────────────────────────────────────────
+
+function generateFolderCompileCommand(
+  compiler: CompilerDecl,
+  chatTable: string,
+  folderItemTable: string,
+): string[] {
+  const fnName = toSnakeCase(compiler.name);
+  const structName = compiler.name
+    .split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+  const inputStruct = `Compile${structName}Input`;
+
+  return [
+    `// ── ${compiler.name} ──`,
+    `// ${compiler.description}`,
+    '',
+    '#[derive(Debug, Deserialize)]',
+    '#[serde(rename_all = "camelCase")]',
+    `pub struct ${inputStruct} {`,
+    '    pub message_ids: serde_json::Value,',
+    '    pub folder_id: String,',
+    '}',
+    '',
+    '#[tauri::command]',
+    `pub async fn ${fnName}(`,
+    `    input: ${inputStruct},`,
+    `    db: tauri::State<'_, DbPool>,`,
+    `) -> Result<serde_json::Value, String> {`,
+    '    let ids: Vec<String> = serde_json::from_value(input.message_ids).map_err(|e| e.to_string())?;',
+    '    let conn = db.lock().map_err(|e| e.to_string())?;',
+    '    let mut count = 0i64;',
+    '    for id in &ids {',
+    '        let row: (String, i64) = conn.query_row(',
+    `            "SELECT ai_message, ai_tokens FROM ${chatTable} WHERE id = ?",`,
+    '            [id.as_str()],',
+    '            |r| Ok((r.get(0)?, r.get(1)?)),',
+    '        ).map_err(|e| e.to_string())?;',
+    '        let item_id = uuid::Uuid::new_v4().to_string();',
+    '        let now = chrono::Utc::now().to_rfc3339();',
+    '        conn.execute(',
+    `            "INSERT INTO ${folderItemTable} (id, content, tokens, item_type, folder_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",`,
+    '            rusqlite::params![item_id, row.0, row.1, "ai-response", input.folder_id, now, now],',
+    '        ).map_err(|e| e.to_string())?;',
+    '        count += 1;',
+    '    }',
+    '    Ok(serde_json::json!({ "count": count }))',
+    '}',
+    '',
+  ];
+}
+
+// ── Non-AI compile stub (fallback for unrecognized patterns) ──────────────────
 
 function generateStubCompileCommand(compiler: CompilerDecl): string[] {
   const fnName = toSnakeCase(compiler.name);
@@ -319,8 +446,12 @@ export function generateCompiler(ast: AgiFile): Map<string, string> {
   const hasAiService = ast.aiService !== null && ast.aiService !== undefined;
   const chatEntity = findChatMessageEntity(ast);
   const docEntity = findDocumentEntity(ast);
+  const exchangeEntity = findExchangeEntity(ast);
+  const folderItemEntity = findFolderItemEntity(ast);
   const chatTable = chatEntity ? toTableName(chatEntity.name) : 'chat_messages';
   const docTable = docEntity ? toTableName(docEntity.name) : 'documents';
+  const exchangeTable = exchangeEntity ? toTableName(exchangeEntity.name) : 'exchanges';
+  const folderItemTable = folderItemEntity ? toTableName(folderItemEntity.name) : 'folder_items';
 
   const lines: string[] = [
     '// Agicore Generated — DO NOT EDIT BY HAND',
@@ -341,6 +472,10 @@ export function generateCompiler(ast: AgiFile): Map<string, string> {
     const isAiDoc = compiler.ai !== undefined && compiler.to === 'document';
     if (isAiDoc) {
       lines.push(...generateAiCompileCommand(compiler, chatTable, docTable, hasAiService));
+    } else if (isExchangeCompiler(compiler)) {
+      lines.push(...generateExchangeCompileCommand(compiler, chatTable, exchangeTable));
+    } else if (isFolderCompiler(compiler)) {
+      lines.push(...generateFolderCompileCommand(compiler, chatTable, folderItemTable));
     } else {
       lines.push(...generateStubCompileCommand(compiler));
     }

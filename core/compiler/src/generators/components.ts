@@ -592,7 +592,9 @@ ${fields.map((f, i) => i === 0
 }
 
 function generateCustomView(view: ViewDecl): string {
-  return `export function ${view.name}() {
+  return `// @agicore-protected — edit freely, this file will NOT be overwritten on regen.
+// Remove this line to let agicore regenerate it.
+export function ${view.name}() {
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4">${view.title ?? view.name}</h2>
@@ -961,6 +963,48 @@ function generateAiChatView(view: ViewDecl, msgEntity: EntityDecl, ast: AgiFile)
   const currentIdField = `current${parentEntityName}Id`;
   const loadAction = `load${msgType}sForCurrent${parentEntityName}`;
 
+  // ── Semantic Session Transitions (COMPILER blocks) ──────────────────────────
+  const docCompilers = ast.compilers.filter(c => c.ai !== undefined && c.to === 'document');
+  const exchangeCompilers = ast.compilers.filter(
+    c => c.extract.includes('prompt') && c.extract.includes('response'),
+  );
+
+  // State declarations for the main ChatView component
+  const docCompilerState = docCompilers.length > 0
+    ? `\n  const [activeDocCompiler, setActiveDocCompiler] = useState<string | null>(null);\n  const [compileTitle, setCompileTitle] = useState('');\n  const [compileStatus, setCompileStatus] = useState<string | null>(null);`
+    : '';
+
+  // Handler for doc compilers (session-level compile)
+  const docCompilerHandler = docCompilers.length > 0
+    ? `\n\n  async function handleDocCompile(compilerName: string) {\n    try {\n      const safeTitle = compileTitle || new Date().toLocaleDateString();\n      const msgIds = displayMessages.filter((m) => !m.isExcluded && !m.isArchived).map((m) => m.id);\n      const outputPath = safeTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.md';\n      await invoke(compilerName, { messageIds: msgIds, model: selectedModel, title: safeTitle, outputPath });\n      setCompileStatus('\\u2713 Document created');\n      setActiveDocCompiler(null);\n      setCompileTitle('');\n      setTimeout(() => setCompileStatus(null), 3000);\n    } catch (err) {\n      setCompileStatus('Error: ' + String(err));\n    }\n  }`
+    : '';
+
+  // Toolbar JSX inserted above MessageInput
+  const docCompilerToolbarJsx = docCompilers.length > 0
+    ? `\n      <div className="border-t border-slate-700/50">\n        <div className="flex items-center gap-2 px-4 py-1.5">\n          <span className="text-xs text-gray-500 flex-shrink-0">Compile →</span>\n          <div className="flex gap-1 flex-wrap">\n            ${docCompilers.map(c =>
+      `<button onClick={() => setActiveDocCompiler(activeDocCompiler === '${c.name}' ? null : '${c.name}')} className="text-xs text-blue-400 hover:text-blue-300 bg-slate-700/50 hover:bg-slate-700 px-2 py-0.5 rounded transition">${c.description}</button>`
+    ).join('\n            ')}\n          </div>\n          {compileStatus && <span className="text-xs text-green-400 ml-auto flex-shrink-0">{compileStatus}</span>}\n        </div>\n        {activeDocCompiler && (\n          <div className="flex items-center gap-2 px-4 pb-2">\n            <input type="text" placeholder="Document title..." value={compileTitle} onChange={(e) => setCompileTitle(e.target.value)} className="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500" />\n            <button onClick={() => handleDocCompile(activeDocCompiler)} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition">Generate</button>\n            <button onClick={() => { setActiveDocCompiler(null); setCompileStatus(null); }} className="text-xs text-gray-500 hover:text-white px-2 py-1 rounded transition">Cancel</button>\n          </div>\n        )}\n      </div>`
+    : '';
+
+  // Per-message state for exchange compilers (in ChatMessageItem)
+  const exchangeState = exchangeCompilers.length > 0
+    ? `\n  const [showExchangePicker, setShowExchangePicker] = useState(false);\n  const [exchangeRating, setExchangeRating] = useState(3);\n  const [savedAsExchange, setSavedAsExchange] = useState(false);`
+    : '';
+
+  const exchangeHandler = exchangeCompilers.length > 0
+    ? `\n  async function handleSaveAsExchange() {\n    try {\n      await invoke('${exchangeCompilers[0].name}', { messageIds: [message.id], userId: 'default-user', rating: exchangeRating });\n      setSavedAsExchange(true); setShowExchangePicker(false); setMenuOpen(false);\n      setTimeout(() => setSavedAsExchange(false), 2000);\n    } catch (err) { console.error('Save as exchange failed:', err); }\n  }`
+    : '';
+
+  // Menu item JSX for exchange save (in the per-message context menu)
+  const exchangeMenuJsx = exchangeCompilers.length > 0
+    ? `\n                <hr className="border-slate-600 my-1" />\n                <button onClick={() => setShowExchangePicker(!showExchangePicker)} className="w-full text-left px-3 py-1.5 text-sm hover:bg-slate-600 transition flex items-center justify-between">\n                  <span>★ Save as Exchange</span><span className="text-gray-400 text-xs">{showExchangePicker ? '\\u25b2' : '\\u25b6'}</span>\n                </button>\n                {showExchangePicker && (\n                  <div className="bg-slate-800 border-t border-slate-600 px-3 py-2">\n                    <div className="flex items-center gap-1 mb-2">\n                      {[1,2,3,4,5].map((n) => (\n                        <button key={n} onClick={() => setExchangeRating(n)} className={n <= exchangeRating ? 'text-yellow-400 text-base' : 'text-gray-600 text-base'}>★</button>\n                      ))}\n                      <span className="text-xs text-gray-500 ml-1">Rating</span>\n                    </div>\n                    <button onClick={handleSaveAsExchange} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition w-full">Save to Exchange Library</button>\n                  </div>\n                )}`
+    : '';
+
+  // Status badge for exchange in message footer
+  const exchangeStatusJsx = exchangeCompilers.length > 0
+    ? `\n            {savedAsExchange && <span className="text-xs text-yellow-400 bg-yellow-900/30 px-1.5 py-0.5 rounded">★ saved</span>}`
+    : '';
+
   return `import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppStore } from '../store/appStore';
 import { MarkdownRenderer } from './MarkdownRenderer';
@@ -987,7 +1031,7 @@ export function ${view.name}() {
   const [showSearch, setShowSearch] = useState(false);
   const [selectedFolderItems] = useState<string[]>([]);
   const [folderItemsMap] = useState<Record<string, any>>({});
-  const selectedModel = useAppStore((s) => s.selectedModel);
+  const selectedModel = useAppStore((s) => s.selectedModel);${docCompilerState}
 
   useEffect(() => { ${loadAction}(); }, [${currentIdField}, ${loadAction}]);
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [${msgPlural}, streamingContent, ${currentIdField}]);
@@ -1038,7 +1082,7 @@ export function ${view.name}() {
       setStreamingContent(\`Error: \${err}\`);
       setTimeout(() => setStreamingContent(null), 5000);
     } finally { unlisten(); }
-  }, [${loadAction}, ${msgPlural}, selectedModel, ${currentIdField}]);
+  }, [${loadAction}, ${msgPlural}, selectedModel, ${currentIdField}]);${docCompilerHandler}
 
   return (
     <div className="flex flex-col h-full">
@@ -1074,7 +1118,7 @@ export function ${view.name}() {
         )}
         <div ref={messagesEndRef} />
       </div>
-      <ContextBar selectedFolderItems={selectedFolderItems} folderItemsMap={folderItemsMap} onRemove={() => {}} />
+      <ContextBar selectedFolderItems={selectedFolderItems} folderItemsMap={folderItemsMap} onRemove={() => {}} />${docCompilerToolbarJsx}
       <MessageInput onSend={handleSend} />
     </div>
   );
@@ -1090,7 +1134,7 @@ function ${msgType}Item({ message, folders, tags: _tags, sessions, onRefresh }: 
   const [showTagPicker, setShowTagPicker] = useState(false);
   const [showMovePicker, setShowMovePicker] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [savedFolderId, setSavedFolderId] = useState<string | null>(null);
+  const [savedFolderId, setSavedFolderId] = useState<string | null>(null);${exchangeState}
 
   const ts = new Date(message.createdAt);
   const timeStr = ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1121,7 +1165,7 @@ function ${msgType}Item({ message, folders, tags: _tags, sessions, onRefresh }: 
   async function handleMoveToSession(targetSessionId: string) {
     await invoke('update_${msgSnake}', { id: message.id, input: { sessionId: targetSessionId } });
     await onRefresh(); setShowMovePicker(false); setMenuOpen(false);
-  }
+  }${exchangeHandler}
 
   return (
     <>
@@ -1190,6 +1234,7 @@ function ${msgType}Item({ message, folders, tags: _tags, sessions, onRefresh }: 
                     )}
                   </>
                 )}
+                ${exchangeMenuJsx}
                 <hr className="border-slate-600 my-1" />
                 <button onClick={() => { setConfirmDelete(true); setMenuOpen(false); }} className="w-full text-left px-3 py-1.5 text-sm text-red-400 hover:bg-slate-600 transition">Delete</button>
               </div>
@@ -1213,7 +1258,7 @@ function ${msgType}Item({ message, folders, tags: _tags, sessions, onRefresh }: 
             {message.isPruned && <span className="text-xs text-orange-400 bg-orange-900/30 px-1.5 py-0.5 rounded">pruned</span>}
             {message.isExcluded && <span className="text-xs text-red-400 bg-red-900/30 px-1.5 py-0.5 rounded">excluded</span>}
             {message.isArchived && <span className="text-xs text-gray-500 bg-slate-700/50 px-1.5 py-0.5 rounded">archived</span>}
-            {savedFolderId && <span className="text-xs text-green-400 bg-green-900/30 px-1.5 py-0.5 rounded">✓ saved</span>}
+            {savedFolderId && <span className="text-xs text-green-400 bg-green-900/30 px-1.5 py-0.5 rounded">✓ saved</span>}${exchangeStatusJsx}
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+// @agicore-protected — edit freely, this file will NOT be overwritten on regen.
+// Remove this line to let agicore regenerate it.
 export function TerminalView() {
   return (
     <div className="p-6">

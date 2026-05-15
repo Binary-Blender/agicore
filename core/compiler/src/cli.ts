@@ -2,7 +2,7 @@
 
 // Agicore CLI - Generate Tauri applications from .agi files
 
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { resolve, dirname, basename } from 'path';
 import { compile } from './index.js';
 
@@ -33,14 +33,23 @@ function cmdGenerate(inputFile: string, outputDir?: string): void {
   const outDir = outputDir ?? resolve(process.cwd(), ast.app.name);
 
   let count = 0;
+  let skipped = 0;
   for (const [relPath, content] of files) {
     const fullPath = resolve(outDir, relPath);
+    if (existsSync(fullPath)) {
+      const firstLine = readFileSync(fullPath, 'utf-8').split('\n')[0] ?? '';
+      if (firstLine.includes('@agicore-protected')) {
+        skipped++;
+        continue;
+      }
+    }
     mkdirSync(dirname(fullPath), { recursive: true });
     writeFileSync(fullPath, content, 'utf-8');
     count++;
   }
 
   console.log(`Agicore: Generated ${count} files in ${outDir}`);
+  if (skipped > 0) console.log(`  Skipped:    ${skipped} protected files (remove // @agicore-protected to force regen)`);
   console.log(`  App:        ${ast.app.title}`);
   console.log(`  Entities:   ${ast.entities.length}`);
   console.log(`  Actions:    ${ast.actions.length}`);

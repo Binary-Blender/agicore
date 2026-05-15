@@ -320,11 +320,11 @@ export const scanDocumentsDir = (dir: string) =>
   invoke<ScannedDocument[]>('scan_documents_dir', { dir });
 
 // --- Send To (Semantic Compilers) ---
-export const chatToExchange = (messageIds: string[]) =>
-  invoke<unknown>('chat_to_exchange', { messageIds });
+export const chatToExchange = (messageIds: string[], userId: string, rating?: number) =>
+  invoke<{count: number}>('chat_to_exchange', { messageIds, userId, rating });
 
-export const chatToFolder = (messageIds: string[]) =>
-  invoke<unknown>('chat_to_folder', { messageIds });
+export const chatToFolder = (messageIds: string[], folderId: string) =>
+  invoke<{count: number}>('chat_to_folder', { messageIds, folderId });
 
 export const chatToSkilldoc = (messageIds: string[], model: string, title: string, outputPath: string) =>
   invoke<{id: string; title: string; filePath: string; content: string}>('chat_to_skilldoc', { messageIds, model, title, outputPath });
