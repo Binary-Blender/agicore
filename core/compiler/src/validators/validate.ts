@@ -129,6 +129,84 @@ export function validate(ast: AgiFile): ValidationResult[] {
     }
   }
 
+  // 13. AI_SERVICE model entries — each model's provider must be in PROVIDERS
+  if (ast.aiService) {
+    const providerSet = new Set(ast.aiService.providers);
+    for (const model of ast.aiService.models) {
+      if (!providerSet.has(model.provider)) {
+        results.push({
+          severity: 'error',
+          message: `AI_SERVICE: model '${model.id}' declares provider '${model.provider}' which is not listed in PROVIDERS`,
+          node: 'ai_service',
+          span: ast.aiService.span,
+        });
+      }
+    }
+  }
+
+  // 14. WORKFLOW step.action must reference a declared ACTION
+  const actionNames = new Set(ast.actions.map((a) => a.name));
+  for (const workflow of ast.workflows) {
+    for (const step of workflow.steps) {
+      if (step.action && !actionNames.has(step.action)) {
+        results.push({
+          severity: 'error',
+          message: `Workflow '${workflow.name}': step '${step.name}' references undeclared action '${step.action}'`,
+          node: `workflow:${workflow.name}`,
+          span: step.span,
+        });
+      }
+    }
+  }
+
+  // 15. TRIGGER fires.target must reference a declared declaration of the right kind
+  const workflowNames = new Set(ast.workflows.map((w) => w.name));
+  const reasonerNames = new Set(ast.reasoners.map((r) => r.name));
+  const pipelineNames = new Set(ast.pipelines.map((p) => p.name));
+  const compilerNames = new Set(ast.compilers.map((c) => c.name));
+  const sessionNames  = new Set(ast.sessions.map((s) => s.name));
+
+  const triggerTargetSets: Record<string, Set<string>> = {
+    workflow: workflowNames,
+    reasoner: reasonerNames,
+    pipeline: pipelineNames,
+    compiler: compilerNames,
+    session:  sessionNames,
+  };
+
+  for (const trigger of ast.triggers) {
+    const targetSet = triggerTargetSets[trigger.fires.kind];
+    if (targetSet && !targetSet.has(trigger.fires.target)) {
+      results.push({
+        severity: 'error',
+        message: `Trigger '${trigger.name}': fires ${trigger.fires.kind} '${trigger.fires.target}' which is not declared`,
+        node: `trigger:${trigger.name}`,
+        span: trigger.span,
+      });
+    }
+  }
+
+  // 16. HAS_MANY ↔ BELONGS_TO symmetry (warning)
+  // If A HAS_MANY B, B should declare BELONGS_TO A
+  for (const entity of ast.entities) {
+    for (const rel of entity.relationships) {
+      if (rel.type !== 'HAS_MANY') continue;
+      const target = ast.entities.find((e) => e.name === rel.target);
+      if (!target) continue; // already reported in check 5/6
+      const hasReciprocal = target.relationships.some(
+        (r) => r.type === 'BELONGS_TO' && r.target === entity.name,
+      );
+      if (!hasReciprocal) {
+        results.push({
+          severity: 'warning',
+          message: `Entity '${entity.name}' HAS_MANY '${rel.target}', but '${rel.target}' does not declare BELONGS_TO '${entity.name}'`,
+          node: `entity:${entity.name}`,
+          span: rel.span,
+        });
+      }
+    }
+  }
+
   return results;
 }
 

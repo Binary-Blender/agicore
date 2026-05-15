@@ -353,6 +353,162 @@ AI_SERVICE {
   assert(!hasError(results, 'DEFAULT provider'), 'Valid DEFAULT provider should produce no error');
 }
 
+// ─── AI_SERVICE model provider consistency ────────────────────────────────────
+
+section('AI_SERVICE model with unknown provider emits error');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+AI_SERVICE {
+  PROVIDERS openai
+  DEFAULT openai
+  KEYS_FILE ".env"
+  MODELS {
+    openai "gpt-4o"
+    ghost_provider "ghost-model"
+  }
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasError(results, "model 'ghost-model' declares provider 'ghost_provider'"), 'Should error when model provider not in PROVIDERS');
+}
+
+section('AI_SERVICE all models have valid providers is OK');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+AI_SERVICE {
+  PROVIDERS openai, anthropic
+  DEFAULT anthropic
+  KEYS_FILE ".env"
+  MODELS {
+    openai "gpt-4o"
+    anthropic "claude-opus-4-5" DEFAULT
+  }
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasError(results, "declares provider"), 'All valid model providers should produce no error');
+}
+
+// ─── WORKFLOW step action references ─────────────────────────────────────────
+
+section('WORKFLOW step referencing undeclared action emits error');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+WORKFLOW OnboardUser {
+  STEP welcome {
+    ACTION ghost_action
+  }
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasError(results, "step 'welcome' references undeclared action 'ghost_action'"), 'Should error when workflow step references undeclared action');
+}
+
+section('WORKFLOW step referencing declared action is OK');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+ACTION SendWelcome {
+  INPUT  userId: string
+  OUTPUT sent: boolean
+}
+WORKFLOW OnboardUser {
+  STEP welcome {
+    ACTION SendWelcome
+  }
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasError(results, 'undeclared action'), 'Valid workflow step action should produce no error');
+}
+
+// ─── TRIGGER fires target references ─────────────────────────────────────────
+
+section('TRIGGER firing undeclared workflow emits error');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+TRIGGER DailySync {
+  WHEN { CHANNEL some_channel }
+  FIRES WORKFLOW GhostWorkflow
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasError(results, "fires workflow 'GhostWorkflow' which is not declared"), 'Should error when trigger fires undeclared workflow');
+}
+
+section('TRIGGER firing declared workflow is OK');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+ACTION DoNothing {
+  INPUT  noop: string
+  OUTPUT result: string
+}
+WORKFLOW DoSync {
+  STEP run {
+    ACTION DoNothing
+  }
+}
+TRIGGER DailySync {
+  WHEN { CHANNEL some_channel }
+  FIRES WORKFLOW DoSync
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasError(results, "which is not declared"), 'Valid trigger target should produce no error');
+}
+
+// ─── HAS_MANY ↔ BELONGS_TO symmetry ─────────────────────────────────────────
+
+section('HAS_MANY without reciprocal BELONGS_TO emits warning');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+ENTITY Project {
+  name: string
+  HAS_MANY Task
+  TIMESTAMPS
+}
+ENTITY Task {
+  title: string
+  TIMESTAMPS
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasWarning(results, "HAS_MANY 'Task', but 'Task' does not declare BELONGS_TO 'Project'"), 'Should warn when HAS_MANY lacks reciprocal BELONGS_TO');
+}
+
+section('HAS_MANY with reciprocal BELONGS_TO produces no warning');
+{
+  const src = `
+APP MyApp { TITLE "T" DB t.db }
+ENTITY Project {
+  name: string
+  HAS_MANY Task
+  TIMESTAMPS
+}
+ENTITY Task {
+  title: string
+  BELONGS_TO Project
+  TIMESTAMPS
+}
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasWarning(results, "BELONGS_TO"), 'Symmetric HAS_MANY / BELONGS_TO should produce no warning');
+}
+
 // ─── Results ──────────────────────────────────────────────────────────────────
 
 console.log(`\n=== Validator Tests: ${passed} passed, ${failed} failed ===\n`);

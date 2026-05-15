@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "node --import tsx test/codegen.test.ts",
+    "test": "node --import tsx test/codegen.test.ts && node --import tsx test/validator.test.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
