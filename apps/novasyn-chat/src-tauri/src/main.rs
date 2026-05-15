@@ -37,7 +37,7 @@ fn main() {
             TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
                 .menu(&menu)
-                .menu_on_left_click(false)
+                .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => {
                         if let Some(w) = app.get_webview_window("main") {
@@ -167,8 +167,8 @@ fn main() {
             vault::vault_tag_asset,
             vault::vault_record_provenance,
             vault::vault_get_provenance,
-            commands::workspace::get_db_path,
-            commands::workspace::switch_db,
+            commands::workspaces::get_db_path,
+            commands::workspaces::switch_db,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

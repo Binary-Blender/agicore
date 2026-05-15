@@ -336,10 +336,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const hasActions = ast.actions.some(a => a.name !== 'send_chat' && !routerOwnedNames.has(a.name));
   if (hasActions) modLines.push('pub mod actions;');
   const hasWorkspaces = ast.app.workspaces === true;
-  if (hasWorkspaces) modLines.push('pub mod workspace;');
+  if (hasWorkspaces) modLines.push('pub mod workspaces;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
-  // Emit commands/workspace.rs when WORKSPACES declared
+  // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
   if (hasWorkspaces) {
     const workspaceRs = [
       '// Agicore Generated — DO NOT EDIT BY HAND',
@@ -374,7 +374,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       '}',
       '',
     ].join('\n');
-    files.set('src-tauri/src/commands/workspace.rs', workspaceRs);
+    files.set('src-tauri/src/commands/workspaces.rs', workspaceRs);
   }
 
   // Generate main.rs
@@ -428,7 +428,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
 
   // WORKSPACE commands
   const workspaceCmds = hasWorkspaces
-    ? ['commands::workspace::get_db_path', 'commands::workspace::switch_db']
+    ? ['commands::workspaces::get_db_path', 'commands::workspaces::switch_db']
     : [];
 
   const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds];
@@ -500,7 +500,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       '            TrayIconBuilder::new()',
       '                .icon(app.default_window_icon().unwrap().clone())',
       '                .menu(&menu)',
-      '                .menu_on_left_click(false)',
+      '                .show_menu_on_left_click(false)',
       '                .on_menu_event(|app, event| match event.id.as_ref() {',
       '                    "show" => {',
       '                        if let Some(w) = app.get_webview_window("main") {',
