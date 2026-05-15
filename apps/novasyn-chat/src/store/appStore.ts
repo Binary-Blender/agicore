@@ -161,7 +161,7 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  currentView: 'Dashboard',
+  currentView: 'ChatView',
   setCurrentView: (view) => set({ currentView: view }),
 
   selectedModel: 'claude-sonnet-4-20250514',

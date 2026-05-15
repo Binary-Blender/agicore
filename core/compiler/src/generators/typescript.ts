@@ -449,7 +449,8 @@ export function generateStore(ast: AgiFile): string {
 
   // Build the store
   lines.push('export const useAppStore = create<AppState>((set, get) => ({');
-  lines.push("  currentView: 'Dashboard',");
+  const firstView = ast.views[0]?.name ?? 'Dashboard';
+  lines.push(`  currentView: '${firstView}',`);
   lines.push("  setCurrentView: (view) => set({ currentView: view }),");
   lines.push('');
 
