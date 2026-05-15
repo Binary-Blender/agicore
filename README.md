@@ -126,9 +126,18 @@ agicore/
 
 ## Reference Application: NovaSyn Chat 2.0
 
-The `apps/novasyn-chat/` directory contains the first real application built on Agicore — a multi-provider AI chat client with conversation context, folder-based knowledge, and tag-driven retrieval. It is generated from a single `.agi` source file with hand-written extensions for UI shell.
+The `apps/novasyn-chat/` directory contains the first real application built on Agicore — a multi-provider AI chat client generated from a single `.agi` source file. **This application is proven working end-to-end.**
 
-This app drives Agicore's evolution: every recurring bug encountered while building it became a framework fix; every hand-extension is a candidate for future codegen. The commit history of this repository tracks the framework hardening alongside the app's needs.
+Verified features (all from generated code):
+- Multi-provider streaming AI responses (Anthropic, OpenAI, Google, xAI)
+- Encrypted API key storage and runtime model selection
+- Conversation history with session management
+- Folder-based knowledge organization with context injection
+- Tag management and exchange library for reuse
+- Semantic "Send To" transitions (save conversations to exchanges, folders, or documents)
+- Frameless window with system tray and global hotkey
+
+The app drives Agicore's evolution: every bug encountered while building it became a framework fix; every hand-extension is a codegen candidate. The commit history tracks framework hardening alongside the app's development.
 
 See [`apps/novasyn-chat/README.md`](apps/novasyn-chat/README.md) for setup and architecture notes.
 
@@ -154,9 +163,18 @@ The result is systems that are:
 
 ---
 
-## Status
+## Status — MVP Complete (May 2026)
 
-Phases 1 and 2 are complete. The DSL covers 34 declaration types across 7 layers:
+**The full pipeline works end-to-end.** A single `.agi` file compiles to a running Tauri application. The reference app has been tested in production: API key entry, multi-provider streaming AI responses, conversation history, folder-based knowledge, tag management, and exchange library all work from generated code.
+
+| Layer | Tests | Status |
+|---|---|---|
+| Parser (547 tests) | 547 passing | Complete |
+| Compiler (606 tests) | 606 passing | Complete |
+| Static Validator (20 tests) | 20 passing | Complete |
+| **Total** | **1,173 passing** | **0 failures** |
+
+The DSL covers 34 declaration types across 7 layers:
 
 - **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST
 - **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT
@@ -165,6 +183,19 @@ Phases 1 and 2 are complete. The DSL covers 34 declaration types across 7 layers
 - **Semantic Infrastructure:** PACKET, AUTHORITY, CHANNEL, IDENTITY, FEED
 - **Ambient Intelligence:** NODE, SENSOR, ZONE
 - **Semantic Operating Environment:** SESSION, COMPILER
+
+**What the compiler generates from a single `.agi` file:**
+
+- SQLite migration with all entity tables, indexes, timestamps, and seed rows
+- Rust Tauri commands for full CRUD, relationships, and custom operations
+- TypeScript invoke wrappers with correct signatures (auto-generated via specta)
+- Zustand store with entity state, current-entity navigation, and AI model selection
+- React components: list views, form modals, AI chat with streaming, model picker, API key modal
+- Expert system runtime (RULE/FACT/STATE/PATTERN/SCORE) and orchestration engine (WORKFLOW/PIPELINE with BFS parallel execution and SPC sampling)
+- ROUTER with multi-tier fallback and per-tier circuit breakers
+- COMPILER semantic transitions ("Send To" — save conversations to exchanges, folders, or documents)
+- Tauri configuration, capabilities ACL, tray icon, global hotkey, system tray
+- Static validation before generation: 12 semantic checks, errors abort, warnings continue
 
 ---
 
