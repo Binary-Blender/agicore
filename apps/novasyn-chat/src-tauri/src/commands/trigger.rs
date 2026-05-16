@@ -7,6 +7,7 @@ use tauri::{AppHandle, Emitter, State};
 use crate::ai_service::ApiKeyStore;
 use crate::db::DbPool;
 use super::channel::{mark_processed_internal, publish_message_internal};
+use super::semantic_memory::store_insight;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -278,6 +279,10 @@ async fn check_and_fire(
                                     &output[..output.len().min(500)],
                                     Some(86400),
                                 );
+                                // Store insight in shared semantic memory
+                                let mem_key = format!("{}:latest", target);
+                                let mem_val = if output.len() > 1000 { format!("{}…", &output[..1000]) } else { output.clone() };
+                                store_insight(&db_clone, "insights", &mem_key, &mem_val, &format!("reasoner:{}", target));
                                 eprintln!("[Trigger→Reasoner] {} completed ({} records)", target, records);
                             }
                             Err(err) => {

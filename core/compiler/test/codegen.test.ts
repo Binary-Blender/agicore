@@ -2715,6 +2715,141 @@ AUTHORITY OpenCommunity {
   assert(!files.has('migrations/authority.sql'), 'Should NOT emit authority migration when no AUTHORITY declared');
 }
 
+// --- SEMANTIC MEMORY emitter ---
+section('SEMANTIC MEMORY emitter — semantic_memory.rs + migration + MemoryView stub');
+
+// Semantic memory emits when reasoners, sessions, or modules are present
+const semanticMemReasonerSrc = `
+APP smart_app { TITLE "Smart App" DB sqlite }
+
+ENTITY Conversation { title: string REQUIRED TIMESTAMPS }
+
+PACKET InsightRequest {
+  DESCRIPTION "Insight request"
+  PAYLOAD { topic: string REQUIRED }
+}
+
+CHANNEL insight_requests {
+  DESCRIPTION  "Insight request queue"
+  ORDERING     fifo
+  PACKET       InsightRequest
+}
+
+CHANNEL insights_ready {
+  DESCRIPTION  "Ready insights"
+  ORDERING     fifo
+  PACKET       InsightRequest
+}
+
+REASONER insight_finder {
+  DESCRIPTION  "Extract key insights from conversations"
+  SCHEDULE     daily
+  INPUT { CHANNEL insight_requests WINDOW "24h" }
+  OUTPUT { CHANNEL insights_ready }
+}
+
+TRIGGER on_insight_request {
+  DESCRIPTION  "Fire insight_finder when requests arrive"
+  WHEN { CHANNEL insight_requests }
+  FIRES        REASONER insight_finder
+  DEBOUNCE     "5m"
+}
+`;
+
+{
+  const { files } = compile(semanticMemReasonerSrc);
+
+  // semantic_memory.rs emitted because reasoners present
+  assert(files.has('src-tauri/src/commands/semantic_memory.rs'), 'Should emit semantic_memory.rs when reasoners declared');
+  const rs = files.get('src-tauri/src/commands/semantic_memory.rs') ?? '';
+  assert(rs.includes('pub fn mem_store'), 'semantic_memory.rs should export mem_store');
+  assert(rs.includes('pub fn mem_recall'), 'semantic_memory.rs should export mem_recall');
+  assert(rs.includes('pub fn mem_search'), 'semantic_memory.rs should export mem_search');
+  assert(rs.includes('pub fn mem_list'), 'semantic_memory.rs should export mem_list');
+  assert(rs.includes('pub fn mem_forget'), 'semantic_memory.rs should export mem_forget');
+  assert(rs.includes('pub fn mem_prune'), 'semantic_memory.rs should export mem_prune');
+  assert(rs.includes('pub fn mem_stats'), 'semantic_memory.rs should export mem_stats');
+  assert(rs.includes('pub fn mem_namespaces'), 'semantic_memory.rs should export mem_namespaces');
+  assert(rs.includes('pub fn store_insight'), 'semantic_memory.rs should export store_insight helper');
+  assert(rs.includes('ON CONFLICT(namespace, key) DO UPDATE'), 'semantic_memory.rs should use upsert on namespace+key');
+  assert(rs.includes('confidence'), 'semantic_memory.rs should handle confidence scoring');
+  assert(rs.includes('expires_at'), 'semantic_memory.rs should handle TTL/expiry');
+  assert(rs.includes('access_count'), 'semantic_memory.rs should track access count');
+  assert(rs.includes('ON CONFLICT(namespace, key) DO UPDATE'), 'store_insight should upsert');
+
+  // trigger.rs should import store_insight and call it after reasoner completion
+  const triggerRs = files.get('src-tauri/src/commands/trigger.rs') ?? '';
+  assert(triggerRs.includes('store_insight'), 'trigger.rs should call store_insight after reasoner fires');
+  assert(triggerRs.includes('semantic_memory'), 'trigger.rs should import from semantic_memory');
+  assert(triggerRs.includes('insights'), 'trigger.rs should write to insights namespace');
+
+  // migration SQL
+  assert(files.has('migrations/semantic_memory.sql'), 'Should emit semantic_memory migration');
+  const sql = files.get('migrations/semantic_memory.sql') ?? '';
+  assert(sql.includes('semantic_memory'), 'Migration should create semantic_memory table');
+  assert(sql.includes('UNIQUE(namespace, key)'), 'Migration should have unique constraint');
+  assert(sql.includes('idx_semantic_memory_conf'), 'Migration should have confidence index');
+  assert(sql.includes('idx_semantic_memory_expires'), 'Migration should have expires index');
+
+  // React stub
+  assert(files.has('src/components/MemoryView.tsx'), 'Should emit MemoryView stub');
+  const tsx = files.get('src/components/MemoryView.tsx') ?? '';
+  assert(tsx.includes('@agicore-protected'), 'MemoryView should be @agicore-protected');
+  assert(tsx.includes('mem_namespaces'), 'MemoryView should call mem_namespaces');
+  assert(tsx.includes('mem_search'), 'MemoryView should call mem_search');
+  assert(tsx.includes('mem_stats'), 'MemoryView should call mem_stats');
+
+  // mod.rs includes semantic_memory module
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod semantic_memory;'), 'mod.rs should declare semantic_memory module');
+
+  // main.rs registers all 8 memory commands
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('mem_store'), 'main.rs should register mem_store');
+  assert(mainRs.includes('mem_recall'), 'main.rs should register mem_recall');
+  assert(mainRs.includes('mem_search'), 'main.rs should register mem_search');
+  assert(mainRs.includes('mem_prune'), 'main.rs should register mem_prune');
+  assert(mainRs.includes('mem_stats'), 'main.rs should register mem_stats');
+  assert(mainRs.includes('mem_namespaces'), 'main.rs should register mem_namespaces');
+}
+
+// Semantic memory also emits when sessions declared
+{
+  const src = `
+APP session_app { TITLE "Session App" DB sqlite }
+SESSION brainstorm {
+  DESCRIPTION "Open-ended ideation"
+  TOOLS       chat, search
+  CONTEXT     conversation
+  MEMORY      session
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src-tauri/src/commands/semantic_memory.rs'), 'Should emit semantic_memory.rs when sessions declared');
+}
+
+// Semantic memory also emits when modules declared
+{
+  const src = `
+APP module_app { TITLE "Module App" DB sqlite }
+MODULE InsightHelper {
+  DESCRIPTION "Enhances insight quality"
+  ACTIVATE_WHEN insight_score >= 5
+  PATTERN basic { MATCH "/.*/" RESPOND "Enhanced." PRIORITY 10 }
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src-tauri/src/commands/semantic_memory.rs'), 'Should emit semantic_memory.rs when modules declared');
+}
+
+// No reasoners/sessions/modules → no semantic memory
+{
+  const src = `APP minimal { TITLE "Minimal" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/semantic_memory.rs'), 'Should NOT emit semantic_memory.rs for minimal app');
+  assert(!files.has('migrations/semantic_memory.sql'), 'Should NOT emit semantic_memory migration for minimal app');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

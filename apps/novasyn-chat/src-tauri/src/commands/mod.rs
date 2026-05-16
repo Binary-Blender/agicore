@@ -23,3 +23,4 @@ pub mod feed;
 pub mod session_mode;
 pub mod module_engine;
 pub mod authority;
+pub mod semantic_memory;

@@ -26,6 +26,7 @@ import { generateFeed } from './generators/feed.js';
 import { generateSession } from './generators/session.js';
 import { generateModule } from './generators/module.js';
 import { generateAuthority } from './generators/authority.js';
+import { generateSemanticMemory } from './generators/semantic-memory.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -72,6 +73,7 @@ export function compile(source: string): CompileResult {
     generateSession(ast),
     generateModule(ast),
     generateAuthority(ast),
+    generateSemanticMemory(ast),
   ];
 
   for (const gen of generators) {
@@ -110,3 +112,4 @@ export { generateFeed } from './generators/feed.js';
 export { generateSession } from './generators/session.js';
 export { generateModule } from './generators/module.js';
 export { generateAuthority } from './generators/authority.js';
+export { generateSemanticMemory } from './generators/semantic-memory.js';

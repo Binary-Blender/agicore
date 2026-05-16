@@ -225,6 +225,14 @@ fn main() {
             commands::authority::list_trust_claims,
             commands::authority::revoke_trust_claim,
             commands::authority::check_admissibility,
+            commands::semantic_memory::mem_store,
+            commands::semantic_memory::mem_recall,
+            commands::semantic_memory::mem_search,
+            commands::semantic_memory::mem_list,
+            commands::semantic_memory::mem_forget,
+            commands::semantic_memory::mem_prune,
+            commands::semantic_memory::mem_stats,
+            commands::semantic_memory::mem_namespaces,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

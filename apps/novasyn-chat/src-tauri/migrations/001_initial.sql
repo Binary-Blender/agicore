@@ -319,6 +319,26 @@ CREATE TABLE IF NOT EXISTS module_facts (
   updated_at TEXT DEFAULT (datetime('now'))
 );
 
+-- SEMANTIC MEMORY: cross-session persistent intelligence store
+CREATE TABLE IF NOT EXISTS semantic_memory (
+  id TEXT PRIMARY KEY,
+  namespace TEXT NOT NULL,
+  key TEXT NOT NULL,
+  value TEXT NOT NULL,
+  tags TEXT NOT NULL DEFAULT '',
+  confidence REAL NOT NULL DEFAULT 1.0,
+  source TEXT NOT NULL DEFAULT 'user',
+  ttl_hours INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now')),
+  accessed_at TEXT DEFAULT (datetime('now')),
+  access_count INTEGER NOT NULL DEFAULT 0,
+  expires_at TEXT,
+  UNIQUE(namespace, key)
+);
+CREATE INDEX IF NOT EXISTS idx_semantic_memory_ns ON semantic_memory(namespace, accessed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_semantic_memory_conf ON semantic_memory(confidence DESC, accessed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_semantic_memory_expires ON semantic_memory(expires_at) WHERE expires_at IS NOT NULL;
+
 -- AUTHORITY: trust governance claims
 CREATE TABLE IF NOT EXISTS trust_claims (
   id TEXT PRIMARY KEY,

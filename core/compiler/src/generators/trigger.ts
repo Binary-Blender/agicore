@@ -47,7 +47,7 @@ function buildTriggerRs(triggers: TriggerDecl[]): string {
 
   const hasReasonerFires = triggers.some(t => t.fires.kind === 'reasoner');
   const reasonerImport = hasReasonerFires
-    ? 'use super::channel::publish_message_internal;\nuse super::reasoner::{start_run, execute_reasoner, finish_run, fail_run, get_run};'
+    ? 'use super::channel::publish_message_internal;\nuse super::reasoner::{start_run, execute_reasoner, finish_run, fail_run, get_run};\nuse super::semantic_memory::store_insight;'
     : 'use super::channel::publish_message_internal;';
 
   return `// TRIGGER runtime — reactive event binding dispatcher
@@ -251,6 +251,8 @@ async fn check_and_fire(app: &AppHandle, db: &DbPool, keys: &std::sync::Arc<ApiK
                                 let _ = finish_run(&db_clone, &run_id, records, &output);
                                 if let Ok(run) = get_run(&db_clone, &run_id) { let _ = app_clone.emit("reasoner-completed", run); }
                                 let _ = publish_message_internal(&db_clone, "analysis_ready", Some("ReasonerOutput"), &output[..output.len().min(500)], Some(86400));
+                                let mem_val = if output.len() > 1000 { format!("{}…", &output[..1000]) } else { output.clone() };
+                                store_insight(&db_clone, "insights", &format!("{}:latest", target), &mem_val, &format!("reasoner:{}", target));
                                 eprintln!("[Trigger→Reasoner] {} completed ({} records)", target, records);
                             }
                             Err(err) => { let _ = fail_run(&db_clone, &run_id, &err); eprintln!("[Trigger→Reasoner] {} failed: {}", target, err); }

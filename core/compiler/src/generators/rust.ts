@@ -355,6 +355,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasModules) modLines.push('pub mod module_engine;');
   const hasAuthorities = ast.authorities.length > 0;
   if (hasAuthorities) modLines.push('pub mod authority;');
+  const needsSemanticMemory = ast.reasoners.length > 0 || ast.sessions.length > 0 || ast.modules.length > 0;
+  if (needsSemanticMemory) modLines.push('pub mod semantic_memory;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -476,7 +478,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const authorityCmds = hasAuthorities
     ? ['commands::authority::list_authorities', 'commands::authority::issue_trust_claim', 'commands::authority::list_trust_claims', 'commands::authority::revoke_trust_claim', 'commands::authority::check_admissibility']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds];
+  const semanticMemoryCmds = needsSemanticMemory
+    ? ['commands::semantic_memory::mem_store', 'commands::semantic_memory::mem_recall', 'commands::semantic_memory::mem_search', 'commands::semantic_memory::mem_list', 'commands::semantic_memory::mem_forget', 'commands::semantic_memory::mem_prune', 'commands::semantic_memory::mem_stats', 'commands::semantic_memory::mem_namespaces']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
