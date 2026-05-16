@@ -345,6 +345,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasTriggers) modLines.push('pub mod trigger;');
   const hasPackets = ast.packets.length > 0;
   if (hasPackets) modLines.push('pub mod packet;');
+  const hasIdentities = ast.identities.length > 0;
+  if (hasIdentities) modLines.push('pub mod identity;');
+  const hasFeeds = ast.feeds.length > 0;
+  if (hasFeeds) modLines.push('pub mod feed;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -451,7 +455,13 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const packetCmds = hasPackets
     ? ['commands::packet::list_packet_schemas', 'commands::packet::list_validation_failures']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds];
+  const identityCmds = hasIdentities
+    ? ['commands::identity::list_identities', 'commands::identity::get_identity', 'commands::identity::update_identity_profile', 'commands::identity::sign_payload', 'commands::identity::verify_signature']
+    : [];
+  const feedCmds = hasFeeds
+    ? ['commands::feed::list_feeds', 'commands::feed::generate_feed', 'commands::feed::get_feed_entries']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
@@ -554,6 +564,15 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       '                    }',
       '                }',
       `            })?;`,
+    );
+  }
+  if (hasIdentities) {
+    mainRsLines.push(
+      '            // Bootstrap IDENTITY declarations (generate keys if first run)',
+      '            {',
+      '                let pool_ref = app.state::<db::DbPool>().inner().clone();',
+      '                commands::identity::bootstrap_identities(&pool_ref);',
+      '            }',
     );
   }
   if (hasReasoners || hasTriggers) {

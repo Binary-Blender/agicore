@@ -267,3 +267,15 @@ CREATE TABLE IF NOT EXISTS packet_validation_log (
   created_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_packet_val_channel ON packet_validation_log(channel_name, validated_at DESC);
+
+-- IDENTITY: creator-owned identity profiles
+CREATE TABLE IF NOT EXISTS identity_profiles (
+  id TEXT PRIMARY KEY,
+  identity_name TEXT NOT NULL UNIQUE,
+  did TEXT NOT NULL UNIQUE,
+  signing_key_id TEXT NOT NULL,
+  profile TEXT NOT NULL DEFAULT '{}',
+  discoverable INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);

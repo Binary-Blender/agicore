@@ -2257,6 +2257,187 @@ CHANNEL batch_queue {
   assert(!files.has('migrations/packets.sql'), 'Should NOT emit packet migration when no PACKET declared');
 }
 
+// --- IDENTITY emitter ---
+section('IDENTITY emitter — identity.rs + migration + IdentityView stub');
+
+const identitySrc = `
+APP creator_app { TITLE "Creator App" DB sqlite }
+
+IDENTITY CreatorProfile {
+  DESCRIPTION    "Human creator identity"
+  SIGNING_KEY    ed25519
+  DOMAINS        writing, publishing
+  DISCOVERABLE   true
+  PORTABLE       true
+  PROFILE {
+    display_name: string REQUIRED
+    bio: string
+  }
+}
+
+IDENTITY SystemBot {
+  DESCRIPTION    "Automated pipeline identity"
+  SIGNING_KEY    ed25519
+  DOMAINS        orchestration
+  DISCOVERABLE   false
+  PORTABLE       false
+  PROFILE {
+    node_id: string REQUIRED
+  }
+}
+`;
+
+{
+  const { files } = compile(identitySrc);
+
+  // identity.rs is emitted
+  assert(files.has('src-tauri/src/commands/identity.rs'), 'Should emit identity.rs');
+  const identityRs = files.get('src-tauri/src/commands/identity.rs') ?? '';
+  assert(identityRs.includes('CreatorProfile'), 'identity.rs should include CreatorProfile');
+  assert(identityRs.includes('SystemBot'), 'identity.rs should include SystemBot');
+  assert(identityRs.includes('sign_with_key'), 'identity.rs should include signing function');
+  assert(identityRs.includes('make_did'), 'identity.rs should include DID builder');
+  assert(identityRs.includes('bootstrap_identities'), 'identity.rs should include bootstrap fn');
+  assert(identityRs.includes('did:agicore'), 'identity.rs should use did:agicore format');
+  assert(identityRs.includes('pub fn list_identities'), 'identity.rs should export list_identities');
+  assert(identityRs.includes('pub fn sign_payload'), 'identity.rs should export sign_payload');
+  assert(identityRs.includes('pub fn verify_signature'), 'identity.rs should export verify_signature');
+  assert(identityRs.includes('discoverable: true'), 'CreatorProfile should be discoverable');
+  assert(identityRs.includes('discoverable: false'), 'SystemBot should not be discoverable');
+
+  // migration SQL
+  assert(files.has('migrations/identity.sql'), 'Should emit identity migration');
+  const sql = files.get('migrations/identity.sql') ?? '';
+  assert(sql.includes('identity_profiles'), 'Migration should create identity_profiles table');
+  assert(sql.includes('signing_key_id'), 'Migration should have signing_key_id column');
+  assert(sql.includes('did TEXT NOT NULL'), 'Migration should have did column');
+
+  // React stub
+  assert(files.has('src/components/IdentityView.tsx'), 'Should emit IdentityView stub');
+  const tsx = files.get('src/components/IdentityView.tsx') ?? '';
+  assert(tsx.includes('@agicore-protected'), 'IdentityView should be @agicore-protected');
+  assert(tsx.includes('list_identities'), 'IdentityView should call list_identities');
+
+  // mod.rs includes identity module
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod identity;'), 'mod.rs should declare identity module');
+
+  // main.rs registers identity commands + bootstrap call
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('list_identities'), 'main.rs should register list_identities');
+  assert(mainRs.includes('sign_payload'), 'main.rs should register sign_payload');
+  assert(mainRs.includes('bootstrap_identities'), 'main.rs should call bootstrap_identities');
+}
+
+// No IDENTITY → no identity files
+{
+  const src = `APP no_id { TITLE "NoId" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/identity.rs'), 'Should NOT emit identity.rs when no IDENTITY declared');
+  assert(!files.has('migrations/identity.sql'), 'Should NOT emit identity migration when no IDENTITY declared');
+}
+
+// --- FEED emitter ---
+section('FEED emitter — feed.rs + migration + FeedView stub');
+
+const feedSrc = `
+APP creator_app { TITLE "Creator App" DB sqlite }
+
+PACKET BlogPost {
+  DESCRIPTION "Creator blog post"
+  PAYLOAD {
+    title: string REQUIRED
+    content: string REQUIRED
+  }
+}
+
+CHANNEL public_feed {
+  DESCRIPTION "Public blog post stream"
+  ORDERING    fifo
+  PACKET      BlogPost
+}
+
+IDENTITY CreatorProfile {
+  DESCRIPTION    "Human creator identity"
+  SIGNING_KEY    ed25519
+  DOMAINS        writing
+  DISCOVERABLE   true
+  PORTABLE       true
+  PROFILE {
+    display_name: string REQUIRED
+  }
+}
+
+FEED creator_blog {
+  DESCRIPTION  "Creator's personal semantic blog feed"
+  IDENTITY     CreatorProfile
+  PACKET       BlogPost
+  CHANNEL      public_feed
+  SUBSCRIBE    open
+  SYNDICATE    true
+  MAX_ITEMS    500
+  DISCOVERY    true
+}
+
+FEED premium_content {
+  DESCRIPTION  "Subscriber-only content"
+  IDENTITY     CreatorProfile
+  PACKET       BlogPost
+  SUBSCRIBE    approved
+  SYNDICATE    false
+  MAX_ITEMS    100
+  DISCOVERY    false
+}
+`;
+
+{
+  const { files } = compile(feedSrc);
+
+  // feed.rs is emitted
+  assert(files.has('src-tauri/src/commands/feed.rs'), 'Should emit feed.rs');
+  const feedRs = files.get('src-tauri/src/commands/feed.rs') ?? '';
+  assert(feedRs.includes('creator_blog'), 'feed.rs should include creator_blog');
+  assert(feedRs.includes('premium_content'), 'feed.rs should include premium_content');
+  assert(feedRs.includes('escape_xml'), 'feed.rs should include XML escaper');
+  assert(feedRs.includes('build_atom_feed'), 'feed.rs should include Atom builder');
+  assert(feedRs.includes('pub fn list_feeds'), 'feed.rs should export list_feeds');
+  assert(feedRs.includes('pub fn generate_feed'), 'feed.rs should export generate_feed');
+  assert(feedRs.includes('pub fn get_feed_entries'), 'feed.rs should export get_feed_entries');
+  assert(feedRs.includes('get_identity_did'), 'feed.rs should call identity DID lookup');
+  assert(feedRs.includes('syndicate: true'), 'creator_blog should have syndicate: true');
+  assert(feedRs.includes('syndicate: false'), 'premium_content should have syndicate: false');
+  assert(feedRs.includes('subscribe: "open"'), 'creator_blog subscribe mode');
+  assert(feedRs.includes('subscribe: "approved"'), 'premium_content subscribe mode');
+
+  // migration placeholder
+  assert(files.has('migrations/feed.sql'), 'Should emit feed migration placeholder');
+
+  // React stub
+  assert(files.has('src/components/FeedView.tsx'), 'Should emit FeedView stub');
+  const tsx = files.get('src/components/FeedView.tsx') ?? '';
+  assert(tsx.includes('@agicore-protected'), 'FeedView should be @agicore-protected');
+  assert(tsx.includes('generate_feed'), 'FeedView should call generate_feed');
+
+  // mod.rs includes feed module
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod feed;'), 'mod.rs should declare feed module');
+  assert(modRs.includes('pub mod identity;'), 'mod.rs should declare identity module when feeds present');
+
+  // main.rs registers feed commands
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('list_feeds'), 'main.rs should register list_feeds');
+  assert(mainRs.includes('generate_feed'), 'main.rs should register generate_feed');
+  assert(mainRs.includes('get_feed_entries'), 'main.rs should register get_feed_entries');
+}
+
+// No FEED → no feed files
+{
+  const src = `APP no_feed { TITLE "NoFeed" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/feed.rs'), 'Should NOT emit feed.rs when no FEED declared');
+  assert(!files.has('migrations/feed.sql'), 'Should NOT emit feed migration when no FEED declared');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

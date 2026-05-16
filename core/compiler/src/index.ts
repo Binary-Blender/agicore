@@ -21,6 +21,8 @@ import { generateReasoner } from './generators/reasoner.js';
 import { generateChannel } from './generators/channel.js';
 import { generateTrigger } from './generators/trigger.js';
 import { generatePacket } from './generators/packet.js';
+import { generateIdentity } from './generators/identity.js';
+import { generateFeed } from './generators/feed.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -62,6 +64,8 @@ export function compile(source: string): CompileResult {
     generateChannel(ast),
     generateTrigger(ast),
     generatePacket(ast),
+    generateIdentity(ast),
+    generateFeed(ast),
   ];
 
   for (const gen of generators) {
@@ -95,3 +99,5 @@ export { validate } from './validators/validate.js';
 export { generateChannel } from './generators/channel.js';
 export { generateTrigger } from './generators/trigger.js';
 export { generatePacket } from './generators/packet.js';
+export { generateIdentity } from './generators/identity.js';
+export { generateFeed } from './generators/feed.js';

@@ -18,3 +18,5 @@ pub mod shell;
 pub mod reasoner;
 pub mod channel;
 pub mod trigger;
+pub mod identity;
+pub mod feed;

@@ -67,6 +67,11 @@ fn main() {
                     }
                 }
             })?;
+            // Bootstrap IDENTITY declarations (generate keys if first run)
+            {
+                let pool_ref = app.state::<db::DbPool>().inner().clone();
+                commands::identity::bootstrap_identities(&pool_ref);
+            }
             // Start REASONER scheduler + TRIGGER dispatcher
             {
                 use std::sync::Arc;
@@ -196,6 +201,14 @@ fn main() {
             commands::channel::list_validation_failures,
             commands::trigger::list_trigger_statuses,
             commands::trigger::list_trigger_log,
+            commands::identity::list_identities,
+            commands::identity::get_identity,
+            commands::identity::update_identity_profile,
+            commands::identity::sign_payload,
+            commands::identity::verify_signature,
+            commands::feed::list_feeds,
+            commands::feed::generate_feed,
+            commands::feed::get_feed_entries,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
