@@ -23,6 +23,8 @@ import { generateTrigger } from './generators/trigger.js';
 import { generatePacket } from './generators/packet.js';
 import { generateIdentity } from './generators/identity.js';
 import { generateFeed } from './generators/feed.js';
+import { generateSession } from './generators/session.js';
+import { generateModule } from './generators/module.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -66,6 +68,8 @@ export function compile(source: string): CompileResult {
     generatePacket(ast),
     generateIdentity(ast),
     generateFeed(ast),
+    generateSession(ast),
+    generateModule(ast),
   ];
 
   for (const gen of generators) {
@@ -101,3 +105,5 @@ export { generateTrigger } from './generators/trigger.js';
 export { generatePacket } from './generators/packet.js';
 export { generateIdentity } from './generators/identity.js';
 export { generateFeed } from './generators/feed.js';
+export { generateSession } from './generators/session.js';
+export { generateModule } from './generators/module.js';

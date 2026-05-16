@@ -2438,6 +2438,178 @@ FEED premium_content {
   assert(!files.has('migrations/feed.sql'), 'Should NOT emit feed migration when no FEED declared');
 }
 
+// --- SESSION emitter ---
+section('SESSION emitter — session_mode.rs + migration + SessionModeView stub');
+
+const sessionSrc = `
+APP workflow_app { TITLE "Workflow App" DB sqlite }
+
+SESSION brainstorm {
+  DESCRIPTION  "Open-ended ideation and requirements discovery"
+  TOOLS        chat, search, vault_browse
+  CONTEXT      conversation
+  MEMORY       session
+}
+
+SESSION coding {
+  DESCRIPTION  "Implementation with repo awareness and verification"
+  TOOLS        chat, terminal, file_edit, test_run
+  CONTEXT      structured
+  MEMORY       persistent
+  PERSIST      true
+}
+
+SESSION publishing {
+  DESCRIPTION  "Content creation and distribution"
+  TOOLS        chat, editor, feed_publish
+  CONTEXT      structured
+  MEMORY       persistent
+  PERSIST      true
+}
+`;
+
+{
+  const { files } = compile(sessionSrc);
+
+  // session_mode.rs is emitted
+  assert(files.has('src-tauri/src/commands/session_mode.rs'), 'Should emit session_mode.rs');
+  const rs = files.get('src-tauri/src/commands/session_mode.rs') ?? '';
+  assert(rs.includes('brainstorm'), 'session_mode.rs should include brainstorm');
+  assert(rs.includes('coding'), 'session_mode.rs should include coding');
+  assert(rs.includes('publishing'), 'session_mode.rs should include publishing');
+  assert(rs.includes('SESSION_MODES'), 'session_mode.rs should have SESSION_MODES registry');
+  assert(rs.includes('pub fn list_session_modes'), 'session_mode.rs should export list_session_modes');
+  assert(rs.includes('pub fn set_active_mode'), 'session_mode.rs should export set_active_mode');
+  assert(rs.includes('pub fn get_mode_memory'), 'session_mode.rs should export get_mode_memory');
+  assert(rs.includes('pub fn set_mode_memory'), 'session_mode.rs should export set_mode_memory');
+  assert(rs.includes('persist: true'), 'coding should have persist: true');
+  assert(rs.includes('persist: false'), 'brainstorm should have persist: false');
+  assert(rs.includes('session_mode_memory'), 'session_mode.rs should reference session_mode_memory table');
+
+  // migration SQL
+  assert(files.has('migrations/session_modes.sql'), 'Should emit session_modes migration');
+  const sql = files.get('migrations/session_modes.sql') ?? '';
+  assert(sql.includes('session_mode_activations'), 'Migration should create session_mode_activations table');
+  assert(sql.includes('session_mode_memory'), 'Migration should create session_mode_memory table');
+  assert(sql.includes('UNIQUE(mode_name, key)'), 'Memory table should have unique constraint');
+
+  // React stub
+  assert(files.has('src/components/SessionModeView.tsx'), 'Should emit SessionModeView stub');
+  const tsx = files.get('src/components/SessionModeView.tsx') ?? '';
+  assert(tsx.includes('@agicore-protected'), 'SessionModeView should be @agicore-protected');
+  assert(tsx.includes('list_session_modes'), 'SessionModeView should call list_session_modes');
+  assert(tsx.includes('set_active_mode'), 'SessionModeView should call set_active_mode');
+
+  // mod.rs includes session_mode module
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod session_mode;'), 'mod.rs should declare session_mode module');
+
+  // main.rs registers session_mode commands
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('list_session_modes'), 'main.rs should register list_session_modes');
+  assert(mainRs.includes('set_active_mode'), 'main.rs should register set_active_mode');
+  assert(mainRs.includes('set_mode_memory'), 'main.rs should register set_mode_memory');
+}
+
+// No SESSION → no session_mode files
+{
+  const src = `APP no_session { TITLE "NoSession" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/session_mode.rs'), 'Should NOT emit session_mode.rs when no SESSION declared');
+  assert(!files.has('migrations/session_modes.sql'), 'Should NOT emit session_modes migration when no SESSION declared');
+}
+
+// --- MODULE emitter ---
+section('MODULE emitter — module_engine.rs + migration + ModuleView stub');
+
+const moduleSrc = `
+APP conv_engine { TITLE "Conversation Engine" DB sqlite }
+
+MODULE WarGames {
+  DESCRIPTION "WOPR/Joshua simulation triggered by Gen-X language patterns"
+  ACTIVATE_WHEN gen_x_score >= 10
+  DEACTIVATE_WHEN wargames_complete == true
+
+  PATTERN joshua_intro {
+    MATCH   "/.*/"
+    RESPOND "GREETINGS, PROFESSOR FALKEN."
+    PRIORITY 100
+  }
+
+  PATTERN game_selection {
+    MATCH   "/.*/"
+    RESPOND "SHALL WE PLAY A GAME?"
+    PRIORITY 90
+  }
+}
+
+MODULE JediMaster {
+  DESCRIPTION "Yoda-style wisdom engine triggered by philosophical discussion"
+  ACTIVATE_WHEN philosophical_score >= 10
+
+  PATTERN yoda_response {
+    MATCH   "/.*/"
+    RESPOND "Hmm. Much to learn, you still have."
+    PRIORITY 90
+  }
+}
+`;
+
+{
+  const { files } = compile(moduleSrc);
+
+  // module_engine.rs is emitted
+  assert(files.has('src-tauri/src/commands/module_engine.rs'), 'Should emit module_engine.rs');
+  const rs = files.get('src-tauri/src/commands/module_engine.rs') ?? '';
+  assert(rs.includes('WarGames'), 'module_engine.rs should include WarGames');
+  assert(rs.includes('JediMaster'), 'module_engine.rs should include JediMaster');
+  assert(rs.includes('MODULES'), 'module_engine.rs should have MODULES registry');
+  assert(rs.includes('activate_when: Some("gen_x_score >= 10")'), 'WarGames should have activate_when condition');
+  assert(rs.includes('deactivate_when: Some("wargames_complete == true")'), 'WarGames should have deactivate_when condition');
+  assert(rs.includes('activate_when: Some("philosophical_score >= 10")'), 'JediMaster should have activate_when');
+  assert(rs.includes('evaluate_condition'), 'module_engine.rs should include condition evaluator');
+  assert(rs.includes('pub fn list_module_statuses'), 'module_engine.rs should export list_module_statuses');
+  assert(rs.includes('pub fn set_module_active'), 'module_engine.rs should export set_module_active');
+  assert(rs.includes('pub fn check_module_conditions'), 'module_engine.rs should export check_module_conditions');
+  assert(rs.includes('pub fn set_module_fact'), 'module_engine.rs should export set_module_fact');
+  assert(rs.includes('module_facts'), 'module_engine.rs should reference module_facts table');
+
+  // Pattern names embedded in registry
+  assert(rs.includes('joshua_intro'), 'WarGames patterns should be in registry');
+  assert(rs.includes('yoda_response'), 'JediMaster patterns should be in registry');
+
+  // migration SQL
+  assert(files.has('migrations/modules.sql'), 'Should emit modules migration');
+  const sql = files.get('migrations/modules.sql') ?? '';
+  assert(sql.includes('module_activations'), 'Migration should create module_activations table');
+  assert(sql.includes('module_facts'), 'Migration should create module_facts table');
+
+  // React stub
+  assert(files.has('src/components/ModuleView.tsx'), 'Should emit ModuleView stub');
+  const tsx = files.get('src/components/ModuleView.tsx') ?? '';
+  assert(tsx.includes('@agicore-protected'), 'ModuleView should be @agicore-protected');
+  assert(tsx.includes('list_module_statuses'), 'ModuleView should call list_module_statuses');
+  assert(tsx.includes('check_module_conditions'), 'ModuleView should call check_module_conditions');
+
+  // mod.rs includes module_engine module
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod module_engine;'), 'mod.rs should declare module_engine module');
+
+  // main.rs registers module commands
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('list_module_statuses'), 'main.rs should register list_module_statuses');
+  assert(mainRs.includes('check_module_conditions'), 'main.rs should register check_module_conditions');
+  assert(mainRs.includes('set_module_fact'), 'main.rs should register set_module_fact');
+}
+
+// No MODULE → no module_engine files
+{
+  const src = `APP no_module { TITLE "NoModule" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/module_engine.rs'), 'Should NOT emit module_engine.rs when no MODULE declared');
+  assert(!files.has('migrations/modules.sql'), 'Should NOT emit modules migration when no MODULE declared');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

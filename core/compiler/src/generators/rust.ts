@@ -349,6 +349,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasIdentities) modLines.push('pub mod identity;');
   const hasFeeds = ast.feeds.length > 0;
   if (hasFeeds) modLines.push('pub mod feed;');
+  const hasSessions = ast.sessions.length > 0;
+  if (hasSessions) modLines.push('pub mod session_mode;');
+  const hasModules = ast.modules.length > 0;
+  if (hasModules) modLines.push('pub mod module_engine;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -461,7 +465,13 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const feedCmds = hasFeeds
     ? ['commands::feed::list_feeds', 'commands::feed::generate_feed', 'commands::feed::get_feed_entries']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds];
+  const sessionModeCmds = hasSessions
+    ? ['commands::session_mode::list_session_modes', 'commands::session_mode::get_active_mode', 'commands::session_mode::set_active_mode', 'commands::session_mode::get_mode_memory', 'commands::session_mode::set_mode_memory', 'commands::session_mode::delete_mode_memory']
+    : [];
+  const moduleCmds = hasModules
+    ? ['commands::module_engine::list_module_statuses', 'commands::module_engine::set_module_active', 'commands::module_engine::check_module_conditions', 'commands::module_engine::list_module_facts', 'commands::module_engine::set_module_fact']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

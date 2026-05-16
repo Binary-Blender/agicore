@@ -209,6 +209,17 @@ fn main() {
             commands::feed::list_feeds,
             commands::feed::generate_feed,
             commands::feed::get_feed_entries,
+            commands::session_mode::list_session_modes,
+            commands::session_mode::get_active_mode,
+            commands::session_mode::set_active_mode,
+            commands::session_mode::get_mode_memory,
+            commands::session_mode::set_mode_memory,
+            commands::session_mode::delete_mode_memory,
+            commands::module_engine::list_module_statuses,
+            commands::module_engine::set_module_active,
+            commands::module_engine::check_module_conditions,
+            commands::module_engine::list_module_facts,
+            commands::module_engine::set_module_fact,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

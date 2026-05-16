@@ -279,3 +279,42 @@ CREATE TABLE IF NOT EXISTS identity_profiles (
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now'))
 );
+
+-- SESSION MODES: semantic operating mode activations
+CREATE TABLE IF NOT EXISTS session_mode_activations (
+  id TEXT PRIMARY KEY,
+  mode_name TEXT NOT NULL,
+  is_active INTEGER NOT NULL DEFAULT 0,
+  activated_at TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_session_mode_active ON session_mode_activations(mode_name, is_active);
+
+-- SESSION MODE MEMORY: persistent key-value memory per mode
+CREATE TABLE IF NOT EXISTS session_mode_memory (
+  id TEXT PRIMARY KEY,
+  mode_name TEXT NOT NULL,
+  key TEXT NOT NULL,
+  value TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now')),
+  UNIQUE(mode_name, key)
+);
+CREATE INDEX IF NOT EXISTS idx_session_mode_memory ON session_mode_memory(mode_name, key);
+
+-- MODULES: expert-system module activation log
+CREATE TABLE IF NOT EXISTS module_activations (
+  id TEXT PRIMARY KEY,
+  module_name TEXT NOT NULL,
+  is_active INTEGER NOT NULL DEFAULT 0,
+  activated_at TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_module_activations ON module_activations(module_name, created_at DESC);
+
+-- MODULE FACTS: runtime fact store for condition evaluation
+CREATE TABLE IF NOT EXISTS module_facts (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TEXT DEFAULT (datetime('now'))
+);
