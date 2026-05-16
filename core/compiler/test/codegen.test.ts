@@ -2173,6 +2173,90 @@ TRIGGER on_chat_burst {
   assert(!files.has('migrations/triggers.sql'), 'Should NOT emit trigger migration when no TRIGGER declared');
 }
 
+// --- PACKET emitter ---
+section('PACKET emitter — packet.rs validator + migration');
+
+{
+  const src = `
+APP pkt_app { TITLE "Pkt" DB pkt.db }
+
+PACKET ImageBatch {
+  DESCRIPTION "Batch of images for processing"
+  PAYLOAD {
+    batch_id:    string REQUIRED
+    image_count: number
+    confidence:  number
+  }
+  METADATA {
+    PROVENANCE false
+    LINEAGE    false
+    SIGNATURES false
+    TTL        3600
+  }
+  VALIDATION {
+    has_images:      image_count > 0
+    high_confidence: confidence >= 0.5
+  }
+}
+
+PACKET UserEvent {
+  DESCRIPTION "User activity event"
+  PAYLOAD {
+    user_id: string REQUIRED
+    action:  string
+  }
+}
+
+CHANNEL batch_queue {
+  DESCRIPTION "Image processing queue"
+  PROTOCOL    queue
+  DIRECTION   inbound
+  PACKET      ImageBatch
+}
+  `.trim();
+
+  const { files } = compile(src);
+
+  // packet.rs is emitted
+  assert(files.has('src-tauri/src/commands/packet.rs'), 'Should emit packet.rs');
+  const rs = files.get('src-tauri/src/commands/packet.rs') ?? '';
+  assert(rs.includes('ImageBatch'), 'packet.rs should include ImageBatch schema');
+  assert(rs.includes('UserEvent'), 'packet.rs should include UserEvent schema');
+  assert(rs.includes('has_images'), 'packet.rs should include validation rule name');
+  assert(rs.includes('image_count > 0'), 'packet.rs should include validation condition');
+  assert(rs.includes('confidence >= 0.5'), 'packet.rs should include confidence rule');
+  assert(rs.includes('Some(3600)'), 'packet.rs should encode TTL as Some(3600)');
+  assert(rs.includes('validate_channel_message'), 'packet.rs should expose validate_channel_message fn');
+  assert(rs.includes('list_packet_schemas'), 'packet.rs should define list_packet_schemas command');
+  assert(rs.includes('list_validation_failures'), 'packet.rs should define list_validation_failures command');
+  // Channel→packet mapping
+  assert(rs.includes('channel_name: "batch_queue"'), 'packet.rs should map batch_queue channel');
+  assert(rs.includes('packet_name: "ImageBatch"'), 'packet.rs should map to ImageBatch packet');
+
+  // migration SQL
+  assert(files.has('migrations/packets.sql'), 'Should emit packets migration');
+  const sql = files.get('migrations/packets.sql') ?? '';
+  assert(sql.includes('packet_validation_log'), 'Migration should create packet_validation_log table');
+  assert(sql.includes('channel_name TEXT NOT NULL'), 'Migration should have channel_name column');
+
+  // mod.rs includes packet module
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod packet;'), 'mod.rs should declare packet module when PACKET declared');
+
+  // main.rs registers packet commands
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('list_packet_schemas'), 'main.rs should register list_packet_schemas');
+  assert(mainRs.includes('list_validation_failures'), 'main.rs should register list_validation_failures');
+}
+
+// No PACKET → no packet files
+{
+  const src = `APP no_pkt { TITLE "NoPkt" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/packet.rs'), 'Should NOT emit packet.rs when no PACKET declared');
+  assert(!files.has('migrations/packets.sql'), 'Should NOT emit packet migration when no PACKET declared');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

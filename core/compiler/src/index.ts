@@ -20,6 +20,7 @@ import { generateQc } from './generators/qc.js';
 import { generateReasoner } from './generators/reasoner.js';
 import { generateChannel } from './generators/channel.js';
 import { generateTrigger } from './generators/trigger.js';
+import { generatePacket } from './generators/packet.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -60,6 +61,7 @@ export function compile(source: string): CompileResult {
     generateReasoner(ast),
     generateChannel(ast),
     generateTrigger(ast),
+    generatePacket(ast),
   ];
 
   for (const gen of generators) {
@@ -92,3 +94,4 @@ export { generateQc } from './generators/qc.js';
 export { validate } from './validators/validate.js';
 export { generateChannel } from './generators/channel.js';
 export { generateTrigger } from './generators/trigger.js';
+export { generatePacket } from './generators/packet.js';

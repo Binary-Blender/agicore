@@ -7,10 +7,10 @@
 | Milestone | Tests | Status |
 |---|---|---|
 | DSL Parser | 547 passing | Complete |
-| Tauri Codegen | 623 passing | Complete |
+| Tauri Codegen | 698 passing | Complete |
 | Static Validator | 34 passing | Complete |
 | Reference App (NovaSyn Chat 2.0) | End-to-end verified | **MVP Complete** |
-| **Total** | **1,204 passing, 0 failures** | |
+| **Total** | **1,279 passing, 0 failures** | |
 
 ---
 
@@ -103,10 +103,10 @@ Validator expansion (completed):
 
 **Goal:** Integrate cooperative intelligence primitives and enable module composition.
 
-- [ ] REASONER runtime — periodic AI analysis loops with scheduled execution
-- [ ] TRIGGER runtime — reactive event binding, debounce, rate limiting
-- [ ] CHANNEL runtime — typed message passing between modules
-- [ ] PACKET validation engine
+- [x] REASONER runtime — periodic AI analysis loops with scheduled execution
+- [x] TRIGGER runtime — reactive event binding, debounce, rate limiting
+- [x] CHANNEL runtime — typed message passing between modules
+- [x] PACKET validation engine — typed payload validation, TTL, condition rules, rejection audit log
 - [ ] Cross-app module composition (`spawn compliance.workflow`)
 - [ ] IDENTITY + FEED — creator-owned identity and semantic syndication
 - [ ] Shared semantic memory (NS Vault evolution)

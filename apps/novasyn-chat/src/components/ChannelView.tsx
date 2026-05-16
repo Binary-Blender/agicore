@@ -1,8 +1,8 @@
-// @agicore-protected — Channel + Trigger monitoring UI
+// @agicore-protected — Channel + Trigger + PACKET monitoring UI
 import { useState, useEffect, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
-import { Radio, Zap, RefreshCw, Send, Trash2, ChevronDown, ChevronRight, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Radio, Zap, Package, RefreshCw, Send, Trash2, ChevronDown, ChevronRight, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -14,13 +14,29 @@ interface ChannelMessage {
   status: string;
   publishedAt: string;
   processedAt?: string;
+  validationErrors?: string;
 }
 
 interface ChannelSummary {
   name: string;
   totalMessages: number;
   pendingMessages: number;
+  rejectedMessages: number;
   lastMessageAt?: string;
+}
+
+interface PacketFieldInfo {
+  name: string;
+  type_: string;
+  required: boolean;
+}
+
+interface PacketSchemaInfo {
+  name: string;
+  channel?: string;
+  fields: PacketFieldInfo[];
+  rules: string[];
+  ttlSeconds?: number;
 }
 
 interface TriggerStatus {
@@ -137,6 +153,11 @@ function ChannelPanel({ summary, onRefresh }: { summary: ChannelSummary; onRefre
               {summary.pendingMessages} pending
             </span>
           )}
+          {summary.rejectedMessages > 0 && (
+            <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-xs font-medium">
+              {summary.rejectedMessages} rejected
+            </span>
+          )}
           <span className="text-xs text-[var(--text-muted)]">{summary.totalMessages} total</span>
         </div>
       </button>
@@ -197,20 +218,29 @@ function ChannelPanel({ summary, onRefresh }: { summary: ChannelSummary; onRefre
                 </thead>
                 <tbody>
                   {messages.map(msg => (
-                    <tr key={msg.id} className="border-t border-[var(--border)] hover:bg-[var(--bg-hover)]">
-                      <td className="px-4 py-2">
-                        <StatusDot status={msg.status} />
-                      </td>
-                      <td className="px-4 py-2 text-[var(--text-muted)]">
-                        {msg.packetType ?? '—'}
-                      </td>
-                      <td className="px-4 py-2 text-[var(--text-primary)] font-mono max-w-xs truncate">
-                        {msg.payload}
-                      </td>
-                      <td className="px-4 py-2 text-[var(--text-muted)] whitespace-nowrap">
-                        {fmtTime(msg.publishedAt)}
-                      </td>
-                    </tr>
+                    <>
+                      <tr key={msg.id} className="border-t border-[var(--border)] hover:bg-[var(--bg-hover)]">
+                        <td className="px-4 py-2">
+                          <StatusDot status={msg.status} />
+                        </td>
+                        <td className="px-4 py-2 text-[var(--text-muted)]">
+                          {msg.packetType ?? '—'}
+                        </td>
+                        <td className="px-4 py-2 text-[var(--text-primary)] font-mono max-w-xs truncate">
+                          {msg.payload}
+                        </td>
+                        <td className="px-4 py-2 text-[var(--text-muted)] whitespace-nowrap">
+                          {fmtTime(msg.publishedAt)}
+                        </td>
+                      </tr>
+                      {msg.validationErrors && (
+                        <tr key={`${msg.id}-err`} className="bg-red-900/10">
+                          <td colSpan={4} className="px-4 py-1.5 text-xs text-red-400">
+                            {JSON.parse(msg.validationErrors).join(' · ')}
+                          </td>
+                        </tr>
+                      )}
+                    </>
                   ))}
                 </tbody>
               </table>
@@ -325,20 +355,23 @@ function TriggerPanel({ trigger }: { trigger: TriggerStatus }) {
 // ─── Main View ────────────────────────────────────────────────────────────────
 
 export function ChannelView() {
-  const [tab, setTab] = useState<'channels' | 'triggers'>('channels');
+  const [tab, setTab] = useState<'channels' | 'triggers' | 'schemas'>('channels');
   const [channels, setChannels] = useState<ChannelSummary[]>([]);
   const [triggers, setTriggers] = useState<TriggerStatus[]>([]);
+  const [schemas, setSchemas] = useState<PacketSchemaInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [chans, trigs] = await Promise.all([
+      const [chans, trigs, schs] = await Promise.all([
         invoke<ChannelSummary[]>('list_all_channels'),
         invoke<TriggerStatus[]>('list_trigger_statuses'),
+        invoke<PacketSchemaInfo[]>('list_packet_schemas'),
       ]);
       setChannels(chans);
       setTriggers(trigs);
+      setSchemas(schs);
     } catch (e) {
       console.error(e);
     } finally {
@@ -404,6 +437,19 @@ export function ChannelView() {
             Triggers ({triggers.length})
           </span>
         </button>
+        <button
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            tab === 'schemas'
+              ? 'border-green-500 text-[var(--text-primary)]'
+              : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+          }`}
+          onClick={() => setTab('schemas')}
+        >
+          <span className="flex items-center gap-1.5">
+            <Package size={14} />
+            Schemas ({schemas.length})
+          </span>
+        </button>
       </div>
 
       {/* Content */}
@@ -433,10 +479,68 @@ export function ChannelView() {
               <p>Publish to <code className="font-mono">session_summary_request</code> → triggers <strong>session_summarizer</strong> reasoner</p>
             </div>
           </div>
-        ) : (
+        ) : tab === 'triggers' ? (
           <div className="space-y-3">
             {triggers.map(t => (
               <TriggerPanel key={t.name} trigger={t} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {schemas.length === 0 ? (
+              <div className="text-center py-12">
+                <Package size={40} className="mx-auto mb-3 text-[var(--text-muted)] opacity-40" />
+                <p className="text-[var(--text-muted)] text-sm">No PACKET schemas defined.</p>
+              </div>
+            ) : schemas.map(schema => (
+              <div key={schema.name} className="border border-[var(--border)] rounded-lg overflow-hidden">
+                <div className="flex items-center gap-3 px-4 py-3 bg-[var(--bg-secondary)]">
+                  <Package size={16} className="text-green-400 flex-shrink-0" />
+                  <span className="font-medium text-[var(--text-primary)]">{schema.name}</span>
+                  {schema.channel && (
+                    <span className="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono">
+                      {schema.channel}
+                    </span>
+                  )}
+                  {schema.ttlSeconds && (
+                    <span className="text-xs text-[var(--text-muted)] ml-auto">
+                      TTL {schema.ttlSeconds >= 3600 ? `${schema.ttlSeconds / 3600}h` : `${schema.ttlSeconds}s`}
+                    </span>
+                  )}
+                </div>
+                <div className="px-4 py-3 bg-[var(--bg-primary)]">
+                  {/* Fields */}
+                  <div className="mb-3">
+                    <div className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">Fields</div>
+                    <div className="space-y-1">
+                      {schema.fields.map(f => (
+                        <div key={f.name} className="flex items-center gap-2 text-sm">
+                          <code className="font-mono text-[var(--text-primary)]">{f.name}</code>
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-muted)]">{f.type_}</span>
+                          {f.required && <span className="text-xs text-red-400">required</span>}
+                        </div>
+                      ))}
+                      {schema.fields.length === 0 && (
+                        <div className="text-xs text-[var(--text-muted)]">No typed fields — accepts any JSON</div>
+                      )}
+                    </div>
+                  </div>
+                  {/* Validation rules */}
+                  {schema.rules.length > 0 && (
+                    <div>
+                      <div className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">Validation Rules</div>
+                      <div className="space-y-1">
+                        {schema.rules.map(rule => (
+                          <div key={rule} className="flex items-center gap-2 text-xs">
+                            <CheckCircle size={12} className="text-green-400 flex-shrink-0" />
+                            <code className="font-mono text-[var(--text-secondary)]">{rule}</code>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         )}

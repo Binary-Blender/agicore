@@ -192,6 +192,8 @@ fn main() {
             commands::channel::list_all_channels,
             commands::channel::clear_channel,
             commands::channel::mark_message_processed,
+            commands::channel::list_packet_schemas,
+            commands::channel::list_validation_failures,
             commands::trigger::list_trigger_statuses,
             commands::trigger::list_trigger_log,
         ])

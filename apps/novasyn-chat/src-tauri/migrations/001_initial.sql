@@ -253,3 +253,17 @@ CREATE TABLE IF NOT EXISTS trigger_log (
   created_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_trigger_log_trigger ON trigger_log(trigger_name, fired_at DESC);
+
+-- PACKET: typed message validation log
+ALTER TABLE channel_messages ADD COLUMN validation_errors TEXT;
+
+CREATE TABLE IF NOT EXISTS packet_validation_log (
+  id TEXT PRIMARY KEY,
+  channel_name TEXT NOT NULL,
+  packet_type TEXT NOT NULL,
+  payload TEXT NOT NULL,
+  errors TEXT NOT NULL,
+  validated_at TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_packet_val_channel ON packet_validation_log(channel_name, validated_at DESC);

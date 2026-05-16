@@ -343,6 +343,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasChannels) modLines.push('pub mod channel;');
   const hasTriggers = ast.triggers.length > 0;
   if (hasTriggers) modLines.push('pub mod trigger;');
+  const hasPackets = ast.packets.length > 0;
+  if (hasPackets) modLines.push('pub mod packet;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -446,7 +448,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const triggerCmds = hasTriggers
     ? ['commands::trigger::list_trigger_statuses', 'commands::trigger::list_trigger_log']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds];
+  const packetCmds = hasPackets
+    ? ['commands::packet::list_packet_schemas', 'commands::packet::list_validation_failures']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
