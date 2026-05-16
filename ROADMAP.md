@@ -7,10 +7,10 @@
 | Milestone | Tests | Status |
 |---|---|---|
 | DSL Parser | 547 passing | Complete |
-| Tauri Codegen | 747 passing | Complete |
+| Tauri Codegen | 801 passing | Complete |
 | Static Validator | 34 passing | Complete |
 | Reference App (NovaSyn Chat 2.0) | End-to-end verified | **MVP Complete** |
-| **Total** | **1,328 passing, 0 failures** | |
+| **Total** | **1,382 passing, 0 failures** | |
 
 ---
 
@@ -108,8 +108,10 @@ Validator expansion (completed):
 - [x] CHANNEL runtime — typed message passing between modules
 - [x] PACKET validation engine — typed payload validation, TTL, condition rules, rejection audit log
 - [x] IDENTITY + FEED — creator-owned DID, deterministic signing, Atom 1.0 syndication
-- [ ] Cross-app module composition (`spawn compliance.workflow`)
-- [ ] Shared semantic memory (NS Vault evolution)
+- [x] SESSION — semantic operating modes with persistent key-value memory per mode
+- [x] MODULE — composable expert-system bundles with score-based runtime activation
+- [ ] AUTHORITY — trust governance layers for channels and packet signing chains
+- [ ] Shared semantic memory (cross-session Vault evolution)
 
 ---
 

@@ -2610,6 +2610,111 @@ MODULE JediMaster {
   assert(!files.has('migrations/modules.sql'), 'Should NOT emit modules migration when no MODULE declared');
 }
 
+// --- AUTHORITY emitter ---
+section('AUTHORITY emitter — authority.rs + migration');
+
+const authoritySrc = `
+APP creator_app { TITLE "Creator App" DB sqlite }
+
+AUTHORITY CreatorTrust {
+  DESCRIPTION "Trust framework for creator content publishing"
+
+  LEVELS {
+    creator:   "Content creator and publisher"
+    moderator: "Community moderator with content review authority"
+    admin:     "Network administrator"
+  }
+
+  SIGNING {
+    REQUIRED       true
+    ALGORITHM      "ed25519"
+    VERIFY_CHAIN   true
+  }
+
+  ADMISSIBILITY {
+    signed:         signature IS NOT NULL
+    valid_identity: creator_id IS NOT NULL
+  }
+}
+
+AUTHORITY OpenCommunity {
+  DESCRIPTION "Open-source community authority for public modules"
+
+  LEVELS {
+    public:      "Anyone can read and execute"
+    contributor: "Approved contributor"
+  }
+
+  SIGNING {
+    REQUIRED       false
+    ALGORITHM      "ed25519"
+    VERIFY_CHAIN   false
+  }
+
+  ADMISSIBILITY {
+    public_or_signed: signature IS NOT NULL
+  }
+}
+`;
+
+{
+  const { files } = compile(authoritySrc);
+
+  // authority.rs is emitted
+  assert(files.has('src-tauri/src/commands/authority.rs'), 'Should emit authority.rs');
+  const rs = files.get('src-tauri/src/commands/authority.rs') ?? '';
+  assert(rs.includes('CreatorTrust'), 'authority.rs should include CreatorTrust');
+  assert(rs.includes('OpenCommunity'), 'authority.rs should include OpenCommunity');
+  assert(rs.includes('AUTHORITIES'), 'authority.rs should have AUTHORITIES registry');
+  assert(rs.includes('signing_required: true'), 'CreatorTrust should have signing_required: true');
+  assert(rs.includes('signing_required: false'), 'OpenCommunity should have signing_required: false');
+  assert(rs.includes('verify_chain: true'), 'CreatorTrust should have verify_chain: true');
+  assert(rs.includes('verify_chain: false'), 'OpenCommunity should have verify_chain: false');
+  assert(rs.includes('"creator"'), 'CreatorTrust should list creator level');
+  assert(rs.includes('"moderator"'), 'CreatorTrust should list moderator level');
+  assert(rs.includes('"admin"'), 'CreatorTrust should list admin level');
+  assert(rs.includes('"public"'), 'OpenCommunity should list public level');
+  assert(rs.includes('check_admissibility_condition'), 'authority.rs should include admissibility evaluator');
+  assert(rs.includes('"IS", "NOT", "NULL"'), 'Evaluator should handle IS NOT NULL');
+  assert(rs.includes('pub fn list_authorities'), 'authority.rs should export list_authorities');
+  assert(rs.includes('pub fn issue_trust_claim'), 'authority.rs should export issue_trust_claim');
+  assert(rs.includes('pub fn list_trust_claims'), 'authority.rs should export list_trust_claims');
+  assert(rs.includes('pub fn revoke_trust_claim'), 'authority.rs should export revoke_trust_claim');
+  assert(rs.includes('pub fn check_admissibility'), 'authority.rs should export check_admissibility');
+  assert(rs.includes('trust_claims'), 'authority.rs should reference trust_claims table');
+
+  // Admissibility rules embedded
+  assert(rs.includes('signed'), 'CreatorTrust admissibility rule "signed" should be present');
+  assert(rs.includes('valid_identity'), 'CreatorTrust admissibility rule "valid_identity" should be present');
+  assert(rs.includes('signature IS NOT NULL'), 'Admissibility condition should be embedded');
+
+  // migration SQL
+  assert(files.has('migrations/authority.sql'), 'Should emit authority migration');
+  const sql = files.get('migrations/authority.sql') ?? '';
+  assert(sql.includes('trust_claims'), 'Migration should create trust_claims table');
+  assert(sql.includes('authority_name'), 'Migration should have authority_name column');
+  assert(sql.includes('revoked'), 'Migration should have revoked column');
+  assert(sql.includes('idx_trust_claims_subject'), 'Migration should have subject index');
+
+  // mod.rs includes authority module
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod authority;'), 'mod.rs should declare authority module');
+
+  // main.rs registers authority commands
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('list_authorities'), 'main.rs should register list_authorities');
+  assert(mainRs.includes('issue_trust_claim'), 'main.rs should register issue_trust_claim');
+  assert(mainRs.includes('check_admissibility'), 'main.rs should register check_admissibility');
+}
+
+// No AUTHORITY → no authority files
+{
+  const src = `APP no_auth { TITLE "NoAuth" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/authority.rs'), 'Should NOT emit authority.rs when no AUTHORITY declared');
+  assert(!files.has('migrations/authority.sql'), 'Should NOT emit authority migration when no AUTHORITY declared');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

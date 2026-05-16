@@ -25,6 +25,7 @@ import { generateIdentity } from './generators/identity.js';
 import { generateFeed } from './generators/feed.js';
 import { generateSession } from './generators/session.js';
 import { generateModule } from './generators/module.js';
+import { generateAuthority } from './generators/authority.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -70,6 +71,7 @@ export function compile(source: string): CompileResult {
     generateFeed(ast),
     generateSession(ast),
     generateModule(ast),
+    generateAuthority(ast),
   ];
 
   for (const gen of generators) {
@@ -107,3 +109,4 @@ export { generateIdentity } from './generators/identity.js';
 export { generateFeed } from './generators/feed.js';
 export { generateSession } from './generators/session.js';
 export { generateModule } from './generators/module.js';
+export { generateAuthority } from './generators/authority.js';

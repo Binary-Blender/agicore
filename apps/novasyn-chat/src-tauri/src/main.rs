@@ -220,6 +220,11 @@ fn main() {
             commands::module_engine::check_module_conditions,
             commands::module_engine::list_module_facts,
             commands::module_engine::set_module_fact,
+            commands::authority::list_authorities,
+            commands::authority::issue_trust_claim,
+            commands::authority::list_trust_claims,
+            commands::authority::revoke_trust_claim,
+            commands::authority::check_admissibility,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

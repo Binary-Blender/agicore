@@ -318,3 +318,18 @@ CREATE TABLE IF NOT EXISTS module_facts (
   value TEXT NOT NULL,
   updated_at TEXT DEFAULT (datetime('now'))
 );
+
+-- AUTHORITY: trust governance claims
+CREATE TABLE IF NOT EXISTS trust_claims (
+  id TEXT PRIMARY KEY,
+  authority_name TEXT NOT NULL,
+  level TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  signature TEXT,
+  issued_at TEXT NOT NULL,
+  expires_at TEXT,
+  revoked INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_trust_claims_authority ON trust_claims(authority_name, revoked);
+CREATE INDEX IF NOT EXISTS idx_trust_claims_subject ON trust_claims(subject, authority_name);

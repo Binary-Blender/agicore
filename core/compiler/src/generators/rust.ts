@@ -353,6 +353,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasSessions) modLines.push('pub mod session_mode;');
   const hasModules = ast.modules.length > 0;
   if (hasModules) modLines.push('pub mod module_engine;');
+  const hasAuthorities = ast.authorities.length > 0;
+  if (hasAuthorities) modLines.push('pub mod authority;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -471,7 +473,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const moduleCmds = hasModules
     ? ['commands::module_engine::list_module_statuses', 'commands::module_engine::set_module_active', 'commands::module_engine::check_module_conditions', 'commands::module_engine::list_module_facts', 'commands::module_engine::set_module_fact']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds];
+  const authorityCmds = hasAuthorities
+    ? ['commands::authority::list_authorities', 'commands::authority::issue_trust_claim', 'commands::authority::list_trust_claims', 'commands::authority::revoke_trust_claim', 'commands::authority::check_admissibility']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
