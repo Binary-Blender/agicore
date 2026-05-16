@@ -16,3 +16,5 @@ pub mod actions;
 pub mod workspaces;
 pub mod shell;
 pub mod reasoner;
+pub mod channel;
+pub mod trigger;

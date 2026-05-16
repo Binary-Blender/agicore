@@ -224,3 +224,32 @@ CREATE TABLE IF NOT EXISTS reasoner_runs (
 
 CREATE INDEX IF NOT EXISTS idx_reasoner_runs_name ON reasoner_runs(reasoner_name);
 CREATE INDEX IF NOT EXISTS idx_reasoner_runs_started ON reasoner_runs(started_at DESC);
+
+-- CHANNEL: typed message passing with SQLite persistence
+CREATE TABLE IF NOT EXISTS channel_messages (
+  id TEXT PRIMARY KEY,
+  channel_name TEXT NOT NULL,
+  packet_type TEXT,
+  payload TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  published_at TEXT NOT NULL,
+  processed_at TEXT,
+  expires_at TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_channel_messages_channel ON channel_messages(channel_name, published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_channel_messages_status  ON channel_messages(status, channel_name);
+
+-- TRIGGER: reactive event binding audit log
+CREATE TABLE IF NOT EXISTS trigger_log (
+  id TEXT PRIMARY KEY,
+  trigger_name TEXT NOT NULL,
+  channel_name TEXT NOT NULL,
+  message_id TEXT NOT NULL,
+  fires_kind TEXT NOT NULL,
+  fires_target TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'fired',
+  fired_at TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_trigger_log_trigger ON trigger_log(trigger_name, fired_at DESC);

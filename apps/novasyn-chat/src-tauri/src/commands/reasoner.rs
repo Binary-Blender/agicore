@@ -126,7 +126,7 @@ LIMIT 100",
 
 // ─── Core execution ───────────────────────────────────────────────────────────
 
-async fn execute_reasoner(
+pub async fn execute_reasoner(
     name: &str,
     model: &str,
     db: &DbPool,
@@ -186,7 +186,7 @@ async fn execute_reasoner(
     Ok((record_count, output))
 }
 
-fn start_run(db: &DbPool, name: &str, model: &str) -> Result<String, String> {
+pub fn start_run(db: &DbPool, name: &str, model: &str) -> Result<String, String> {
     let conn = db.lock().map_err(|e| e.to_string())?;
     let id = uuid::Uuid::new_v4().to_string();
     let now = chrono::Utc::now().to_rfc3339();
@@ -197,7 +197,7 @@ fn start_run(db: &DbPool, name: &str, model: &str) -> Result<String, String> {
     Ok(id)
 }
 
-fn finish_run(db: &DbPool, id: &str, records: i64, output: &str) -> Result<(), String> {
+pub fn finish_run(db: &DbPool, id: &str, records: i64, output: &str) -> Result<(), String> {
     let conn = db.lock().map_err(|e| e.to_string())?;
     let now = chrono::Utc::now().to_rfc3339();
     conn.execute(
@@ -207,7 +207,7 @@ fn finish_run(db: &DbPool, id: &str, records: i64, output: &str) -> Result<(), S
     Ok(())
 }
 
-fn fail_run(db: &DbPool, id: &str, error: &str) -> Result<(), String> {
+pub fn fail_run(db: &DbPool, id: &str, error: &str) -> Result<(), String> {
     let conn = db.lock().map_err(|e| e.to_string())?;
     let now = chrono::Utc::now().to_rfc3339();
     conn.execute(
@@ -217,7 +217,7 @@ fn fail_run(db: &DbPool, id: &str, error: &str) -> Result<(), String> {
     Ok(())
 }
 
-fn get_run(db: &DbPool, id: &str) -> Result<ReasonerRun, String> {
+pub fn get_run(db: &DbPool, id: &str) -> Result<ReasonerRun, String> {
     let conn = db.lock().map_err(|e| e.to_string())?;
     conn.query_row(
         "SELECT * FROM reasoner_runs WHERE id = ?", [id],

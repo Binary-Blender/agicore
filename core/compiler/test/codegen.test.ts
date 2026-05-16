@@ -2021,6 +2021,158 @@ REASONER on_demand_summarizer {
   assert(!files.has('migrations/reasoner_runs.sql'), 'Should NOT emit reasoner migration when no REASONER declared');
 }
 
+// --- CHANNEL emitter ---
+section('CHANNEL emitter — channel.rs + migration + ChannelView stub');
+
+{
+  const src = `
+APP chan_app { TITLE "Chan" DB chan.db }
+
+PACKET UserEvent {
+  DESCRIPTION "User activity event"
+  PAYLOAD { action: string user_id: string }
+}
+
+CHANNEL user_events {
+  DESCRIPTION "User activity stream"
+  PROTOCOL    local
+  DIRECTION   bidirectional
+  PACKET      UserEvent
+  RETRY       3
+  TIMEOUT     5000
+}
+
+CHANNEL audit_log {
+  DESCRIPTION "Audit trail"
+  PROTOCOL    queue
+  DIRECTION   inbound
+  PACKET      UserEvent
+  ORDERING    fifo
+}
+  `.trim();
+
+  const { files } = compile(src);
+
+  // channel.rs is emitted
+  assert(files.has('src-tauri/src/commands/channel.rs'), 'Should emit channel.rs');
+  const rs = files.get('src-tauri/src/commands/channel.rs') ?? '';
+  assert(rs.includes('user_events'), 'channel.rs should include user_events channel');
+  assert(rs.includes('audit_log'), 'channel.rs should include audit_log channel');
+  assert(rs.includes('publish_channel_message'), 'channel.rs should define publish_channel_message command');
+  assert(rs.includes('list_channel_messages'), 'channel.rs should define list_channel_messages command');
+  assert(rs.includes('list_all_channels'), 'channel.rs should define list_all_channels command');
+  assert(rs.includes('publish_message_internal'), 'channel.rs should expose publish_message_internal helper');
+
+  // migration SQL
+  assert(files.has('migrations/channels.sql'), 'Should emit channels migration');
+  const sql = files.get('migrations/channels.sql') ?? '';
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS channel_messages'), 'Migration should create channel_messages table');
+  assert(sql.includes('channel_name TEXT NOT NULL'), 'Migration should have channel_name column');
+  assert(sql.includes("status TEXT NOT NULL DEFAULT 'pending'"), 'Migration should have status column with default');
+
+  // ChannelView stub
+  assert(files.has('src/components/ChannelView.tsx'), 'Should emit ChannelView.tsx stub');
+  const tsx = files.get('src/components/ChannelView.tsx') ?? '';
+  assert(tsx.includes('@agicore-protected'), 'ChannelView stub should be marked @agicore-protected');
+  assert(tsx.includes('user_events'), 'ChannelView stub should reference channel names');
+}
+
+// No CHANNEL → no channel files
+{
+  const src = `APP no_chan { TITLE "NoChan" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/channel.rs'), 'Should NOT emit channel.rs when no CHANNEL declared');
+  assert(!files.has('migrations/channels.sql'), 'Should NOT emit channel migration when no CHANNEL declared');
+}
+
+// --- TRIGGER emitter ---
+section('TRIGGER emitter — trigger.rs + migration + TriggerView stub');
+
+{
+  const src = `
+APP trig_app { TITLE "Trig" DB trig.db }
+
+REASONER daily_analyzer {
+  DESCRIPTION "Daily analysis"
+  INPUT { CHANNEL chat_messages WINDOW "7d" }
+  OUTPUT { CHANNEL insight_stream }
+  SCHEDULE daily
+}
+
+CHANNEL chat_messages {
+  DESCRIPTION "Chat activity"
+  PROTOCOL    local
+  DIRECTION   inbound
+  PACKET      ChatMessage
+}
+
+CHANNEL insight_stream {
+  DESCRIPTION "AI insights"
+  PROTOCOL    local
+  DIRECTION   outbound
+  PACKET      ChatMessage
+}
+
+TRIGGER on_chat {
+  DESCRIPTION  "Analyze on new chat activity"
+  WHEN { CHANNEL chat_messages }
+  FIRES        REASONER daily_analyzer
+  DEBOUNCE     "5m"
+}
+
+TRIGGER on_chat_burst {
+  DESCRIPTION  "Gap analysis trigger"
+  WHEN { CHANNEL insight_stream }
+  FIRES        REASONER daily_analyzer
+  DEBOUNCE     "1h"
+}
+  `.trim();
+
+  const { files } = compile(src);
+
+  // trigger.rs is emitted
+  assert(files.has('src-tauri/src/commands/trigger.rs'), 'Should emit trigger.rs');
+  const rs = files.get('src-tauri/src/commands/trigger.rs') ?? '';
+  assert(rs.includes('on_chat'), 'trigger.rs should include on_chat trigger');
+  assert(rs.includes('on_chat_burst'), 'trigger.rs should include on_chat_burst trigger');
+  assert(rs.includes('list_trigger_statuses'), 'trigger.rs should define list_trigger_statuses command');
+  assert(rs.includes('list_trigger_log'), 'trigger.rs should define list_trigger_log command');
+  assert(rs.includes('start_trigger_dispatcher'), 'trigger.rs should define start_trigger_dispatcher fn');
+  assert(rs.includes('debounce_secs: 300'), 'Should parse 5m debounce as 300 seconds');
+  assert(rs.includes('debounce_secs: 3600'), 'Should parse 1h debounce as 3600 seconds');
+  assert(rs.includes('fires_kind: "reasoner"'), 'Should emit fires_kind for reasoner target');
+  assert(rs.includes('fires_target: "daily_analyzer"'), 'Should emit fires_target with reasoner name');
+
+  // migration SQL
+  assert(files.has('migrations/triggers.sql'), 'Should emit triggers migration');
+  const sql = files.get('migrations/triggers.sql') ?? '';
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS trigger_log'), 'Migration should create trigger_log table');
+  assert(sql.includes('trigger_name TEXT NOT NULL'), 'Migration should have trigger_name column');
+
+  // TriggerView stub
+  assert(files.has('src/components/TriggerView.tsx'), 'Should emit TriggerView.tsx stub');
+  const tsx = files.get('src/components/TriggerView.tsx') ?? '';
+  assert(tsx.includes('@agicore-protected'), 'TriggerView stub should be @agicore-protected');
+  assert(tsx.includes('on_chat'), 'TriggerView stub should reference trigger names');
+
+  // main.rs wires trigger dispatcher
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('start_trigger_dispatcher'), 'main.rs should start trigger dispatcher');
+  assert(mainRs.includes('list_trigger_statuses'), 'main.rs should register trigger commands');
+
+  // db.rs uses Arc<Mutex> when triggers are present (needed for cloneable pool in async tasks)
+  const dbRs = files.get('src-tauri/src/db.rs') ?? '';
+  assert(dbRs.includes('Arc<Mutex<Connection>>'), 'db.rs should use Arc<Mutex<Connection>> when triggers present');
+}
+
+// No TRIGGER → no trigger files
+{
+  const src = `APP no_trig { TITLE "NoTrig" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/trigger.rs'), 'Should NOT emit trigger.rs when no TRIGGER declared');
+  assert(!files.has('migrations/triggers.sql'), 'Should NOT emit trigger migration when no TRIGGER declared');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

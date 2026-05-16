@@ -67,13 +67,18 @@ fn main() {
                     }
                 }
             })?;
-            // Start REASONER background scheduler (checks if daily/weekly reasoners are due)
+            // Start REASONER scheduler + TRIGGER dispatcher
             {
                 use std::sync::Arc;
                 let pool_ref = app.state::<db::DbPool>().inner().clone(); // Arc clone, cheap
                 let keys_arc = Arc::new(Mutex::new(ai_service::load_api_keys()));
                 let default_model = "claude-sonnet-4-6".to_string();
-                commands::reasoner::start_reasoner_scheduler(app.handle().clone(), pool_ref, keys_arc, default_model);
+                commands::reasoner::start_reasoner_scheduler(
+                    app.handle().clone(), pool_ref.clone(), keys_arc.clone(), default_model.clone()
+                );
+                commands::trigger::start_trigger_dispatcher(
+                    app.handle().clone(), pool_ref, keys_arc, default_model
+                );
             }
             Ok(())
         })
@@ -182,6 +187,13 @@ fn main() {
             commands::reasoner::list_reasoner_statuses,
             commands::reasoner::list_reasoner_runs,
             commands::reasoner::run_reasoner,
+            commands::channel::publish_channel_message,
+            commands::channel::list_channel_messages,
+            commands::channel::list_all_channels,
+            commands::channel::clear_channel,
+            commands::channel::mark_message_processed,
+            commands::trigger::list_trigger_statuses,
+            commands::trigger::list_trigger_log,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

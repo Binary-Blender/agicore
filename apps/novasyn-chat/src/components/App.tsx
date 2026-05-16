@@ -11,6 +11,7 @@ import { DocumentEditor } from './DocumentEditor';
 import { SettingsView } from './SettingsView';
 import { WorkflowView } from './WorkflowView';
 import { ReasonerView } from './ReasonerView';
+import { ChannelView } from './ChannelView';
 import { getPopoutView } from '../lib/popout';
 
 function renderView(view: string) {
@@ -24,6 +25,7 @@ function renderView(view: string) {
     case 'SettingsView':     return <SettingsView />;
     case 'WorkflowView':     return <WorkflowView />;
     case 'ReasonerView':     return <ReasonerView />;
+    case 'ChannelView':      return <ChannelView />;
     default:                 return <div className="p-6 text-gray-500">Unknown view</div>;
   }
 }

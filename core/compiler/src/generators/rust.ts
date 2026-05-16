@@ -339,6 +339,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasWorkspaces) modLines.push('pub mod workspaces;');
   const hasReasoners = ast.reasoners.length > 0;
   if (hasReasoners) modLines.push('pub mod reasoner;');
+  const hasChannels = ast.channels.length > 0;
+  if (hasChannels) modLines.push('pub mod channel;');
+  const hasTriggers = ast.triggers.length > 0;
+  if (hasTriggers) modLines.push('pub mod trigger;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -436,7 +440,13 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const reasonerCmds = hasReasoners
     ? ['commands::reasoner::list_reasoner_statuses', 'commands::reasoner::list_reasoner_runs', 'commands::reasoner::run_reasoner']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds];
+  const channelCmds = hasChannels
+    ? ['commands::channel::publish_channel_message', 'commands::channel::list_channel_messages', 'commands::channel::list_all_channels', 'commands::channel::clear_channel', 'commands::channel::mark_message_processed']
+    : [];
+  const triggerCmds = hasTriggers
+    ? ['commands::trigger::list_trigger_statuses', 'commands::trigger::list_trigger_log']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
@@ -541,6 +551,27 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       `            })?;`,
     );
   }
+  if (hasReasoners || hasTriggers) {
+    mainRsLines.push(
+      '            // Start background runtimes',
+      '            {',
+      '                use std::sync::Arc;',
+      '                let pool_ref = app.state::<db::DbPool>().inner().clone();',
+      '                let keys_arc = Arc::new(std::sync::Mutex::new(ai_service::load_api_keys()));',
+      '                let default_model = "claude-sonnet-4-6".to_string();',
+    );
+    if (hasReasoners) {
+      mainRsLines.push(
+        '                commands::reasoner::start_reasoner_scheduler(app.handle().clone(), pool_ref.clone(), keys_arc.clone(), default_model.clone());',
+      );
+    }
+    if (hasTriggers) {
+      mainRsLines.push(
+        '                commands::trigger::start_trigger_dispatcher(app.handle().clone(), pool_ref, keys_arc, default_model);',
+      );
+    }
+    mainRsLines.push('            }');
+  }
   mainRsLines.push(
     '            Ok(())',
     '        })',
@@ -556,12 +587,18 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   files.set('src-tauri/src/main.rs', mainRsLines.join('\n'));
 
   // Generate db.rs
+  // Use Arc<Mutex<Connection>> when background tasks need a cloneable pool handle
+  const needsArcPool = hasReasoners || hasTriggers;
   const dbRs = [
     'use rusqlite::Connection;',
     'use std::path::PathBuf;',
     'use std::sync::Mutex;',
+    ...(needsArcPool ? ['use std::sync::Arc;'] : []),
     '',
-    'pub type DbPool = Mutex<Connection>;',
+    ...(needsArcPool
+      ? ['pub type DbPool = Arc<Mutex<Connection>>;']
+      : ['pub type DbPool = Mutex<Connection>;']
+    ),
     ...(hasWorkspaces ? ['pub type DbPath = Mutex<PathBuf>;'] : []),
     '',
     'pub fn init_db(db_path: PathBuf) -> DbPool {',
@@ -573,7 +610,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     '    let migration = include_str!("../migrations/001_initial.sql");',
     '    conn.execute_batch(migration).expect("Failed to run migrations");',
     '',
-    '    Mutex::new(conn)',
+    ...(needsArcPool ? ['    Arc::new(Mutex::new(conn))'] : ['    Mutex::new(conn)']),
     '}',
     '',
   ].join('\n');

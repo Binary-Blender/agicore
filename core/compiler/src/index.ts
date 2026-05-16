@@ -18,6 +18,8 @@ import { generateSkills } from './generators/skills.js';
 import { generateTests } from './generators/tests.js';
 import { generateQc } from './generators/qc.js';
 import { generateReasoner } from './generators/reasoner.js';
+import { generateChannel } from './generators/channel.js';
+import { generateTrigger } from './generators/trigger.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -56,6 +58,8 @@ export function compile(source: string): CompileResult {
     generateTests(ast),
     generateQc(ast),
     generateReasoner(ast),
+    generateChannel(ast),
+    generateTrigger(ast),
   ];
 
   for (const gen of generators) {
@@ -86,3 +90,5 @@ export { generateSkills } from './generators/skills.js';
 export { generateTests } from './generators/tests.js';
 export { generateQc } from './generators/qc.js';
 export { validate } from './validators/validate.js';
+export { generateChannel } from './generators/channel.js';
+export { generateTrigger } from './generators/trigger.js';
