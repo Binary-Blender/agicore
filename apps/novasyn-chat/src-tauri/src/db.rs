@@ -1,8 +1,9 @@
 use rusqlite::Connection;
 use std::path::PathBuf;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
-pub type DbPool = Mutex<Connection>;
+// Arc wrapper so DbPool can be cloned into background tasks (scheduler, etc.)
+pub type DbPool = Arc<Mutex<Connection>>;
 pub type DbPath = Mutex<PathBuf>;
 
 pub fn init_db(db_path: PathBuf) -> DbPool {
@@ -14,5 +15,5 @@ pub fn init_db(db_path: PathBuf) -> DbPool {
     let migration = include_str!("../migrations/001_initial.sql");
     conn.execute_batch(migration).expect("Failed to run migrations");
 
-    Mutex::new(conn)
+    Arc::new(Mutex::new(conn))
 }

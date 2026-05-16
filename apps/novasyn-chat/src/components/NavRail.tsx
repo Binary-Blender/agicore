@@ -1,4 +1,4 @@
-import { MessageSquare, Terminal, FolderOpen, Tags, BookMarked, FileText, Settings, GitBranch, ExternalLink } from 'lucide-react';
+import { MessageSquare, Terminal, FolderOpen, Tags, BookMarked, FileText, Settings, GitBranch, Brain, ExternalLink } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { openViewWindow } from '../lib/popout';
 
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { view: 'ExchangeLibrary',icon: BookMarked,    title: 'Exchanges' },
   { view: 'DocumentEditor', icon: FileText,      title: 'Documents' },
   { view: 'WorkflowView',   icon: GitBranch,     title: 'Workflows' },
+  { view: 'ReasonerView',   icon: Brain,         title: 'Reasoners' },
   { view: 'SettingsView',   icon: Settings,      title: 'Settings' },
 ];
 

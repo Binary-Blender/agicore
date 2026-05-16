@@ -207,3 +207,20 @@ CREATE INDEX IF NOT EXISTS idx_orchestration_runs_orchestration_id ON orchestrat
 
 -- SEED: idempotent INSERT OR IGNORE rows from ENTITY SEED blocks
 INSERT OR IGNORE INTO users (id, email, name, created_at, updated_at) VALUES ('default-user', 'you@local', 'You', datetime('now'), datetime('now'));
+-- REASONER: persistent run history
+CREATE TABLE IF NOT EXISTS reasoner_runs (
+  id TEXT PRIMARY KEY,
+  reasoner_name TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'running',
+  records_analyzed INTEGER NOT NULL DEFAULT 0,
+  output TEXT,
+  error TEXT,
+  model TEXT,
+  started_at TEXT NOT NULL,
+  completed_at TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_reasoner_runs_name ON reasoner_runs(reasoner_name);
+CREATE INDEX IF NOT EXISTS idx_reasoner_runs_started ON reasoner_runs(started_at DESC);

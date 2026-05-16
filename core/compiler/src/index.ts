@@ -17,6 +17,7 @@ import { generateVault } from './generators/vault.js';
 import { generateSkills } from './generators/skills.js';
 import { generateTests } from './generators/tests.js';
 import { generateQc } from './generators/qc.js';
+import { generateReasoner } from './generators/reasoner.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -54,6 +55,7 @@ export function compile(source: string): CompileResult {
     generateSkills(ast),
     generateTests(ast),
     generateQc(ast),
+    generateReasoner(ast),
   ];
 
   for (const gen of generators) {

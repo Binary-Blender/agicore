@@ -337,6 +337,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasActions) modLines.push('pub mod actions;');
   const hasWorkspaces = ast.app.workspaces === true;
   if (hasWorkspaces) modLines.push('pub mod workspaces;');
+  const hasReasoners = ast.reasoners.length > 0;
+  if (hasReasoners) modLines.push('pub mod reasoner;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -431,7 +433,10 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     ? ['commands::workspaces::get_db_path', 'commands::workspaces::switch_db']
     : [];
 
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds];
+  const reasonerCmds = hasReasoners
+    ? ['commands::reasoner::list_reasoner_statuses', 'commands::reasoner::list_reasoner_runs', 'commands::reasoner::run_reasoner']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

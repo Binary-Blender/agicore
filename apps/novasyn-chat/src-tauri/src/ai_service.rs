@@ -918,3 +918,86 @@ pub async fn discover_models(
 
     Ok(all)
 }
+
+// ─── Non-streaming AI completion (for REASONER background analysis) ───────────
+
+pub async fn chat_complete(
+    system: &str,
+    user_content: &str,
+    model: &str,
+    keys: &HashMap<String, String>,
+) -> Result<String, String> {
+    let provider = provider_from_model(model);
+    let api_key = keys.get(provider)
+        .filter(|k| !k.is_empty())
+        .cloned()
+        .ok_or_else(|| format!("No API key configured for provider '{}'", provider))?;
+
+    let client = reqwest::Client::new();
+
+    match provider {
+        "anthropic" => {
+            let body = serde_json::json!({
+                "model": model,
+                "max_tokens": 4096,
+                "system": system,
+                "messages": [{"role": "user", "content": user_content}],
+            });
+            let resp = client
+                .post("https://api.anthropic.com/v1/messages")
+                .header("x-api-key", &api_key)
+                .header("anthropic-version", "2023-06-01")
+                .header("content-type", "application/json")
+                .json(&body)
+                .send().await.map_err(|e| e.to_string())?;
+            if !resp.status().is_success() {
+                return Err(format!("Anthropic error: {}", resp.text().await.unwrap_or_default()));
+            }
+            let val: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;
+            Ok(val["content"][0]["text"].as_str().unwrap_or("").to_string())
+        }
+        "openai" | "xai" => {
+            let url = if provider == "xai" {
+                "https://api.x.ai/v1/chat/completions"
+            } else {
+                "https://api.openai.com/v1/chat/completions"
+            };
+            let body = serde_json::json!({
+                "model": model,
+                "max_tokens": 4096,
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user_content}
+                ],
+            });
+            let resp = client
+                .post(url)
+                .header("Authorization", format!("Bearer {}", api_key))
+                .header("content-type", "application/json")
+                .json(&body)
+                .send().await.map_err(|e| e.to_string())?;
+            if !resp.status().is_success() {
+                return Err(format!("{} error: {}", provider, resp.text().await.unwrap_or_default()));
+            }
+            let val: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;
+            Ok(val["choices"][0]["message"]["content"].as_str().unwrap_or("").to_string())
+        }
+        "google" => {
+            let url = format!(
+                "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",
+                model, api_key
+            );
+            let body = serde_json::json!({
+                "system_instruction": {"parts": [{"text": system}]},
+                "contents": [{"role": "user", "parts": [{"text": user_content}]}],
+            });
+            let resp = client.post(&url).json(&body).send().await.map_err(|e| e.to_string())?;
+            if !resp.status().is_success() {
+                return Err(format!("Google error: {}", resp.text().await.unwrap_or_default()));
+            }
+            let val: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;
+            Ok(val["candidates"][0]["content"]["parts"][0]["text"].as_str().unwrap_or("").to_string())
+        }
+        _ => Err(format!("Unsupported provider: {}", provider)),
+    }
+}

@@ -1921,6 +1921,106 @@ const noQcSrc = `APP no_qc { TITLE "No QC" DB sqlite } ENTITY User { email: stri
 const { files: noQcFiles } = compile(noQcSrc);
 assert(!noQcFiles.has('src/lib/qc.ts'), 'Should NOT emit qc.ts when no QC blocks declared');
 
+// --- REASONER emitter ---
+section('REASONER emitter — reasoner.rs + ReasonerView.tsx stub');
+
+{
+  const src = `
+APP insights { TITLE "Insights App" DB insights.db }
+
+ENTITY ChatMessage {
+  user_message: string REQUIRED
+  ai_message: string REQUIRED
+  TIMESTAMPS
+}
+
+CHANNEL chat_messages { DESCRIPTION "Chat message stream" }
+
+REASONER conversation_analyzer {
+  DESCRIPTION "Surfaces patterns in recent conversations"
+  INPUT {
+    CHANNEL chat_messages
+    WINDOW "7d"
+    FILTER "is_excluded = 0"
+  }
+  OUTPUT {
+    PACKET ConversationInsight
+  }
+  SCHEDULE daily
+}
+
+REASONER knowledge_gap_finder {
+  DESCRIPTION "Finds gaps in the knowledge base"
+  INPUT {
+    CHANNEL chat_messages
+    WINDOW "30d"
+  }
+  OUTPUT {
+    PACKET KnowledgeGap
+  }
+  SCHEDULE weekly
+}
+
+REASONER on_demand_summarizer {
+  DESCRIPTION "On-demand session summary"
+  INPUT {
+    CHANNEL chat_messages
+    WINDOW "1d"
+  }
+  OUTPUT {
+    PACKET SessionSummary
+  }
+  SCHEDULE on_demand
+}
+`;
+  const { files } = compile(src);
+
+  // reasoner.rs is generated (Rust files use src-tauri/src/ prefix)
+  assert(files.has('src-tauri/src/commands/reasoner.rs'), 'Should emit src-tauri/src/commands/reasoner.rs');
+  const rs = files.get('src-tauri/src/commands/reasoner.rs') ?? '';
+
+  // All three reasoners appear
+  assert(rs.includes('"conversation_analyzer"'), 'Should include conversation_analyzer');
+  assert(rs.includes('"knowledge_gap_finder"'), 'Should include knowledge_gap_finder');
+  assert(rs.includes('"on_demand_summarizer"'), 'Should include on_demand_summarizer');
+
+  // Schedules
+  assert(rs.includes('"daily"'), 'Should include daily schedule');
+  assert(rs.includes('"weekly"'), 'Should include weekly schedule');
+  assert(rs.includes('"on_demand"'), 'Should include on_demand schedule');
+
+  // Scheduler only for daily/weekly — not on_demand
+  assert(rs.includes('start_reasoner_scheduler'), 'Should emit scheduler fn since daily/weekly present');
+
+  // SQL migration fragment
+  assert(files.has('migrations/reasoner_runs.sql'), 'Should emit reasoner_runs migration');
+  const sql = files.get('migrations/reasoner_runs.sql') ?? '';
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS reasoner_runs'), 'Migration should create reasoner_runs table');
+  assert(sql.includes('reasoner_name TEXT NOT NULL'), 'Migration should have reasoner_name column');
+
+  // ReasonerView TSX stub
+  assert(files.has('src/components/ReasonerView.tsx'), 'Should emit ReasonerView.tsx stub');
+  const tsx = files.get('src/components/ReasonerView.tsx') ?? '';
+  assert(tsx.includes('conversation_analyzer'), 'ReasonerView should reference reasoner names');
+  assert(tsx.includes('run_reasoner'), 'ReasonerView should invoke run_reasoner command');
+
+  // Tauri commands listed in main.rs (src-tauri/src/ prefix)
+  assert(files.has('src-tauri/src/main.rs'), 'Should emit src-tauri/src/main.rs');
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(
+    mainRs.includes('list_reasoner_statuses') && mainRs.includes('run_reasoner'),
+    'main.rs should register reasoner commands'
+  );
+}
+
+// No REASONER → no reasoner.rs
+{
+  const src = `APP no_reasoner { TITLE "No Reasoner" DB sqlite } ENTITY User { email: string TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src/commands/reasoner.rs'), 'Should NOT emit reasoner.rs when no REASONER declared');
+  assert(!files.has('migrations/reasoner_runs.sql'), 'Should NOT emit reasoner migration when no REASONER declared');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);
