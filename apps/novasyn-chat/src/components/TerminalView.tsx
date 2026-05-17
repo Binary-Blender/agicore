@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { Terminal, ChevronRight, Loader2, Trash2 } from 'lucide-react';
+import { parseAnsi } from '../lib/ansi';
 
 type Stream = 'stdout' | 'stderr' | 'system';
 
@@ -118,11 +119,21 @@ export function TerminalView() {
     }
   };
 
-  const lineColor = (stream: Stream) => {
-    if (stream === 'stderr') return 'text-red-400';
-    if (stream === 'system') return 'text-[var(--text-secondary)]';
-    return 'text-[var(--text-primary)]';
-  };
+  function renderLine(l: OutputLine) {
+    if (l.stream === 'system') {
+      return <span className="text-[var(--text-secondary)]">{l.text}</span>;
+    }
+    const spans = parseAnsi(l.text);
+    const baseColor = l.stream === 'stderr' ? 'text-red-400' : 'text-[var(--text-primary)]';
+    if (spans.length === 0) return <span className={baseColor}>{l.text}</span>;
+    return (
+      <>
+        {spans.map((s, i) => (
+          <span key={i} className={s.cls || baseColor}>{s.text}</span>
+        ))}
+      </>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full bg-[var(--bg-page)] text-sm">
@@ -151,11 +162,8 @@ export function TerminalView() {
           </div>
         )}
         {lines.map((l) => (
-          <div
-            key={l.id}
-            className={`leading-5 whitespace-pre-wrap break-all ${lineColor(l.stream)}`}
-          >
-            {l.text}
+          <div key={l.id} className="leading-5 whitespace-pre-wrap break-all">
+            {renderLine(l)}
           </div>
         ))}
         {running && (

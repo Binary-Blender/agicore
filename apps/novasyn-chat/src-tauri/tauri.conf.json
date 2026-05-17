@@ -34,5 +34,13 @@
       "icons/128x128.png",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "PLACEHOLDER — replace with output of: tauri signer generate -w novasyn-chat.key",
+      "endpoints": [
+        "https://github.com/Binary-Blender/agicore/releases/latest/download/latest.json"
+      ]
+    }
   }
 }

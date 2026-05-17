@@ -325,8 +325,10 @@ SESSION chat {
 }
 
 SESSION terminal {
-  DESCRIPTION  "Command-line workspace with WSL and PowerShell"
+  DESCRIPTION  "Command-line workspace with ANSI color output"
   TOOLS        terminal, file_edit
+  TERMINAL     xterm                    // @agicore:since FE-3 — codegen pending
+  PROFILES     cmd, powershell, wsl
   CONTEXT      minimal
   MEMORY       session
   OUTPUT       code
@@ -509,6 +511,19 @@ PREFERENCE model_context_overrides {
   TYPE    json    // Record<modelId, tokenCount>
   DEFAULT {}
   KEY     "ns_context_overrides"
+}
+
+// ===================================================================
+// AUTO-UPDATE — tauri-plugin-updater (Sprint 10)
+// ===================================================================
+
+ACTION check_for_update {
+  OUTPUT  version: string | null, available: boolean
+  PATTERN plugin_delegate    // delegates to tauri-plugin-updater
+}
+
+ACTION install_update {
+  PATTERN plugin_delegate
 }
 
 // ===================================================================
