@@ -25,8 +25,26 @@ This app exists for two reasons:
 
 ### Hand-written (extends the codegen)
 
-- `src-tauri/src/main.rs` — wires the generated ai_service commands into the Tauri builder
-- `src/components/ChatView.tsx`, `Sidebar.tsx`, `MessageInput.tsx`, `MarkdownRenderer.tsx`, `SearchBar.tsx`, `ContextBar.tsx`, `TagPicker.tsx`, `DocumentEditor.tsx`, `ExchangeLibrary.tsx`, `FolderPanel.tsx`, `NavRail.tsx`, `SettingsView.tsx`, `TagManager.tsx`, `TerminalView.tsx`, `TitleBar.tsx` — UI shell
+**Rust (src-tauri/src/):**
+- `main.rs` — wires plugins (dialog, global-shortcut, updater), tray icon, global hotkey, identity/reasoner/trigger bootstrap
+- `commands/upload.rs` — `upload_file_to_folder`: file dialog → extension detection → EPUB/text extraction → FolderItem creation + folder token sync
+- `commands/shell.rs` — async PTY-less shell runner; streams stdout/stderr lines as Tauri events
+
+**TypeScript components (src/components/):**
+- `ChatView.tsx` — streaming chat, council/broadcast mode, synthesis, auto-prune, context viewer, save-to-folder toolbar
+- `Sidebar.tsx` — session list with inline search/filter, system-prompt editor per session, session management
+- `FolderPanel.tsx` — folder list + "View items" button launching FolderContentModal
+- `FolderContentModal.tsx` — full folder item manager: file upload, inline edit, move, delete
+- `ContextWindowViewer.tsx` — modal reconstructing the exact AI context from store state (system prompt, active messages, token budget)
+- `OnboardingScreen.tsx` — first-run API key gate; shows until at least one key is configured
+- `SettingsView.tsx` — API keys, model visibility toggles, per-model context overrides, synthesis model selector, update checker
+- `ModelPicker.tsx` — single/council/broadcast mode toggle; respects hidden models list
+- `TerminalView.tsx` — shell runner with ANSI color output, command history, quick-command palette
+- `MessageInput.tsx`, `MarkdownRenderer.tsx`, `SearchBar.tsx`, `ContextBar.tsx`, `TagPicker.tsx`, `DocumentEditor.tsx`, `ExchangeLibrary.tsx`, `NavRail.tsx`, `TagManager.tsx`, `TitleBar.tsx` — supporting UI
+
+**TypeScript lib (src/lib/):**
+- `models.ts` — model definitions with context window sizes; `broadcastModelIds()`, `modelContextWindow()` with override support
+- `ansi.ts` — SGR escape sequence parser; converts ANSI color codes to Tailwind classes for terminal output
 
 The split shrinks over time as Agicore grows new emitters.
 
@@ -34,7 +52,7 @@ The split shrinks over time as Agicore grows new emitters.
 
 ## The DSL source
 
-The entire shape of this app — entities, relationships, AI providers, models, navigation context, session entity declaration, FK ordering, default user seed — is declared in `novasyn_chat.agi` (~440 lines).
+The entire shape of this app — entities, relationships, AI providers, models, navigation context, session declarations, ACTIONs, VIEWs, PREFERENCEs, and FK ordering — is declared in `novasyn_chat.agi` (~590 lines).
 
 Reading that file is the fastest way to understand both Agicore and this app.
 
@@ -90,7 +108,7 @@ console.log('Regenerated', result.files.size, 'files');
 
 ## Configuring API keys
 
-On first run, click the **🔑 API Keys** button in the sidebar. Keys are stored at:
+On first run, an onboarding screen prompts for API keys before the app opens. You can also reach key management via **Settings → API Keys**. Keys are stored at:
 - Windows: `%APPDATA%\NovaSyn\api-keys.json`
 - macOS/Linux: `~/.config/NovaSyn/api-keys.json`
 
@@ -107,25 +125,27 @@ Supported providers (declared in `AI_SERVICE.PROVIDERS`):
 
 ## Architecture notes
 
-This app is the test bench for the Agicore framework. As of agicore commit `20a03e8` (May 2026), the codegen pipeline handles:
+This app is the test bench for the Agicore framework. As of May 2026 (10-sprint port complete), the codegen pipeline handles:
 
 - AI_SERVICE → Rust streaming for multiple providers
 - ENTITY → SQL migration + Rust CRUD + TS types + invoke wrappers + Zustand slice
 - ENTITY.ORDER → SQL ordering direction
 - ENTITY.SEED → idempotent INSERT OR IGNORE rows
 - ENTITY.BELONGS_TO + APP.CURRENT → SQL-pushdown filtered list queries + matching store actions
-- AI_SERVICE.MODELS (multi-model with LABEL/DEFAULT) → ModelPicker.tsx
-- AI_SERVICE.PROVIDERS → ApiKeyModal.tsx (with key-storage-only support)
+- AI_SERVICE.MODELS (multi-model with LABEL/DEFAULT) → ModelPicker.tsx (hidden models, context overrides)
+- AI_SERVICE.PROVIDERS → ApiKeyModal + onboarding screen
+- SESSION → semantic operating modes with persistent memory
+- PREFERENCE → localStorage-persisted user preferences (FE-2; localStorage pending full codegen)
 
-Future phases will add:
+Framework enhancements identified during the port (pending implementation in Agicore core):
 
-- ACTION emitter (orchestrator-pattern Rust) — `send_chat`, `council_chat`, `broadcast_chat`, `web_search`
-- ROUTER emitter (tiered routing + Mosh Pit + preference scoring)
-- Document filesystem emitter (`<document>` stream tag scanner)
-- SETTINGS / VAULT emitter
-- Workspace runtime DB switching
+- **FE-1** — `CONTEXT` keyword in AI_SERVICE MODELS → emit context window into `models.ts` codegen
+- **FE-2** — `PREFERENCE` declaration type → Rust JSON file backend + typed TS accessors + Zustand slice
+- **FE-3** — `TERMINAL` keyword in SESSION → xterm.js + PTY codegen scaffold
+- **FE-4** — `FILE_HANDLER` pattern in ACTION → Tauri file dialog + Rust extension dispatch scaffold
+- **FE-5** — `@agicore:since` drift annotation → compiler skips annotated fields in initial SQL migration
 
-See [`../../README.md`](../../README.md) for the framework overview, [`../../ROADMAP.md`](../../ROADMAP.md) for the plan, and the commit history of this repo for the framework's evolution as it tracked this app's needs.
+See [`../../README.md`](../../README.md) for the framework overview, [`../../ROADMAP.md`](../../ROADMAP.md) for the plan, and [`PORT_PLAN.md`](./PORT_PLAN.md) for the full 10-sprint port history.
 
 ---
 

@@ -3,7 +3,7 @@
 **Old app (3G):** `novasyn_suite/novasyn_chat_lite/` — Electron + Node.js + SQLite  
 **New app (4G):** `agicore/apps/novasyn-chat/` — Tauri 2 + Rust + SQLite  
 **Agicore:** Phase 5 complete — 34 declaration types, 1,382 tests passing, all codegen implemented  
-**Last updated:** 2026-05-17  
+**Last updated:** 2026-05-17 — **ALL 10 SPRINTS COMPLETE**  
 
 ---
 
@@ -35,23 +35,37 @@ These are things that exist in the implementation but are missing from `novasyn_
 
 ---
 
-## Already Done (Sprints 1–6 + filter)
+## Completed — All 10 Sprints Done (May 2026)
 
-| Feature | Status | Notes |
+| Feature | Sprint | Status |
 |---|---|---|
-| Core chat (single model, streaming) | ✅ | `send_chat` ACTION |
-| Multi-provider (Anthropic, OpenAI, Google, xAI) | ✅ | AI_SERVICE declaration |
-| Council mode (parallel multi-model, tab UI) | ✅ | Frontend-only; `council_chat` ACTION in `.agi` not yet wired |
-| System prompt per session | ✅ | Schema drift — fix `.agi` |
-| Token counting + auto-prune | ✅ | Frontend-only; `is_pruned` field already in `.agi` |
-| First-run onboarding screen | ✅ | Pure UI |
-| Session search/filter in sidebar | ✅ | Pure UI |
-| Web search (`/search` prefix) | ✅ | `web_search` ACTION in `.agi` ✅ |
-| Session rename / delete / export MD | ✅ | `export_session_md` ACTION in `.agi` ✅ |
-| Message tagging | ✅ | ChatMessageTag entity in `.agi` ✅ |
-| Folder reference system | ✅ | Folder/FolderItem entities in `.agi` ✅ |
-| Document editor | ✅ | Document entity + VIEW in `.agi` ✅ |
-| Exchange library | ✅ | Exchange entity + VIEW in `.agi` ✅ |
+| Core chat (single model, streaming) | 1–5 | ✅ |
+| Multi-provider (Anthropic, OpenAI, Google, xAI) | 1–5 | ✅ |
+| Council mode (parallel multi-model, tab UI) | 5 | ✅ |
+| System prompt per session | 6 | ✅ |
+| Token counting + auto-prune | 5 | ✅ |
+| First-run onboarding screen | 6 | ✅ |
+| Session search/filter in sidebar | 6 | ✅ |
+| Web search (`/search` prefix) | 1–5 | ✅ |
+| Session rename / delete / export MD | 1–5 | ✅ |
+| Message tagging | 1–5 | ✅ |
+| Folder reference system | 1–5 | ✅ |
+| Document editor | 1–5 | ✅ |
+| Exchange library | 1–5 | ✅ |
+| Response synthesis (council/broadcast → single merged) | 7 | ✅ |
+| Broadcast mode (one model per provider simultaneously) | 7 | ✅ |
+| Context window viewer | 7 | ✅ |
+| File upload to folders (.txt, .md, .epub, .csv, .rst) | 8 | ✅ |
+| EPUB text extraction | 8 | ✅ |
+| Save chat session to folder | 8 | ✅ |
+| FolderContentModal (view, edit, move, delete items) | 8 | ✅ |
+| Session folder persistence (migration 003) | 8 | ✅ |
+| Model visibility toggle (hide from picker) | 9 | ✅ |
+| Per-model context window override | 9 | ✅ |
+| Synthesis model selection (persisted) | 9 | ✅ |
+| Preferences persisted to localStorage | 9 | ✅ |
+| ANSI color rendering in terminal | 10 | ✅ |
+| Auto-update infrastructure (tauri-plugin-updater) | 10 | ✅ |
 
 ---
 

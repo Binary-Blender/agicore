@@ -61,14 +61,27 @@ Deliverables:
 
 **Goal:** Build a real application using the DSL, proving the full pipeline works beyond toy examples.
 
-Result: NovaSyn Chat 2.0 (`apps/novasyn-chat/`) — a multi-provider AI chat client generated from `novasyn_chat.agi` (~400 lines of DSL → 54+ generated files). End-to-end verified in production.
+Result: NovaSyn Chat 2.0 (`apps/novasyn-chat/`) — a multi-provider AI chat client generated from `novasyn_chat.agi` (~590 lines of DSL → 54+ generated files, 10-sprint port from 3G Electron to 4G Tauri complete).
 
 - [x] Complete `.agi` definition for a production application
 - [x] Generated Tauri application — builds clean (`cargo build` + `tsc --noEmit`)
 - [x] Streaming AI responses verified (Anthropic, OpenAI, Google, xAI)
-- [x] API key management, model selection, conversation history
-- [x] Folder-based knowledge, tag management, exchange library
+- [x] API key management with first-run onboarding screen
+- [x] Model selection with visibility toggles and per-model context window overrides
+- [x] Council mode — parallel multi-model responses with tab UI
+- [x] Broadcast mode — one model per provider simultaneously
+- [x] Response synthesis — merge council/broadcast alternatives via configurable model
+- [x] Context window viewer — reconstruct exact AI context from store state
+- [x] Conversation history with auto-prune when context window fills
+- [x] Session search/filter, system prompt per session
+- [x] Folder-based knowledge — upload .txt/.md/.epub/.csv/.rst files, inline edit, move, delete
+- [x] Save chat session to folder as chat-export item
+- [x] Tag management, exchange library, document editor
 - [x] Semantic state transitions ("Send To" compilers)
+- [x] ANSI color rendering in terminal (cargo/npm/git output)
+- [x] Auto-update infrastructure (tauri-plugin-updater wired, endpoint configurable)
+- [x] User preferences persisted to localStorage (model selection, hidden models, context overrides)
+- [x] Framework enhancements identified: FE-1 through FE-5 (pending implementation in Agicore core)
 - [x] Framework bugs discovered during build → fixed in core (module naming, layout, permissions, initial view)
 
 ---
@@ -121,6 +134,7 @@ Validator expansion (completed):
 
 **Goal:** Build an open ecosystem around the platform.
 
+- [ ] Framework enhancements FE-1 through FE-5 (identified during NovaSyn Chat 2.0 port — see `apps/novasyn-chat/PORT_PLAN.md`)
 - [ ] Comprehensive documentation and tutorial series
 - [ ] Additional compilation targets (web API, CLI tools, automation pipelines)
 - [ ] Community-contributed modules and module registry
