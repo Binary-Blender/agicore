@@ -55,6 +55,7 @@ export function ChatView() {
   const [showContextViewer, setShowContextViewer] = useState(false);
   const [showSaveToFolder, setShowSaveToFolder] = useState(false);
   const [savingToFolder, setSavingToFolder] = useState(false);
+  const [alertDismissedAt, setAlertDismissedAt] = useState(0);
 
   const contextWindow = modelContextWindow(selectedModel, modelContextOverrides);
   const activeMessages = chatMessages.filter((m) => !m.isExcluded && !m.isArchived && !m.isPruned);
@@ -281,6 +282,35 @@ export function ChatView() {
           onResults={(results) => setSearchResults(results)}
           onClear={() => setSearchResults(null)}
         />
+      )}
+      {tokenPct >= warnThreshold && contextTokens > alertDismissedAt && (
+        <div className={`flex items-center gap-2 px-4 py-2 text-xs border-b flex-shrink-0 ${
+          tokenPct >= pruneThreshold
+            ? 'bg-red-900/20 border-red-700/40 text-red-300'
+            : 'bg-amber-900/20 border-amber-700/40 text-amber-300'
+        }`}>
+          <span className="flex-1">
+            Context {Math.round(tokenPct * 100)}% full
+            ({contextTokens.toLocaleString()} / {contextWindow.toLocaleString()} tokens)
+            {tokenPct >= pruneThreshold ? ' — prune to continue.' : ' — approaching limit.'}
+          </span>
+          {tokenPct >= pruneThreshold && (
+            <button
+              onClick={handleAutoPrune}
+              disabled={pruning}
+              className="text-xs bg-red-700/60 hover:bg-red-600/80 px-2 py-0.5 rounded transition disabled:opacity-50"
+            >
+              {pruning ? 'Pruning…' : 'Prune'}
+            </button>
+          )}
+          <button
+            onClick={() => setAlertDismissedAt(contextTokens)}
+            className="text-gray-500 hover:text-white transition"
+            title="Dismiss"
+          >
+            ×
+          </button>
+        </div>
       )}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {displayMessages.length === 0 && !streamingContent && (

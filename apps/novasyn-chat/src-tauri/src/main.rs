@@ -107,6 +107,8 @@ fn main() {
             commands::session::get_session,
             commands::session::update_session,
             commands::session::delete_session,
+            commands::session::get_session_message_counts,
+            commands::session::copy_session_messages,
             commands::folder::list_folders,
             commands::folder::create_folder,
             commands::folder::get_folder,

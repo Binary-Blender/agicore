@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { Key, Database, Info, Cpu, RefreshCw } from 'lucide-react';
 import { MODELS } from '../lib/models';
 import { useAppStore } from '../store/appStore';
@@ -31,6 +32,8 @@ export function SettingsView() {
   const [updateVersion, setUpdateVersion] = useState<string | null>(null);
   const [installing, setInstalling] = useState(false);
   const [updateHandle, setUpdateHandle] = useState<Awaited<ReturnType<typeof checkUpdate>> | null>(null);
+  const [dbPath, setDbPath] = useState('');
+  const [switchingDb, setSwitchingDb] = useState(false);
 
   function toggleHidden(modelId: string) {
     if (hiddenModels.includes(modelId)) {
@@ -65,6 +68,22 @@ export function SettingsView() {
     }
   }
 
+  async function handleSwitchDb() {
+    setSwitchingDb(true);
+    try {
+      const selected = await openDialog({
+        multiple: false,
+        filters: [{ name: 'SQLite Database', extensions: ['db'] }],
+      });
+      if (!selected) return;
+      await invoke('switch_db', { newPath: selected });
+      setDbPath(selected);
+      // Reload the page so all store state re-initialises against the new DB
+      window.location.reload();
+    } catch (err) { console.error('Switch DB failed:', err); }
+    finally { setSwitchingDb(false); }
+  }
+
   async function handleInstallUpdate() {
     if (!updateHandle) return;
     setInstalling(true);
@@ -76,7 +95,10 @@ export function SettingsView() {
     }
   }
 
-  useEffect(() => { loadKeys(); }, []);
+  useEffect(() => {
+    loadKeys();
+    invoke<string>('get_db_path').then(setDbPath).catch(() => {});
+  }, []);
 
   async function loadKeys() {
     try {
@@ -229,8 +251,21 @@ export function SettingsView() {
           <Database size={16} className="text-purple-400" />
           <h3 className="text-sm font-medium text-white">Database</h3>
         </div>
-        <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-2 text-sm text-gray-300">
-          <p><span className="text-gray-500">File:</span> <code className="bg-slate-900/50 px-1.5 py-0.5 rounded text-xs">novasyn_chat.db</code></p>
+        <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-3 text-sm text-gray-300">
+          <div>
+            <p className="text-xs text-gray-500 mb-1">Active database</p>
+            <code className="block bg-slate-900/50 px-2 py-1.5 rounded text-xs text-gray-300 break-all">{dbPath || 'novasyn_chat.db'}</code>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleSwitchDb}
+              disabled={switchingDb}
+              className="text-xs bg-slate-700 hover:bg-slate-600 text-gray-300 hover:text-white px-3 py-1.5 rounded transition disabled:opacity-50"
+            >
+              {switchingDb ? 'Switching…' : 'Open another database…'}
+            </button>
+            <span className="text-xs text-gray-600">App restarts on switch</span>
+          </div>
         </div>
       </section>
       <section>

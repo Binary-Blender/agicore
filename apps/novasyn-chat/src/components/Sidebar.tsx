@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Plus, Pencil, Trash2, Key, MessageSquare, Download, SlidersHorizontal, Search, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, Key, MessageSquare, Download, SlidersHorizontal, Search, X, Archive, ArchiveRestore, Copy, ChevronDown, ChevronRight } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { useAppStore } from '../store/appStore';
 import { ModelPicker } from './ModelPicker';
@@ -9,18 +9,24 @@ import type { Session } from '../lib/types';
 interface SessionItemProps {
   session: Session;
   isActive: boolean;
+  msgCount: number;
+  allSessions: Session[];
   onSelect: () => void;
   onRename: (name: string) => void;
   onDelete: () => void;
+  onArchive: () => void;
+  onCopyTo: (targetId: string) => void;
   onSystemPromptSave: (prompt: string | null) => void;
 }
 
-function SessionItem({ session, isActive, onSelect, onRename, onDelete, onSystemPromptSave }: SessionItemProps) {
+function SessionItem({ session, isActive, msgCount, allSessions, onSelect, onRename, onDelete, onArchive, onCopyTo, onSystemPromptSave }: SessionItemProps) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(session.name);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const [promptDraft, setPromptDraft] = useState(session.systemPrompt ?? '');
+  const [showCopyMenu, setShowCopyMenu] = useState(false);
+  const copyTargets = allSessions.filter((s) => s.id !== session.id && !s.isArchived);
 
   async function handleExport() {
     try {
@@ -78,6 +84,9 @@ function SessionItem({ session, isActive, onSelect, onRename, onDelete, onSystem
       >
         <MessageSquare size={14} className="flex-shrink-0 opacity-60" />
         <span className="text-sm flex-1 truncate">{session.name}</span>
+        {msgCount > 0 && (
+          <span className="text-xs text-gray-600 flex-shrink-0 tabular-nums">{msgCount}</span>
+        )}
         <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition">
           <button
             onClick={(e) => { e.stopPropagation(); handleExport(); }}
@@ -92,6 +101,36 @@ function SessionItem({ session, isActive, onSelect, onRename, onDelete, onSystem
             title="System prompt"
           >
             <SlidersHorizontal size={11} />
+          </button>
+          {copyTargets.length > 0 && (
+            <div className="relative">
+              <button
+                onClick={(e) => { e.stopPropagation(); setShowCopyMenu((v) => !v); }}
+                className="text-gray-500 hover:text-green-400 p-0.5 rounded hover:bg-slate-600 transition"
+                title="Copy messages to…"
+              >
+                <Copy size={11} />
+              </button>
+              {showCopyMenu && (
+                <div className="absolute left-0 top-full mt-1 bg-slate-700 border border-slate-600 rounded-lg shadow-xl z-20 min-w-[160px] py-1">
+                  <p className="text-xs text-gray-500 px-3 py-1">Copy to session:</p>
+                  {copyTargets.map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={(e) => { e.stopPropagation(); onCopyTo(t.id); setShowCopyMenu(false); }}
+                      className="w-full text-left px-3 py-1.5 text-xs text-blue-300 hover:bg-slate-600 transition truncate"
+                    >{t.name}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          <button
+            onClick={(e) => { e.stopPropagation(); onArchive(); }}
+            className={`p-0.5 rounded hover:bg-slate-600 transition ${session.isArchived ? 'text-amber-400 hover:text-amber-300' : 'text-gray-500 hover:text-amber-400'}`}
+            title={session.isArchived ? 'Unarchive' : 'Archive'}
+          >
+            {session.isArchived ? <ArchiveRestore size={11} /> : <Archive size={11} />}
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); setEditing(true); }}
@@ -144,11 +183,15 @@ export function Sidebar() {
   const [showApiKeys, setShowApiKeys] = useState(false);
   const [filterText, setFilterText] = useState('');
   const [showFilter, setShowFilter] = useState(false);
+  const [msgCounts, setMsgCounts] = useState<Record<string, number>>({});
+  const [showArchived, setShowArchived] = useState(false);
   const filterRef = useRef<HTMLInputElement>(null);
 
+  const activeSessions = sessions.filter((s) => !s.isArchived);
+  const archivedSessions = sessions.filter((s) => s.isArchived);
   const filteredSessions = filterText.trim()
-    ? sessions.filter((s) => s.name.toLowerCase().includes(filterText.toLowerCase()))
-    : sessions;
+    ? activeSessions.filter((s) => s.name.toLowerCase().includes(filterText.toLowerCase()))
+    : activeSessions;
 
   function openFilter() {
     setShowFilter(true);
@@ -160,11 +203,18 @@ export function Sidebar() {
     setShowFilter(false);
   }
 
-  useEffect(() => { loadSessions(); }, []);
+  async function loadMsgCounts() {
+    try {
+      const counts = await invoke<Record<string, number>>('get_session_message_counts');
+      setMsgCounts(counts);
+    } catch { /* non-critical */ }
+  }
+
+  useEffect(() => { loadSessions(); loadMsgCounts(); }, []);
 
   useEffect(() => {
-    if (!currentSessionId && sessions.length > 0) {
-      setCurrentSessionId(sessions[0].id);
+    if (!currentSessionId && activeSessions.length > 0) {
+      setCurrentSessionId(activeSessions[0].id);
     }
   }, [sessions, currentSessionId]);
 
@@ -173,6 +223,7 @@ export function Sidebar() {
     try {
       await invoke('create_session', { input: { name, userId: 'default-user' } });
       await loadSessions();
+      await loadMsgCounts();
     } catch (err) { console.error('Create session failed:', err); }
   }
 
@@ -188,8 +239,24 @@ export function Sidebar() {
     try {
       await invoke('delete_session', { id });
       await loadSessions();
+      await loadMsgCounts();
       if (currentSessionId === id) setCurrentSessionId(null);
     } catch (err) { console.error('Delete failed:', err); }
+  }
+
+  async function handleArchiveSession(id: string, archive: boolean) {
+    try {
+      await invoke('update_session', { id, input: { isArchived: archive } });
+      await loadSessions();
+      if (archive && currentSessionId === id) setCurrentSessionId(null);
+    } catch (err) { console.error('Archive failed:', err); }
+  }
+
+  async function handleCopyTo(sourceId: string, targetId: string) {
+    try {
+      await invoke('copy_session_messages', { sourceSessionId: sourceId, targetSessionId: targetId });
+      await loadMsgCounts();
+    } catch (err) { console.error('Copy failed:', err); }
   }
 
   async function handleSystemPromptSave(id: string, prompt: string | null) {
@@ -198,6 +265,19 @@ export function Sidebar() {
       await loadSessions();
     } catch (err) { console.error('System prompt save failed:', err); }
   }
+
+  const sessionItemProps = (session: Session) => ({
+    session,
+    isActive: currentSessionId === session.id,
+    msgCount: msgCounts[session.id] ?? 0,
+    allSessions: sessions,
+    onSelect: () => setCurrentSessionId(session.id),
+    onRename: (name: string) => handleRenameSession(session.id, name),
+    onDelete: () => handleDeleteSession(session.id),
+    onArchive: () => handleArchiveSession(session.id, !session.isArchived),
+    onCopyTo: (targetId: string) => handleCopyTo(session.id, targetId),
+    onSystemPromptSave: (prompt: string | null) => handleSystemPromptSave(session.id, prompt),
+  });
 
   return (
     <>
@@ -230,7 +310,7 @@ export function Sidebar() {
                 />
                 {filterText && (
                   <span className="text-xs text-gray-600 flex-shrink-0">
-                    {filteredSessions.length}/{sessions.length}
+                    {filteredSessions.length}/{activeSessions.length}
                   </span>
                 )}
                 <button onClick={clearFilter} className="text-gray-500 hover:text-white transition flex-shrink-0">
@@ -259,27 +339,36 @@ export function Sidebar() {
               </button>
             </div>
           </div>
-          {sessions.length === 0 && (
+
+          {activeSessions.length === 0 && (
             <p className="text-xs text-gray-600 px-3 py-4 text-center">
               No conversations yet.<br />Click + to start one.
             </p>
           )}
-          {sessions.length > 0 && filteredSessions.length === 0 && (
+          {activeSessions.length > 0 && filteredSessions.length === 0 && (
             <p className="text-xs text-gray-600 px-3 py-4 text-center">
               No sessions match "{filterText}".
             </p>
           )}
           {filteredSessions.map((session) => (
-            <SessionItem
-              key={session.id}
-              session={session}
-              isActive={currentSessionId === session.id}
-              onSelect={() => setCurrentSessionId(session.id)}
-              onRename={(name) => handleRenameSession(session.id, name)}
-              onDelete={() => handleDeleteSession(session.id)}
-              onSystemPromptSave={(prompt) => handleSystemPromptSave(session.id, prompt)}
-            />
+            <SessionItem key={session.id} {...sessionItemProps(session)} />
           ))}
+
+          {archivedSessions.length > 0 && (
+            <div className="mt-2 border-t border-slate-700/50 pt-2">
+              <button
+                onClick={() => setShowArchived((v) => !v)}
+                className="flex items-center gap-1.5 px-3 py-1 w-full text-left text-xs text-gray-600 hover:text-gray-400 transition"
+              >
+                {showArchived ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                <Archive size={11} />
+                <span>Archived ({archivedSessions.length})</span>
+              </button>
+              {showArchived && archivedSessions.map((session) => (
+                <SessionItem key={session.id} {...sessionItemProps(session)} />
+              ))}
+            </div>
+          )}
         </div>
         <div className="px-3 py-2 border-t border-slate-700 text-xs text-gray-600">
           <span>Built on Agicore</span>

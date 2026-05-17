@@ -56,6 +56,7 @@ export interface Session {
   name: string;
   systemPrompt: string | null;
   selectedFolders: string | null;
+  isArchived: boolean;
   userId: string;
   createdAt: string;
   updatedAt: string;
@@ -70,6 +71,7 @@ export interface UpdateSessionInput {
   name?: string;
   systemPrompt?: string | null;
   selectedFolders?: string | null;
+  isArchived?: boolean;
 }
 
 export interface Folder {

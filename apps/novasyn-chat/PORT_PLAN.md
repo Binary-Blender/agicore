@@ -339,15 +339,15 @@ Sprint 10:        Add TERMINAL + PROFILES to SESSION terminal
 
 ## Backlog / Nice-to-Have
 
-| Feature | Notes |
-|---|---|
-| Copy messages to another session | `COPY_MESSAGES_TO_SESSION` from old app |
-| Archive session | Soft-delete to archive list |
-| Session message count badge | Show `(N)` next to session name |
-| BabyAI integration | Cooperative intelligence routing via ROUTER BabyAI |
-| Tray icon / minimize to tray | `TRAY` already in APP declaration — just needs wiring |
-| Multi-workspace (separate DBs) | Workspace commands exist; need WorkspaceSwitcher UI |
-| Token budget alerts | Warn when estimated cost exceeds threshold |
+| Feature | Status | Notes |
+|---|---|---|
+| Copy messages to another session | ✅ Sprint 11 | `copy_session_messages` Rust command + Copy icon in session hover row |
+| Archive session | ✅ Sprint 11 | Migration 004 + `is_archived` field; collapsible Archived section in sidebar |
+| Session message count badge | ✅ Sprint 11 | `get_session_message_counts` query + count shown next to session name |
+| Token budget alerts | ✅ Sprint 11 | Dismissible banner at 70% (amber) and 85% (red) with inline Prune button |
+| Multi-workspace (separate DBs) | ✅ Sprint 11 | "Open another database…" in Settings → file dialog → `switch_db` → reload |
+| BabyAI integration | Pending | Cooperative intelligence routing via ROUTER BabyAI |
+| Tray icon / minimize to tray | Done (core) | System tray already wired in main.rs (Sprint 1–5) |
 
 ---
 

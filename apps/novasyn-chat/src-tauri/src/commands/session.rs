@@ -3,6 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 use crate::db::DbPool;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,6 +12,7 @@ pub struct Session {
     pub name: String,
     pub system_prompt: Option<String>,
     pub selected_folders: Option<String>,
+    pub is_archived: bool,
     pub user_id: String,
     pub created_at: String,
     pub updated_at: String,
@@ -29,6 +31,7 @@ pub struct UpdateSessionInput {
     pub name: Option<String>,
     pub system_prompt: Option<String>,
     pub selected_folders: Option<String>,
+    pub is_archived: Option<bool>,
 }
 
 impl Session {
@@ -38,6 +41,7 @@ impl Session {
             name: row.get("name").unwrap(),
             system_prompt: row.get("system_prompt").unwrap_or(None),
             selected_folders: row.get("selected_folders").unwrap_or(None),
+            is_archived: row.get::<_, i64>("is_archived").unwrap_or(0) != 0,
             user_id: row.get("user_id").unwrap(),
             created_at: row.get("created_at").unwrap(),
             updated_at: row.get("updated_at").unwrap(),
@@ -101,6 +105,10 @@ pub fn update_session(db: tauri::State<'_, DbPool>, id: String, input: UpdateSes
         sets.push("selected_folders = ?".to_string());
         params.push(Box::new(val));
     }
+    if let Some(val) = input.is_archived {
+        sets.push("is_archived = ?".to_string());
+        params.push(Box::new(if val { 1i64 } else { 0i64 }));
+    }
     sets.push("updated_at = ?".to_string());
     params.push(Box::new(chrono::Utc::now().to_rfc3339()));
     params.push(Box::new(id.clone()));
@@ -117,4 +125,57 @@ pub fn delete_session(db: tauri::State<'_, DbPool>, id: String) -> Result<(), St
     conn.execute("DELETE FROM sessions WHERE id = ?", [&id])
         .map_err(|e| e.to_string())?;
     Ok(())
+}
+
+#[tauri::command]
+pub fn get_session_message_counts(db: tauri::State<'_, DbPool>) -> Result<HashMap<String, i64>, String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let mut stmt = conn.prepare(
+        "SELECT session_id, COUNT(*) FROM chat_messages GROUP BY session_id"
+    ).map_err(|e| e.to_string())?;
+    let mut map = HashMap::new();
+    let rows = stmt.query_map([], |row| {
+        Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?))
+    }).map_err(|e| e.to_string())?;
+    for row in rows {
+        let (sid, cnt) = row.map_err(|e| e.to_string())?;
+        map.insert(sid, cnt);
+    }
+    Ok(map)
+}
+
+#[tauri::command]
+pub fn copy_session_messages(
+    db: tauri::State<'_, DbPool>,
+    source_session_id: String,
+    target_session_id: String,
+) -> Result<i32, String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let mut stmt = conn.prepare(
+        "SELECT user_message, ai_message, user_tokens, ai_tokens, total_tokens, model, provider
+         FROM chat_messages WHERE session_id = ? ORDER BY created_at ASC"
+    ).map_err(|e| e.to_string())?;
+    let rows: Vec<_> = stmt.query_map([&source_session_id], |row| {
+        Ok((
+            row.get::<_, String>(0)?,
+            row.get::<_, String>(1)?,
+            row.get::<_, i64>(2)?,
+            row.get::<_, i64>(3)?,
+            row.get::<_, i64>(4)?,
+            row.get::<_, String>(5)?,
+            row.get::<_, String>(6)?,
+        ))
+    }).map_err(|e| e.to_string())?
+    .collect::<Result<_, _>>().map_err(|e| e.to_string())?;
+    let count = rows.len() as i32;
+    let now = chrono::Utc::now().to_rfc3339();
+    for (user_msg, ai_msg, user_tokens, ai_tokens, total_tokens, model, provider) in rows {
+        let id = uuid::Uuid::new_v4().to_string();
+        conn.execute(
+            "INSERT INTO chat_messages (id, user_message, ai_message, user_tokens, ai_tokens, total_tokens, model, provider, user_id, session_id, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'default-user', ?, ?, ?)",
+            rusqlite::params![id, user_msg, ai_msg, user_tokens, ai_tokens, total_tokens, model, provider, target_session_id, &now, &now],
+        ).map_err(|e| e.to_string())?;
+    }
+    Ok(count)
 }
