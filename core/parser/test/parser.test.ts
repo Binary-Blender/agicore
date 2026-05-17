@@ -1920,6 +1920,160 @@ assert(fullWsResult.app.workspaces === true, 'WORKSPACES should coexist with oth
 assert(fullWsResult.app.current?.[0] === 'Session', 'CURRENT should still parse alongside WORKSPACES');
 assert(fullWsResult.app.window?.frameless === true, 'WINDOW frameless should still parse alongside WORKSPACES');
 
+// --- Test: EVENT declaration ---
+
+section('EVENT declaration');
+
+const eventDsl = `
+APP event_app { TITLE "Event App" DB event.db }
+
+EVENT ImageBatchRejected {
+  DESCRIPTION "Fires when a batch of generated images fails QC validation"
+  PAYLOAD {
+    batch_id: string
+    rejection_reason: string
+    attempt_count: string
+  }
+  SUBSCRIBERS [PromptRefinementWorkflow, AuditLogger]
+  IDEMPOTENT true
+  TTL 3600
+}
+`;
+
+try {
+  const eventResult = parse(eventDsl);
+  assert(eventResult.events.length === 1, 'Should have 1 EVENT declaration');
+  const ev = eventResult.events[0]!;
+  assert(ev.kind === 'event', 'EVENT kind should be "event"');
+  assert(ev.name === 'ImageBatchRejected', 'EVENT name should be ImageBatchRejected');
+  assert(ev.description === 'Fires when a batch of generated images fails QC validation', 'EVENT description should match');
+  assert(ev.payload.length === 3, 'EVENT payload should have 3 fields');
+  assert(ev.payload[0]!.name === 'batch_id', 'First payload field should be batch_id');
+  assert(ev.payload[0]!.type === 'string', 'First payload field type should be string');
+  assert(ev.subscribers.length === 2, 'EVENT should have 2 subscribers');
+  assert(ev.subscribers[0] === 'PromptRefinementWorkflow', 'First subscriber should be PromptRefinementWorkflow');
+  assert(ev.subscribers[1] === 'AuditLogger', 'Second subscriber should be AuditLogger');
+  assert(ev.idempotent === true, 'EVENT idempotent should be true');
+  assert(ev.ttl === 3600, 'EVENT TTL should be 3600');
+  console.log('  EVENT parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: EVENT parse error: ${err}`);
+}
+
+// --- Test: NBVE declaration ---
+
+section('NBVE declaration');
+
+const nbveDsl = `
+APP nbve_app { TITLE "NBVE App" DB nbve.db }
+
+NBVE LinkedInCommentOptimizer {
+  DESCRIPTION "Shadow-tests Qwen3-72B against Claude Sonnet for LinkedIn comments"
+  PRODUCTION "claude-sonnet-4-20250514"
+  SHADOW "Qwen/Qwen3-72B"
+  SPC {
+    WINDOW 50
+    CONFIDENCE 0.95
+    ACCURACY_THRESHOLD 0.90
+    STABILITY_THRESHOLD 0.92
+    DEFECT_RATE_MAX 0.05
+  }
+  METRICS [semantic_accuracy, workflow_stability, human_acceptance_rate, token_cost]
+  PROMOTION auto
+  FALLBACK production
+}
+`;
+
+try {
+  const nbveResult = parse(nbveDsl);
+  assert(nbveResult.nbves.length === 1, 'Should have 1 NBVE declaration');
+  const nb = nbveResult.nbves[0]!;
+  assert(nb.kind === 'nbve', 'NBVE kind should be "nbve"');
+  assert(nb.name === 'LinkedInCommentOptimizer', 'NBVE name should be LinkedInCommentOptimizer');
+  assert(nb.production === 'claude-sonnet-4-20250514', 'NBVE production model should match');
+  assert(nb.shadow === 'Qwen/Qwen3-72B', 'NBVE shadow model should match');
+  assert(nb.spc.window === 50, 'NBVE SPC window should be 50');
+  assert(nb.spc.confidence === 0.95, 'NBVE SPC confidence should be 0.95');
+  assert(nb.spc.accuracyThreshold === 0.90, 'NBVE SPC accuracyThreshold should be 0.90');
+  assert(nb.spc.stabilityThreshold === 0.92, 'NBVE SPC stabilityThreshold should be 0.92');
+  assert(nb.spc.defectRateMax === 0.05, 'NBVE SPC defectRateMax should be 0.05');
+  assert(nb.metrics.length === 4, 'NBVE should have 4 metrics');
+  assert(nb.metrics[0] === 'semantic_accuracy', 'First metric should be semantic_accuracy');
+  assert(nb.promotion === 'auto', 'NBVE promotion should be auto');
+  assert(nb.fallback === 'production', 'NBVE fallback should be production');
+  console.log('  NBVE parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: NBVE parse error: ${err}`);
+}
+
+// --- Test: CONTRACT declaration ---
+
+section('CONTRACT declaration');
+
+const contractDsl = `
+APP contract_app { TITLE "Contract App" DB contract.db }
+
+CONTRACT MusicCommission {
+  DESCRIPTION "Custom synthwave intro commission"
+  PARTIES {
+    client: Identity
+    provider: Identity
+  }
+  TERMS {
+    delivery_deadline: "14d"
+    revisions: 2
+  }
+  DELIVERABLES {
+    audio_file: REQUIRED
+    commercial_license: REQUIRED
+  }
+  PAYMENT {
+    METHOD ach
+    AMOUNT 50
+    CURRENCY "USD"
+    RELEASE on_acceptance
+    RECURRING false
+  }
+  GOVERNANCE {
+    SIGNED_BY both
+    DISPUTE optional
+  }
+  TIMESTAMPS
+}
+`;
+
+try {
+  const contractResult = parse(contractDsl);
+  assert(contractResult.contracts.length === 1, 'Should have 1 CONTRACT declaration');
+  const ct = contractResult.contracts[0]!;
+  assert(ct.kind === 'contract', 'CONTRACT kind should be "contract"');
+  assert(ct.name === 'MusicCommission', 'CONTRACT name should be MusicCommission');
+  assert(ct.description === 'Custom synthwave intro commission', 'CONTRACT description should match');
+  assert(ct.parties.length === 2, 'CONTRACT should have 2 parties');
+  assert(ct.parties[0]!.role === 'client', 'First party role should be client');
+  assert(ct.parties[0]!.type === 'Identity', 'First party type should be Identity');
+  assert(ct.terms.length === 2, 'CONTRACT should have 2 terms');
+  assert(ct.terms[0]!.key === 'delivery_deadline', 'First term key should be delivery_deadline');
+  assert(ct.terms[0]!.value === '14d', 'First term value should be 14d');
+  assert(ct.deliverables.length === 2, 'CONTRACT should have 2 deliverables');
+  assert(ct.deliverables[0]!.name === 'audio_file', 'First deliverable name should be audio_file');
+  assert(ct.deliverables[0]!.required === true, 'First deliverable should be required');
+  assert(ct.payment.method === 'ach', 'CONTRACT payment method should be ach');
+  assert(ct.payment.amount === 50, 'CONTRACT payment amount should be 50');
+  assert(ct.payment.currency === 'USD', 'CONTRACT payment currency should be USD');
+  assert(ct.payment.release === 'on_acceptance', 'CONTRACT payment release should be on_acceptance');
+  assert(ct.payment.recurring === false, 'CONTRACT payment recurring should be false');
+  assert(ct.governance.signedBy === 'both', 'CONTRACT governance signedBy should be both');
+  assert(ct.governance.dispute === 'optional', 'CONTRACT governance dispute should be optional');
+  assert(ct.timestamps === true, 'CONTRACT timestamps should be true');
+  console.log('  CONTRACT parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: CONTRACT parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

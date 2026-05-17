@@ -143,6 +143,32 @@ Validator expansion (completed):
 
 ---
 
+## Phase 7: Adaptive Intelligence Layer
+
+**Goal:** Turn Agicore from a systems-authoring tool into a self-optimizing operational platform.
+
+### Phase 7.1 — New Declaration Types (complete)
+
+- [x] **EVENT** — named async pub/sub events; fills the gap between TRIGGER (direct fire) and CHANNEL (point-to-point routing); enables loosely-coupled distributed orchestration
+- [x] **NBVE** — Non-Blocking Variant Evaluation; shadow-runs a smaller/cheaper AI model alongside production, governed by SPC thresholds; promotes automatically when quality meets the bar — the mechanism for progressive AI cost optimization without production risk
+- [x] **CONTRACT** — machine-readable service agreements; PARTIES, TERMS, DELIVERABLES, PAYMENT, GOVERNANCE blocks; generates TypeScript schema + SQLite state machine; non-custodial (Agicore coordinates, external providers move money)
+
+Total after Phase 7.1: **37 declaration types, ~1,500 tests passing.**
+
+### Phase 7.2 — Commerce Layer (pending)
+
+- [ ] **REPUTATION** — SPC-driven trust scoring tied to CONTRACT execution history; decays over time, builds with consistent delivery; measurable trust vs engagement-based popularity
+- [ ] **SUBSCRIPTION** — recurring creator support relationships with payment coordination
+- [ ] **DISPUTE** — structured conflict resolution workflow for CONTRACT disagreements
+
+### Phase 7.3 — Codegen Completions (pending)
+
+Several declarations are fully parsed but have limited codegen. Full compiler implementations needed for: ACTION (Tauri command + TypeScript invoke), ROUTER (BabyAI decision tree), COMPILER (semantic extraction pipeline), VAULT (key rotation + audit log), EVENT (Tauri event bus + listener hooks), NBVE (shadow execution harness + SPC metric collection), CONTRACT (lifecycle state machine + SQLite schema).
+
+See `idea factory/NEXT_CAPABILITIES.md` for the full Phase 7 through Phase 10 roadmap.
+
+---
+
 ## Non-Goals
 
 These are explicitly out of scope:

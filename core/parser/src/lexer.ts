@@ -231,6 +231,29 @@ export enum TokenType {
   CAPACITY = 'CAPACITY',
   HOURS = 'HOURS',
 
+  // Event / NBVE / Contract keywords
+  EVENT_KW = 'EVENT_KW',
+  NBVE_KW = 'NBVE_KW',
+  CONTRACT_KW = 'CONTRACT_KW',
+  REPUTATION_KW = 'REPUTATION_KW',
+  PUBLISH = 'PUBLISH',
+  SHADOW = 'SHADOW',
+  PRODUCTION_KW = 'PRODUCTION_KW',
+  SPC_KW = 'SPC_KW',
+  CONFIDENCE = 'CONFIDENCE',
+  PROMOTION_KW = 'PROMOTION_KW',
+  METRICS = 'METRICS',
+  AMOUNT = 'AMOUNT',
+  CURRENCY = 'CURRENCY',
+  RELEASE = 'RELEASE',
+  RECURRING = 'RECURRING',
+  PARTIES = 'PARTIES',
+  TERMS = 'TERMS',
+  DELIVERABLES = 'DELIVERABLES',
+  PAYMENT_KW = 'PAYMENT_KW',
+  DISPUTE_KW = 'DISPUTE_KW',
+  SUBSCRIBERS = 'SUBSCRIBERS',
+
   // Semantic operating environment keywords
   SESSION = 'SESSION',
   COMPILER_KW = 'COMPILER_KW',
@@ -298,6 +321,8 @@ export enum TokenType {
 
   // Symbols (additional)
   SLASH = 'SLASH',
+  LBRACKET = 'LBRACKET',
+  RBRACKET = 'RBRACKET',
 
   // Other
   IDENTIFIER = 'IDENTIFIER',
@@ -508,6 +533,26 @@ const KEYWORDS: Record<string, TokenType> = {
   AMBIENT: TokenType.AMBIENT,
   CAPACITY: TokenType.CAPACITY,
   HOURS: TokenType.HOURS,
+  EVENT: TokenType.EVENT_KW,
+  NBVE: TokenType.NBVE_KW,
+  CONTRACT: TokenType.CONTRACT_KW,
+  REPUTATION: TokenType.REPUTATION_KW,
+  PUBLISH: TokenType.PUBLISH,
+  SHADOW: TokenType.SHADOW,
+  PRODUCTION: TokenType.PRODUCTION_KW,
+  CONFIDENCE: TokenType.CONFIDENCE,
+  PROMOTION: TokenType.PROMOTION_KW,
+  METRICS: TokenType.METRICS,
+  AMOUNT: TokenType.AMOUNT,
+  CURRENCY: TokenType.CURRENCY,
+  RELEASE: TokenType.RELEASE,
+  RECURRING: TokenType.RECURRING,
+  PARTIES: TokenType.PARTIES,
+  TERMS: TokenType.TERMS,
+  DELIVERABLES: TokenType.DELIVERABLES,
+  PAYMENT: TokenType.PAYMENT_KW,
+  DISPUTE: TokenType.DISPUTE_KW,
+  SUBSCRIBERS: TokenType.SUBSCRIBERS,
   SESSION: TokenType.SESSION,
   COMPILER: TokenType.COMPILER_KW,
   TOOLS: TokenType.TOOLS,
@@ -607,12 +652,18 @@ export class Lexer {
       if (ch === '.') { this.addToken(TokenType.DOT, '.'); this.advance(); continue; }
       if (ch === '/') { this.addToken(TokenType.SLASH, '/'); this.advance(); continue; }
 
-      // JSON literal shorthand: [] or {}
-      if (ch === '[' && this.peekNext() === ']') {
-        this.addToken(TokenType.STRING_LITERAL, '[]');
-        this.advance(); this.advance();
+      // Bracket tokens: [] is JSON literal shorthand, [x] is a list
+      if (ch === '[') {
+        if (this.peekNext() === ']') {
+          this.addToken(TokenType.STRING_LITERAL, '[]');
+          this.advance(); this.advance();
+        } else {
+          this.addToken(TokenType.LBRACKET, '[');
+          this.advance();
+        }
         continue;
       }
+      if (ch === ']') { this.addToken(TokenType.RBRACKET, ']'); this.advance(); continue; }
 
       // Multi-char operators
       if (ch === '-' && this.peekNext() === '>') {

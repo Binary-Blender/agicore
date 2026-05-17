@@ -24,6 +24,10 @@ import type {
   SensorDecl, SensorType,
   ZoneDecl,
   SessionDecl, CompilerDecl,
+  EventDecl, EventPayloadField,
+  NbveDecl, NbveSpc,
+  ContractDecl, ContractParty, ContractTerm, ContractDeliverable, ContractPayment, ContractGovernance,
+  PaymentMethod, PaymentRelease,
   StateNode, StateTransition, ScoreThreshold,
   FieldDef, FieldModifier, AgiType, CrudOp, Relationship, EntityOrder, SeedRecord,
   ActionParam, ActionOutput, LayoutType, ThemeOption,
@@ -84,6 +88,9 @@ export class Parser {
     const zones: ZoneDecl[] = [];
     const sessions: SessionDecl[] = [];
     const compilers: CompilerDecl[] = [];
+    const events: EventDecl[] = [];
+    const nbves: NbveDecl[] = [];
+    const contracts: ContractDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -186,12 +193,21 @@ export class Parser {
         case TokenType.COMPILER_KW:
           compilers.push(this.parseCompiler());
           break;
+        case TokenType.EVENT_KW:
+          events.push(this.parseEvent());
+          break;
+        case TokenType.NBVE_KW:
+          nbves.push(this.parseNbve());
+          break;
+        case TokenType.CONTRACT_KW:
+          contracts.push(this.parseContract());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts };
   }
 
   // --- APP ---
@@ -2511,6 +2527,218 @@ export class Parser {
     return { kind: 'compiler', name, description, from, to, extract, enrich, ai, validate, span: { start, end } };
   }
 
+  // --- EVENT ---
+
+  private parseEvent(): EventDecl {
+    const start = this.expectToken(TokenType.EVENT_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    const payload: EventPayloadField[] = [];
+    const subscribers: string[] = [];
+    let idempotent = false;
+    let ttl = 0;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.PAYLOAD) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const fieldName = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const fieldType = this.expectIdentifier();
+          payload.push({ name: fieldName, type: fieldType });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.type === TokenType.SUBSCRIBERS) {
+        this.advance(); subscribers.push(...this.parseBracketedIdentifierList()); continue;
+      }
+      if (token.type === TokenType.IDEMPOTENT) {
+        this.advance(); idempotent = this.parseBoolValue(); continue;
+      }
+      if (token.type === TokenType.TTL) {
+        this.advance(); ttl = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue;
+      }
+      this.error(`Unexpected token in EVENT: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'event', name, description, payload, subscribers, idempotent, ttl, span: { start, end } };
+  }
+
+  // --- NBVE ---
+
+  private parseNbve(): NbveDecl {
+    const start = this.expectToken(TokenType.NBVE_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let production = '';
+    let shadow = '';
+    let spc: NbveSpc = { window: 50, confidence: 0.95, accuracyThreshold: 0.90, stabilityThreshold: 0.92, defectRateMax: 0.05 };
+    const metrics: string[] = [];
+    let promotion: 'auto' | 'manual' = 'manual';
+    let fallback: 'production' | 'shadow' = 'production';
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.PRODUCTION_KW) {
+        this.advance(); production = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.SHADOW) {
+        this.advance(); shadow = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.SPC) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const parsed: Partial<NbveSpc> = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const spcToken = this.current();
+          if (spcToken.type === TokenType.WINDOW) {
+            this.advance(); parsed.window = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (spcToken.type === TokenType.CONFIDENCE) {
+            this.advance(); parsed.confidence = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (spcToken.type === TokenType.IDENTIFIER && spcToken.value === 'ACCURACY_THRESHOLD') {
+            this.advance(); parsed.accuracyThreshold = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (spcToken.type === TokenType.IDENTIFIER && spcToken.value === 'STABILITY_THRESHOLD') {
+            this.advance(); parsed.stabilityThreshold = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (spcToken.type === TokenType.IDENTIFIER && spcToken.value === 'DEFECT_RATE_MAX') {
+            this.advance(); parsed.defectRateMax = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else {
+            this.error(`Unexpected token in NBVE SPC block: ${spcToken.value}`);
+          }
+        }
+        this.expectToken(TokenType.RBRACE);
+        spc = { ...spc, ...parsed };
+        continue;
+      }
+      if (token.type === TokenType.METRICS) {
+        this.advance(); metrics.push(...this.parseBracketedIdentifierList()); continue;
+      }
+      if (token.type === TokenType.PROMOTION_KW) {
+        this.advance(); promotion = this.expectIdentifier() as 'auto' | 'manual'; continue;
+      }
+      if (token.type === TokenType.FALLBACK) {
+        this.advance(); fallback = this.expectIdentifier() as 'production' | 'shadow'; continue;
+      }
+      this.error(`Unexpected token in NBVE: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'nbve', name, description, production, shadow, spc, metrics, promotion, fallback, span: { start, end } };
+  }
+
+  // --- CONTRACT ---
+
+  private parseContract(): ContractDecl {
+    const start = this.expectToken(TokenType.CONTRACT_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    const parties: ContractParty[] = [];
+    const terms: ContractTerm[] = [];
+    const deliverables: ContractDeliverable[] = [];
+    let payment: ContractPayment = { method: 'external', amount: 0, currency: 'USD', release: 'manual', recurring: false };
+    let governance: ContractGovernance = { signedBy: 'both', dispute: 'optional' };
+    let timestamps = false;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.PARTIES) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const role = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const type = this.expectIdentifier();
+          parties.push({ role, type });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.type === TokenType.TERMS) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const key = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const val = this.parseLiteral();
+          terms.push({ key, value: String(val) });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.type === TokenType.DELIVERABLES) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const dName = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const reqToken = this.current();
+          const required = reqToken.type === TokenType.REQUIRED || reqToken.value === 'REQUIRED';
+          this.advance();
+          deliverables.push({ name: dName, required });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.type === TokenType.PAYMENT_KW) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const parsed: Partial<ContractPayment> = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const pt = this.current();
+          if (pt.type === TokenType.IDENTIFIER && pt.value === 'METHOD') {
+            this.advance(); parsed.method = this.expectIdentifier() as PaymentMethod;
+          } else if (pt.type === TokenType.AMOUNT) {
+            this.advance(); parsed.amount = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (pt.type === TokenType.CURRENCY) {
+            this.advance(); parsed.currency = this.expectToken(TokenType.STRING_LITERAL).value;
+          } else if (pt.type === TokenType.RELEASE) {
+            this.advance(); parsed.release = this.expectIdentifier() as PaymentRelease;
+          } else if (pt.type === TokenType.RECURRING) {
+            this.advance(); parsed.recurring = this.parseBoolValue();
+          } else {
+            this.error(`Unexpected token in PAYMENT block: ${pt.value}`);
+          }
+        }
+        this.expectToken(TokenType.RBRACE);
+        payment = { ...payment, ...parsed };
+        continue;
+      }
+      if (token.type === TokenType.GOVERNANCE) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const parsed: Partial<ContractGovernance> = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const gt = this.current();
+          if (gt.type === TokenType.SIGNED_BY) {
+            this.advance(); parsed.signedBy = this.expectIdentifier() as ContractGovernance['signedBy'];
+          } else if (gt.type === TokenType.DISPUTE_KW) {
+            this.advance(); parsed.dispute = this.expectIdentifier() as ContractGovernance['dispute'];
+          } else {
+            this.error(`Unexpected token in CONTRACT GOVERNANCE block: ${gt.value}`);
+          }
+        }
+        this.expectToken(TokenType.RBRACE);
+        governance = { ...governance, ...parsed };
+        continue;
+      }
+      if (token.type === TokenType.TIMESTAMPS) {
+        this.advance(); timestamps = true; continue;
+      }
+      this.error(`Unexpected token in CONTRACT: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'contract', name, description, parties, terms, deliverables, payment, governance, timestamps, span: { start, end } };
+  }
+
   // --- NODE ---
 
   private parseNode(): NodeDecl {
@@ -2873,6 +3101,17 @@ export class Parser {
       if (this.isTopLevelKeyword(this.current().type)) break;
       list.push(this.expectIdentifier());
     } while (this.consumeIf(TokenType.COMMA));
+    return list;
+  }
+
+  private parseBracketedIdentifierList(): string[] {
+    this.expectToken(TokenType.LBRACKET);
+    const list: string[] = [];
+    while (!this.check(TokenType.RBRACKET) && !this.isAtEnd()) {
+      list.push(this.expectIdentifier());
+      this.consumeIf(TokenType.COMMA);
+    }
+    this.expectToken(TokenType.RBRACKET);
     return list;
   }
 

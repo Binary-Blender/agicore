@@ -806,6 +806,93 @@ export interface CompilerDecl {
   span: SourceSpan;
 }
 
+// --- EVENT Declaration ---
+
+export interface EventPayloadField {
+  name: string;
+  type: string;
+}
+
+export interface EventDecl {
+  kind: 'event';
+  name: string;
+  description: string;
+  payload: EventPayloadField[];
+  subscribers: string[];
+  idempotent: boolean;
+  ttl: number;
+  span: SourceSpan;
+}
+
+// --- NBVE Declaration (No-Blind-Version-Elevation) ---
+
+export interface NbveSpc {
+  window: number;
+  confidence: number;
+  accuracyThreshold: number;
+  stabilityThreshold: number;
+  defectRateMax: number;
+}
+
+export interface NbveDecl {
+  kind: 'nbve';
+  name: string;
+  description: string;
+  production: string;
+  shadow: string;
+  spc: NbveSpc;
+  metrics: string[];
+  promotion: 'auto' | 'manual';
+  fallback: 'production' | 'shadow';
+  span: SourceSpan;
+}
+
+// --- CONTRACT Declaration ---
+
+export type PaymentMethod = 'ach' | 'stripe' | 'paypal' | 'crypto' | 'external';
+export type PaymentRelease = 'on_acceptance' | 'milestone' | 'manual';
+
+export interface ContractParty {
+  role: string;
+  type: string;
+}
+
+export interface ContractTerm {
+  key: string;
+  value: string;
+}
+
+export interface ContractDeliverable {
+  name: string;
+  required: boolean;
+}
+
+export interface ContractPayment {
+  method: PaymentMethod;
+  amount: number;
+  currency: string;
+  release: PaymentRelease;
+  recurring: boolean;
+}
+
+export interface ContractGovernance {
+  signedBy: 'client' | 'provider' | 'both';
+  dispute: 'optional' | 'required' | 'external';
+}
+
+export interface ContractDecl {
+  kind: 'contract';
+  name: string;
+  description: string;
+  parties: ContractParty[];
+  terms: ContractTerm[];
+  deliverables: ContractDeliverable[];
+  payment: ContractPayment;
+  governance: ContractGovernance;
+  timestamps: boolean;
+  span: SourceSpan;
+}
+
 // --- Top-Level AST ---
 
 export type Declaration =
@@ -841,7 +928,10 @@ export type Declaration =
   | SensorDecl
   | ZoneDecl
   | SessionDecl
-  | CompilerDecl;
+  | CompilerDecl
+  | EventDecl
+  | NbveDecl
+  | ContractDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -877,6 +967,9 @@ export interface AgiFile {
   zones: ZoneDecl[];
   sessions: SessionDecl[];
   compilers: CompilerDecl[];
+  events: EventDecl[];
+  nbves: NbveDecl[];
+  contracts: ContractDecl[];
 }
 
 // --- Parse Error ---
