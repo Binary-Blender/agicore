@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Key, MessageSquare, Download, SlidersHorizontal } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Plus, Pencil, Trash2, Key, MessageSquare, Download, SlidersHorizontal, Search, X } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { useAppStore } from '../store/appStore';
 import { ModelPicker } from './ModelPicker';
@@ -142,6 +142,23 @@ export function Sidebar() {
   const currentSessionId = useAppStore((s) => s.currentSessionId);
   const setCurrentSessionId = useAppStore((s) => s.setCurrentSessionId);
   const [showApiKeys, setShowApiKeys] = useState(false);
+  const [filterText, setFilterText] = useState('');
+  const [showFilter, setShowFilter] = useState(false);
+  const filterRef = useRef<HTMLInputElement>(null);
+
+  const filteredSessions = filterText.trim()
+    ? sessions.filter((s) => s.name.toLowerCase().includes(filterText.toLowerCase()))
+    : sessions;
+
+  function openFilter() {
+    setShowFilter(true);
+    setTimeout(() => filterRef.current?.focus(), 0);
+  }
+
+  function clearFilter() {
+    setFilterText('');
+    setShowFilter(false);
+  }
 
   useEffect(() => { loadSessions(); }, []);
 
@@ -199,21 +216,60 @@ export function Sidebar() {
         <ModelPicker />
         <div className="flex-1 overflow-y-auto py-2">
           <div className="px-3 mb-1 flex items-center justify-between">
-            <span className="text-xs text-gray-500 uppercase tracking-wide">Conversations</span>
-            <button
-              onClick={handleNewSession}
-              className="text-gray-400 hover:text-white p-0.5 rounded hover:bg-slate-700 transition"
-              title="New Session"
-            >
-              <Plus size={14} />
-            </button>
+            {showFilter ? (
+              <div className="flex items-center gap-1 flex-1 mr-1">
+                <Search size={11} className="text-gray-500 flex-shrink-0" />
+                <input
+                  ref={filterRef}
+                  type="text"
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Escape') clearFilter(); }}
+                  placeholder="Filter sessions…"
+                  className="flex-1 bg-transparent text-xs text-white placeholder-gray-600 focus:outline-none min-w-0"
+                />
+                {filterText && (
+                  <span className="text-xs text-gray-600 flex-shrink-0">
+                    {filteredSessions.length}/{sessions.length}
+                  </span>
+                )}
+                <button onClick={clearFilter} className="text-gray-500 hover:text-white transition flex-shrink-0">
+                  <X size={11} />
+                </button>
+              </div>
+            ) : (
+              <span className="text-xs text-gray-500 uppercase tracking-wide">Conversations</span>
+            )}
+            <div className="flex items-center gap-0.5 flex-shrink-0">
+              {!showFilter && (
+                <button
+                  onClick={openFilter}
+                  className="text-gray-500 hover:text-white p-0.5 rounded hover:bg-slate-700 transition"
+                  title="Filter sessions"
+                >
+                  <Search size={12} />
+                </button>
+              )}
+              <button
+                onClick={handleNewSession}
+                className="text-gray-400 hover:text-white p-0.5 rounded hover:bg-slate-700 transition"
+                title="New Session"
+              >
+                <Plus size={14} />
+              </button>
+            </div>
           </div>
           {sessions.length === 0 && (
             <p className="text-xs text-gray-600 px-3 py-4 text-center">
               No conversations yet.<br />Click + to start one.
             </p>
           )}
-          {sessions.map((session) => (
+          {sessions.length > 0 && filteredSessions.length === 0 && (
+            <p className="text-xs text-gray-600 px-3 py-4 text-center">
+              No sessions match "{filterText}".
+            </p>
+          )}
+          {filteredSessions.map((session) => (
             <SessionItem
               key={session.id}
               session={session}
