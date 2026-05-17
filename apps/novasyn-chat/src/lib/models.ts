@@ -21,3 +21,13 @@ export function modelLabel(modelId: string): string {
 export function modelContextWindow(modelId: string): number {
   return MODELS.find((m) => m.id === modelId)?.contextWindow ?? 128_000;
 }
+
+/** One default model per provider (first listed), used for Broadcast mode. */
+export function broadcastModelIds(): string[] {
+  const seen = new Set<string>();
+  return MODELS.filter((m) => {
+    if (seen.has(m.provider)) return false;
+    seen.add(m.provider);
+    return true;
+  }).map((m) => m.id);
+}

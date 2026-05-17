@@ -139,6 +139,7 @@ ENTITY Workspace {
 
 ENTITY Session {
   name: string REQUIRED
+  system_prompt: string   // @agicore:since migration_002
   BELONGS_TO User
   TIMESTAMPS
 }

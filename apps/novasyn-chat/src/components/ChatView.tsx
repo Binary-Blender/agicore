@@ -8,7 +8,8 @@ import { TagPicker } from './TagPicker';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { webSearch } from '../lib/api';
-import { modelLabel, modelContextWindow } from '../lib/models';
+import { modelLabel, modelContextWindow, broadcastModelIds } from '../lib/models';
+import { ContextWindowViewer } from './ContextWindowViewer';
 import type { ChatMessage, ChatMessageAlternative } from '../lib/types';
 
 interface SearchResult { title: string; snippet: string; url: string; source: string; }
@@ -44,11 +45,13 @@ export function ChatView() {
   const [folderItemsMap] = useState<Record<string, any>>({});
   const selectedModel = useAppStore((s) => s.selectedModel);
   const councilModels = useAppStore((s) => s.councilModels);
+  const broadcastMode = useAppStore((s) => s.broadcastMode);
   const [activeDocCompiler, setActiveDocCompiler] = useState<string | null>(null);
   const [compileTitle, setCompileTitle] = useState('');
   const [compileStatus, setCompileStatus] = useState<string | null>(null);
   const [webSearching, setWebSearching] = useState(false);
   const [pruning, setPruning] = useState(false);
+  const [showContextViewer, setShowContextViewer] = useState(false);
 
   const contextWindow = modelContextWindow(selectedModel);
   const activeMessages = chatMessages.filter((m) => !m.isExcluded && !m.isArchived && !m.isPruned);
@@ -112,8 +115,43 @@ export function ChatView() {
     const apiContent = searchContext ? `${searchContext}\n\n---\n\n${userText}` : userText;
 
     const isCouncil = councilModels.length > 0;
+    const isBroadcast = broadcastMode;
 
-    if (isCouncil) {
+    if (isBroadcast) {
+      const allModels = broadcastModelIds();
+      setStreamingContent(`Broadcasting to ${allModels.length} providers…`);
+      try {
+        const results = await Promise.allSettled(
+          allModels.map((model) =>
+            invoke<{ content: string; model: string; provider: string; inputTokens: number; outputTokens: number }>(
+              'send_chat',
+              { request: { messages: [...history, { role: 'user', content: apiContent }], model, systemPrompt: currentSession?.systemPrompt ?? null }, requestId: crypto.randomUUID() }
+            )
+          )
+        );
+
+        const alternatives: ChatMessageAlternative[] = results
+          .map((r, i): ChatMessageAlternative | null =>
+            r.status === 'fulfilled'
+              ? { provider: r.value.provider, providerName: modelLabel(allModels[i]), modelId: r.value.model || allModels[i], content: r.value.content, tokens: (r.value.inputTokens ?? 0) + (r.value.outputTokens ?? 0), preferred: i === 0 }
+              : null
+          )
+          .filter((a): a is ChatMessageAlternative => a !== null);
+
+        if (alternatives.length === 0) throw new Error('All broadcast requests failed');
+        const primary = alternatives[0];
+
+        await invoke('create_chat_message', {
+          input: { userMessage: userText, aiMessage: primary.content, userTokens: primary.tokens, aiTokens: primary.tokens, totalTokens: alternatives.reduce((sum, a) => sum + a.tokens, 0), model: primary.modelId, provider: primary.provider, systemPrompt: searchContext || null, alternatives: JSON.stringify(alternatives), userId: 'default-user', sessionId: currentSessionId },
+        });
+        setStreamingContent(null);
+        await loadChatMessagesForCurrentSession();
+      } catch (err) {
+        console.error('Broadcast failed:', err);
+        setStreamingContent(`Error: ${err}`);
+        setTimeout(() => setStreamingContent(null), 5000);
+      }
+    } else if (isCouncil) {
       const allModels = [selectedModel, ...councilModels];
       setStreamingContent(`Gathering ${allModels.length} council responses…`);
       try {
@@ -203,7 +241,7 @@ export function ChatView() {
         setTimeout(() => setStreamingContent(null), 5000);
       } finally { unlisten(); }
     }
-  }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, councilModels, currentSessionId, currentSession]);
+  }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, councilModels, broadcastMode, currentSessionId, currentSession]);
 
   async function handleDocCompile(compilerName: string) {
     try {
@@ -266,9 +304,20 @@ export function ChatView() {
         )}
         <div ref={messagesEndRef} />
       </div>
+      {showContextViewer && (
+        <ContextWindowViewer messages={chatMessages} onClose={() => setShowContextViewer(false)} />
+      )}
       <ContextBar selectedFolderItems={selectedFolderItems} folderItemsMap={folderItemsMap} onRemove={() => {}} />
       <div className="border-t border-slate-700/50">
         <div className="flex items-center gap-2 px-4 py-1.5">
+          <button
+            onClick={() => setShowContextViewer(true)}
+            className="text-xs text-gray-500 hover:text-blue-400 bg-slate-700/40 hover:bg-slate-700 px-2 py-0.5 rounded transition flex-shrink-0"
+            title="View context window"
+          >
+            Context
+          </button>
+          <span className="text-xs text-gray-600 flex-shrink-0">·</span>
           <span className="text-xs text-gray-500 flex-shrink-0">Compile →</span>
           <div className="flex gap-1 flex-wrap">
             <button onClick={() => setActiveDocCompiler(activeDocCompiler === 'chat_to_skilldoc' ? null : 'chat_to_skilldoc')} className="text-xs text-blue-400 hover:text-blue-300 bg-slate-700/50 hover:bg-slate-700 px-2 py-0.5 rounded transition">Extract behavioral specifications from conversation</button>
@@ -366,6 +415,8 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
   const [exchangeRating, setExchangeRating] = useState(3);
   const [savedAsExchange, setSavedAsExchange] = useState(false);
   const [activeAltIndex, setActiveAltIndex] = useState(0);
+  const [synthesizing, setSynthesizing] = useState(false);
+  const synthesisModel = useAppStore((s) => s.synthesisModel);
 
   const ts = new Date(message.createdAt);
   const timeStr = ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -412,6 +463,28 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
       setSavedAsExchange(true); setShowExchangePicker(false); setMenuOpen(false);
       setTimeout(() => setSavedAsExchange(false), 2000);
     } catch (err) { console.error('Save as exchange failed:', err); }
+  }
+
+  async function handleSynthesize(alts: ChatMessageAlternative[]) {
+    if (synthesizing || alts.length < 2) return;
+    setSynthesizing(true);
+    const parts = alts.map((a) => `## ${a.providerName} (${a.modelId}):\n${a.content}`).join('\n\n');
+    const prompt = `Original question: "${message.userMessage}"\n\nMultiple AI models responded:\n\n${parts}\n\nSynthesize these responses into a single comprehensive, well-structured answer.`;
+    try {
+      const resp = await invoke<{ content: string; model: string; provider: string; inputTokens: number; outputTokens: number }>(
+        'send_chat',
+        { request: { messages: [{ role: 'user', content: prompt }], model: synthesisModel, systemPrompt: 'You are a council synthesizer. Provide a clear, comprehensive synthesis capturing the best insights from each response.' }, requestId: crypto.randomUUID() }
+      );
+      const synthesisAlt: ChatMessageAlternative = {
+        provider: resp.provider, providerName: '✦ Synthesis', modelId: resp.model || synthesisModel,
+        content: resp.content, tokens: (resp.inputTokens ?? 0) + (resp.outputTokens ?? 0), preferred: false,
+      };
+      const updated = [...alts, synthesisAlt];
+      await invoke('update_chat_message', { id: message.id, input: { alternatives: JSON.stringify(updated) } });
+      await onRefresh();
+      setActiveAltIndex(updated.length - 1);
+    } catch (err) { console.error('Synthesis failed:', err); }
+    finally { setSynthesizing(false); }
   }
 
   return (
@@ -510,20 +583,31 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
           </div>
 
           {alternatives && alternatives.length > 1 && (
-            <div className="flex gap-0.5 mb-3 border-b border-slate-700/50 pb-2">
+            <div className="flex items-center gap-0.5 mb-3 border-b border-slate-700/50 pb-2">
               {alternatives.map((alt, i) => (
                 <button
                   key={alt.modelId + i}
                   onClick={() => setActiveAltIndex(i)}
                   className={`text-xs px-2.5 py-1 rounded-t transition ${
                     i === activeAltIndex
-                      ? 'bg-purple-700/60 text-purple-200 font-medium'
+                      ? alt.providerName.startsWith('✦')
+                        ? 'bg-amber-700/50 text-amber-200 font-medium'
+                        : 'bg-purple-700/60 text-purple-200 font-medium'
                       : 'text-gray-500 hover:text-gray-300 hover:bg-slate-700/50'
                   }`}
                 >
                   {alt.providerName}
                 </button>
               ))}
+              {!alternatives.some((a) => a.providerName.startsWith('✦')) && (
+                <button
+                  onClick={() => handleSynthesize(alternatives)}
+                  disabled={synthesizing}
+                  className="ml-auto text-xs text-amber-400 hover:text-white bg-amber-900/30 hover:bg-amber-800/50 px-2 py-0.5 rounded transition disabled:opacity-50"
+                >
+                  {synthesizing ? 'Synthesizing…' : '✦ Synthesize'}
+                </button>
+              )}
             </div>
           )}
 
@@ -535,7 +619,8 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
             <span className="text-xs text-gray-600">{timeStr}</span>
             <span className="text-xs text-gray-600 bg-slate-700/50 px-1.5 py-0.5 rounded">{displayModel}</span>
             <span className="text-xs text-gray-600">~{contextTokens.toLocaleString()} tokens</span>
-            {alternatives && <span className="text-xs text-purple-400 bg-purple-900/30 px-1.5 py-0.5 rounded">⚡ council</span>}
+            {alternatives && alternatives.some((a) => a.providerName.startsWith('✦')) && <span className="text-xs text-amber-400 bg-amber-900/30 px-1.5 py-0.5 rounded">✦ synthesized</span>}
+            {alternatives && !alternatives.some((a) => a.providerName.startsWith('✦')) && <span className="text-xs text-purple-400 bg-purple-900/30 px-1.5 py-0.5 rounded">⚡ council</span>}
             {message.isPruned && <span className="text-xs text-orange-400 bg-orange-900/30 px-1.5 py-0.5 rounded">pruned</span>}
             {message.isExcluded && <span className="text-xs text-red-400 bg-red-900/30 px-1.5 py-0.5 rounded">excluded</span>}
             {message.isArchived && <span className="text-xs text-gray-500 bg-slate-700/50 px-1.5 py-0.5 rounded">archived</span>}

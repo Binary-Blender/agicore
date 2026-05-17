@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { MODELS } from '../lib/models';
+import { MODELS, broadcastModelIds } from '../lib/models';
 
 export function ModelPicker() {
   const selectedModel = useAppStore((s) => s.selectedModel);
   const setSelectedModel = useAppStore((s) => s.setSelectedModel);
   const councilModels = useAppStore((s) => s.councilModels);
   const setCouncilModels = useAppStore((s) => s.setCouncilModels);
+  const broadcastMode = useAppStore((s) => s.broadcastMode);
+  const setBroadcastMode = useAppStore((s) => s.setBroadcastMode);
   const [showCouncil, setShowCouncil] = useState(false);
+
+  const bcastIds = broadcastModelIds();
 
   function toggleCouncilModel(modelId: string) {
     if (modelId === selectedModel) return;
@@ -37,7 +41,7 @@ export function ModelPicker() {
       </select>
 
       <button
-        onClick={() => setShowCouncil((v) => !v)}
+        onClick={() => { setShowCouncil((v) => !v); if (broadcastMode) setBroadcastMode(false); }}
         className={`mt-1.5 w-full text-left text-xs flex items-center justify-between px-2 py-1 rounded transition ${
           isCouncilActive
             ? 'text-purple-300 bg-purple-900/30'
@@ -46,6 +50,17 @@ export function ModelPicker() {
       >
         <span>{isCouncilActive ? `⚡ Council (${councilModels.length + 1})` : 'Council mode'}</span>
         <span>{showCouncil ? '▲' : '▼'}</span>
+      </button>
+
+      <button
+        onClick={() => { setBroadcastMode(!broadcastMode); setCouncilModels([]); setShowCouncil(false); }}
+        className={`mt-0.5 w-full text-left text-xs flex items-center justify-between px-2 py-1 rounded transition ${
+          broadcastMode
+            ? 'text-sky-300 bg-sky-900/30'
+            : 'text-gray-500 hover:text-gray-300 hover:bg-slate-700/50'
+        }`}
+      >
+        <span>{broadcastMode ? `📡 Broadcast (${bcastIds.length} providers)` : 'Broadcast mode'}</span>
       </button>
 
       {showCouncil && (

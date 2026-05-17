@@ -45,6 +45,12 @@ interface AppState {
   councilModels: string[];
   setCouncilModels: (models: string[]) => void;
 
+  broadcastMode: boolean;
+  setBroadcastMode: (on: boolean) => void;
+
+  synthesisModel: string;
+  setSynthesisModel: (model: string) => void;
+
   currentSessionId: string | null;
   setCurrentSessionId: (id: string | null) => void;
 
@@ -172,6 +178,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   councilModels: [],
   setCouncilModels: (models) => set({ councilModels: models }),
+
+  broadcastMode: false,
+  setBroadcastMode: (on) => set({ broadcastMode: on }),
+
+  synthesisModel: 'claude-sonnet-4-20250514',
+  setSynthesisModel: (model) => set({ synthesisModel: model }),
 
   currentSessionId: null,
   setCurrentSessionId: (id) => set({ currentSessionId: id }),
