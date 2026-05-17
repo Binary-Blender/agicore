@@ -8,7 +8,7 @@ import { TagPicker } from './TagPicker';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { webSearch } from '../lib/api';
-import { modelLabel } from '../lib/models';
+import { modelLabel, modelContextWindow } from '../lib/models';
 import type { ChatMessage, ChatMessageAlternative } from '../lib/types';
 
 interface SearchResult { title: string; snippet: string; url: string; source: string; }
@@ -48,6 +48,30 @@ export function ChatView() {
   const [compileTitle, setCompileTitle] = useState('');
   const [compileStatus, setCompileStatus] = useState<string | null>(null);
   const [webSearching, setWebSearching] = useState(false);
+  const [pruning, setPruning] = useState(false);
+
+  const contextWindow = modelContextWindow(selectedModel);
+  const activeMessages = chatMessages.filter((m) => !m.isExcluded && !m.isArchived && !m.isPruned);
+  const contextTokens = activeMessages.reduce((sum, m) => sum + (m.totalTokens || 0), 0);
+  const tokenPct = Math.min(contextTokens / contextWindow, 1);
+  const warnThreshold = 0.7;
+  const pruneThreshold = 0.85;
+
+  async function handleAutoPrune() {
+    setPruning(true);
+    const target = contextWindow * 0.5;
+    let running = contextTokens;
+    const sorted = [...activeMessages].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    for (const msg of sorted) {
+      if (running <= target) break;
+      await invoke('update_chat_message', { id: msg.id, input: { isPruned: true } });
+      running -= msg.totalTokens || 0;
+    }
+    await loadChatMessagesForCurrentSession();
+    setPruning(false);
+  }
 
   useEffect(() => { loadChatMessagesForCurrentSession(); }, [currentSessionId, loadChatMessagesForCurrentSession]);
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages, streamingContent, currentSessionId]);
@@ -75,7 +99,7 @@ export function ChatView() {
     }
 
     const history = [...chatMessages]
-      .filter((m) => !m.isExcluded && !m.isArchived)
+      .filter((m) => !m.isExcluded && !m.isArchived && !m.isPruned)
       .flatMap((m) => {
         const content = m.systemPrompt?.startsWith(SEARCH_CONTEXT_PREFIX)
           ? `${m.systemPrompt}\n\n---\n\n${m.userMessage}`
@@ -261,7 +285,68 @@ export function ChatView() {
           </div>
         )}
       </div>
+      <TokenBar
+        contextTokens={contextTokens}
+        contextWindow={contextWindow}
+        tokenPct={tokenPct}
+        warnThreshold={warnThreshold}
+        pruneThreshold={pruneThreshold}
+        pruning={pruning}
+        onPrune={handleAutoPrune}
+      />
       <MessageInput onSend={handleSend} />
+    </div>
+  );
+}
+
+function fmtTokens(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
+}
+
+function TokenBar({
+  contextTokens, contextWindow, tokenPct, warnThreshold, pruneThreshold, pruning, onPrune,
+}: {
+  contextTokens: number; contextWindow: number; tokenPct: number;
+  warnThreshold: number; pruneThreshold: number; pruning: boolean; onPrune: () => void;
+}) {
+  if (contextTokens === 0) return null;
+
+  const barColor =
+    tokenPct >= pruneThreshold ? 'bg-red-500' :
+    tokenPct >= warnThreshold  ? 'bg-amber-400' :
+                                  'bg-blue-500';
+  const labelColor =
+    tokenPct >= pruneThreshold ? 'text-red-400' :
+    tokenPct >= warnThreshold  ? 'text-amber-400' :
+                                  'text-gray-500';
+
+  return (
+    <div className="px-4 py-1 border-t border-slate-700/50">
+      <div className="flex items-center gap-2">
+        <div className="flex-1 h-1 bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all ${barColor}`}
+            style={{ width: `${Math.max(tokenPct * 100, 0.5)}%` }}
+          />
+        </div>
+        <span className={`text-xs flex-shrink-0 tabular-nums ${labelColor}`}>
+          {fmtTokens(contextTokens)} / {fmtTokens(contextWindow)}
+        </span>
+        {tokenPct >= pruneThreshold && (
+          <button
+            onClick={onPrune}
+            disabled={pruning}
+            className="text-xs text-red-300 hover:text-white bg-red-900/40 hover:bg-red-800/60 px-2 py-0.5 rounded transition disabled:opacity-50"
+          >
+            {pruning ? 'Pruning…' : 'Auto-prune'}
+          </button>
+        )}
+      </div>
+      {tokenPct >= pruneThreshold && (
+        <p className="text-xs text-red-400 mt-0.5">Context window nearly full — prune old messages to continue.</p>
+      )}
     </div>
   );
 }
