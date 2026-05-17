@@ -110,8 +110,10 @@ Validator expansion (completed):
 - [x] IDENTITY + FEED — creator-owned DID, deterministic signing, Atom 1.0 syndication
 - [x] SESSION — semantic operating modes with persistent key-value memory per mode
 - [x] MODULE — composable expert-system bundles with score-based runtime activation
-- [ ] AUTHORITY — trust governance layers for channels and packet signing chains
-- [ ] Shared semantic memory (cross-session Vault evolution)
+- [x] AUTHORITY — trust governance layers for channels and packet signing chains
+- [x] SEMANTIC MEMORY — shared cross-session intelligence store (Vault evolution)
+
+**Phase 5 is complete. All 34 declaration types implemented. 1,382 tests passing.**
 
 ---
 
