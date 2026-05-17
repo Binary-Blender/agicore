@@ -54,6 +54,7 @@ export interface UpdateWorkspaceInput {
 export interface Session {
   id: string;
   name: string;
+  systemPrompt: string | null;
   userId: string;
   createdAt: string;
   updatedAt: string;
@@ -66,6 +67,7 @@ export interface CreateSessionInput {
 
 export interface UpdateSessionInput {
   name?: string;
+  systemPrompt?: string | null;
 }
 
 export interface Folder {

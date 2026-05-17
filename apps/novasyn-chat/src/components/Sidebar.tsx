@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Key, MessageSquare, Download } from 'lucide-react';
+import { Plus, Pencil, Trash2, Key, MessageSquare, Download, SlidersHorizontal } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { useAppStore } from '../store/appStore';
 import { ModelPicker } from './ModelPicker';
@@ -12,12 +12,15 @@ interface SessionItemProps {
   onSelect: () => void;
   onRename: (name: string) => void;
   onDelete: () => void;
+  onSystemPromptSave: (prompt: string | null) => void;
 }
 
-function SessionItem({ session, isActive, onSelect, onRename, onDelete }: SessionItemProps) {
+function SessionItem({ session, isActive, onSelect, onRename, onDelete, onSystemPromptSave }: SessionItemProps) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(session.name);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [promptDraft, setPromptDraft] = useState(session.systemPrompt ?? '');
 
   async function handleExport() {
     try {
@@ -66,37 +69,69 @@ function SessionItem({ session, isActive, onSelect, onRename, onDelete }: Sessio
   }
 
   return (
-    <div
-      onClick={onSelect}
-      className={`group flex items-center gap-2 px-2 py-1.5 rounded mx-1 mb-0.5 cursor-pointer transition ${
-        isActive ? 'bg-blue-600/20 text-blue-200' : 'text-gray-300 hover:bg-slate-700/50 hover:text-white'
-      }`}
-    >
-      <MessageSquare size={14} className="flex-shrink-0 opacity-60" />
-      <span className="text-sm flex-1 truncate">{session.name}</span>
-      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition">
-        <button
-          onClick={(e) => { e.stopPropagation(); handleExport(); }}
-          className="text-gray-500 hover:text-blue-400 p-0.5 rounded hover:bg-slate-600 transition"
-          title="Export as Markdown"
-        >
-          <Download size={11} />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); setEditing(true); }}
-          className="text-gray-500 hover:text-white p-0.5 rounded hover:bg-slate-600 transition"
-          title="Rename"
-        >
-          <Pencil size={11} />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); }}
-          className="text-gray-500 hover:text-red-400 p-0.5 rounded hover:bg-slate-600 transition"
-          title="Delete"
-        >
-          <Trash2 size={11} />
-        </button>
+    <div className="mx-1 mb-0.5">
+      <div
+        onClick={onSelect}
+        className={`group flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer transition ${
+          isActive ? 'bg-blue-600/20 text-blue-200' : 'text-gray-300 hover:bg-slate-700/50 hover:text-white'
+        }`}
+      >
+        <MessageSquare size={14} className="flex-shrink-0 opacity-60" />
+        <span className="text-sm flex-1 truncate">{session.name}</span>
+        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition">
+          <button
+            onClick={(e) => { e.stopPropagation(); handleExport(); }}
+            className="text-gray-500 hover:text-blue-400 p-0.5 rounded hover:bg-slate-600 transition"
+            title="Export as Markdown"
+          >
+            <Download size={11} />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowPrompt((v) => !v); }}
+            className={`p-0.5 rounded hover:bg-slate-600 transition ${showPrompt || session.systemPrompt ? 'text-amber-400' : 'text-gray-500 hover:text-amber-400'}`}
+            title="System prompt"
+          >
+            <SlidersHorizontal size={11} />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setEditing(true); }}
+            className="text-gray-500 hover:text-white p-0.5 rounded hover:bg-slate-600 transition"
+            title="Rename"
+          >
+            <Pencil size={11} />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); }}
+            className="text-gray-500 hover:text-red-400 p-0.5 rounded hover:bg-slate-600 transition"
+            title="Delete"
+          >
+            <Trash2 size={11} />
+          </button>
+        </div>
       </div>
+      {showPrompt && (
+        <div className="mt-0.5 px-2 pb-1.5">
+          <textarea
+            value={promptDraft}
+            onChange={(e) => setPromptDraft(e.target.value)}
+            onBlur={() => onSystemPromptSave(promptDraft.trim() || null)}
+            placeholder="System prompt for this session…"
+            rows={3}
+            className="w-full bg-slate-800 border border-slate-600 text-xs text-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-amber-500 resize-none placeholder-gray-600"
+          />
+          <div className="flex justify-between items-center mt-0.5">
+            <span className="text-xs text-gray-600">{promptDraft.length > 0 ? `${promptDraft.length} chars` : 'No prompt set'}</span>
+            {promptDraft.trim() && (
+              <button
+                onClick={() => { setPromptDraft(''); onSystemPromptSave(null); }}
+                className="text-xs text-gray-500 hover:text-red-400 transition"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -140,6 +175,13 @@ export function Sidebar() {
     } catch (err) { console.error('Delete failed:', err); }
   }
 
+  async function handleSystemPromptSave(id: string, prompt: string | null) {
+    try {
+      await invoke('update_session', { id, input: { systemPrompt: prompt } });
+      await loadSessions();
+    } catch (err) { console.error('System prompt save failed:', err); }
+  }
+
   return (
     <>
       {showApiKeys && <ApiKeyModal onClose={() => setShowApiKeys(false)} />}
@@ -179,6 +221,7 @@ export function Sidebar() {
               onSelect={() => setCurrentSessionId(session.id)}
               onRename={(name) => handleRenameSession(session.id, name)}
               onDelete={() => handleDeleteSession(session.id)}
+              onSystemPromptSave={(prompt) => handleSystemPromptSave(session.id, prompt)}
             />
           ))}
         </div>

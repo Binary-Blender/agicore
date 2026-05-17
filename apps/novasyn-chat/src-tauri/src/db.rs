@@ -14,6 +14,9 @@ pub fn init_db(db_path: PathBuf) -> DbPool {
     // Run migrations
     let migration = include_str!("../migrations/001_initial.sql");
     conn.execute_batch(migration).expect("Failed to run migrations");
+    let migration2 = include_str!("../migrations/002_system_prompt.sql");
+    // ALTER TABLE is idempotent-ish — ignore "duplicate column" errors
+    let _ = conn.execute_batch(migration2);
 
     Arc::new(Mutex::new(conn))
 }

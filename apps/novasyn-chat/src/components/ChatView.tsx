@@ -35,6 +35,7 @@ export function ChatView() {
   const tags = useAppStore((s) => s.tags);
   const sessions = useAppStore((s) => s.sessions);
   const currentSessionId = useAppStore((s) => s.currentSessionId);
+  const currentSession = sessions.find((s) => s.id === currentSessionId) ?? null;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [streamingContent, setStreamingContent] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<ChatMessage[] | null>(null);
@@ -96,7 +97,7 @@ export function ChatView() {
           allModels.map((model) =>
             invoke<{ content: string; model: string; provider: string; inputTokens: number; outputTokens: number }>(
               'send_chat',
-              { request: { messages: [...history, { role: 'user', content: apiContent }], model }, requestId: crypto.randomUUID() }
+              { request: { messages: [...history, { role: 'user', content: apiContent }], model, systemPrompt: currentSession?.systemPrompt ?? null }, requestId: crypto.randomUUID() }
             )
           )
         );
@@ -154,7 +155,7 @@ export function ChatView() {
         const response = await invoke<{
           content: string; model: string; provider: string;
           inputTokens: number; outputTokens: number;
-        }>('send_chat', { request: { messages: [...history, { role: 'user', content: apiContent }], model: selectedModel }, requestId });
+        }>('send_chat', { request: { messages: [...history, { role: 'user', content: apiContent }], model: selectedModel, systemPrompt: currentSession?.systemPrompt ?? null }, requestId });
 
         await invoke('create_chat_message', {
           input: {
@@ -178,7 +179,7 @@ export function ChatView() {
         setTimeout(() => setStreamingContent(null), 5000);
       } finally { unlisten(); }
     }
-  }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, councilModels, currentSessionId]);
+  }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, councilModels, currentSessionId, currentSession]);
 
   async function handleDocCompile(compilerName: string) {
     try {

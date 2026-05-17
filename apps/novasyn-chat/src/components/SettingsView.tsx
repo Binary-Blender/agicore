@@ -4,7 +4,7 @@ import { Key, Database, Info } from 'lucide-react';
 
 const PROVIDERS = [
   { id: 'anthropic', label: 'Anthropic (Claude)', placeholder: 'sk-ant-...', url: 'https://console.anthropic.com/settings/keys' },
-  { id: 'openai', label: 'OpenAI (GPT-4o)', placeholder: 'sk-...', url: 'https://platform.openai.com/api-keys' },
+  { id: 'openai', label: 'OpenAI', placeholder: 'sk-...', url: 'https://platform.openai.com/api-keys' },
   { id: 'google', label: 'Google (Gemini)', placeholder: 'AIza...', url: 'https://aistudio.google.com/app/apikey' },
   { id: 'xai', label: 'xAI (Grok)', placeholder: 'xai-...', url: 'https://x.ai/api' },
   { id: 'babyai', label: 'BabyAI (HuggingFace)', placeholder: 'hf_...', url: 'https://huggingface.co/settings/tokens' },
