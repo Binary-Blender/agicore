@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { useAppStore } from '../store/appStore';
+import { FolderContentModal } from './FolderContentModal';
+import type { Folder } from '../lib/types';
 
 export function FolderPanel() {
   const folders = useAppStore((s) => s.folders);
@@ -12,6 +14,7 @@ export function FolderPanel() {
   const [creating, setCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [contentModalFolder, setContentModalFolder] = useState<Folder | null>(null);
 
   useEffect(() => { load(); }, []);
 
@@ -108,7 +111,11 @@ export function FolderPanel() {
       <div className="flex-1 p-6 overflow-y-auto">
         {selected ? (
           <div>
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 flex-wrap">
+              <button
+                onClick={() => setContentModalFolder(selected)}
+                className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded transition"
+              >View items</button>
               {editingId !== selected.id && <button onClick={() => { setEditingId(selected.id); setForm({name: String(selected.name ?? ''), description: String(selected.description ?? '')}); }} className="text-xs bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-primary)] px-3 py-1.5 rounded transition">Edit</button>}
               {editingId !== selected.id && <button onClick={() => setConfirmDeleteId(selected.id)} className="text-xs text-red-400 hover:text-red-300 hover:bg-red-900/20 px-3 py-1.5 rounded transition">Delete</button>}
             </div>
@@ -146,6 +153,14 @@ export function FolderPanel() {
           </div>
         )}
       </div>
+
+      {contentModalFolder && (
+        <FolderContentModal
+          folder={contentModalFolder}
+          onClose={() => setContentModalFolder(null)}
+          onChanged={() => load()}
+        />
+      )}
 
       {confirmDeleteId && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => setConfirmDeleteId(null)}>

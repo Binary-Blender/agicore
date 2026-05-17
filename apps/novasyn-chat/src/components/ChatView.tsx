@@ -52,6 +52,8 @@ export function ChatView() {
   const [webSearching, setWebSearching] = useState(false);
   const [pruning, setPruning] = useState(false);
   const [showContextViewer, setShowContextViewer] = useState(false);
+  const [showSaveToFolder, setShowSaveToFolder] = useState(false);
+  const [savingToFolder, setSavingToFolder] = useState(false);
 
   const contextWindow = modelContextWindow(selectedModel);
   const activeMessages = chatMessages.filter((m) => !m.isExcluded && !m.isArchived && !m.isPruned);
@@ -243,6 +245,19 @@ export function ChatView() {
     }
   }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, councilModels, broadcastMode, currentSessionId, currentSession]);
 
+  async function handleSaveSessionToFolder(folderId: string) {
+    if (!currentSessionId) return;
+    setSavingToFolder(true);
+    try {
+      const msgs = chatMessages.filter((m) => !m.isExcluded && !m.isArchived);
+      const text = msgs.map((m) => `User: ${m.userMessage}\n\nAssistant: ${m.aiMessage}`).join('\n\n---\n\n');
+      const tokens = Math.ceil(text.length / 4);
+      await invoke('create_folder_item', { input: { content: text, tokens, itemType: 'chat-export', folderId } });
+      setShowSaveToFolder(false);
+    } catch (err) { console.error(err); }
+    finally { setSavingToFolder(false); }
+  }
+
   async function handleDocCompile(compilerName: string) {
     try {
       const safeTitle = compileTitle || new Date().toLocaleDateString();
@@ -317,6 +332,23 @@ export function ChatView() {
           >
             Context
           </button>
+          <div className="relative flex-shrink-0">
+            <button
+              onClick={() => setShowSaveToFolder(!showSaveToFolder)}
+              disabled={savingToFolder || folders.length === 0}
+              className="text-xs text-gray-500 hover:text-green-400 bg-slate-700/40 hover:bg-slate-700 px-2 py-0.5 rounded transition disabled:opacity-40"
+              title="Save session to folder"
+            >
+              {savingToFolder ? 'Saving…' : '→ Folder'}
+            </button>
+            {showSaveToFolder && folders.length > 0 && (
+              <div className="absolute left-0 bottom-full mb-1 bg-slate-700 border border-slate-600 rounded-lg shadow-xl z-20 min-w-[180px] py-1">
+                {folders.map((f) => (
+                  <button key={f.id} onClick={() => handleSaveSessionToFolder(f.id)} className="w-full text-left px-3 py-1.5 text-xs text-blue-300 hover:bg-slate-600 transition truncate">{f.name}</button>
+                ))}
+              </div>
+            )}
+          </div>
           <span className="text-xs text-gray-600 flex-shrink-0">·</span>
           <span className="text-xs text-gray-500 flex-shrink-0">Compile →</span>
           <div className="flex gap-1 flex-wrap">

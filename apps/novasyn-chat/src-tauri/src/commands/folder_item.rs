@@ -140,3 +140,28 @@ pub fn delete_folder_item(db: tauri::State<'_, DbPool>, id: String) -> Result<()
         .map_err(|e| e.to_string())?;
     Ok(())
 }
+
+#[tauri::command]
+pub fn list_folder_items_by_folder(db: tauri::State<'_, DbPool>, folder_id: String) -> Result<Vec<FolderItem>, String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let mut stmt = conn.prepare(
+        "SELECT * FROM folder_items WHERE folder_id = ? ORDER BY created_at DESC"
+    ).map_err(|e| e.to_string())?;
+    let rows = stmt.query_map([&folder_id], |row| Ok(FolderItem::from_row(row)))
+        .map_err(|e| e.to_string())?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| e.to_string())?;
+    Ok(rows)
+}
+
+#[tauri::command]
+pub fn move_folder_item(db: tauri::State<'_, DbPool>, id: String, target_folder_id: String) -> Result<FolderItem, String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let now = chrono::Utc::now().to_rfc3339();
+    conn.execute(
+        "UPDATE folder_items SET folder_id = ?, updated_at = ? WHERE id = ?",
+        rusqlite::params![target_folder_id, now, id],
+    ).map_err(|e| e.to_string())?;
+    drop(conn);
+    get_folder_item(db, id)
+}

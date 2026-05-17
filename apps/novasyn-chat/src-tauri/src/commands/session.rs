@@ -10,6 +10,7 @@ pub struct Session {
     pub id: String,
     pub name: String,
     pub system_prompt: Option<String>,
+    pub selected_folders: Option<String>,
     pub user_id: String,
     pub created_at: String,
     pub updated_at: String,
@@ -27,6 +28,7 @@ pub struct CreateSessionInput {
 pub struct UpdateSessionInput {
     pub name: Option<String>,
     pub system_prompt: Option<String>,
+    pub selected_folders: Option<String>,
 }
 
 impl Session {
@@ -35,6 +37,7 @@ impl Session {
             id: row.get("id").unwrap(),
             name: row.get("name").unwrap(),
             system_prompt: row.get("system_prompt").unwrap_or(None),
+            selected_folders: row.get("selected_folders").unwrap_or(None),
             user_id: row.get("user_id").unwrap(),
             created_at: row.get("created_at").unwrap(),
             updated_at: row.get("updated_at").unwrap(),
@@ -92,6 +95,10 @@ pub fn update_session(db: tauri::State<'_, DbPool>, id: String, input: UpdateSes
     }
     if let Some(val) = input.system_prompt {
         sets.push("system_prompt = ?".to_string());
+        params.push(Box::new(val));
+    }
+    if let Some(val) = input.selected_folders {
+        sets.push("selected_folders = ?".to_string());
         params.push(Box::new(val));
     }
     sets.push("updated_at = ?".to_string());

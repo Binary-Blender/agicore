@@ -16,6 +16,7 @@ futures-util = "0.3"
 dirs = "5"
 tauri-plugin-global-shortcut = "2"
 tauri-plugin-dialog = "2"
+epub = "2"
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }

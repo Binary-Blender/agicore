@@ -55,6 +55,7 @@ export interface Session {
   id: string;
   name: string;
   systemPrompt: string | null;
+  selectedFolders: string | null;
   userId: string;
   createdAt: string;
   updatedAt: string;
@@ -68,6 +69,7 @@ export interface CreateSessionInput {
 export interface UpdateSessionInput {
   name?: string;
   systemPrompt?: string | null;
+  selectedFolders?: string | null;
 }
 
 export interface Folder {

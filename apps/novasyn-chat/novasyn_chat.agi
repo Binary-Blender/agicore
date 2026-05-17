@@ -140,6 +140,7 @@ ENTITY Workspace {
 ENTITY Session {
   name: string REQUIRED
   system_prompt: string   // @agicore:since migration_002
+  selected_folders: json = []  // @agicore:since migration_003
   BELONGS_TO User
   TIMESTAMPS
 }
@@ -299,6 +300,17 @@ ACTION export_session_md {
   OUTPUT  markdown: string
 }
 
+ACTION upload_file_to_folder {
+  INPUT   folder_id: string, file_path: string
+  OUTPUT  item: FolderItem
+  PATTERN file_handler   // FE-4: generates Tauri dialog + Rust file-read scaffold
+}
+
+ACTION save_chat_to_folder {
+  INPUT   session_id: string, folder_id: string
+  OUTPUT  item: FolderItem
+}
+
 // ===================================================================
 // SEMANTIC SESSIONS — Cognitive operating modes
 // ===================================================================
@@ -456,6 +468,12 @@ VIEW DocumentEditor {
   LAYOUT   document_editor
   SIDEBAR  icon: FileText
   TITLE    "Documents"
+}
+
+VIEW FolderContentModal {
+  ENTITY   FolderItem
+  LAYOUT   custom
+  ACTIONS  create, edit, delete, move
 }
 
 VIEW SettingsView {
