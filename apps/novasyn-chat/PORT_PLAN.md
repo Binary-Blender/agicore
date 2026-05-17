@@ -3,7 +3,7 @@
 **Old app (3G):** `novasyn_suite/novasyn_chat_lite/` — Electron + Node.js + SQLite  
 **New app (4G):** `agicore/apps/novasyn-chat/` — Tauri 2 + Rust + SQLite  
 **Agicore:** Phase 5 complete — 34 declaration types, 1,382 tests passing, all codegen implemented  
-**Last updated:** 2026-05-17 — **ALL 10 SPRINTS COMPLETE**  
+**Last updated:** 2026-05-17 — **ALL 12 SPRINTS COMPLETE**  
 
 ---
 
@@ -346,7 +346,7 @@ Sprint 10:        Add TERMINAL + PROFILES to SESSION terminal
 | Session message count badge | ✅ Sprint 11 | `get_session_message_counts` query + count shown next to session name |
 | Token budget alerts | ✅ Sprint 11 | Dismissible banner at 70% (amber) and 85% (red) with inline Prune button |
 | Multi-workspace (separate DBs) | ✅ Sprint 11 | "Open another database…" in Settings → file dialog → `switch_db` → reload |
-| BabyAI integration | Pending | Cooperative intelligence routing via ROUTER BabyAI |
+| BabyAI integration | ✅ Sprint 12 | 5 HF models in picker (optgroup + free badge); `call_huggingface` SSE streaming; `babyai` key slot; `model.contains('/')` provider detection |
 | Tray icon / minimize to tray | Done (core) | System tray already wired in main.rs (Sprint 1–5) |
 
 ---

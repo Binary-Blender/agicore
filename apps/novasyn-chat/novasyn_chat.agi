@@ -36,6 +36,12 @@ AI_SERVICE {
     openai     "gpt-4o-mini"                     LABEL "GPT-4o Mini"
     google     "gemini-2.5-flash-preview-05-20"  LABEL "Gemini 2.5 Flash"  DEFAULT
     xai        "grok-3-latest"                   LABEL "Grok 3"            DEFAULT
+    // HuggingFace free tier (BabyAI key slot)
+    huggingface "Qwen/Qwen3-72B"                 LABEL "Qwen 3 72B"        CONTEXT 32768
+    huggingface "Qwen/Qwen3-8B"                  LABEL "Qwen 3 8B"         CONTEXT 32768
+    huggingface "meta-llama/Llama-3.1-8B-Instruct" LABEL "Llama 3.1 8B"   CONTEXT 128000
+    huggingface "Qwen/Qwen2.5-Coder-7B-Instruct" LABEL "Qwen 2.5 Coder 7B" CONTEXT 32768
+    huggingface "mistralai/Mistral-7B-Instruct-v0.3" LABEL "Mistral 7B"    CONTEXT 32768
   }
 }
 

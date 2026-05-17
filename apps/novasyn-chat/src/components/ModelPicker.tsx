@@ -13,6 +13,8 @@ export function ModelPicker() {
   const [showCouncil, setShowCouncil] = useState(false);
 
   const visibleModels = MODELS.filter((m) => !hiddenModels.includes(m.id));
+  const visiblePaidModels = visibleModels.filter((m) => m.provider !== 'huggingface');
+  const visibleHfModels = visibleModels.filter((m) => m.provider === 'huggingface');
   const bcastIds = broadcastModelIds().filter((id) => !hiddenModels.includes(id));
 
   function toggleCouncilModel(modelId: string) {
@@ -37,9 +39,16 @@ export function ModelPicker() {
         }}
         className="w-full bg-slate-700 border border-slate-600 text-white text-xs px-2 py-1.5 rounded focus:outline-none focus:border-blue-500"
       >
-        {visibleModels.map((m) => (
+        {visiblePaidModels.map((m) => (
           <option key={m.id} value={m.id}>{m.label}</option>
         ))}
+        {visibleHfModels.length > 0 && (
+          <optgroup label="BabyAI — HuggingFace (free tier)">
+            {visibleHfModels.map((m) => (
+              <option key={m.id} value={m.id}>{m.label}</option>
+            ))}
+          </optgroup>
+        )}
       </select>
 
       <button
@@ -75,7 +84,10 @@ export function ModelPicker() {
                 onChange={() => toggleCouncilModel(m.id)}
                 className="accent-purple-500 w-3 h-3"
               />
-              <span className="text-xs text-gray-300">{m.label}</span>
+              <span className="text-xs text-gray-300 flex-1 truncate">{m.label}</span>
+              {m.provider === 'huggingface' && (
+                <span className="text-xs text-emerald-600 flex-shrink-0">free</span>
+              )}
             </label>
           ))}
           {isCouncilActive && (

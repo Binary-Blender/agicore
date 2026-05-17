@@ -108,6 +108,7 @@ fn provider_from_model(model: &str) -> &'static str {
     if model.starts_with("gpt-") || model.starts_with("o1") || model.starts_with("o3") || model.starts_with("o4") || model.starts_with("chatgpt-") { return "openai"; }
     if model.starts_with("gemini") { return "google"; }
     if model.starts_with("grok") { return "xai"; }
+    if model.contains('/') { return "huggingface"; }  // HuggingFace org/model-name format
     "anthropic"
 }
 
@@ -119,20 +120,20 @@ pub async fn send_chat(
     store: tauri::State<'_, ApiKeyStore>,
 ) -> Result<ChatResponse, String> {
     let provider = provider_from_model(&request.model);
+    // HuggingFace models use the "babyai" key slot
+    let key_name = if provider == "huggingface" { "babyai" } else { provider };
     let api_key = {
         let keys = store.lock().map_err(|e| e.to_string())?;
-        keys.get(provider).cloned()
+        keys.get(key_name).cloned()
     };
-    let api_key = api_key.ok_or_else(|| format!("No API key configured for {}", provider))?;
+    let api_key = api_key.ok_or_else(|| format!("No API key configured for {} (key slot: {})", provider, key_name))?;
 
-    // Note: `babyai` is declared in AI_SERVICE.PROVIDERS but has no chat
-    // dispatch template — it is treated as key-storage-only. Routing to
-    // the babyai endpoint happens through the ROUTER tier, not send_chat.
     match provider {
         "anthropic" => call_anthropic(request, request_id, window, api_key).await,
         "openai" => call_openai(request, request_id, window, api_key).await,
         "google" => call_google(request, request_id, window, api_key).await,
         "xai" => call_xai(request, request_id, window, api_key).await,
+        "huggingface" => call_huggingface(request, request_id, window, api_key).await,
         _ => Err(format!("Unsupported provider: {}", provider)),
     }
 }
@@ -1000,4 +1001,104 @@ pub async fn chat_complete(
         }
         _ => Err(format!("Unsupported provider: {}", provider)),
     }
+}
+
+// ── HuggingFace Inference Router ─────────────────────────────────────────────
+// Uses the OpenAI-compatible endpoint at router.huggingface.co.
+// Streaming format is identical to OpenAI SSE.
+async fn call_huggingface(
+    request: ChatRequest,
+    request_id: String,
+    window: Window,
+    api_key: String,
+) -> Result<ChatResponse, String> {
+    let client = reqwest::Client::new();
+
+    let mut messages: Vec<serde_json::Value> = vec![];
+    if let Some(sys) = &request.system_prompt {
+        messages.push(serde_json::json!({"role": "system", "content": sys}));
+    }
+    for m in &request.messages {
+        messages.push(serde_json::json!({"role": m.role, "content": m.content}));
+    }
+
+    let body = serde_json::json!({
+        "model": request.model,
+        "messages": messages,
+        "max_tokens": request.max_tokens.unwrap_or(4096),
+        "temperature": request.temperature.unwrap_or(0.7),
+        "stream": true,
+    });
+
+    let response = client
+        .post("https://router.huggingface.co/v1/chat/completions")
+        .header("Authorization", format!("Bearer {}", api_key))
+        .header("Content-Type", "application/json")
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if !response.status().is_success() {
+        let err_text = response.text().await.unwrap_or_default();
+        return Err(format!("HuggingFace API error: {}", err_text));
+    }
+
+    let mut full_content = String::new();
+    let mut input_tokens = 0u32;
+    let mut output_tokens = 0u32;
+    let mut bytes_stream = response.bytes_stream();
+    use futures_util::StreamExt;
+
+    let stream_result: Result<(), String> = async {
+        while let Some(chunk) = bytes_stream.next().await {
+            let chunk = chunk.map_err(|e| e.to_string())?;
+            let text = String::from_utf8_lossy(&chunk);
+            for line in text.lines() {
+                if let Some(data) = line.strip_prefix("data: ") {
+                    if data == "[DONE]" { continue; }
+                    if let Ok(event) = serde_json::from_str::<serde_json::Value>(data) {
+                        if let Some(delta) = event["choices"][0]["delta"]["content"].as_str() {
+                            full_content.push_str(delta);
+                            let _ = window.emit("chat-stream", StreamDelta {
+                                request_id: request_id.clone(),
+                                delta: delta.to_string(),
+                                done: false,
+                            });
+                        }
+                        if let Some(usage) = event["usage"].as_object() {
+                            if let Some(t) = usage.get("prompt_tokens").and_then(|v| v.as_u64()) {
+                                input_tokens = t as u32;
+                            }
+                            if let Some(t) = usage.get("completion_tokens").and_then(|v| v.as_u64()) {
+                                output_tokens = t as u32;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Ok(())
+    }.await;
+
+    if let Err(err) = stream_result {
+        if full_content.is_empty() {
+            return Err(format!("HuggingFace stream failed: {}", err));
+        }
+        eprintln!("[HuggingFace] stream interrupted after {} chars: {}", full_content.len(), err);
+    }
+
+    let _ = window.emit("chat-stream", StreamDelta {
+        request_id: request_id.clone(),
+        delta: String::new(),
+        done: true,
+    });
+
+    Ok(ChatResponse {
+        content: full_content,
+        model: request.model,
+        provider: "huggingface".to_string(),
+        input_tokens,
+        output_tokens,
+    })
 }
