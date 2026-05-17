@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { Key, Database, Info } from 'lucide-react';
+import { Key, Database, Info, Cpu } from 'lucide-react';
+import { MODELS } from '../lib/models';
+import { useAppStore } from '../store/appStore';
 
 const PROVIDERS = [
   { id: 'anthropic', label: 'Anthropic (Claude)', placeholder: 'sk-ant-...', url: 'https://console.anthropic.com/settings/keys' },
@@ -15,6 +17,30 @@ export function SettingsView() {
   const [maskedKeys, setMaskedKeys] = useState<Record<string, string>>({});
   const [editing, setEditing] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+
+  const hiddenModels = useAppStore((s) => s.hiddenModels);
+  const setHiddenModels = useAppStore((s) => s.setHiddenModels);
+  const modelContextOverrides = useAppStore((s) => s.modelContextOverrides);
+  const setModelContextOverride = useAppStore((s) => s.setModelContextOverride);
+  const synthesisModel = useAppStore((s) => s.synthesisModel);
+  const setSynthesisModel = useAppStore((s) => s.setSynthesisModel);
+
+  const [ctxDraft, setCtxDraft] = useState<Record<string, string>>({});
+
+  function toggleHidden(modelId: string) {
+    if (hiddenModels.includes(modelId)) {
+      setHiddenModels(hiddenModels.filter((id) => id !== modelId));
+    } else {
+      setHiddenModels([...hiddenModels, modelId]);
+    }
+  }
+
+  function commitCtxOverride(modelId: string) {
+    const raw = ctxDraft[modelId];
+    if (raw === undefined) return;
+    const n = parseInt(raw, 10);
+    setModelContextOverride(modelId, isNaN(n) || n <= 0 ? null : n);
+  }
 
   useEffect(() => { loadKeys(); }, []);
 
@@ -101,6 +127,69 @@ export function SettingsView() {
           </div>
         </section>
       )}
+      <section className="mb-8">
+        <div className="flex items-center gap-2 mb-3">
+          <Cpu size={16} className="text-emerald-400" />
+          <h3 className="text-sm font-medium text-white">Models</h3>
+        </div>
+        <p className="text-xs text-gray-500 mb-4">
+          Hide models from the picker. Override context window size if a model has been updated since this release.
+        </p>
+        <div className="space-y-2 mb-4">
+          {MODELS.map((m) => {
+            const hidden = hiddenModels.includes(m.id);
+            const override = modelContextOverrides[m.id];
+            const draftVal = ctxDraft[m.id] ?? (override ? String(override) : '');
+            return (
+              <div key={m.id} className={`bg-slate-800/60 border rounded-lg p-3 transition ${hidden ? 'border-slate-700/40 opacity-50' : 'border-slate-700'}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <button
+                    onClick={() => toggleHidden(m.id)}
+                    className={`w-8 h-4 rounded-full transition flex-shrink-0 relative ${hidden ? 'bg-slate-600' : 'bg-emerald-600'}`}
+                    title={hidden ? 'Show in picker' : 'Hide from picker'}
+                  >
+                    <span className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${hidden ? 'left-0.5' : 'left-4'}`} />
+                  </button>
+                  <span className="text-sm text-gray-200 font-medium flex-1 min-w-0 truncate">{m.label}</span>
+                  <span className="text-xs text-gray-500 bg-slate-700/50 px-1.5 py-0.5 rounded flex-shrink-0">{m.provider}</span>
+                  <span className="text-xs text-gray-600 flex-shrink-0">{override ? `${(override / 1000).toFixed(0)}K*` : `${(m.contextWindow / 1000).toFixed(0)}K`}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-600 w-28 flex-shrink-0">Context override</span>
+                  <input
+                    type="number"
+                    min={1000}
+                    step={1000}
+                    value={draftVal}
+                    placeholder={String(m.contextWindow)}
+                    onChange={(e) => setCtxDraft((p) => ({ ...p, [m.id]: e.target.value }))}
+                    onBlur={() => commitCtxOverride(m.id)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') commitCtxOverride(m.id); }}
+                    className="w-32 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+                  />
+                  {override && (
+                    <button onClick={() => { setModelContextOverride(m.id, null); setCtxDraft((p) => ({ ...p, [m.id]: '' })); }} className="text-xs text-gray-500 hover:text-red-400 transition">reset</button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4">
+          <label className="text-sm text-gray-200 font-medium block mb-2">Synthesis model</label>
+          <p className="text-xs text-gray-500 mb-3">Used when synthesizing council/broadcast responses.</p>
+          <select
+            value={synthesisModel}
+            onChange={(e) => setSynthesisModel(e.target.value)}
+            className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500"
+          >
+            {MODELS.filter((m) => !hiddenModels.includes(m.id)).map((m) => (
+              <option key={m.id} value={m.id}>{m.label} ({m.provider})</option>
+            ))}
+          </select>
+        </div>
+      </section>
+
       <section className="mb-8">
         <div className="flex items-center gap-2 mb-3">
           <Database size={16} className="text-purple-400" />

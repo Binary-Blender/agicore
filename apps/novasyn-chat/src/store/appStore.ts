@@ -51,6 +51,12 @@ interface AppState {
   synthesisModel: string;
   setSynthesisModel: (model: string) => void;
 
+  hiddenModels: string[];
+  setHiddenModels: (ids: string[]) => void;
+
+  modelContextOverrides: Record<string, number>;
+  setModelContextOverride: (modelId: string, tokens: number | null) => void;
+
   currentSessionId: string | null;
   setCurrentSessionId: (id: string | null) => void;
 
@@ -169,12 +175,19 @@ interface AppState {
 
 }
 
+function lsGet<T>(key: string, fallback: T): T {
+  try { return JSON.parse(localStorage.getItem(key) ?? 'null') ?? fallback; } catch { return fallback; }
+}
+function lsSet(key: string, value: unknown) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+}
+
 export const useAppStore = create<AppState>((set, get) => ({
   currentView: 'ChatView',
   setCurrentView: (view) => set({ currentView: view }),
 
-  selectedModel: 'claude-sonnet-4-20250514',
-  setSelectedModel: (model) => set({ selectedModel: model }),
+  selectedModel: lsGet('ns_selected_model', 'claude-sonnet-4-20250514'),
+  setSelectedModel: (model) => { lsSet('ns_selected_model', model); set({ selectedModel: model }); },
 
   councilModels: [],
   setCouncilModels: (models) => set({ councilModels: models }),
@@ -182,8 +195,20 @@ export const useAppStore = create<AppState>((set, get) => ({
   broadcastMode: false,
   setBroadcastMode: (on) => set({ broadcastMode: on }),
 
-  synthesisModel: 'claude-sonnet-4-20250514',
-  setSynthesisModel: (model) => set({ synthesisModel: model }),
+  synthesisModel: lsGet('ns_synthesis_model', 'claude-sonnet-4-20250514'),
+  setSynthesisModel: (model) => { lsSet('ns_synthesis_model', model); set({ synthesisModel: model }); },
+
+  hiddenModels: lsGet<string[]>('ns_hidden_models', []),
+  setHiddenModels: (ids) => { lsSet('ns_hidden_models', ids); set({ hiddenModels: ids }); },
+
+  modelContextOverrides: lsGet<Record<string, number>>('ns_context_overrides', {}),
+  setModelContextOverride: (modelId, tokens) => {
+    const current = get().modelContextOverrides;
+    const next = { ...current };
+    if (tokens === null || tokens <= 0) { delete next[modelId]; } else { next[modelId] = tokens; }
+    lsSet('ns_context_overrides', next);
+    set({ modelContextOverrides: next });
+  },
 
   currentSessionId: null,
   setCurrentSessionId: (id) => set({ currentSessionId: id }),

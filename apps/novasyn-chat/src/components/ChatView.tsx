@@ -46,6 +46,7 @@ export function ChatView() {
   const selectedModel = useAppStore((s) => s.selectedModel);
   const councilModels = useAppStore((s) => s.councilModels);
   const broadcastMode = useAppStore((s) => s.broadcastMode);
+  const modelContextOverrides = useAppStore((s) => s.modelContextOverrides);
   const [activeDocCompiler, setActiveDocCompiler] = useState<string | null>(null);
   const [compileTitle, setCompileTitle] = useState('');
   const [compileStatus, setCompileStatus] = useState<string | null>(null);
@@ -55,7 +56,7 @@ export function ChatView() {
   const [showSaveToFolder, setShowSaveToFolder] = useState(false);
   const [savingToFolder, setSavingToFolder] = useState(false);
 
-  const contextWindow = modelContextWindow(selectedModel);
+  const contextWindow = modelContextWindow(selectedModel, modelContextOverrides);
   const activeMessages = chatMessages.filter((m) => !m.isExcluded && !m.isArchived && !m.isPruned);
   const contextTokens = activeMessages.reduce((sum, m) => sum + (m.totalTokens || 0), 0);
   const tokenPct = Math.min(contextTokens / contextWindow, 1);

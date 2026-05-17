@@ -18,7 +18,8 @@ export function modelLabel(modelId: string): string {
   return MODELS.find((m) => m.id === modelId)?.label ?? modelId;
 }
 
-export function modelContextWindow(modelId: string): number {
+export function modelContextWindow(modelId: string, overrides?: Record<string, number>): number {
+  if (overrides && overrides[modelId]) return overrides[modelId];
   return MODELS.find((m) => m.id === modelId)?.contextWindow ?? 128_000;
 }
 

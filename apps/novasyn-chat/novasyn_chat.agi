@@ -483,6 +483,35 @@ VIEW SettingsView {
 }
 
 // ===================================================================
+// PREFERENCES — lightweight client-side settings persistence (FE-2)
+// Implemented via localStorage pending PREFERENCE codegen in Agicore.
+// ===================================================================
+
+PREFERENCE selected_model {
+  TYPE    string
+  DEFAULT "claude-sonnet-4-20250514"
+  KEY     "ns_selected_model"
+}
+
+PREFERENCE synthesis_model {
+  TYPE    string
+  DEFAULT "claude-sonnet-4-20250514"
+  KEY     "ns_synthesis_model"
+}
+
+PREFERENCE hidden_models {
+  TYPE    json    // string[]
+  DEFAULT []
+  KEY     "ns_hidden_models"
+}
+
+PREFERENCE model_context_overrides {
+  TYPE    json    // Record<modelId, tokenCount>
+  DEFAULT {}
+  KEY     "ns_context_overrides"
+}
+
+// ===================================================================
 // QUALITY CONTROL — SPC on AI response quality
 // ===================================================================
 

@@ -9,9 +9,11 @@ export function ModelPicker() {
   const setCouncilModels = useAppStore((s) => s.setCouncilModels);
   const broadcastMode = useAppStore((s) => s.broadcastMode);
   const setBroadcastMode = useAppStore((s) => s.setBroadcastMode);
+  const hiddenModels = useAppStore((s) => s.hiddenModels);
   const [showCouncil, setShowCouncil] = useState(false);
 
-  const bcastIds = broadcastModelIds();
+  const visibleModels = MODELS.filter((m) => !hiddenModels.includes(m.id));
+  const bcastIds = broadcastModelIds().filter((id) => !hiddenModels.includes(id));
 
   function toggleCouncilModel(modelId: string) {
     if (modelId === selectedModel) return;
@@ -35,7 +37,7 @@ export function ModelPicker() {
         }}
         className="w-full bg-slate-700 border border-slate-600 text-white text-xs px-2 py-1.5 rounded focus:outline-none focus:border-blue-500"
       >
-        {MODELS.map((m) => (
+        {visibleModels.map((m) => (
           <option key={m.id} value={m.id}>{m.label}</option>
         ))}
       </select>
@@ -65,7 +67,7 @@ export function ModelPicker() {
 
       {showCouncil && (
         <div className="mt-1 space-y-0.5">
-          {MODELS.filter((m) => m.id !== selectedModel).map((m) => (
+          {visibleModels.filter((m) => m.id !== selectedModel).map((m) => (
             <label key={m.id} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-700/50 cursor-pointer">
               <input
                 type="checkbox"
