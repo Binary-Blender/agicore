@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import { useAppStore } from '../store/appStore';
 import { Sidebar } from './Sidebar';
 import { NavRail } from './NavRail';
@@ -13,6 +15,7 @@ import { WorkflowView } from './WorkflowView';
 import { ReasonerView } from './ReasonerView';
 import { ChannelView } from './ChannelView';
 import { IdentityView } from './IdentityView';
+import { OnboardingScreen } from './OnboardingScreen';
 import { getPopoutView } from '../lib/popout';
 
 function renderView(view: string) {
@@ -37,6 +40,19 @@ const popoutView = getPopoutView();
 
 export function App() {
   const currentView = useAppStore((s) => s.currentView);
+  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    invoke<Record<string, string>>('get_api_keys')
+      .then((existing) => {
+        const hasKey = Object.values(existing).some((v) => v && v.length > 0);
+        setNeedsOnboarding(!hasKey);
+      })
+      .catch(() => {
+        // If the command doesn't exist yet, skip onboarding
+        setNeedsOnboarding(false);
+      });
+  }, []);
 
   if (popoutView) {
     return (
@@ -56,6 +72,9 @@ export function App() {
           {renderView(currentView)}
         </main>
       </div>
+      {needsOnboarding && (
+        <OnboardingScreen onDone={() => setNeedsOnboarding(false)} />
+      )}
     </div>
   );
 }
