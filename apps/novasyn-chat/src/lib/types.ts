@@ -1,6 +1,15 @@
 // Agicore Generated TypeScript Types
 // App: novasyn_chat
 
+export interface ChatMessageAlternative {
+  provider: string;
+  providerName: string;
+  modelId: string;
+  content: string;
+  tokens: number;
+  preferred: boolean;
+}
+
 export interface User {
   id: string;
   email: string;

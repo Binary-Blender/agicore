@@ -8,7 +8,8 @@ import { TagPicker } from './TagPicker';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { webSearch } from '../lib/api';
-import type { ChatMessage } from '../lib/types';
+import { modelLabel } from '../lib/models';
+import type { ChatMessage, ChatMessageAlternative } from '../lib/types';
 
 interface SearchResult { title: string; snippet: string; url: string; source: string; }
 
@@ -41,6 +42,7 @@ export function ChatView() {
   const [selectedFolderItems] = useState<string[]>([]);
   const [folderItemsMap] = useState<Record<string, any>>({});
   const selectedModel = useAppStore((s) => s.selectedModel);
+  const councilModels = useAppStore((s) => s.councilModels);
   const [activeDocCompiler, setActiveDocCompiler] = useState<string | null>(null);
   const [compileTitle, setCompileTitle] = useState('');
   const [compileStatus, setCompileStatus] = useState<string | null>(null);
@@ -57,7 +59,6 @@ export function ChatView() {
   const displayMessages = searchResults ?? chatMessages;
 
   const handleSend = useCallback(async (rawText: string) => {
-    // --- /search <query> slash command ---
     let userText = rawText;
     let searchContext = '';
     const searchMatch = rawText.match(/^\/search\s+(.+)/is);
@@ -72,57 +73,112 @@ export function ChatView() {
       userText = query;
     }
 
-    const requestId = crypto.randomUUID();
-    setStreamingContent('');
-    const unlisten = await listen<StreamDelta>('chat-stream', (event) => {
-      const { requestId: rid, delta, done } = event.payload;
-      if (rid !== requestId || done) return;
-      setStreamingContent((prev) => (prev ?? '') + delta);
-    });
-    try {
-      // Reconstruct history — if a past message has search context, include it
-      const history = [...chatMessages]
-        .filter((m) => !m.isExcluded && !m.isArchived)
-        .flatMap((m) => {
-          const content = m.systemPrompt?.startsWith(SEARCH_CONTEXT_PREFIX)
-            ? `${m.systemPrompt}\n\n---\n\n${m.userMessage}`
-            : m.userMessage;
-          return [
-            { role: 'user', content },
-            { role: 'assistant', content: m.aiMessage },
-          ];
-        });
-
-      // Combine search context + user text for this turn's API call
-      const apiContent = searchContext ? `${searchContext}\n\n---\n\n${userText}` : userText;
-
-      const response = await invoke<{
-        content: string; model: string; provider: string;
-        inputTokens: number; outputTokens: number;
-      }>('send_chat', { request: { messages: [...history, { role: 'user', content: apiContent }], model: selectedModel }, requestId });
-
-      await invoke('create_chat_message', {
-        input: {
-          userMessage: userText,
-          aiMessage: response.content,
-          userTokens: response.inputTokens || Math.ceil(apiContent.length / 4),
-          aiTokens: response.outputTokens || Math.ceil(response.content.length / 4),
-          totalTokens: (response.inputTokens || 0) + (response.outputTokens || 0),
-          model: response.model,
-          provider: response.provider,
-          systemPrompt: searchContext || null,
-          userId: 'default-user',
-          sessionId: currentSessionId,
-        },
+    const history = [...chatMessages]
+      .filter((m) => !m.isExcluded && !m.isArchived)
+      .flatMap((m) => {
+        const content = m.systemPrompt?.startsWith(SEARCH_CONTEXT_PREFIX)
+          ? `${m.systemPrompt}\n\n---\n\n${m.userMessage}`
+          : m.userMessage;
+        return [
+          { role: 'user', content },
+          { role: 'assistant', content: m.aiMessage },
+        ];
       });
-      setStreamingContent(null);
-      await loadChatMessagesForCurrentSession();
-    } catch (err) {
-      console.error('Send failed:', err);
-      setStreamingContent(`Error: ${err}`);
-      setTimeout(() => setStreamingContent(null), 5000);
-    } finally { unlisten(); }
-  }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, currentSessionId]);
+    const apiContent = searchContext ? `${searchContext}\n\n---\n\n${userText}` : userText;
+
+    const isCouncil = councilModels.length > 0;
+
+    if (isCouncil) {
+      const allModels = [selectedModel, ...councilModels];
+      setStreamingContent(`Gathering ${allModels.length} council responses…`);
+      try {
+        const results = await Promise.allSettled(
+          allModels.map((model) =>
+            invoke<{ content: string; model: string; provider: string; inputTokens: number; outputTokens: number }>(
+              'send_chat',
+              { request: { messages: [...history, { role: 'user', content: apiContent }], model }, requestId: crypto.randomUUID() }
+            )
+          )
+        );
+
+        const alternatives: ChatMessageAlternative[] = results
+          .map((r, i): ChatMessageAlternative | null =>
+            r.status === 'fulfilled'
+              ? {
+                  provider: r.value.provider,
+                  providerName: modelLabel(allModels[i]),
+                  modelId: r.value.model || allModels[i],
+                  content: r.value.content,
+                  tokens: (r.value.inputTokens ?? 0) + (r.value.outputTokens ?? 0),
+                  preferred: i === 0,
+                }
+              : null
+          )
+          .filter((a): a is ChatMessageAlternative => a !== null);
+
+        if (alternatives.length === 0) throw new Error('All council requests failed');
+
+        const primary = alternatives.find((a) => a.preferred) ?? alternatives[0];
+
+        await invoke('create_chat_message', {
+          input: {
+            userMessage: userText,
+            aiMessage: primary.content,
+            userTokens: primary.tokens,
+            aiTokens: primary.tokens,
+            totalTokens: alternatives.reduce((sum, a) => sum + a.tokens, 0),
+            model: primary.modelId,
+            provider: primary.provider,
+            systemPrompt: searchContext || null,
+            alternatives: JSON.stringify(alternatives),
+            userId: 'default-user',
+            sessionId: currentSessionId,
+          },
+        });
+        setStreamingContent(null);
+        await loadChatMessagesForCurrentSession();
+      } catch (err) {
+        console.error('Council send failed:', err);
+        setStreamingContent(`Error: ${err}`);
+        setTimeout(() => setStreamingContent(null), 5000);
+      }
+    } else {
+      const requestId = crypto.randomUUID();
+      setStreamingContent('');
+      const unlisten = await listen<StreamDelta>('chat-stream', (event) => {
+        const { requestId: rid, delta, done } = event.payload;
+        if (rid !== requestId || done) return;
+        setStreamingContent((prev) => (prev ?? '') + delta);
+      });
+      try {
+        const response = await invoke<{
+          content: string; model: string; provider: string;
+          inputTokens: number; outputTokens: number;
+        }>('send_chat', { request: { messages: [...history, { role: 'user', content: apiContent }], model: selectedModel }, requestId });
+
+        await invoke('create_chat_message', {
+          input: {
+            userMessage: userText,
+            aiMessage: response.content,
+            userTokens: response.inputTokens || Math.ceil(apiContent.length / 4),
+            aiTokens: response.outputTokens || Math.ceil(response.content.length / 4),
+            totalTokens: (response.inputTokens || 0) + (response.outputTokens || 0),
+            model: response.model,
+            provider: response.provider,
+            systemPrompt: searchContext || null,
+            userId: 'default-user',
+            sessionId: currentSessionId,
+          },
+        });
+        setStreamingContent(null);
+        await loadChatMessagesForCurrentSession();
+      } catch (err) {
+        console.error('Send failed:', err);
+        setStreamingContent(`Error: ${err}`);
+        setTimeout(() => setStreamingContent(null), 5000);
+      } finally { unlisten(); }
+    }
+  }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, councilModels, currentSessionId]);
 
   async function handleDocCompile(compilerName: string) {
     try {
@@ -130,7 +186,7 @@ export function ChatView() {
       const msgIds = displayMessages.filter((m) => !m.isExcluded && !m.isArchived).map((m) => m.id);
       const outputPath = safeTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.md';
       await invoke(compilerName, { messageIds: msgIds, model: selectedModel, title: safeTitle, outputPath });
-      setCompileStatus('\u2713 Document created');
+      setCompileStatus('✓ Document created');
       setActiveDocCompiler(null);
       setCompileTitle('');
       setTimeout(() => setCompileStatus(null), 3000);
@@ -166,13 +222,19 @@ export function ChatView() {
             <span className="text-sm text-blue-300">Searching the web…</span>
           </div>
         )}
-        {streamingContent && (
+        {streamingContent !== null && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-4">
             <div className="flex items-start gap-3">
               <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">AI</div>
               <div className="flex-1 min-w-0">
-                <MarkdownRenderer content={streamingContent} />
-                <span className="inline-block w-2 h-4 bg-purple-400 animate-pulse ml-0.5" />
+                {streamingContent.startsWith('Gathering') || streamingContent.startsWith('Error') ? (
+                  <p className="text-sm text-gray-400 italic">{streamingContent}</p>
+                ) : (
+                  <>
+                    <MarkdownRenderer content={streamingContent} />
+                    <span className="inline-block w-2 h-4 bg-purple-400 animate-pulse ml-0.5" />
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -217,13 +279,23 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
   const [showExchangePicker, setShowExchangePicker] = useState(false);
   const [exchangeRating, setExchangeRating] = useState(3);
   const [savedAsExchange, setSavedAsExchange] = useState(false);
+  const [activeAltIndex, setActiveAltIndex] = useState(0);
 
   const ts = new Date(message.createdAt);
   const timeStr = ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const contextTokens = Math.ceil(message.userMessage.length / 4) + message.aiTokens;
 
+  const alternatives: ChatMessageAlternative[] | null = (() => {
+    if (!message.alternatives) return null;
+    try { return JSON.parse(message.alternatives as string) as ChatMessageAlternative[]; }
+    catch { return null; }
+  })();
+
+  const displayContent = alternatives ? alternatives[activeAltIndex]?.content ?? message.aiMessage : message.aiMessage;
+  const displayModel = alternatives ? alternatives[activeAltIndex]?.modelId ?? message.model : message.model;
+
   async function handleCopy() {
-    await navigator.clipboard.writeText(message.aiMessage);
+    await navigator.clipboard.writeText(displayContent);
     setCopied(true); setTimeout(() => setCopied(false), 1500);
   }
   async function handleToggleExclude() {
@@ -239,7 +311,7 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
   }
   async function handleSaveToFolder(folderId: string) {
     try {
-      await invoke('create_folder_item', { input: { content: message.aiMessage, tokens: message.aiTokens, itemType: 'ai-response', folderId } });
+      await invoke('create_folder_item', { input: { content: displayContent, tokens: message.aiTokens, itemType: 'ai-response', folderId } });
       setSavedFolderId(folderId); setShowFolderPicker(false); setMenuOpen(false);
       setTimeout(() => setSavedFolderId(null), 2000);
     } catch (err) { console.error('Save to folder failed:', err); }
@@ -323,10 +395,9 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
                     )}
                   </>
                 )}
-                
                 <hr className="border-slate-600 my-1" />
                 <button onClick={() => setShowExchangePicker(!showExchangePicker)} className="w-full text-left px-3 py-1.5 text-sm hover:bg-slate-600 transition flex items-center justify-between">
-                  <span>★ Save as Exchange</span><span className="text-gray-400 text-xs">{showExchangePicker ? '\u25b2' : '\u25b6'}</span>
+                  <span>★ Save as Exchange</span><span className="text-gray-400 text-xs">{showExchangePicker ? '▲' : '▶'}</span>
                 </button>
                 {showExchangePicker && (
                   <div className="bg-slate-800 border-t border-slate-600 px-3 py-2">
@@ -351,14 +422,34 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
             <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">U</div>
             <div className="flex-1 min-w-0"><p className="text-sm text-white leading-relaxed whitespace-pre-wrap break-words">{message.userMessage}</p></div>
           </div>
+
+          {alternatives && alternatives.length > 1 && (
+            <div className="flex gap-0.5 mb-3 border-b border-slate-700/50 pb-2">
+              {alternatives.map((alt, i) => (
+                <button
+                  key={alt.modelId + i}
+                  onClick={() => setActiveAltIndex(i)}
+                  className={`text-xs px-2.5 py-1 rounded-t transition ${
+                    i === activeAltIndex
+                      ? 'bg-purple-700/60 text-purple-200 font-medium'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-slate-700/50'
+                  }`}
+                >
+                  {alt.providerName}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="flex items-start gap-3">
             <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">AI</div>
-            <div className="flex-1 min-w-0"><MarkdownRenderer content={message.aiMessage} /></div>
+            <div className="flex-1 min-w-0"><MarkdownRenderer content={displayContent} /></div>
           </div>
           <div className="flex items-center gap-3 mt-3 pt-3 border-t border-slate-700/50">
             <span className="text-xs text-gray-600">{timeStr}</span>
-            <span className="text-xs text-gray-600 bg-slate-700/50 px-1.5 py-0.5 rounded">{message.model}</span>
+            <span className="text-xs text-gray-600 bg-slate-700/50 px-1.5 py-0.5 rounded">{displayModel}</span>
             <span className="text-xs text-gray-600">~{contextTokens.toLocaleString()} tokens</span>
+            {alternatives && <span className="text-xs text-purple-400 bg-purple-900/30 px-1.5 py-0.5 rounded">⚡ council</span>}
             {message.isPruned && <span className="text-xs text-orange-400 bg-orange-900/30 px-1.5 py-0.5 rounded">pruned</span>}
             {message.isExcluded && <span className="text-xs text-red-400 bg-red-900/30 px-1.5 py-0.5 rounded">excluded</span>}
             {message.isArchived && <span className="text-xs text-gray-500 bg-slate-700/50 px-1.5 py-0.5 rounded">archived</span>}

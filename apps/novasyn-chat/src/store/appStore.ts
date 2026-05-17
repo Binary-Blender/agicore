@@ -42,6 +42,9 @@ interface AppState {
   selectedModel: string;
   setSelectedModel: (model: string) => void;
 
+  councilModels: string[];
+  setCouncilModels: (models: string[]) => void;
+
   currentSessionId: string | null;
   setCurrentSessionId: (id: string | null) => void;
 
@@ -166,6 +169,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   selectedModel: 'claude-sonnet-4-20250514',
   setSelectedModel: (model) => set({ selectedModel: model }),
+
+  councilModels: [],
+  setCouncilModels: (models) => set({ councilModels: models }),
 
   currentSessionId: null,
   setCurrentSessionId: (id) => set({ currentSessionId: id }),
