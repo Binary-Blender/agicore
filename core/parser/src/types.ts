@@ -363,6 +363,37 @@ export interface LogDecl {
   span: SourceSpan;
 }
 
+// --- MACRO Declaration (Reusable named capability) ---
+
+export interface MacroParam {
+  name: string;
+  type: string;
+  required: boolean;
+}
+
+export interface MacroDecl {
+  kind: 'macro';
+  name: string;
+  description: string;
+  params: MacroParam[];
+  action?: string;
+  span: SourceSpan;
+}
+
+// --- MACRO_REGISTRY Declaration (Cross-app capability exposure) ---
+
+export interface MacroBinding {
+  macro: string;
+  as?: string;
+}
+
+export interface MacroRegistryDecl {
+  kind: 'macro_registry';
+  exposes: string[];
+  invokes: MacroBinding[];
+  span: SourceSpan;
+}
+
 // --- VAULT Declaration (Shared Asset Storage) ---
 
 export interface VaultDecl {
@@ -1033,6 +1064,8 @@ export type Declaration =
   | QCDecl
   | VaultDecl
   | LogDecl
+  | MacroDecl
+  | MacroRegistryDecl
   | FactDecl
   | StateDecl
   | PatternDecl
@@ -1077,6 +1110,8 @@ export interface AgiFile {
   qcs: QCDecl[];
   vault?: VaultDecl;
   log?: LogDecl;
+  macros: MacroDecl[];
+  macroRegistry?: MacroRegistryDecl;
   facts: FactDecl[];
   states: StateDecl[];
   patterns: PatternDecl[];

@@ -2515,6 +2515,61 @@ LOG {
   console.error(`  FAIL: LOG parse error: ${err}`);
 }
 
+// --- MACRO declaration ---
+
+section('MACRO declaration');
+try {
+  const macroSrc = `
+APP test_macro { TITLE "Test" WINDOW 1200x800 DB "test.db" }
+MACRO export_pdf {
+  DESCRIPTION "Export entity to PDF"
+  PARAMS {
+    entity_id TEXT REQUIRED
+    format    TEXT
+  }
+  ACTION generate_pdf
+}
+`;
+  const macroAst = parse(macroSrc);
+  assert(macroAst.macros.length === 1, 'should have 1 macro');
+  assert(macroAst.macros[0].name === 'export_pdf', 'name should be export_pdf');
+  assert(macroAst.macros[0].description === 'Export entity to PDF', 'description should match');
+  assert(macroAst.macros[0].params.length === 2, 'should have 2 params');
+  assert(macroAst.macros[0].params[0].required === true, 'first param required');
+  assert(macroAst.macros[0].params[1].required === false, 'second param optional');
+  assert(macroAst.macros[0].action === 'generate_pdf', 'action should match');
+  console.log('  MACRO declaration parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: MACRO parse error: ${err}`);
+}
+
+// --- MACRO_REGISTRY declaration ---
+
+section('MACRO_REGISTRY declaration');
+try {
+  const registrySrc = `
+APP test_registry { TITLE "Test" WINDOW 1200x800 DB "test.db" }
+MACRO_REGISTRY {
+  EXPOSES [export_pdf, send_report]
+  INVOKES {
+    novasyn_chat_save_conversation BINDING save_convo
+  }
+}
+`;
+  const registryAst = parse(registrySrc);
+  assert(registryAst.macroRegistry !== undefined, 'macroRegistry should be defined');
+  assert(registryAst.macroRegistry!.exposes.length === 2, 'should expose 2 macros');
+  assert(registryAst.macroRegistry!.exposes[0] === 'export_pdf', 'first expose should be export_pdf');
+  assert(registryAst.macroRegistry!.invokes.length === 1, 'should invoke 1 macro');
+  assert(registryAst.macroRegistry!.invokes[0].macro === 'novasyn_chat_save_conversation', 'invoked macro name');
+  assert(registryAst.macroRegistry!.invokes[0].as === 'save_convo', 'binding alias should match');
+  console.log('  MACRO_REGISTRY declaration parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: MACRO_REGISTRY parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

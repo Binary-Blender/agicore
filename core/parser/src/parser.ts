@@ -8,6 +8,7 @@ import type {
   FactDecl, StateDecl, PatternDecl, ScoreDecl, ModuleDecl,
   PipelineDecl, PipelineRow, PipelineModule, PipelineConnection, PipelineModuleType,
   QCDecl, VaultDecl, LogDecl, LogLevel, LogTarget,
+  MacroDecl, MacroParam, MacroRegistryDecl, MacroBinding,
   RouterDecl, RouterTier, RouterModelDef, CircuitBreaker,
   SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
   ReasonerDecl, ReasonerInput, ReasonerOutput, ReasonerSchedule,
@@ -72,6 +73,8 @@ export class Parser {
     const qcs: QCDecl[] = [];
     let vault: VaultDecl | undefined;
     let log: LogDecl | undefined;
+    const macros: MacroDecl[] = [];
+    let macroRegistry: MacroRegistryDecl | undefined;
     const facts: FactDecl[] = [];
     const states: StateDecl[] = [];
     const patterns: PatternDecl[] = [];
@@ -228,6 +231,12 @@ export class Parser {
         case TokenType.LOG_KW:
           log = this.parseLog();
           break;
+        case TokenType.MACRO_KW:
+          macros.push(this.parseMacro());
+          break;
+        case TokenType.MACRO_REGISTRY_KW:
+          macroRegistry = this.parseMacroRegistry();
+          break;
         case TokenType.SEED:
           topLevelSeeds.push(this.parseTopLevelSeed());
           break;
@@ -236,7 +245,7 @@ export class Parser {
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds };
   }
 
   // --- APP ---
@@ -1562,6 +1571,95 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'log', level, target, path, rotate, span: { start, end } };
+  }
+
+  // --- MACRO ---
+
+  private parseMacro(): MacroDecl {
+    const start = this.expectToken(TokenType.MACRO_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    const params: MacroParam[] = [];
+    let action: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance();
+        description = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.value === 'PARAMS') {
+        this.advance();
+        this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const paramName = this.expectIdentifier();
+          const paramType = this.expectToken(TokenType.IDENTIFIER).value;
+          let required = false;
+          if (this.check(TokenType.REQUIRED)) {
+            this.advance();
+            required = true;
+          }
+          params.push({ name: paramName, type: paramType, required });
+        }
+        this.expectToken(TokenType.RBRACE);
+        continue;
+      }
+      if (token.type === TokenType.ACTION) {
+        this.advance();
+        action = this.expectIdentifier();
+        continue;
+      }
+
+      this.error(`Unexpected token in MACRO: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'macro', name, description, params, action, span: { start, end } };
+  }
+
+  // --- MACRO_REGISTRY ---
+
+  private parseMacroRegistry(): MacroRegistryDecl {
+    const start = this.expectToken(TokenType.MACRO_REGISTRY_KW).location;
+    this.expectToken(TokenType.LBRACE);
+
+    const exposes: string[] = [];
+    const invokes: MacroBinding[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.EXPOSES_KW) {
+        this.advance();
+        const list = this.parseBracketedIdentifierList();
+        exposes.push(...list);
+        continue;
+      }
+      if (token.type === TokenType.INVOKES_KW) {
+        this.advance();
+        this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const macroName = this.expectIdentifier();
+          let as: string | undefined;
+          if (this.check(TokenType.BINDING_KW)) {
+            this.advance();
+            as = this.expectIdentifier();
+          }
+          invokes.push({ macro: macroName, as });
+        }
+        this.expectToken(TokenType.RBRACE);
+        continue;
+      }
+
+      this.error(`Unexpected token in MACRO_REGISTRY: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'macro_registry', exposes, invokes, span: { start, end } };
   }
 
   // --- FACT ---

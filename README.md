@@ -105,6 +105,7 @@ agicore/
 |-- VAULT.md                   # VAULT declaration: shared cross-app asset storage
 |-- CHANNEL.md                 # CHANNEL + PACKET: typed SQLite-backed message queues
 |-- LOGGING.md                 # LOG declaration: file-based Rust logger (no new deps)
+|-- MACROS.md                  # MACRO + MACRO_REGISTRY: cross-app capability exposure
 |-- LICENSE                    # MIT
 |
 |-- dsl/                       # DSL grammar specification
@@ -197,10 +198,10 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 
 | Layer | Tests | Status |
 |---|---|---|
-| Parser | 680 passing | Complete |
+| Parser | 693 passing | Complete |
 | Compiler | 943 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,657 passing** | **0 failures** |
+| **Total** | **1,670 passing** | **0 failures** |
 
 The DSL covers 41 declaration types across 8 layers:
 

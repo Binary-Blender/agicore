@@ -8,6 +8,7 @@ export type {
   FactDecl, StateDecl, PatternDecl, ScoreDecl, ModuleDecl,
   PipelineDecl, PipelineRow, PipelineModule, PipelineConnection, PipelineModuleType,
   QCDecl, VaultDecl, LogDecl, LogLevel, LogTarget,
+  MacroDecl, MacroParam, MacroRegistryDecl, MacroBinding,
   RouterDecl, RouterTier, RouterModelDef, CircuitBreaker,
   SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
   ReasonerDecl, ReasonerInput, ReasonerOutput, ReasonerSchedule, TelemetryMode,

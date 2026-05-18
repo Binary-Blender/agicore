@@ -35,6 +35,7 @@ import { generateSubscription } from './generators/subscription.js';
 import { generateDispute } from './generators/dispute.js';
 import { generatePreference } from './generators/preference.js';
 import { generateLog } from './generators/logging.js';
+import { generateMacroRegistry } from './generators/macro-registry.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -90,6 +91,7 @@ export function compile(source: string): CompileResult {
     generateDispute(ast),
     generatePreference(ast),
     generateLog(ast),
+    generateMacroRegistry(ast),
   ];
 
   for (const gen of generators) {
@@ -136,3 +138,4 @@ export { generateReputation } from './generators/reputation.js';
 export { generateSubscription } from './generators/subscription.js';
 export { generateDispute } from './generators/dispute.js';
 export { generateLog } from './generators/logging.js';
+export { generateMacroRegistry } from './generators/macro-registry.js';

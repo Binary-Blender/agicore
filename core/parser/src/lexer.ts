@@ -87,6 +87,13 @@ export enum TokenType {
   TARGET_KW = 'TARGET_KW',
   ROTATE_KW = 'ROTATE_KW',
 
+  // Macro registry keywords
+  MACRO_KW = 'MACRO_KW',
+  MACRO_REGISTRY_KW = 'MACRO_REGISTRY_KW',
+  EXPOSES_KW = 'EXPOSES_KW',
+  INVOKES_KW = 'INVOKES_KW',
+  BINDING_KW = 'BINDING_KW',
+
   // Workflow keywords
   STEP = 'STEP',
   ON_FAIL = 'ON_FAIL',
@@ -623,6 +630,11 @@ const KEYWORDS: Record<string, TokenType> = {
   LEVEL: TokenType.LEVEL_KW,
   TARGET: TokenType.TARGET_KW,
   ROTATE: TokenType.ROTATE_KW,
+  MACRO: TokenType.MACRO_KW,
+  MACRO_REGISTRY: TokenType.MACRO_REGISTRY_KW,
+  EXPOSES: TokenType.EXPOSES_KW,
+  INVOKES: TokenType.INVOKES_KW,
+  BINDING: TokenType.BINDING_KW,
   true: TokenType.TRUE,
   false: TokenType.FALSE,
   full: TokenType.FULL,
