@@ -3283,6 +3283,130 @@ ENTITY Post {
   console.log('  TYPE alias codegen: export type + entity field references');
 }
 
+// --- Test: THEME generates CSS custom properties and TS constants ---
+section('THEME generates CSS custom properties and TS constants');
+{
+  const src = `
+APP test { TITLE "Test" DB test.db }
+THEME app_theme {
+  PALETTE    indigo
+  ACCENT     "#ff6ad5"
+  BACKGROUND dark
+  FONT       "Inter"
+  DENSITY    comfortable
+  MOTIF      cyberpunk
+  RADIUS     rounded
+}
+`;
+  const { files } = compile(src);
+  const css = files.get('src/styles/theme.css');
+  assert(css !== undefined, 'src/styles/theme.css emitted');
+  assert(css!.includes('--color-primary: #6366f1'), 'CSS has indigo primary color');
+  assert(css!.includes('--color-accent: #ff6ad5'), 'CSS has accent override');
+  assert(css!.includes('--font-family: "Inter"'), 'CSS has font family');
+  assert(css!.includes('--spacing-unit: 1rem'), 'CSS has comfortable spacing');
+  assert(css!.includes('--radius: 0.5rem'), 'CSS has rounded radius');
+  assert(css!.includes('--bg-primary: #0f0f13'), 'CSS has dark bg');
+
+  const ts = files.get('src/lib/theme.ts');
+  assert(ts !== undefined, 'src/lib/theme.ts emitted');
+  assert(ts!.includes('export const APP_THEME'), 'TS exports APP_THEME');
+  assert(ts!.includes("palette: 'indigo'"), 'TS has palette');
+  assert(ts!.includes("motif: 'cyberpunk'"), 'TS has motif');
+  assert(ts!.includes('export type AppTheme'), 'TS exports AppTheme type');
+
+  assert(files.has('src/styles/app_theme.css'), 'named theme css emitted');
+  console.log('  THEME emits CSS variables + TS constants');
+}
+
+section('THEME omitted: no theme files emitted');
+{
+  const src = `APP nothemeapp { TITLE "T" DB t.db }`;
+  const { files } = compile(src);
+  assert(!files.has('src/styles/theme.css'), 'no theme.css when no THEME');
+  assert(!files.has('src/lib/theme.ts'), 'no theme.ts when no THEME');
+  console.log('  no THEME -> no theme files emitted');
+}
+
+section('Hero VIEW layout generates React component');
+{
+  const src = `
+APP heroapp { TITLE "Hero" DB hero.db }
+VIEW HomeHero {
+  LAYOUT hero
+  TITLE "Welcome Home"
+  SUBTITLE "Your creative OS"
+  EMOJI "🚀"
+}
+`;
+  const { files } = compile(src);
+  const tsx = files.get('src/components/HomeHero.tsx');
+  assert(tsx !== undefined, 'HomeHero.tsx emitted');
+  assert(tsx!.includes('Welcome Home'), 'hero title rendered');
+  assert(tsx!.includes('Your creative OS'), 'hero subtitle rendered');
+  assert(tsx!.includes('🚀'), 'hero emoji rendered');
+  assert(tsx!.includes('var(--color-primary)'), 'hero uses theme color var');
+  assert(tsx!.includes('var(--radius)'), 'hero uses theme radius var');
+  console.log('  Hero layout component generated correctly');
+}
+
+section('Gallery VIEW layout generates grid component');
+{
+  const src = `
+APP galleryapp { TITLE "G" DB g.db }
+ENTITY Post {
+  title: string REQUIRED
+  body: string
+}
+VIEW PostsGallery {
+  ENTITY Post
+  LAYOUT gallery
+  COLUMNS 4
+  TITLE "All Posts"
+}
+`;
+  const { files } = compile(src);
+  const tsx = files.get('src/components/PostsGallery.tsx');
+  assert(tsx !== undefined, 'PostsGallery.tsx emitted');
+  assert(tsx!.includes('grid '), 'gallery uses grid layout');
+  assert(tsx!.includes('lg:grid-cols-4'), 'gallery uses 4 columns');
+  assert(tsx!.includes('All Posts'), 'gallery renders title');
+  assert(tsx!.includes('useAppStore'), 'gallery wires store');
+  console.log('  Gallery layout component generated with COLUMNS count');
+}
+
+section('Landing + Dashboard VIEW layouts');
+{
+  const src = `
+APP la { TITLE "L" DB l.db }
+ENTITY Post { title: string }
+VIEW Splash {
+  LAYOUT landing
+  TITLE "Hello"
+  SUBTITLE "World"
+  EMOJI "✨"
+  FEATURED [Post]
+}
+VIEW Stats {
+  LAYOUT dashboard
+  TITLE "Overview"
+  FEATURED Post
+}
+`;
+  const { files } = compile(src);
+  const splash = files.get('src/components/Splash.tsx');
+  assert(splash !== undefined, 'Splash.tsx emitted');
+  assert(splash!.includes('Hello'), 'landing has title');
+  assert(splash!.includes('✨'), 'landing has emoji');
+  assert(splash!.includes('Post'), 'landing references featured entity');
+
+  const stats = files.get('src/components/Stats.tsx');
+  assert(stats !== undefined, 'Stats.tsx emitted');
+  assert(stats!.includes('useAppStore'), 'dashboard wires store');
+  assert(stats!.includes('posts.length'), 'dashboard renders stat count');
+  console.log('  Landing + Dashboard components emitted');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

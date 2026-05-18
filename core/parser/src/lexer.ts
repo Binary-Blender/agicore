@@ -360,6 +360,21 @@ export enum TokenType {
   EQ_EQ = 'EQ_EQ',
   PIPE = 'PIPE',
 
+  // THEME declaration keywords
+  PALETTE_KW = 'PALETTE_KW',
+  ACCENT_KW = 'ACCENT_KW',
+  BACKGROUND_KW = 'BACKGROUND_KW',
+  FONT_KW = 'FONT_KW',
+  DENSITY_KW = 'DENSITY_KW',
+  MOTIF_KW = 'MOTIF_KW',
+  RADIUS_KW = 'RADIUS_KW',
+
+  // Extended VIEW keywords
+  SUBTITLE_KW = 'SUBTITLE_KW',
+  EMOJI_KW = 'EMOJI_KW',
+  COLUMNS_KW = 'COLUMNS_KW',
+  FEATURED_KW = 'FEATURED_KW',
+
   // Layout values
   LAYOUT_TABLE = 'LAYOUT_TABLE',
   LAYOUT_FORM = 'LAYOUT_FORM',
@@ -369,6 +384,10 @@ export enum TokenType {
   LAYOUT_CUSTOM = 'LAYOUT_CUSTOM',
   LAYOUT_DOCUMENT_EDITOR = 'LAYOUT_DOCUMENT_EDITOR',
   LAYOUT_SETTINGS = 'LAYOUT_SETTINGS',
+  LAYOUT_HERO = 'LAYOUT_HERO',
+  LAYOUT_GALLERY = 'LAYOUT_GALLERY',
+  LAYOUT_LANDING = 'LAYOUT_LANDING',
+  LAYOUT_DASHBOARD = 'LAYOUT_DASHBOARD',
 
   // On-fail values
   FAIL_STOP = 'FAIL_STOP',
@@ -690,6 +709,21 @@ const KEYWORDS: Record<string, TokenType> = {
   custom: TokenType.LAYOUT_CUSTOM,
   document_editor: TokenType.LAYOUT_DOCUMENT_EDITOR,
   settings: TokenType.LAYOUT_SETTINGS,
+  hero: TokenType.LAYOUT_HERO,
+  gallery: TokenType.LAYOUT_GALLERY,
+  landing: TokenType.LAYOUT_LANDING,
+  dashboard: TokenType.LAYOUT_DASHBOARD,
+  PALETTE: TokenType.PALETTE_KW,
+  ACCENT: TokenType.ACCENT_KW,
+  BACKGROUND: TokenType.BACKGROUND_KW,
+  FONT: TokenType.FONT_KW,
+  DENSITY: TokenType.DENSITY_KW,
+  MOTIF: TokenType.MOTIF_KW,
+  RADIUS: TokenType.RADIUS_KW,
+  SUBTITLE: TokenType.SUBTITLE_KW,
+  EMOJI: TokenType.EMOJI_KW,
+  COLUMNS: TokenType.COLUMNS_KW,
+  FEATURED: TokenType.FEATURED_KW,
   stop: TokenType.FAIL_STOP,
   skip: TokenType.FAIL_SKIP,
   retry: TokenType.FAIL_RETRY,

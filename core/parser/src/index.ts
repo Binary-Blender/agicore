@@ -42,6 +42,7 @@ export type {
   AssertionOp, RuleCondition, WorkflowStep, OnFailBehavior,
   LiteralValue, SourceLocation, SourceSpan, ParseError as ParseErrorType,
   PreferenceDecl,
+  ThemeDecl, ThemePalette, ThemeBackground, ThemeDensity, ThemeMotif, ThemeRadius,
 } from './types.js';
 
 import { Parser } from './parser.js';

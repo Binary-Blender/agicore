@@ -30,7 +30,28 @@ export type CrudOp = 'create' | 'read' | 'update' | 'delete' | 'list';
 
 export type ThemeOption = 'dark' | 'light' | 'system';
 
-export type LayoutType = 'table' | 'form' | 'detail' | 'cards' | 'split' | 'custom' | 'document_editor' | 'settings';
+export type LayoutType = 'table' | 'form' | 'detail' | 'cards' | 'split' | 'custom' | 'document_editor' | 'settings' | 'hero' | 'gallery' | 'landing' | 'dashboard';
+
+// --- THEME Declaration (visual identity) ---
+
+export type ThemePalette = 'indigo' | 'violet' | 'rose' | 'amber' | 'emerald' | 'cyan' | 'slate';
+export type ThemeBackground = 'dark' | 'light' | 'auto';
+export type ThemeDensity = 'compact' | 'comfortable' | 'spacious';
+export type ThemeMotif = 'minimal' | 'retro' | 'cyberpunk' | 'corporate' | 'playful';
+export type ThemeRadius = 'sharp' | 'rounded' | 'pill';
+
+export interface ThemeDecl {
+  kind: 'theme';
+  name: string;
+  palette: ThemePalette;
+  accent?: string;
+  background: ThemeBackground;
+  font: string;
+  density: ThemeDensity;
+  motif: ThemeMotif;
+  radius: ThemeRadius;
+  span: SourceSpan;
+}
 
 export type OnFailBehavior = 'stop' | 'skip' | 'retry' | 'fallback';
 
@@ -172,6 +193,10 @@ export interface ViewDecl {
   sidebar?: { icon: string };
   fields: string[];
   title?: string;
+  subtitle?: string;
+  emoji?: string;
+  columns?: number;
+  featured?: string[];
   span: SourceSpan;
 }
 
@@ -1187,7 +1212,8 @@ export type Declaration =
   | SubscriptionDecl
   | DisputeDecl
   | PreferenceDecl
-  | TopLevelSeedDecl;
+  | TopLevelSeedDecl
+  | ThemeDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -1239,6 +1265,7 @@ export interface AgiFile {
   preferences: PreferenceDecl[];
   topLevelSeeds: TopLevelSeedDecl[];
   typeAliases: TypeAliasDecl[];
+  themes: ThemeDecl[];
 }
 
 // --- Parse Error ---

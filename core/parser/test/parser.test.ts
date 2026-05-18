@@ -2740,6 +2740,119 @@ ENTITY Post {
   console.error(`  FAIL: Entity field custom TYPE alias error: ${err}`);
 }
 
+// --- Test: THEME declaration ---
+section('THEME declaration parsing');
+try {
+  const src = `
+APP test { TITLE "Test" DB test.db }
+THEME app_theme {
+  PALETTE    indigo
+  ACCENT     "#ff6ad5"
+  BACKGROUND dark
+  FONT       "Inter"
+  DENSITY    comfortable
+  MOTIF      cyberpunk
+  RADIUS     rounded
+}
+`;
+  const result = parse(src);
+  assert(result.themes.length === 1, 'THEME parsed yields one theme');
+  const t = result.themes[0]!;
+  assert(t.kind === 'theme', 'theme kind tag');
+  assert(t.name === 'app_theme', 'theme name');
+  assert(t.palette === 'indigo', 'palette is indigo');
+  assert(t.accent === '#ff6ad5', 'accent hex captured');
+  assert(t.background === 'dark', 'background is dark');
+  assert(t.font === 'Inter', 'font is Inter');
+  assert(t.density === 'comfortable', 'density is comfortable');
+  assert(t.motif === 'cyberpunk', 'motif is cyberpunk');
+  assert(t.radius === 'rounded', 'radius is rounded');
+  console.log('  THEME with all fields parsed correctly');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: THEME parsing error: ${err}`);
+}
+
+section('THEME declaration defaults');
+try {
+  const src = `
+APP test { TITLE "Test" DB test.db }
+THEME minimal_theme { }
+`;
+  const result = parse(src);
+  const t = result.themes[0]!;
+  assert(t.palette === 'slate', 'default palette is slate');
+  assert(t.background === 'dark', 'default background is dark');
+  assert(t.font === 'Inter', 'default font is Inter');
+  assert(t.density === 'comfortable', 'default density is comfortable');
+  assert(t.motif === 'minimal', 'default motif is minimal');
+  assert(t.radius === 'rounded', 'default radius is rounded');
+  assert(t.accent === undefined, 'accent undefined when not specified');
+  console.log('  THEME defaults applied for omitted fields');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: THEME defaults error: ${err}`);
+}
+
+// --- Test: Extended VIEW layouts ---
+section('Extended VIEW layouts');
+try {
+  const src = `
+APP test { TITLE "Test" DB test.db }
+VIEW HomeHero {
+  LAYOUT hero
+  TITLE "Welcome Home"
+  SUBTITLE "Your creative OS"
+  EMOJI "🚀"
+}
+VIEW PostsGallery {
+  ENTITY Post
+  LAYOUT gallery
+  COLUMNS 4
+}
+VIEW Landing {
+  LAYOUT landing
+  TITLE "Hello"
+  EMOJI "✨"
+  FEATURED [Post, Page]
+}
+VIEW Stats {
+  LAYOUT dashboard
+  TITLE "Overview"
+  FEATURED Post
+}
+ENTITY Post { title: string }
+ENTITY Page { title: string }
+`;
+  const result = parse(src);
+  assert(result.views.length === 4, '4 views parsed');
+  const hero = result.views.find(v => v.name === 'HomeHero')!;
+  assert(hero.layout === 'hero', 'hero layout');
+  assert(hero.title === 'Welcome Home', 'hero title');
+  assert(hero.subtitle === 'Your creative OS', 'hero subtitle');
+  assert(hero.emoji === '🚀', 'hero emoji captured');
+
+  const gallery = result.views.find(v => v.name === 'PostsGallery')!;
+  assert(gallery.layout === 'gallery', 'gallery layout');
+  assert(gallery.columns === 4, 'gallery columns = 4');
+  assert(gallery.entity === 'Post', 'gallery entity = Post');
+
+  const landing = result.views.find(v => v.name === 'Landing')!;
+  assert(landing.layout === 'landing', 'landing layout');
+  assert(landing.emoji === '✨', 'landing emoji');
+  assert(Array.isArray(landing.featured), 'landing featured array');
+  assert(landing.featured?.length === 2, 'landing featured length 2');
+  assert(landing.featured?.[0] === 'Post', 'landing featured[0] Post');
+
+  const stats = result.views.find(v => v.name === 'Stats')!;
+  assert(stats.layout === 'dashboard', 'dashboard layout');
+  assert(stats.featured?.[0] === 'Post', 'dashboard featured single');
+  console.log('  Extended VIEW layouts (hero/gallery/landing/dashboard) parsed');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: Extended VIEW layouts error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

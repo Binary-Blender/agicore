@@ -45,6 +45,7 @@ import type {
   LiteralValue, SourceLocation, SourceSpan,
   PreferenceDecl,
   TypeAliasDecl,
+  ThemeDecl, ThemePalette, ThemeBackground, ThemeDensity, ThemeMotif, ThemeRadius,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -115,6 +116,7 @@ export class Parser {
     const preferences: PreferenceDecl[] = [];
     const topLevelSeeds: TopLevelSeedDecl[] = [];
     const typeAliases: TypeAliasDecl[] = [];
+    const themes: ThemeDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -265,12 +267,15 @@ export class Parser {
         case TokenType.TYPE_KW:
           typeAliases.push(this.parseTypeAlias());
           break;
+        case TokenType.THEME:
+          themes.push(this.parseTheme());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes };
   }
 
   // --- APP ---
@@ -870,6 +875,10 @@ export class Parser {
     let sidebar: ViewDecl['sidebar'];
     let fields: string[] = [];
     let title: string | undefined;
+    let subtitle: string | undefined;
+    let emoji: string | undefined;
+    let columns: number | undefined;
+    let featured: string[] | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -905,13 +914,33 @@ export class Parser {
           this.advance();
           title = this.expectToken(TokenType.STRING_LITERAL).value;
           break;
+        case TokenType.SUBTITLE_KW:
+          this.advance();
+          subtitle = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
+        case TokenType.EMOJI_KW:
+          this.advance();
+          emoji = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
+        case TokenType.COLUMNS_KW:
+          this.advance();
+          columns = parseInt(this.expectToken(TokenType.NUMBER_LITERAL).value, 10);
+          break;
+        case TokenType.FEATURED_KW:
+          this.advance();
+          if (this.check(TokenType.LBRACKET)) {
+            featured = this.parseBracketedIdentifierList();
+          } else {
+            featured = this.parseIdentifierList();
+          }
+          break;
         default:
           this.error(`Unexpected field in VIEW: ${token.value}`);
       }
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'view', name, entity, layout, actions, sidebar, fields, title, span: { start, end } };
+    return { kind: 'view', name, entity, layout, actions, sidebar, fields, title, subtitle, emoji, columns, featured, span: { start, end } };
   }
 
   private parseLayoutType(): LayoutType {
@@ -925,6 +954,10 @@ export class Parser {
       [TokenType.LAYOUT_CUSTOM]: 'custom',
       [TokenType.LAYOUT_DOCUMENT_EDITOR]: 'document_editor',
       [TokenType.LAYOUT_SETTINGS]: 'settings',
+      [TokenType.LAYOUT_HERO]: 'hero',
+      [TokenType.LAYOUT_GALLERY]: 'gallery',
+      [TokenType.LAYOUT_LANDING]: 'landing',
+      [TokenType.LAYOUT_DASHBOARD]: 'dashboard',
     };
     const lt = layoutMap[token.type];
     if (lt) { this.advance(); return lt; }
@@ -937,6 +970,92 @@ export class Parser {
       if (mapped) { this.advance(); return mapped; }
     }
     this.error(`Expected layout type, got: ${token.value}`);
+  }
+
+  // --- THEME ---
+
+  private parseTheme(): ThemeDecl {
+    const start = this.expectToken(TokenType.THEME).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    const validPalettes: ThemePalette[] = ['indigo', 'violet', 'rose', 'amber', 'emerald', 'cyan', 'slate'];
+    const validBackgrounds: ThemeBackground[] = ['dark', 'light', 'auto'];
+    const validDensities: ThemeDensity[] = ['compact', 'comfortable', 'spacious'];
+    const validMotifs: ThemeMotif[] = ['minimal', 'retro', 'cyberpunk', 'corporate', 'playful'];
+    const validRadii: ThemeRadius[] = ['sharp', 'rounded', 'pill'];
+
+    let palette: ThemePalette = 'slate';
+    let accent: string | undefined;
+    let background: ThemeBackground = 'dark';
+    let font: string = 'Inter';
+    let density: ThemeDensity = 'comfortable';
+    let motif: ThemeMotif = 'minimal';
+    let radius: ThemeRadius = 'rounded';
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      switch (token.type) {
+        case TokenType.PALETTE_KW: {
+          this.advance();
+          const v = this.expectIdentifier();
+          if (!validPalettes.includes(v as ThemePalette)) {
+            this.error(`Invalid PALETTE value: ${v}. Expected one of: ${validPalettes.join(', ')}`);
+          }
+          palette = v as ThemePalette;
+          break;
+        }
+        case TokenType.ACCENT_KW:
+          this.advance();
+          accent = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
+        case TokenType.BACKGROUND_KW: {
+          this.advance();
+          const v = this.expectIdentifier();
+          if (!validBackgrounds.includes(v as ThemeBackground)) {
+            this.error(`Invalid BACKGROUND value: ${v}. Expected one of: ${validBackgrounds.join(', ')}`);
+          }
+          background = v as ThemeBackground;
+          break;
+        }
+        case TokenType.FONT_KW:
+          this.advance();
+          font = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
+        case TokenType.DENSITY_KW: {
+          this.advance();
+          const v = this.expectIdentifier();
+          if (!validDensities.includes(v as ThemeDensity)) {
+            this.error(`Invalid DENSITY value: ${v}. Expected one of: ${validDensities.join(', ')}`);
+          }
+          density = v as ThemeDensity;
+          break;
+        }
+        case TokenType.MOTIF_KW: {
+          this.advance();
+          const v = this.expectIdentifier();
+          if (!validMotifs.includes(v as ThemeMotif)) {
+            this.error(`Invalid MOTIF value: ${v}. Expected one of: ${validMotifs.join(', ')}`);
+          }
+          motif = v as ThemeMotif;
+          break;
+        }
+        case TokenType.RADIUS_KW: {
+          this.advance();
+          const v = this.expectIdentifier();
+          if (!validRadii.includes(v as ThemeRadius)) {
+            this.error(`Invalid RADIUS value: ${v}. Expected one of: ${validRadii.join(', ')}`);
+          }
+          radius = v as ThemeRadius;
+          break;
+        }
+        default:
+          this.error(`Unexpected field in THEME: ${token.value}`);
+      }
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'theme', name, palette, accent, background, font, density, motif, radius, span: { start, end } };
   }
 
   private parseSidebar(): { icon: string } {

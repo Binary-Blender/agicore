@@ -42,6 +42,7 @@ import { generatePlatform } from './generators/platform.js';
 import { generateNullclaw } from './generators/nullclaw.js';
 import { generateBrainBody } from './generators/brain-body.js';
 import { generateSkillDoc } from './generators/skilldoc.js';
+import { generateTheme } from './generators/theme.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -104,6 +105,7 @@ export function compile(source: string): CompileResult {
     generateNullclaw(ast),
     generateBrainBody(ast),
     generateSkillDoc(ast),
+    generateTheme(ast),
   ];
 
   for (const gen of generators) {
@@ -157,3 +159,4 @@ export { generatePlatform } from './generators/platform.js';
 export { generateNullclaw } from './generators/nullclaw.js';
 export { generateBrainBody } from './generators/brain-body.js';
 export { generateSkillDoc } from './generators/skilldoc.js';
+export { generateTheme } from './generators/theme.js';

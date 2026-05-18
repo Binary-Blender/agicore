@@ -634,11 +634,264 @@ function generateViewComponent(view: ViewDecl, entity: EntityDecl | undefined, a
     case 'cards':           return generateCardsView(view, entity, ast);
     case 'document_editor': return generateDocumentEditorView(view, entity, ast);
     case 'settings':        return generateSettingsView(view, ast);
+    case 'hero':            return generateHeroView(view, entity, ast);
+    case 'gallery':         return generateGalleryView(view, entity, ast);
+    case 'landing':         return generateLandingView(view, entity, ast);
+    case 'dashboard':       return generateDashboardView(view, entity, ast);
     case 'form':
     case 'detail':
     case 'custom':
     default:                return generateCustomView(view);
   }
+}
+
+// --- Extended layouts: hero / gallery / landing / dashboard ---
+//
+// These respond to THEME-generated CSS custom properties (var(--color-primary),
+// var(--font-family), var(--radius)) so a single THEME declaration retints
+// the whole surface. The `emoji` field is the seed of a larger icon system
+// — string in the AST, rendered as a giant glyph for now; later we'll layer
+// SVG packs and let the same field key into them.
+
+function jsEscape(s: string): string {
+  return s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+}
+
+function generateHeroView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
+  const title = jsEscape(view.title ?? view.name);
+  const subtitle = view.subtitle ? jsEscape(view.subtitle) : null;
+  const emoji = view.emoji ? jsEscape(view.emoji) : null;
+
+  const ctaBlock = entity
+    ? `      <button
+        onClick={() => { /* TODO: open create-${lcFirst(entity.name)} flow */ }}
+        className="px-6 py-3 text-base font-medium text-white shadow-lg hover:opacity-90 transition"
+        style={{ background: 'var(--color-primary)', borderRadius: 'var(--radius)' }}
+      >
+        Get Started
+      </button>`
+    : '';
+
+  return `// Agicore Generated — Hero layout
+export function ${view.name}() {
+  return (
+    <div
+      className="flex flex-col items-center justify-center min-h-[60vh] text-center px-8 py-16"
+      style={{ borderRadius: 'var(--radius)' }}
+    >
+${emoji ? `      <div className="text-8xl mb-6" role="img" aria-label="hero-emoji">${emoji}</div>\n` : ''}      <h1
+        className="text-5xl font-bold mb-4"
+        style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family)' }}
+      >
+        ${title}
+      </h1>
+${subtitle ? `      <p className="text-xl text-gray-400 mb-8 max-w-2xl">${subtitle}</p>\n` : ''}${ctaBlock}
+    </div>
+  );
+}
+`;
+}
+
+function generateGalleryView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
+  const cols = view.columns && view.columns > 0 ? view.columns : 3;
+  const title = jsEscape(view.title ?? view.name);
+
+  // Tailwind needs literal class names — map column counts to fixed classes.
+  const colClass = ({
+    1: 'grid-cols-1',
+    2: 'grid-cols-1 md:grid-cols-2',
+    3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+    5: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-5',
+    6: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-6',
+  } as Record<number, string>)[cols] ?? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
+
+  if (!entity) {
+    return `// Agicore Generated — Gallery layout (no entity)
+export function ${view.name}() {
+  return (
+    <div className="p-8">
+      <h2 className="text-2xl font-semibold mb-6" style={{ fontFamily: 'var(--font-family)' }}>${title}</h2>
+      <div className="grid ${colClass} gap-4">
+        {[].map((item: any) => null)}
+      </div>
+    </div>
+  );
+}
+`;
+  }
+
+  const name = entity.name;
+  const camel = lcFirst(name);
+  const plural = camel + 's';
+  const titleField = (view.fields[0] ?? entity.fields[0]?.name) ?? 'id';
+  const titleCamel = toCamelCase(titleField);
+
+  const parent = pickCurrentParent(entity, ast);
+  const loaderReads = parent
+    ? `  const current${parent}Id = useAppStore((s) => s.current${parent}Id);
+  const load = useAppStore((s) => s.load${name}sForCurrent${parent});`
+    : `  const load = useAppStore((s) => s.load${name}s);`;
+  const effectDeps = parent ? `[current${parent}Id, load]` : `[]`;
+
+  return `import { useEffect } from 'react';
+import { useAppStore } from '../store/appStore';
+
+// Agicore Generated — Gallery layout (${cols} cols)
+export function ${view.name}() {
+  const ${plural} = useAppStore((s) => s.${plural});
+${loaderReads}
+
+  useEffect(() => { load(); }, ${effectDeps});
+
+  return (
+    <div className="p-8">
+      <h2 className="text-2xl font-semibold mb-6" style={{ fontFamily: 'var(--font-family)' }}>${title}</h2>
+      <div className="grid ${colClass} gap-4">
+        {${plural}.map((item) => (
+          <div
+            key={item.id}
+            className="bg-[var(--bg-panel)] border border-[var(--border)] p-4 hover:border-[var(--color-primary)] transition cursor-pointer"
+            style={{ borderRadius: 'var(--radius)' }}
+          >
+            <h3 className="font-medium text-base mb-1" style={{ color: 'var(--color-primary)' }}>{String(item.${titleCamel} ?? '—')}</h3>
+            <p className="text-xs text-gray-400">#{String(item.id).slice(0, 8)}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+`;
+}
+
+function generateLandingView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
+  const title = jsEscape(view.title ?? view.name);
+  const subtitle = view.subtitle ? jsEscape(view.subtitle) : null;
+  const emoji = view.emoji ? jsEscape(view.emoji) : null;
+  const featured = view.featured ?? [];
+
+  const featuredSections = featured.map((entName) => {
+    const ent = ast.entities.find(e => e.name === entName);
+    if (!ent) return `      <div className="text-sm text-gray-500">/* unknown featured entity: ${entName} */</div>`;
+    const plural = lcFirst(ent.name) + 's';
+    return `      <section className="mb-12">
+        <h3 className="text-2xl font-semibold mb-4" style={{ color: 'var(--color-primary)' }}>${ent.name}</h3>
+        <div className="text-sm text-gray-400">{useAppStore((s) => s.${plural}).length} item(s)</div>
+      </section>`;
+  }).join('\n');
+
+  const needsStore = featured.length > 0;
+
+  return `${needsStore ? `import { useAppStore } from '../store/appStore';\n\n` : ''}// Agicore Generated — Landing layout
+export function ${view.name}() {
+  return (
+    <div className="px-8 py-12">
+      <header className="flex flex-col items-center text-center mb-16">
+${emoji ? `        <div className="text-7xl mb-6" role="img" aria-label="landing-emoji">${emoji}</div>\n` : ''}        <h1
+          className="text-5xl font-bold mb-4"
+          style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family)' }}
+        >
+          ${title}
+        </h1>
+${subtitle ? `        <p className="text-xl text-gray-400 max-w-2xl">${subtitle}</p>\n` : ''}      </header>
+
+${featuredSections}
+
+      <div className="flex justify-center mt-12">
+        <button
+          className="px-8 py-3 text-base font-medium text-white shadow-lg hover:opacity-90 transition"
+          style={{ background: 'var(--color-primary)', borderRadius: 'var(--radius)' }}
+        >
+          Explore
+        </button>
+      </div>
+    </div>
+  );
+}
+`;
+}
+
+function generateDashboardView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
+  const title = jsEscape(view.title ?? view.name);
+  const featured = view.featured ?? (entity ? [entity.name] : []);
+
+  // Stat cards — one per featured entity (count of rows in store).
+  const statCards = featured.map((entName) => {
+    const ent = ast.entities.find(e => e.name === entName);
+    if (!ent) return '';
+    const plural = lcFirst(ent.name) + 's';
+    return `        <div className="bg-[var(--bg-panel)] border border-[var(--border)] p-6" style={{ borderRadius: 'var(--radius)' }}>
+          <div className="text-sm text-gray-400 mb-1">${ent.name}</div>
+          <div className="text-3xl font-bold" style={{ color: 'var(--color-primary)' }}>{${plural}.length}</div>
+        </div>`;
+  }).filter(Boolean).join('\n');
+
+  const storeReads = featured.map((entName) => {
+    const ent = ast.entities.find(e => e.name === entName);
+    if (!ent) return '';
+    const plural = lcFirst(ent.name) + 's';
+    return `  const ${plural} = useAppStore((s) => s.${plural});
+  const load${ent.name}s = useAppStore((s) => s.load${ent.name}s);`;
+  }).filter(Boolean).join('\n');
+
+  const effectBody = featured.map((entName) => {
+    const ent = ast.entities.find(e => e.name === entName);
+    if (!ent) return '';
+    return `    load${ent.name}s();`;
+  }).filter(Boolean).join('\n');
+
+  // Recent items list pulled from the first featured entity.
+  const primary = featured[0] ? ast.entities.find(e => e.name === featured[0]) : undefined;
+  let recentList = '';
+  if (primary) {
+    const plural = lcFirst(primary.name) + 's';
+    const titleField = (primary.fields[0]?.name) ?? 'id';
+    const titleCamel = toCamelCase(titleField);
+    recentList = `      <section>
+        <h3 className="text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-family)' }}>Recent ${primary.name}s</h3>
+        <div className="bg-[var(--bg-panel)] border border-[var(--border)]" style={{ borderRadius: 'var(--radius)' }}>
+          {${plural}.slice(0, 10).map((item) => (
+            <div key={item.id} className="px-4 py-3 border-b border-[var(--border)] last:border-b-0 flex items-center justify-between">
+              <span className="text-sm">{String(item.${titleCamel} ?? '—')}</span>
+              <span className="text-xs text-gray-500">#{String(item.id).slice(0, 8)}</span>
+            </div>
+          ))}
+          {${plural}.length === 0 && (
+            <div className="px-4 py-6 text-sm text-gray-500 text-center">No data yet.</div>
+          )}
+        </div>
+      </section>`;
+  }
+
+  const colClass = ({
+    1: 'grid-cols-1',
+    2: 'grid-cols-1 md:grid-cols-2',
+    3: 'grid-cols-1 md:grid-cols-3',
+  } as Record<number, string>)[Math.min(featured.length || 1, 3)] ?? 'grid-cols-1 md:grid-cols-3';
+
+  return `import { useEffect } from 'react';
+import { useAppStore } from '../store/appStore';
+
+// Agicore Generated — Dashboard layout
+export function ${view.name}() {
+${storeReads}
+
+  useEffect(() => {
+${effectBody}
+  }, []);
+
+  return (
+    <div className="p-8">
+      <h2 className="text-2xl font-semibold mb-6" style={{ fontFamily: 'var(--font-family)' }}>${title}</h2>
+      <div className="grid ${colClass} gap-4 mb-8">
+${statCards}
+      </div>
+${recentList}
+    </div>
+  );
+}
+`;
 }
 
 function generateDocumentEditorView(view: ViewDecl, entity: EntityDecl | undefined, ast: AgiFile): string {
