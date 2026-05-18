@@ -97,6 +97,7 @@ agicore/
 |-- BUILD_WITH_AI.md           # Builder's guide — start here when building an app
 |-- START_HERE_WITH_AI.md      # AI-assisted exploration guide (architecture / philosophy)
 |-- EVOLVING.md                # How to extend the framework when it's missing something
+|-- TECH_STACK.md              # Exact pinned versions for all dependencies
 |-- PHILOSOPHY.md              # Core architectural philosophy
 |-- ROADMAP.md                 # Development roadmap
 |-- LICENSE                    # MIT

@@ -404,4 +404,5 @@ Then read the function body. Every `if (token.type === TokenType.XYZ)` block is 
 | `examples/invoice-approval/` | Workflow and expert system patterns |
 | `dsl/grammar.md` | Grammar narrative (types.ts and parser.ts are more current) |
 | `EVOLVING.md` | Methodology for extending the framework when it's missing something |
+| `TECH_STACK.md` | Exact pinned versions for all dependencies (Node, Rust, frontend) |
 | `ROADMAP.md` | What's implemented, what's planned |

@@ -16,9 +16,9 @@
     "@agicore/parser": "file:../parser"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "@types/node": "25.6.0",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3"
   },
   "license": "MIT"
 }
