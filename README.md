@@ -94,7 +94,9 @@ Systems-language thinking. The NovaSyn architecture generalized into a DSL-drive
 agicore/
 |
 |-- README.md                  # You are here
-|-- START_HERE_WITH_AI.md      # AI-assisted exploration guide
+|-- BUILD_WITH_AI.md           # Builder's guide — start here when building an app
+|-- START_HERE_WITH_AI.md      # AI-assisted exploration guide (architecture / philosophy)
+|-- EVOLVING.md                # How to extend the framework when it's missing something
 |-- PHILOSOPHY.md              # Core architectural philosophy
 |-- ROADMAP.md                 # Development roadmap
 |-- LICENSE                    # MIT
