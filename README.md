@@ -101,6 +101,10 @@ agicore/
 |-- CODING_STANDARDS.md        # Naming conventions, generated structure, anti-patterns
 |-- PHILOSOPHY.md              # Core architectural philosophy
 |-- ROADMAP.md                 # Development roadmap
+|-- TESTING.md                 # TEST declarations and generated Rust integration tests
+|-- VAULT.md                   # VAULT declaration: shared cross-app asset storage
+|-- CHANNEL.md                 # CHANNEL + PACKET: typed SQLite-backed message queues
+|-- LOGGING.md                 # LOG declaration: file-based Rust logger (no new deps)
 |-- LICENSE                    # MIT
 |
 |-- dsl/                       # DSL grammar specification
@@ -193,10 +197,10 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 
 | Layer | Tests | Status |
 |---|---|---|
-| Parser | 675 passing | Complete |
+| Parser | 680 passing | Complete |
 | Compiler | 943 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,652 passing** | **0 failures** |
+| **Total** | **1,657 passing** | **0 failures** |
 
 The DSL covers 41 declaration types across 8 layers:
 

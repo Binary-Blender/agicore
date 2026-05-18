@@ -81,6 +81,12 @@ export enum TokenType {
   FLAG_KW = 'FLAG_KW',
   SEVERITY_KW = 'SEVERITY_KW',
 
+  // Log keywords
+  LOG_KW = 'LOG_KW',
+  LEVEL_KW = 'LEVEL_KW',
+  TARGET_KW = 'TARGET_KW',
+  ROTATE_KW = 'ROTATE_KW',
+
   // Workflow keywords
   STEP = 'STEP',
   ON_FAIL = 'ON_FAIL',
@@ -613,6 +619,10 @@ const KEYWORDS: Record<string, TokenType> = {
   FLAG: TokenType.FLAG_KW,
   SEVERITY: TokenType.SEVERITY_KW,
   APPLIES_TO: TokenType.APPLIES_TO_KW,
+  LOG: TokenType.LOG_KW,
+  LEVEL: TokenType.LEVEL_KW,
+  TARGET: TokenType.TARGET_KW,
+  ROTATE: TokenType.ROTATE_KW,
   true: TokenType.TRUE,
   false: TokenType.FALSE,
   full: TokenType.FULL,

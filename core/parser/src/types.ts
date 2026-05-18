@@ -349,6 +349,20 @@ export interface QCDecl {
   span: SourceSpan;
 }
 
+// --- LOG Declaration (Application Logging) ---
+
+export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error';
+export type LogTarget = 'file' | 'stdout' | 'both';
+
+export interface LogDecl {
+  kind: 'log';
+  level: LogLevel;
+  target: LogTarget;
+  path: string;
+  rotate?: string;
+  span: SourceSpan;
+}
+
 // --- VAULT Declaration (Shared Asset Storage) ---
 
 export interface VaultDecl {
@@ -1018,6 +1032,7 @@ export type Declaration =
   | PipelineDecl
   | QCDecl
   | VaultDecl
+  | LogDecl
   | FactDecl
   | StateDecl
   | PatternDecl
@@ -1061,6 +1076,7 @@ export interface AgiFile {
   pipelines: PipelineDecl[];
   qcs: QCDecl[];
   vault?: VaultDecl;
+  log?: LogDecl;
   facts: FactDecl[];
   states: StateDecl[];
   patterns: PatternDecl[];

@@ -13,6 +13,7 @@ This is the builder's guide. It tells you what to read, what to run, and what to
 5. `apps/novasyn-chat/novasyn_chat.agi` — production app, idiom guide (AI, ENTITY, COMPILER layers)
 6. `apps/novasyn-mba/novasyn_mba.agi` — production app, expert system layers (RULE, SKILL, WORKFLOW, EVENT)
 7. This file (`BUILD_WITH_AI.md`) — DSL reference, extension process, common pitfalls
+8. Feature-specific docs as needed: `TESTING.md`, `VAULT.md`, `CHANNEL.md`, `LOGGING.md`
 
 Then write your `.agi` file, run the compiler, and iterate.
 
@@ -458,4 +459,8 @@ If you find yourself writing hand-rolled Rust that should be generated, or copy-
 | `EVOLVING.md` | Methodology for extending the framework when it's missing something |
 | `TECH_STACK.md` | Exact pinned versions for all dependencies (Node, Rust, frontend) + 3G→4G comparison |
 | `CODING_STANDARDS.md` | Naming conventions, generated file structure, error handling, anti-patterns |
+| `TESTING.md` | TEST declarations and generated Rust integration tests |
+| `VAULT.md` | VAULT declaration: shared cross-app SQLite asset storage |
+| `CHANNEL.md` | CHANNEL + PACKET: typed SQLite-backed message queues |
+| `LOGGING.md` | LOG declaration: file-based Rust logger, no new Cargo dependencies |
 | `ROADMAP.md` | What's implemented, what's planned |

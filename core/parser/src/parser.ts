@@ -7,7 +7,7 @@ import type {
   AiServiceDecl, TestDecl, RuleDecl, WorkflowDecl,
   FactDecl, StateDecl, PatternDecl, ScoreDecl, ModuleDecl,
   PipelineDecl, PipelineRow, PipelineModule, PipelineConnection, PipelineModuleType,
-  QCDecl, VaultDecl,
+  QCDecl, VaultDecl, LogDecl, LogLevel, LogTarget,
   RouterDecl, RouterTier, RouterModelDef, CircuitBreaker,
   SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
   ReasonerDecl, ReasonerInput, ReasonerOutput, ReasonerSchedule,
@@ -71,6 +71,7 @@ export class Parser {
     const pipelines: PipelineDecl[] = [];
     const qcs: QCDecl[] = [];
     let vault: VaultDecl | undefined;
+    let log: LogDecl | undefined;
     const facts: FactDecl[] = [];
     const states: StateDecl[] = [];
     const patterns: PatternDecl[] = [];
@@ -224,6 +225,9 @@ export class Parser {
         case TokenType.PREFERENCE_KW:
           preferences.push(this.parsePreference());
           break;
+        case TokenType.LOG_KW:
+          log = this.parseLog();
+          break;
         case TokenType.SEED:
           topLevelSeeds.push(this.parseTopLevelSeed());
           break;
@@ -232,7 +236,7 @@ export class Parser {
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds };
   }
 
   // --- APP ---
@@ -1514,6 +1518,50 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'vault', path, assetTypes, provenance, tags, span: { start, end } };
+  }
+
+  // --- LOG ---
+
+  private parseLog(): LogDecl {
+    const start = this.expectToken(TokenType.LOG_KW).location;
+    this.expectToken(TokenType.LBRACE);
+
+    let level: LogLevel = 'info';
+    let target: LogTarget = 'file';
+    let path = 'logs/app.log';
+    let rotate: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.LEVEL_KW) {
+        this.advance();
+        const val = this.expectToken(TokenType.IDENTIFIER).value.toLowerCase() as LogLevel;
+        level = val;
+        continue;
+      }
+      if (token.type === TokenType.TARGET_KW) {
+        this.advance();
+        const val = this.expectToken(TokenType.IDENTIFIER).value.toLowerCase() as LogTarget;
+        target = val;
+        continue;
+      }
+      if (token.type === TokenType.PATH) {
+        this.advance();
+        path = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.ROTATE_KW) {
+        this.advance();
+        rotate = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+
+      this.error(`Unexpected token in LOG: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'log', level, target, path, rotate, span: { start, end } };
   }
 
   // --- FACT ---

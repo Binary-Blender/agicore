@@ -7,7 +7,7 @@ export type {
   AiServiceDecl, TestDecl, RuleDecl, WorkflowDecl,
   FactDecl, StateDecl, PatternDecl, ScoreDecl, ModuleDecl,
   PipelineDecl, PipelineRow, PipelineModule, PipelineConnection, PipelineModuleType,
-  QCDecl, VaultDecl,
+  QCDecl, VaultDecl, LogDecl, LogLevel, LogTarget,
   RouterDecl, RouterTier, RouterModelDef, CircuitBreaker,
   SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
   ReasonerDecl, ReasonerInput, ReasonerOutput, ReasonerSchedule, TelemetryMode,

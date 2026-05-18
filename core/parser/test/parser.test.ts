@@ -2490,6 +2490,31 @@ try {
   console.error(`  FAIL: EVENT SCHEDULE parse error: ${err}`);
 }
 
+// --- LOG declaration ---
+
+section('LOG declaration');
+try {
+  const logSrc = `
+APP test_log { TITLE "Test" WINDOW 1200x800 DB "test.db" }
+LOG {
+  LEVEL   info
+  TARGET  file
+  PATH    "logs/app.log"
+  ROTATE  "daily"
+}
+`;
+  const logAst = parse(logSrc);
+  assert(logAst.log !== undefined, 'log should be defined');
+  assert(logAst.log!.level === 'info', 'level should be info');
+  assert(logAst.log!.target === 'file', 'target should be file');
+  assert(logAst.log!.path === 'logs/app.log', 'path should match');
+  assert(logAst.log!.rotate === 'daily', 'rotate should be daily');
+  console.log('  LOG declaration parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: LOG parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);
