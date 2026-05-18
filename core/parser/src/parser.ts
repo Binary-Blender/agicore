@@ -492,7 +492,8 @@ export class Parser {
           break;
         case TokenType.OUTPUT:
           this.advance();
-          output = this.parseActionOutputs();
+          // Accumulate multiple OUTPUT lines rather than replacing
+          output = output.concat(this.parseActionOutputs());
           break;
         case TokenType.AI:
           this.advance();
@@ -3281,6 +3282,17 @@ export class Parser {
     if (token.type === TokenType.NUMBER_LITERAL) { this.advance(); return Number(token.value); }
     if (token.type === TokenType.TRUE) { this.advance(); return true; }
     if (token.type === TokenType.FALSE) { this.advance(); return false; }
+    // json defaults: [] and {}
+    if (token.type === TokenType.LBRACKET) {
+      this.advance();
+      this.expectToken(TokenType.RBRACKET);
+      return '[]';
+    }
+    if (token.type === TokenType.LBRACE) {
+      this.advance();
+      this.expectToken(TokenType.RBRACE);
+      return '{}';
+    }
     this.error(`Expected literal value, got: ${token.value}`);
   }
 

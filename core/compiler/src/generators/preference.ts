@@ -27,6 +27,8 @@ export function generatePreference(ast: AgiFile): Map<string, string> {
     '// PREFERENCES — typed localStorage hooks',
     '// @agicore-generated — DO NOT EDIT (regenerate via: agicore compile)',
     '',
+    "import { useState, useEffect } from 'react';",
+    '',
     'export function usePreference<T>(key: string, defaultValue: T): [T, (value: T) => void] {',
     '  const stored = localStorage.getItem(key);',
     '  const value: T = stored !== null ? JSON.parse(stored) as T : defaultValue;',
@@ -34,6 +36,12 @@ export function generatePreference(ast: AgiFile): Map<string, string> {
     '    localStorage.setItem(key, JSON.stringify(newValue));',
     '  };',
     '  return [value, setValue];',
+    '}',
+    '',
+    'export function usePreferenceState(key: string, defaultValue: string): [string, (v: string) => void] {',
+    '  const [value, setValue] = useState(() => localStorage.getItem(key) ?? defaultValue);',
+    '  const set = (v: string) => { localStorage.setItem(key, v); setValue(v); };',
+    '  return [value, set] as const;',
     '}',
     '',
   ];
@@ -52,6 +60,9 @@ export function generatePreference(ast: AgiFile): Map<string, string> {
     lines.push(`export function set${pascalName}(value: ${tsType}): void {`);
     lines.push(`  localStorage.setItem('${key}', JSON.stringify(value));`);
     lines.push(`}`);
+    lines.push('');
+    // Typed React hook for each preference
+    lines.push(`export const use${pascalName} = () => usePreferenceState('${key}', ${defaultLit});`);
     lines.push('');
   }
 

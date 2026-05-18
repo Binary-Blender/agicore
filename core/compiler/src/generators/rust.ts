@@ -430,15 +430,17 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     const modName = toSnakeCase(e.name);
     return `pub mod ${modName};`;
   });
-  // Include actions module when regular (non-IMPL) ACTION declarations exist
+  // Include actions module when regular (non-IMPL, non-stub) ACTION declarations exist.
+  // Use actionCommandNames() to determine if anything goes into actions.rs.
   const routerOwnedNames = new Set(['broadcast_chat', 'council_chat']);
-  const hasActions = ast.actions.some(a => a.name !== 'send_chat' && !routerOwnedNames.has(a.name) && a.impl === undefined);
-  if (hasActions) modLines.push('pub mod actions;');
-  // Include per-action modules for IMPL actions
-  for (const action of ast.actions) {
-    if (action.impl !== undefined && !routerOwnedNames.has(action.name) && action.name !== 'send_chat') {
-      modLines.push(`pub mod ${toSnakeCase(action.name)};`);
-    }
+  const hasBundledActions = actionCommandNames(ast).length > 0;
+  if (hasBundledActions) modLines.push('pub mod actions;');
+  // Include per-action modules for IMPL actions and stub (no-AI) actions.
+  // implActionCommandNames() now covers both IMPL and stub-category actions.
+  const protectedActionNames = implActionCommandNames(ast)
+    .map(cmd => cmd.split('::')[1]!); // extract module name from "commands::foo::foo"
+  for (const modName of protectedActionNames) {
+    modLines.push(`pub mod ${modName};`);
   }
   const hasWorkspaces = ast.app.workspaces === true;
   if (hasWorkspaces) modLines.push('pub mod workspaces;');
@@ -538,8 +540,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     ? ['ai_service::send_chat', 'ai_service::get_api_keys', 'ai_service::set_api_key']
     : [];
 
-  // ACTION commands (all non-send_chat, non-router, non-IMPL actions)
-  const actionCmds = hasActions ? actionCommandNames(ast) : [];
+  // ACTION commands (all non-send_chat, non-router, non-IMPL, non-stub actions bundled in actions.rs)
+  const actionCmds = hasBundledActions ? actionCommandNames(ast) : [];
 
   // IMPL action commands (protected files, separate modules)
   const implCmds = implActionCommandNames(ast);

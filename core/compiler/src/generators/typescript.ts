@@ -44,6 +44,13 @@ function isRequired(field: FieldDef): boolean {
 
 // --- Type Generation ---
 
+function jsonTsType(field: FieldDef): string {
+  const dv = String(field.defaultValue ?? '');
+  if (dv === '[]') return 'unknown[]';
+  if (dv === '{}' || dv === '') return 'Record<string, unknown>';
+  return 'unknown';
+}
+
 function generateInterface(entity: EntityDecl): string {
   const lines: string[] = [];
   lines.push(`export interface ${entity.name} {`);
@@ -51,9 +58,13 @@ function generateInterface(entity: EntityDecl): string {
 
   for (const field of entity.fields) {
     const name = toCamelCase(field.name);
-    const type = tsType(field.type);
     const optional = isRequired(field) ? '' : ' | null';
-    lines.push(`  ${name}: ${type}${optional};`);
+    if (field.type === 'json') {
+      lines.push(`  ${name}: ${jsonTsType(field)}${optional};`);
+    } else {
+      const type = tsType(field.type);
+      lines.push(`  ${name}: ${type}${optional};`);
+    }
   }
 
   for (const rel of entity.relationships) {
@@ -77,7 +88,7 @@ function generateCreateInput(entity: EntityDecl): string {
 
   for (const field of entity.fields) {
     const name = toCamelCase(field.name);
-    const type = tsType(field.type);
+    const type = field.type === 'json' ? jsonTsType(field) : tsType(field.type);
     const optional = field.modifiers.includes('REQUIRED') ? '' : '?';
     lines.push(`  ${name}${optional}: ${type};`);
   }
@@ -98,7 +109,7 @@ function generateUpdateInput(entity: EntityDecl): string {
 
   for (const field of entity.fields) {
     const name = toCamelCase(field.name);
-    const type = tsType(field.type);
+    const type = field.type === 'json' ? jsonTsType(field) : tsType(field.type);
     lines.push(`  ${name}?: ${type};`);
   }
 
@@ -120,6 +131,19 @@ export function generateTypes(ast: AgiFile): string {
     sections.push('');
     sections.push(generateUpdateInput(entity));
     sections.push('');
+  }
+
+  // Action result interfaces for multi-output actions
+  for (const action of ast.actions) {
+    if (action.output.length > 1) {
+      const pascalName = toPascalCase(action.name);
+      sections.push(`export interface ${pascalName}Result {`);
+      for (const out of action.output) {
+        sections.push(`  ${toCamelCase(out.name)}: ${tsTypeOrEntity(out.type)};`);
+      }
+      sections.push('}');
+      sections.push('');
+    }
   }
 
   return sections.join('\n');
@@ -145,8 +169,9 @@ function generateEntityInvokes(entity: EntityDecl, ast: AgiFile): string {
     lines.push(`  invoke<${name}>('get_${snake}');`);
     lines.push('');
     if (ops.includes('update')) {
-      lines.push(`export const update${name} = (id: string, input: Update${name}Input) =>`);
-      lines.push(`  invoke<${name}>('update_${snake}', { id, input });`);
+      // No id param — Rust hardcodes 'singleton' internally
+      lines.push(`export const update${name} = (input: Update${name}Input) =>`);
+      lines.push(`  invoke<${name}>('update_${snake}', { input });`);
       lines.push('');
     }
     return lines.join('\n');
@@ -202,9 +227,15 @@ function generateActionInvoke(action: ActionDecl): string {
     return `${toCamelCase(p.name)}${optional}: ${tsTypeOrEntity(p.type)}`;
   }).join(', ');
 
-  const returnType = action.output.length > 0
-    ? action.output.map(o => tsTypeOrEntity(o.type)).join(' & ')
-    : 'void';
+  let returnType: string;
+  if (action.output.length === 0) {
+    returnType = 'void';
+  } else if (action.output.length === 1) {
+    returnType = tsTypeOrEntity(action.output[0]!.type);
+  } else {
+    // Multiple outputs → use named result interface from types.ts
+    returnType = toPascalCase(action.name) + 'Result';
+  }
 
   const argObj = action.input.map(p => toCamelCase(p.name)).join(', ');
 
@@ -225,10 +256,8 @@ function generateActionInvoke(action: ActionDecl): string {
       lines.push(`  ${toCamelCase(field.name)}: ${tsTypeOrEntity(field.type)};`);
     }
     lines.push(`};`);
-    lines.push(`export const ${listenerName} = (callback: (payload: ${typeName}) => void) => {`);
-    lines.push(`  const { listen } = require('@tauri-apps/api/event');`);
-    lines.push(`  return listen<${typeName}>('${eventName}', (e: { payload: ${typeName} }) => callback(e.payload));`);
-    lines.push(`};`);
+    lines.push(`export const ${listenerName} = (callback: (payload: ${typeName}) => void) =>`);
+    lines.push(`  listen<${typeName}>('${eventName}', (e) => callback(e.payload));`);
     lines.push('');
   }
 
@@ -240,15 +269,24 @@ function toPascalCase(str: string): string {
 }
 
 export function generateInvokes(ast: AgiFile): string {
+  const hasEmit = ast.actions.some(a => a.emit);
+  const multiOutputActions = ast.actions.filter(a => a.output.length > 1);
+
+  const imports: string[] = ["import { invoke } from '@tauri-apps/api/core';"];
+  if (hasEmit) imports.push("import { listen } from '@tauri-apps/api/event';");
+
+  const typeImports: string[] = [
+    ...ast.entities.flatMap(e => [`  ${e.name}, Create${e.name}Input, Update${e.name}Input,`]),
+    ...multiOutputActions.map(a => `  ${toPascalCase(a.name)}Result,`),
+  ];
+
   const lines: string[] = [
     '// Agicore Generated Invoke Wrappers',
     `// App: ${ast.app.name}`,
     '',
-    "import { invoke } from '@tauri-apps/api/core';",
+    ...imports,
     "import type {",
-    ...ast.entities.flatMap(e => [
-      `  ${e.name}, Create${e.name}Input, Update${e.name}Input,`,
-    ]),
+    ...typeImports,
     "} from './types';",
     '',
   ];
@@ -546,7 +584,7 @@ export function generateStore(ast: AgiFile): string {
       lines.push(`  },`);
       if (ops.includes('update')) {
         lines.push(`  edit${name}: async (input) => {`);
-        lines.push(`    await update${name}('singleton', input);`);
+        lines.push(`    await update${name}(input);`);
         lines.push(`    await get().load${name}();`);
         lines.push(`  },`);
       }

@@ -3017,6 +3017,172 @@ ENTITY AppSettings SINGLETON {
   console.log('  SINGLETON entity codegen generated successfully');
 }
 
+// ─── Bug-fix tests ───────────────────────────────────────────────────────────
+
+// Bug 1A: ACTION with bool output → Ok(false) not Ok(0)
+section('Bug 1A: Bool output generates Ok(false)');
+{
+  const src = GAP_COMPILER_APP + `
+ACTION ping_check {
+  OUTPUT ok: bool
+}
+`;
+  const { files } = compile(src);
+  // Bool output → stub action → protected file (Bug 3 also applies here)
+  // find wherever the stub lands
+  const stubFile = files.get('src-tauri/src/commands/ping_check.rs');
+  if (stubFile) {
+    assert(!stubFile.includes('Ok(0)'), 'Bool stub should NOT emit Ok(0)');
+    assert(stubFile.includes('Result<PingCheckOutput, String>') || stubFile.includes('Result<bool, String>'), 'Bool stub should have typed Result');
+    console.log('  Bool stub generated correctly');
+  } else {
+    // It may be bundled only if categorize returns non-stub — check actions.rs
+    const actionsRs = files.get('src-tauri/src/commands/actions.rs');
+    if (actionsRs) {
+      assert(!actionsRs.includes('Ok(0)'), 'actions.rs bool return should NOT emit Ok(0)');
+      assert(actionsRs.includes('Ok(false)') || actionsRs.includes('todo!()'), 'actions.rs bool return should emit Ok(false) or todo!()');
+      console.log('  Bool return in actions.rs generated correctly');
+    } else {
+      assert(false, 'ping_check must be in actions.rs or its own stub file');
+    }
+  }
+}
+
+// Bug 1B + Bug 3: Stub action (no IMPL, no AI) gets protected file
+section('Bug 1B + Bug 3: Stub action generates protected file');
+{
+  const src = GAP_COMPILER_APP + `
+ACTION do_custom_work {
+  INPUT task_name: string
+  OUTPUT result_text: string
+  OUTPUT success: bool
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src-tauri/src/commands/do_custom_work.rs'), 'Stub action should generate a protected .rs file');
+  const stubFile = files.get('src-tauri/src/commands/do_custom_work.rs')!;
+  assert(stubFile.startsWith('// @agicore-protected'), 'Stub protected file should start with @agicore-protected');
+  assert(stubFile.includes('pub struct DoCustomWorkOutput'), 'Stub protected file should have Output struct');
+  assert(stubFile.includes('pub async fn do_custom_work'), 'Stub protected file should have command fn');
+  assert(stubFile.includes('Result<DoCustomWorkOutput, String>'), 'Stub multi-output should return Output struct');
+  // Should NOT be bundled in actions.rs
+  const actionsRs = files.get('src-tauri/src/commands/actions.rs');
+  const modRs = files.get('src-tauri/src/commands/mod.rs')!;
+  assert(modRs.includes('pub mod do_custom_work;'), 'mod.rs should include stub action module');
+  console.log('  Stub action protected file generated successfully');
+}
+
+// Bug 2: Multi-output action → named Result interface, not intersection
+section('Bug 2: Multi-output TS invoke uses named Result interface');
+{
+  const src = GAP_COMPILER_APP + `
+ACTION analyze_text {
+  INPUT text: string
+  OUTPUT summary: string
+  OUTPUT sentiment: string
+  OUTPUT score: number
+}
+`;
+  const { files } = compile(src);
+  const types = files.get('src/lib/types.ts')!;
+  const api = files.get('src/lib/api.ts')!;
+  assert(types.includes('export interface AnalyzeTextResult'), 'types.ts should have AnalyzeTextResult interface');
+  assert(types.includes('summary: string'), 'AnalyzeTextResult should have summary field');
+  assert(types.includes('sentiment: string'), 'AnalyzeTextResult should have sentiment field');
+  assert(types.includes('score: number'), 'AnalyzeTextResult should have score field');
+  assert(api.includes('invoke<AnalyzeTextResult>'), 'api.ts invoke should use AnalyzeTextResult');
+  assert(!api.includes('string & string & number'), 'api.ts should NOT use intersection type');
+  assert(api.includes("import type {"), 'api.ts should import AnalyzeTextResult from types');
+  assert(api.includes('AnalyzeTextResult,'), 'api.ts should import AnalyzeTextResult');
+  console.log('  Multi-output TS result interface generated successfully');
+}
+
+// Bug 4: SINGLETON update wrapper takes only input (no id)
+section('Bug 4: SINGLETON update wrapper has no id param');
+{
+  const src = GAP_COMPILER_APP + `
+ENTITY AppConfig SINGLETON {
+  TIMESTAMPS
+  theme: string = "dark"
+}
+`;
+  const { files } = compile(src);
+  const api = files.get('src/lib/api.ts')!;
+  assert(!api.includes('update_app_config\', { id,'), 'Singleton update should NOT pass id to invoke');
+  assert(!api.includes('(id: string, input:'), 'Singleton update wrapper should NOT have id param');
+  assert(api.includes('(input: UpdateAppConfigInput)'), 'Singleton update wrapper should take only input');
+  const store = files.get('src/store/appStore.ts')!;
+  assert(!store.includes("updateAppConfig('singleton'"), 'Store should NOT call updateAppConfig(\'singleton\', ...)');
+  assert(store.includes('updateAppConfig(input)'), 'Store should call updateAppConfig(input) directly');
+  console.log('  SINGLETON update wrapper has no id param');
+}
+
+// Bug 5: EMIT listener uses import { listen } not require()
+section('Bug 5: EMIT listener uses ESM import not require()');
+{
+  const src = GAP_COMPILER_APP + `
+ACTION process_file {
+  INPUT file_path: string
+  EMIT file_progress { processed: number, total: number }
+}
+`;
+  const { files } = compile(src);
+  const api = files.get('src/lib/api.ts')!;
+  assert(!api.includes("require('@tauri-apps/api/event')"), 'api.ts should NOT use require() for listen');
+  assert(api.includes("import { listen } from '@tauri-apps/api/event'"), 'api.ts should have ESM listen import');
+  assert(api.includes('export const onFileProgress'), 'api.ts should export onFileProgress listener');
+  assert(!api.includes("const { listen }"), 'api.ts should NOT have inline const { listen }');
+  console.log('  EMIT listener uses ESM import');
+}
+
+// Bug 6: PREFERENCE generates typed React hook
+section('Bug 6: PREFERENCE generates typed React hook');
+{
+  const src = GAP_COMPILER_APP + `
+PREFERENCE AppTheme {
+  TYPE string
+  DEFAULT "midnight"
+  KEY "bka_app_theme"
+}
+PREFERENCE FontSize {
+  TYPE number
+  DEFAULT 14
+  KEY "bka_font_size"
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src/lib/preferences.ts'), 'Should generate preferences.ts');
+  const prefsFile = files.get('src/lib/preferences.ts')!;
+  assert(prefsFile.includes("import { useState, useEffect } from 'react'"), 'preferences.ts should import React hooks');
+  assert(prefsFile.includes('export function usePreferenceState'), 'preferences.ts should export usePreferenceState');
+  assert(prefsFile.includes("export const useAppTheme = ()"), 'preferences.ts should export useAppTheme hook');
+  assert(prefsFile.includes("bka_app_theme"), 'useAppTheme should use the correct key');
+  assert(prefsFile.includes("export const useFontSize = ()"), 'preferences.ts should export useFontSize hook');
+  console.log('  PREFERENCE typed React hooks generated successfully');
+}
+
+// Bug 7: json field with default [] → TypeScript type is unknown[]
+section('Bug 7: json field with [] default → unknown[]');
+{
+  const src = GAP_COMPILER_APP + `
+ENTITY TaggedItem {
+  TIMESTAMPS
+  title: string REQUIRED
+  tags: json = []
+  metadata: json = {}
+}
+`;
+  const { files } = compile(src);
+  const types = files.get('src/lib/types.ts')!;
+  // In the interface
+  assert(types.includes('tags: unknown[]'), 'Interface: tags json=[] should be unknown[]');
+  assert(types.includes('metadata: Record<string, unknown>'), 'Interface: metadata json={} should be Record<string,unknown>');
+  // Not plain unknown
+  const taggedItemBlock = types.split('TaggedItem').slice(1).join('TaggedItem');
+  assert(!taggedItemBlock.split('CreateTaggedItemInput')[0]!.includes('tags: unknown;'), 'Interface: tags should not be plain unknown');
+  console.log('  json field types use default-value-aware TypeScript types');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

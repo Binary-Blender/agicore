@@ -80,8 +80,9 @@ function rustParamType(type: AgiType): string {
 function rustReturnType(action: ActionDecl): string {
   if (action.output.length === 0) return '()';
   const out = action.output[0]!;
-  if (/^[A-Z]/.test(out.type)) return 'serde_json::Value';
-  switch (out.type) {
+  const base = out.type.split(' | ')[0]!.trim(); // strip union suffix
+  if (/^[A-Z]/.test(base)) return 'serde_json::Value';
+  switch (base) {
     case 'string': return 'String';
     case 'number': return 'i64';
     case 'float':  return 'f64';
@@ -93,10 +94,13 @@ function rustReturnType(action: ActionDecl): string {
 
 function defaultOkValue(action: ActionDecl): string {
   const ret = rustReturnType(action);
-  if (ret === 'serde_json::Value') return 'serde_json::json!([])';
+  if (ret === 'serde_json::Value') return 'serde_json::json!({})';
   if (ret === 'String') return 'String::new()';
   if (ret === '()') return '()';
-  return '0'.padEnd(0); // numbers — shouldn't reach
+  if (ret === 'bool') return 'false';
+  if (ret === 'i64') return '0';
+  if (ret === 'f64') return '0.0';
+  return 'todo!()';
 }
 
 // ─── Input struct ─────────────────────────────────────────────────────────────
@@ -353,16 +357,21 @@ function generateImplStub(action: ActionDecl): string[] {
   lines.push('}');
   lines.push('');
 
-  // Output struct
-  lines.push('#[derive(Debug, Serialize)]');
-  lines.push('#[serde(rename_all = "camelCase")]');
-  lines.push(`pub struct ${pascalName}Output {`);
-  for (const out of action.output) {
-    const rustName = toSnakeCase(out.name);
-    lines.push(`    pub ${rustName}: ${rustOutputType(out.type)},`);
+  // Output struct (only if action has outputs)
+  const hasOutput = action.output.length > 0;
+  const returnType = hasOutput ? `${pascalName}Output` : '()';
+
+  if (hasOutput) {
+    lines.push('#[derive(Debug, Serialize)]');
+    lines.push('#[serde(rename_all = "camelCase")]');
+    lines.push(`pub struct ${pascalName}Output {`);
+    for (const out of action.output) {
+      const rustName = toSnakeCase(out.name);
+      lines.push(`    pub ${rustName}: ${rustOutputType(out.type)},`);
+    }
+    lines.push('}');
+    lines.push('');
   }
-  lines.push('}');
-  lines.push('');
 
   // Command signature — varies by pattern
   if (action.pattern === 'file_handler') {
@@ -370,7 +379,7 @@ function generateImplStub(action: ActionDecl): string[] {
     lines.push(`pub async fn ${snakeName}(`);
     lines.push(`    app: tauri::AppHandle,`);
     lines.push(`    _db: tauri::State<'_, DbPool>,`);
-    lines.push(`) -> Result<${pascalName}Output, String> {`);
+    lines.push(`) -> Result<${returnType}, String> {`);
     lines.push(`    // TODO: implement file picker`);
     lines.push(`    // let file = app.dialog().file().pick_file().await;`);
     if (action.emit) {
@@ -384,7 +393,7 @@ function generateImplStub(action: ActionDecl): string[] {
     lines.push(`pub async fn ${snakeName}(`);
     lines.push(`    app: tauri::AppHandle,`);
     lines.push(`    input: ${pascalName}Input,`);
-    lines.push(`) -> Result<${pascalName}Output, String> {`);
+    lines.push(`) -> Result<${returnType}, String> {`);
     lines.push(`    // TODO: implement shell open`);
     lines.push(`    // app.shell().open(&input.url, None).map_err(|e| e.to_string())?;`);
     if (action.emit) {
@@ -400,7 +409,7 @@ function generateImplStub(action: ActionDecl): string[] {
       lines.push(`    input: ${pascalName}Input,`);
     }
     lines.push(`    _db: tauri::State<'_, DbPool>,`);
-    lines.push(`) -> Result<${pascalName}Output, String> {`);
+    lines.push(`) -> Result<${returnType}, String> {`);
     if (action.emit) {
       lines.push(`    // Emit progress events like this:`);
       lines.push(`    // app_handle.emit("${action.emit.eventName}", &serde_json::json!({ ${action.emit.fields.map(f => `"${f.name}": ""`).join(', ')} })).ok();`);
@@ -422,9 +431,15 @@ export function generateActions(ast: AgiFile): Map<string, string> {
     (a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name),
   );
 
-  // Split into impl (protected) and regular (bundled) actions
-  const implActions = allActions.filter((a) => a.impl !== undefined);
-  const regularActions = allActions.filter((a) => a.impl === undefined);
+  // Split into impl/stub (protected) and regular (bundled) actions.
+  // Stub actions (no built-in pattern, no AI) get their own protected file
+  // to avoid being wiped on regen and to support multi-output structs.
+  const implActions = allActions.filter(
+    (a) => a.impl !== undefined || (categorize(a) === 'stub' && !a.ai),
+  );
+  const regularActions = allActions.filter(
+    (a) => a.impl === undefined && !(categorize(a) === 'stub' && !a.ai),
+  );
 
   // Regular actions — bundle into actions.rs as before
   if (regularActions.length > 0) {
@@ -464,19 +479,21 @@ export function generateActions(ast: AgiFile): Map<string, string> {
 
 /**
  * Returns the list of action command identifiers for registration in main.rs.
- * Only regular (non-IMPL) actions emitted by this generator.
+ * Only regular (non-IMPL, non-stub) actions emitted into the bundled actions.rs.
  */
 export function actionCommandNames(ast: AgiFile): string[] {
   return ast.actions
-    .filter((a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name) && a.impl === undefined)
+    .filter((a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name)
+      && a.impl === undefined && !(categorize(a) === 'stub' && !a.ai))
     .map((a) => `commands::actions::${toSnakeCase(a.name)}`);
 }
 
 /**
- * Returns the list of IMPL action command identifiers for registration in main.rs.
+ * Returns the list of IMPL/stub action command identifiers for registration in main.rs.
  */
 export function implActionCommandNames(ast: AgiFile): string[] {
   return ast.actions
-    .filter((a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name) && a.impl !== undefined)
+    .filter((a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name)
+      && (a.impl !== undefined || (categorize(a) === 'stub' && !a.ai)))
     .map((a) => `commands::${toSnakeCase(a.name)}::${toSnakeCase(a.name)}`);
 }
