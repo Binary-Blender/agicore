@@ -28,6 +28,9 @@ import type {
   NbveDecl, NbveSpc,
   ContractDecl, ContractParty, ContractTerm, ContractDeliverable, ContractPayment, ContractGovernance,
   PaymentMethod, PaymentRelease,
+  ReputationDecl, ReputationMetric, ReputationSpc, ReputationDecay,
+  SubscriptionDecl, SubscriptionTerms, SubscriptionPayment,
+  DisputeDecl, DisputeResolution,
   StateNode, StateTransition, ScoreThreshold,
   FieldDef, FieldModifier, AgiType, CrudOp, Relationship, EntityOrder, SeedRecord,
   ActionParam, ActionOutput, LayoutType, ThemeOption,
@@ -91,6 +94,9 @@ export class Parser {
     const events: EventDecl[] = [];
     const nbves: NbveDecl[] = [];
     const contracts: ContractDecl[] = [];
+    const reputations: ReputationDecl[] = [];
+    const subscriptions: SubscriptionDecl[] = [];
+    const disputes: DisputeDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -202,12 +208,21 @@ export class Parser {
         case TokenType.CONTRACT_KW:
           contracts.push(this.parseContract());
           break;
+        case TokenType.REPUTATION_KW:
+          reputations.push(this.parseReputation());
+          break;
+        case TokenType.SUBSCRIPTION_KW:
+          subscriptions.push(this.parseSubscription());
+          break;
+        case TokenType.DISPUTE_KW:
+          disputes.push(this.parseDispute());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes };
   }
 
   // --- APP ---
@@ -2739,6 +2754,143 @@ export class Parser {
     return { kind: 'contract', name, description, parties, terms, deliverables, payment, governance, timestamps, span: { start, end } };
   }
 
+  // --- REPUTATION ---
+
+  private parseReputation(): ReputationDecl {
+    const start = this.expectToken(TokenType.REPUTATION_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    const metrics: ReputationMetric[] = [];
+    let spc: ReputationSpc = { maturingThreshold: 50, matureThreshold: 100, requiredConfidence: 0.95 };
+    let decay: ReputationDecay = { enabled: false, halfLife: '180d' };
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.METRICS) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const mName = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const mType = this.expectIdentifier() as 'float' | 'int';
+          metrics.push({ name: mName, type: mType });
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.type === TokenType.SPC) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const parsed: Partial<ReputationSpc> = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const st = this.current();
+          if (st.type === TokenType.MATURING_THRESHOLD) { this.advance(); parsed.maturingThreshold = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); }
+          else if (st.type === TokenType.MATURE_THRESHOLD) { this.advance(); parsed.matureThreshold = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); }
+          else if (st.type === TokenType.CONFIDENCE) { this.advance(); parsed.requiredConfidence = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); }
+          else { this.error(`Unexpected token in REPUTATION SPC: ${st.value}`); }
+        }
+        this.expectToken(TokenType.RBRACE);
+        spc = { ...spc, ...parsed }; continue;
+      }
+      if (token.type === TokenType.DECAY) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const parsed: Partial<ReputationDecay> = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const dt = this.current();
+          if (dt.value === 'enabled') { this.advance(); parsed.enabled = this.parseBoolValue(); }
+          else if (dt.type === TokenType.HALF_LIFE) { this.advance(); parsed.halfLife = this.expectToken(TokenType.STRING_LITERAL).value; }
+          else { this.error(`Unexpected token in REPUTATION DECAY: ${dt.value}`); }
+        }
+        this.expectToken(TokenType.RBRACE);
+        decay = { ...decay, ...parsed }; continue;
+      }
+      this.error(`Unexpected token in REPUTATION: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'reputation', name, description, metrics, spc, decay, span: { start, end } };
+  }
+
+  // --- SUBSCRIPTION ---
+
+  private parseSubscription(): SubscriptionDecl {
+    const start = this.expectToken(TokenType.SUBSCRIPTION_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '', provider = '', subscriber = '';
+    let terms: SubscriptionTerms = { amount: 0, interval: 'monthly', perks: [] };
+    let payment: SubscriptionPayment = { method: 'stripe', autoRenew: true };
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.PROVIDER_KW) { this.advance(); provider = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.SUBSCRIBER_KW) { this.advance(); subscriber = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.TERMS) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const parsed: Partial<SubscriptionTerms> = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const tt = this.current();
+          if (tt.type === TokenType.AMOUNT) { this.advance(); parsed.amount = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); }
+          else if (tt.type === TokenType.INTERVAL) { this.advance(); parsed.interval = this.expectIdentifier() as SubscriptionTerms['interval']; }
+          else if (tt.type === TokenType.PERKS) { this.advance(); parsed.perks = this.parseBracketedStringList(); }
+          else { this.error(`Unexpected token in SUBSCRIPTION TERMS: ${tt.value}`); }
+        }
+        this.expectToken(TokenType.RBRACE);
+        terms = { ...terms, ...parsed }; continue;
+      }
+      if (token.type === TokenType.PAYMENT_KW) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const parsed: Partial<SubscriptionPayment> = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const pt = this.current();
+          if (pt.value === 'METHOD') { this.advance(); parsed.method = this.expectIdentifier() as PaymentMethod; }
+          else if (pt.type === TokenType.AUTO_RENEW) { this.advance(); parsed.autoRenew = this.parseBoolValue(); }
+          else { this.error(`Unexpected token in SUBSCRIPTION PAYMENT: ${pt.value}`); }
+        }
+        this.expectToken(TokenType.RBRACE);
+        payment = { ...payment, ...parsed }; continue;
+      }
+      this.error(`Unexpected token in SUBSCRIPTION: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'subscription', name, description, provider, subscriber, terms, payment, span: { start, end } };
+  }
+
+  // --- DISPUTE ---
+
+  private parseDispute(): DisputeDecl {
+    const start = this.expectToken(TokenType.DISPUTE_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '', contract = '';
+    const states: string[] = [];
+    const resolutions: DisputeResolution[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.CONTRACT_KW) { this.advance(); contract = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.STATES_KW) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) { states.push(this.expectIdentifier()); }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      if (token.type === TokenType.RESOLUTION_KW) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) { resolutions.push(this.expectIdentifier() as DisputeResolution); }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
+      this.error(`Unexpected token in DISPUTE: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'dispute', name, description, contract, states, resolutions, span: { start, end } };
+  }
+
   // --- NODE ---
 
   private parseNode(): NodeDecl {
@@ -3109,6 +3261,21 @@ export class Parser {
     const list: string[] = [];
     while (!this.check(TokenType.RBRACKET) && !this.isAtEnd()) {
       list.push(this.expectIdentifier());
+      this.consumeIf(TokenType.COMMA);
+    }
+    this.expectToken(TokenType.RBRACKET);
+    return list;
+  }
+
+  private parseBracketedStringList(): string[] {
+    this.expectToken(TokenType.LBRACKET);
+    const list: string[] = [];
+    while (!this.check(TokenType.RBRACKET) && !this.isAtEnd()) {
+      if (this.check(TokenType.STRING_LITERAL)) {
+        list.push(this.advance().value);
+      } else {
+        list.push(this.expectIdentifier());
+      }
       this.consumeIf(TokenType.COMMA);
     }
     this.expectToken(TokenType.RBRACKET);

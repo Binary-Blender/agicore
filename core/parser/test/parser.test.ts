@@ -2074,6 +2074,157 @@ try {
   console.error(`  FAIL: CONTRACT parse error: ${err}`);
 }
 
+// ============================================================
+// REPUTATION Tests
+// ============================================================
+
+console.log('\n--- REPUTATION declaration ---');
+
+const reputationDsl = `
+APP TestApp { TITLE "Test" DB "test.db" }
+
+REPUTATION CreatorReliability {
+  DESCRIPTION "SPC-driven trust scoring for creators"
+  METRICS {
+    on_time_delivery: float
+    acceptance_rate: float
+    dispute_rate: float
+  }
+  SPC {
+    MATURING_THRESHOLD 50
+    MATURE_THRESHOLD 100
+    CONFIDENCE 0.95
+  }
+  DECAY {
+    enabled true
+    HALF_LIFE "180d"
+  }
+}
+`;
+
+try {
+  const repResult = parse(reputationDsl);
+  assert(repResult.reputations.length === 1, 'Should have 1 REPUTATION declaration');
+  const rep = repResult.reputations[0]!;
+  assert(rep.kind === 'reputation', 'REPUTATION kind should be "reputation"');
+  assert(rep.name === 'CreatorReliability', 'REPUTATION name should be CreatorReliability');
+  assert(rep.description === 'SPC-driven trust scoring for creators', 'REPUTATION description should match');
+  assert(rep.metrics.length === 3, 'REPUTATION should have 3 metrics');
+  assert(rep.metrics[0]!.name === 'on_time_delivery', 'First metric name should match');
+  assert(rep.metrics[0]!.type === 'float', 'First metric type should be float');
+  assert(rep.spc.maturingThreshold === 50, 'REPUTATION SPC maturingThreshold should be 50');
+  assert(rep.spc.matureThreshold === 100, 'REPUTATION SPC matureThreshold should be 100');
+  assert(rep.spc.requiredConfidence === 0.95, 'REPUTATION SPC requiredConfidence should be 0.95');
+  assert(rep.decay.enabled === true, 'REPUTATION decay should be enabled');
+  assert(rep.decay.halfLife === '180d', 'REPUTATION decay halfLife should be 180d');
+  console.log('  REPUTATION parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: REPUTATION parse error: ${err}`);
+}
+
+// ============================================================
+// SUBSCRIPTION Tests
+// ============================================================
+
+console.log('\n--- SUBSCRIPTION declaration ---');
+
+const subscriptionDsl = `
+APP TestApp { TITLE "Test" DB "test.db" }
+
+SUBSCRIPTION CreatorSupport {
+  DESCRIPTION "Monthly creator support subscription"
+  PROVIDER CreatorProfile
+  SUBSCRIBER FanProfile
+  TERMS {
+    AMOUNT 5
+    INTERVAL monthly
+    PERKS ["premium_feed", "private_chat"]
+  }
+  PAYMENT {
+    METHOD stripe
+    AUTO_RENEW true
+  }
+}
+`;
+
+try {
+  const subResult = parse(subscriptionDsl);
+  assert(subResult.subscriptions.length === 1, 'Should have 1 SUBSCRIPTION declaration');
+  const sub = subResult.subscriptions[0]!;
+  assert(sub.kind === 'subscription', 'SUBSCRIPTION kind should be "subscription"');
+  assert(sub.name === 'CreatorSupport', 'SUBSCRIPTION name should be CreatorSupport');
+  assert(sub.description === 'Monthly creator support subscription', 'SUBSCRIPTION description should match');
+  assert(sub.provider === 'CreatorProfile', 'SUBSCRIPTION provider should be CreatorProfile');
+  assert(sub.subscriber === 'FanProfile', 'SUBSCRIPTION subscriber should be FanProfile');
+  assert(sub.terms.amount === 5, 'SUBSCRIPTION terms amount should be 5');
+  assert(sub.terms.interval === 'monthly', 'SUBSCRIPTION terms interval should be monthly');
+  assert(sub.terms.perks.length === 2, 'SUBSCRIPTION terms should have 2 perks');
+  assert(sub.terms.perks[0] === 'premium_feed', 'First perk should be premium_feed');
+  assert(sub.payment.method === 'stripe', 'SUBSCRIPTION payment method should be stripe');
+  assert(sub.payment.autoRenew === true, 'SUBSCRIPTION payment autoRenew should be true');
+  console.log('  SUBSCRIPTION parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: SUBSCRIPTION parse error: ${err}`);
+}
+
+// ============================================================
+// DISPUTE Tests
+// ============================================================
+
+console.log('\n--- DISPUTE declaration ---');
+
+const disputeDsl = `
+APP TestApp { TITLE "Test" DB "test.db" }
+
+CONTRACT MusicCommission {
+  DESCRIPTION "A commission"
+  PARTIES { client: Identity provider: Identity }
+  TERMS { delivery_deadline: "14d" }
+  DELIVERABLES { audio_file: REQUIRED }
+  PAYMENT { METHOD ach AMOUNT 50 CURRENCY "USD" RELEASE on_acceptance RECURRING false }
+  GOVERNANCE { SIGNED_BY both DISPUTE optional }
+}
+
+DISPUTE ContractReview {
+  DESCRIPTION "Structured dispute resolution for commission contracts"
+  CONTRACT MusicCommission
+  STATES {
+    opened
+    under_review
+    resolved
+    escalated
+  }
+  RESOLUTION {
+    refund
+    revision
+    partial_acceptance
+    cancellation
+  }
+}
+`;
+
+try {
+  const dispResult = parse(disputeDsl);
+  assert(dispResult.disputes.length === 1, 'Should have 1 DISPUTE declaration');
+  const disp = dispResult.disputes[0]!;
+  assert(disp.kind === 'dispute', 'DISPUTE kind should be "dispute"');
+  assert(disp.name === 'ContractReview', 'DISPUTE name should be ContractReview');
+  assert(disp.description === 'Structured dispute resolution for commission contracts', 'DISPUTE description should match');
+  assert(disp.contract === 'MusicCommission', 'DISPUTE contract should be MusicCommission');
+  assert(disp.states.length === 4, 'DISPUTE should have 4 states');
+  assert(disp.states[0] === 'opened', 'First state should be opened');
+  assert(disp.states[3] === 'escalated', 'Last state should be escalated');
+  assert(disp.resolutions.length === 4, 'DISPUTE should have 4 resolutions');
+  assert(disp.resolutions[0] === 'refund', 'First resolution should be refund');
+  assert(disp.resolutions[2] === 'partial_acceptance', 'Third resolution should be partial_acceptance');
+  console.log('  DISPUTE parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: DISPUTE parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

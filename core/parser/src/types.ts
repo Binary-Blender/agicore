@@ -893,6 +893,72 @@ export interface ContractDecl {
   span: SourceSpan;
 }
 
+// --- REPUTATION Declaration (SPC-Driven Trust Scoring) ---
+
+export interface ReputationMetric {
+  name: string;
+  type: 'float' | 'int';
+}
+
+export interface ReputationSpc {
+  maturingThreshold: number;
+  matureThreshold: number;
+  requiredConfidence: number;
+}
+
+export interface ReputationDecay {
+  enabled: boolean;
+  halfLife: string;
+}
+
+export interface ReputationDecl {
+  kind: 'reputation';
+  name: string;
+  description: string;
+  metrics: ReputationMetric[];
+  spc: ReputationSpc;
+  decay: ReputationDecay;
+  span: SourceSpan;
+}
+
+// --- SUBSCRIPTION Declaration (Recurring Creator Support) ---
+
+export interface SubscriptionTerms {
+  amount: number;
+  interval: 'monthly' | 'yearly' | 'weekly';
+  perks: string[];
+}
+
+export interface SubscriptionPayment {
+  method: PaymentMethod;
+  autoRenew: boolean;
+}
+
+export interface SubscriptionDecl {
+  kind: 'subscription';
+  name: string;
+  description: string;
+  provider: string;
+  subscriber: string;
+  terms: SubscriptionTerms;
+  payment: SubscriptionPayment;
+  span: SourceSpan;
+}
+
+// --- DISPUTE Declaration (Structured Conflict Resolution) ---
+
+export type DisputeResolution = 'refund' | 'revision' | 'partial_acceptance' | 'cancellation';
+
+export interface DisputeDecl {
+  kind: 'dispute';
+  name: string;
+  description: string;
+  contract: string;
+  states: string[];
+  resolutions: DisputeResolution[];
+  span: SourceSpan;
+}
+
 // --- Top-Level AST ---
 
 export type Declaration =
@@ -931,7 +997,10 @@ export type Declaration =
   | CompilerDecl
   | EventDecl
   | NbveDecl
-  | ContractDecl;
+  | ContractDecl
+  | ReputationDecl
+  | SubscriptionDecl
+  | DisputeDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -970,6 +1039,9 @@ export interface AgiFile {
   events: EventDecl[];
   nbves: NbveDecl[];
   contracts: ContractDecl[];
+  reputations: ReputationDecl[];
+  subscriptions: SubscriptionDecl[];
+  disputes: DisputeDecl[];
 }
 
 // --- Parse Error ---
