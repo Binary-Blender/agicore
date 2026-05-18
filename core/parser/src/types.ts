@@ -394,6 +394,85 @@ export interface MacroRegistryDecl {
   span: SourceSpan;
 }
 
+// --- ACTUATOR Declaration (Hardware output device) ---
+
+export type ActuatorType =
+  | 'servo'
+  | 'motor'
+  | 'stepper'
+  | 'relay'
+  | 'led'
+  | 'neopixel'
+  | 'custom';
+
+export interface ActuatorDecl {
+  kind: 'actuator';
+  name: string;
+  description: string;
+  type: ActuatorType;
+  model?: string;
+  safeState: string;
+  maxCurrent?: number;
+  slewRate?: number;
+  watchdog?: number;
+  span: SourceSpan;
+}
+
+// --- PLATFORM Declaration (Embedded target chip + runtime) ---
+
+export type ChipType =
+  | 'rpi5'
+  | 'rpi4'
+  | 'esp32s3'
+  | 'stm32h7'
+  | 'stm32f4'
+  | 'x86'
+  | 'custom';
+
+export interface PlatformDecl {
+  kind: 'platform';
+  name: string;
+  chip: ChipType;
+  os?: string;
+  aiRuntime?: string;
+  crossTarget?: string;
+  span: SourceSpan;
+}
+
+// --- NULLCLAW Declaration (Agent runtime with hardware tool bindings) ---
+
+export interface NullclawTool {
+  name: string;
+  mapsTo: string;
+}
+
+export interface NullclawProvider {
+  name: string;
+  url: string;
+  priority: number;
+}
+
+export interface NullclawDecl {
+  kind: 'nullclaw';
+  configPath: string;
+  providers: NullclawProvider[];
+  tools: NullclawTool[];
+  personality?: string;
+  span: SourceSpan;
+}
+
+// --- BRAIN_BODY Declaration (UART brain-body protocol) ---
+
+export interface BrainBodyDecl {
+  kind: 'brain_body';
+  baud: number;
+  heartbeat: number;
+  watchdog: number;
+  estopGpio?: string;
+  commands: string[];
+  span: SourceSpan;
+}
+
 // --- VAULT Declaration (Shared Asset Storage) ---
 
 export interface VaultDecl {
@@ -1066,6 +1145,10 @@ export type Declaration =
   | LogDecl
   | MacroDecl
   | MacroRegistryDecl
+  | ActuatorDecl
+  | PlatformDecl
+  | NullclawDecl
+  | BrainBodyDecl
   | FactDecl
   | StateDecl
   | PatternDecl
@@ -1112,6 +1195,10 @@ export interface AgiFile {
   log?: LogDecl;
   macros: MacroDecl[];
   macroRegistry?: MacroRegistryDecl;
+  actuators: ActuatorDecl[];
+  platforms: PlatformDecl[];
+  nullclaw?: NullclawDecl;
+  brainBody?: BrainBodyDecl;
   facts: FactDecl[];
   states: StateDecl[];
   patterns: PatternDecl[];

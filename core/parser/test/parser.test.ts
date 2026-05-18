@@ -2570,6 +2570,124 @@ MACRO_REGISTRY {
   console.error(`  FAIL: MACRO_REGISTRY parse error: ${err}`);
 }
 
+// --- ACTUATOR declaration ---
+
+section('ACTUATOR declaration');
+try {
+  const actuatorSrc = `
+APP test_actuator { TITLE "Test" WINDOW 1200x800 DB "test.db" }
+ACTUATOR drive_motor {
+  DESCRIPTION "Left drive motor via L298N"
+  TYPE        motor
+  MODEL       "L298N"
+  SAFE_STATE  coast
+  MAX_CURRENT 2000
+  SLEW_RATE   10
+  WATCHDOG    3000
+}
+`;
+  const actuatorAst = parse(actuatorSrc);
+  assert(actuatorAst.actuators.length === 1, 'should have 1 actuator');
+  assert(actuatorAst.actuators[0].name === 'drive_motor', 'name should be drive_motor');
+  assert(actuatorAst.actuators[0].type === 'motor', 'type should be motor');
+  assert(actuatorAst.actuators[0].model === 'L298N', 'model should be L298N');
+  assert(actuatorAst.actuators[0].safeState === 'coast', 'safe state should be coast');
+  assert(actuatorAst.actuators[0].maxCurrent === 2000, 'maxCurrent should be 2000');
+  assert(actuatorAst.actuators[0].watchdog === 3000, 'watchdog should be 3000');
+  console.log('  ACTUATOR declaration parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ACTUATOR parse error: ${err}`);
+}
+
+// --- PLATFORM declaration ---
+
+section('PLATFORM declaration');
+try {
+  const platformSrc = `
+APP test_platform { TITLE "Test" WINDOW 1200x800 DB "test.db" }
+PLATFORM robot_brain {
+  CHIP         rpi5
+  OS           "Raspberry Pi OS Lite 64-bit"
+  AI_RUNTIME   "ollama"
+  CROSS_TARGET "aarch64-linux-gnu"
+}
+`;
+  const platformAst = parse(platformSrc);
+  assert(platformAst.platforms.length === 1, 'should have 1 platform');
+  assert(platformAst.platforms[0].name === 'robot_brain', 'name should be robot_brain');
+  assert(platformAst.platforms[0].chip === 'rpi5', 'chip should be rpi5');
+  assert(platformAst.platforms[0].os === 'Raspberry Pi OS Lite 64-bit', 'os should match');
+  assert(platformAst.platforms[0].aiRuntime === 'ollama', 'aiRuntime should be ollama');
+  assert(platformAst.platforms[0].crossTarget === 'aarch64-linux-gnu', 'crossTarget should match');
+  console.log('  PLATFORM declaration parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: PLATFORM parse error: ${err}`);
+}
+
+// --- NULLCLAW declaration ---
+
+section('NULLCLAW declaration');
+try {
+  const nullclawSrc = `
+APP test_nullclaw { TITLE "Test" WINDOW 1200x800 DB "test.db" }
+NULLCLAW {
+  PATH "~/.nullclaw/config.json"
+  PROVIDERS {
+    ollama "http://localhost:11434" 1
+    babyai "https://novasynchris-babyai.hf.space" 2
+  }
+  TOOLS {
+    read_temperature  sensor_temperature_read
+    set_led           actuator_led_set
+    speak             tts_speak
+  }
+  PERSONALITY "You are Nova, a helpful home assistant robot."
+}
+`;
+  const nullclawAst = parse(nullclawSrc);
+  assert(nullclawAst.nullclaw !== undefined, 'nullclaw should be defined');
+  assert(nullclawAst.nullclaw!.providers.length === 2, 'should have 2 providers');
+  assert(nullclawAst.nullclaw!.providers[0].name === 'ollama', 'first provider should be ollama');
+  assert(nullclawAst.nullclaw!.providers[0].priority === 1, 'ollama priority should be 1');
+  assert(nullclawAst.nullclaw!.tools.length === 3, 'should have 3 tools');
+  assert(nullclawAst.nullclaw!.tools[0].name === 'read_temperature', 'first tool name');
+  assert(nullclawAst.nullclaw!.tools[0].mapsTo === 'sensor_temperature_read', 'first tool mapsTo');
+  assert(nullclawAst.nullclaw!.personality !== undefined, 'personality should be set');
+  console.log('  NULLCLAW declaration parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: NULLCLAW parse error: ${err}`);
+}
+
+// --- BRAIN_BODY declaration ---
+
+section('BRAIN_BODY declaration');
+try {
+  const brainBodySrc = `
+APP test_brain_body { TITLE "Test" WINDOW 1200x800 DB "test.db" }
+BRAIN_BODY {
+  BAUD      115200
+  HEARTBEAT 1000
+  WATCHDOG  3000
+  ESTOP     "GPIO_24"
+  COMMANDS  [PING, MOVE_SERVO, SET_MOTOR, READ_SENSORS, HB, ACK, NACK]
+}
+`;
+  const brainBodyAst = parse(brainBodySrc);
+  assert(brainBodyAst.brainBody !== undefined, 'brainBody should be defined');
+  assert(brainBodyAst.brainBody!.baud === 115200, 'baud should be 115200');
+  assert(brainBodyAst.brainBody!.heartbeat === 1000, 'heartbeat should be 1000');
+  assert(brainBodyAst.brainBody!.watchdog === 3000, 'watchdog should be 3000');
+  assert(brainBodyAst.brainBody!.estopGpio === 'GPIO_24', 'estopGpio should match');
+  assert(brainBodyAst.brainBody!.commands.length === 7, 'should have 7 commands');
+  console.log('  BRAIN_BODY declaration parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: BRAIN_BODY parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

@@ -106,6 +106,8 @@ agicore/
 |-- CHANNEL.md                 # CHANNEL + PACKET: typed SQLite-backed message queues
 |-- LOGGING.md                 # LOG declaration: file-based Rust logger (no new deps)
 |-- MACROS.md                  # MACRO + MACRO_REGISTRY: cross-app capability exposure
+|-- EMBEDDED.md                # NODE, SENSOR, ZONE, ACTUATOR, PLATFORM, BRAIN_BODY: robots + IoT
+|-- NULLCLAW.md                # NullClaw agent runtime: tool bindings, providers, safety
 |-- LICENSE                    # MIT
 |
 |-- dsl/                       # DSL grammar specification
@@ -198,10 +200,10 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 
 | Layer | Tests | Status |
 |---|---|---|
-| Parser | 693 passing | Complete |
+| Parser | 720 passing | Complete |
 | Compiler | 943 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,670 passing** | **0 failures** |
+| **Total** | **1,697 passing** | **0 failures** |
 
 The DSL covers 41 declaration types across 8 layers:
 

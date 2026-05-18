@@ -9,6 +9,10 @@ import type {
   PipelineDecl, PipelineRow, PipelineModule, PipelineConnection, PipelineModuleType,
   QCDecl, VaultDecl, LogDecl, LogLevel, LogTarget,
   MacroDecl, MacroParam, MacroRegistryDecl, MacroBinding,
+  ActuatorDecl, ActuatorType,
+  PlatformDecl, ChipType,
+  NullclawDecl, NullclawTool, NullclawProvider, // TOOLS + PROVIDERS reuse existing token types
+  BrainBodyDecl,
   RouterDecl, RouterTier, RouterModelDef, CircuitBreaker,
   SkillDecl, SkillDocDecl, SkillDocGovernance, SkillDocCompression, AuditLevel,
   ReasonerDecl, ReasonerInput, ReasonerOutput, ReasonerSchedule,
@@ -75,6 +79,10 @@ export class Parser {
     let log: LogDecl | undefined;
     const macros: MacroDecl[] = [];
     let macroRegistry: MacroRegistryDecl | undefined;
+    const actuators: ActuatorDecl[] = [];
+    const platforms: PlatformDecl[] = [];
+    let nullclaw: NullclawDecl | undefined;
+    let brainBody: BrainBodyDecl | undefined;
     const facts: FactDecl[] = [];
     const states: StateDecl[] = [];
     const patterns: PatternDecl[] = [];
@@ -237,6 +245,18 @@ export class Parser {
         case TokenType.MACRO_REGISTRY_KW:
           macroRegistry = this.parseMacroRegistry();
           break;
+        case TokenType.ACTUATOR_KW:
+          actuators.push(this.parseActuator());
+          break;
+        case TokenType.PLATFORM_KW:
+          platforms.push(this.parsePlatform());
+          break;
+        case TokenType.NULLCLAW_KW:
+          nullclaw = this.parseNullclaw();
+          break;
+        case TokenType.BRAIN_BODY_KW:
+          brainBody = this.parseBrainBody();
+          break;
         case TokenType.SEED:
           topLevelSeeds.push(this.parseTopLevelSeed());
           break;
@@ -245,7 +265,7 @@ export class Parser {
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds };
   }
 
   // --- APP ---
@@ -1660,6 +1680,183 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'macro_registry', exposes, invokes, span: { start, end } };
+  }
+
+  // --- ACTUATOR ---
+
+  private parseActuator(): ActuatorDecl {
+    const start = this.expectToken(TokenType.ACTUATOR_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let type: ActuatorType = 'custom';
+    let model: string | undefined;
+    let safeState = 'off';
+    let maxCurrent: number | undefined;
+    let slewRate: number | undefined;
+    let watchdog: number | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.TYPE_KW) {
+        this.advance(); type = this.expectToken(TokenType.IDENTIFIER).value.toLowerCase() as ActuatorType; continue;
+      }
+      if (token.value === 'MODEL') {
+        this.advance(); model = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.SAFE_STATE_KW) {
+        this.advance(); safeState = this.expectToken(TokenType.IDENTIFIER).value; continue;
+      }
+      if (token.type === TokenType.MAX_CURRENT_KW) {
+        this.advance(); maxCurrent = this.parseNumericLiteral(); continue;
+      }
+      if (token.type === TokenType.SLEW_RATE_KW) {
+        this.advance(); slewRate = this.parseNumericLiteral(); continue;
+      }
+      if (token.type === TokenType.WATCHDOG_KW) {
+        this.advance(); watchdog = this.parseNumericLiteral(); continue;
+      }
+
+      this.error(`Unexpected token in ACTUATOR: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'actuator', name, description, type, model, safeState, maxCurrent, slewRate, watchdog, span: { start, end } };
+  }
+
+  // --- PLATFORM ---
+
+  private parsePlatform(): PlatformDecl {
+    const start = this.expectToken(TokenType.PLATFORM_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let chip: ChipType = 'custom';
+    let os: string | undefined;
+    let aiRuntime: string | undefined;
+    let crossTarget: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.CHIP_KW) {
+        this.advance(); chip = this.expectToken(TokenType.IDENTIFIER).value.toLowerCase() as ChipType; continue;
+      }
+      if (token.type === TokenType.OS_KW) {
+        this.advance(); os = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.AI_RUNTIME_KW) {
+        this.advance(); aiRuntime = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.CROSS_TARGET_KW) {
+        this.advance(); crossTarget = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+
+      this.error(`Unexpected token in PLATFORM: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'platform', name, chip, os, aiRuntime, crossTarget, span: { start, end } };
+  }
+
+  // --- NULLCLAW ---
+
+  private parseNullclaw(): NullclawDecl {
+    const start = this.expectToken(TokenType.NULLCLAW_KW).location;
+    this.expectToken(TokenType.LBRACE);
+
+    let configPath = '~/.nullclaw/config.json';
+    const providers: NullclawProvider[] = [];
+    const tools: NullclawTool[] = [];
+    let personality: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.PATH) {
+        this.advance(); configPath = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.PROVIDERS) {
+        this.advance();
+        this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const providerName = this.expectIdentifier();
+          const url = this.expectToken(TokenType.STRING_LITERAL).value;
+          let priority = providers.length + 1;
+          if (this.current().value.match(/^\d/)) {
+            priority = this.parseNumericLiteral();
+          }
+          providers.push({ name: providerName, url, priority });
+        }
+        this.expectToken(TokenType.RBRACE);
+        continue;
+      }
+      if (token.type === TokenType.TOOLS) {
+        this.advance();
+        this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          const toolName = this.expectIdentifier();
+          const mapsTo = this.expectIdentifier();
+          tools.push({ name: toolName, mapsTo });
+        }
+        this.expectToken(TokenType.RBRACE);
+        continue;
+      }
+      if (token.type === TokenType.PERSONALITY_KW) {
+        this.advance(); personality = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+
+      this.error(`Unexpected token in NULLCLAW: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'nullclaw', configPath, providers, tools, personality, span: { start, end } };
+  }
+
+  // --- BRAIN_BODY ---
+
+  private parseBrainBody(): BrainBodyDecl {
+    const start = this.expectToken(TokenType.BRAIN_BODY_KW).location;
+    this.expectToken(TokenType.LBRACE);
+
+    let baud = 115200;
+    let heartbeat = 1000;
+    let watchdog = 3000;
+    let estopGpio: string | undefined;
+    const commands: string[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+
+      if (token.type === TokenType.BAUD_KW) {
+        this.advance(); baud = this.parseNumericLiteral(); continue;
+      }
+      if (token.type === TokenType.HEARTBEAT_KW) {
+        this.advance(); heartbeat = this.parseNumericLiteral(); continue;
+      }
+      if (token.type === TokenType.WATCHDOG_KW) {
+        this.advance(); watchdog = this.parseNumericLiteral(); continue;
+      }
+      if (token.type === TokenType.ESTOP_KW) {
+        this.advance(); estopGpio = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.COMMANDS_KW) {
+        this.advance();
+        const list = this.parseBracketedIdentifierList();
+        commands.push(...list);
+        continue;
+      }
+
+      this.error(`Unexpected token in BRAIN_BODY: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'brain_body', baud, heartbeat, watchdog, estopGpio, commands, span: { start, end } };
   }
 
   // --- FACT ---

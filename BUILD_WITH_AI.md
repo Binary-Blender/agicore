@@ -13,7 +13,7 @@ This is the builder's guide. It tells you what to read, what to run, and what to
 5. `apps/novasyn-chat/novasyn_chat.agi` — production app, idiom guide (AI, ENTITY, COMPILER layers)
 6. `apps/novasyn-mba/novasyn_mba.agi` — production app, expert system layers (RULE, SKILL, WORKFLOW, EVENT)
 7. This file (`BUILD_WITH_AI.md`) — DSL reference, extension process, common pitfalls
-8. Feature-specific docs as needed: `TESTING.md`, `VAULT.md`, `CHANNEL.md`, `LOGGING.md`, `MACROS.md`
+8. Feature-specific docs as needed: `TESTING.md`, `VAULT.md`, `CHANNEL.md`, `LOGGING.md`, `MACROS.md`, `EMBEDDED.md`, `NULLCLAW.md`
 
 Then write your `.agi` file, run the compiler, and iterate.
 
@@ -464,4 +464,6 @@ If you find yourself writing hand-rolled Rust that should be generated, or copy-
 | `CHANNEL.md` | CHANNEL + PACKET: typed SQLite-backed message queues |
 | `LOGGING.md` | LOG declaration: file-based Rust logger, no new Cargo dependencies |
 | `MACROS.md` | MACRO + MACRO_REGISTRY: cross-app capability invocation |
+| `EMBEDDED.md` | NODE, SENSOR, ZONE, ACTUATOR, PLATFORM, BRAIN_BODY — robots and sensor arrays |
+| `NULLCLAW.md` | NullClaw agent runtime: tool bindings, offline-first AI routing, safety |
 | `ROADMAP.md` | What's implemented, what's planned |
