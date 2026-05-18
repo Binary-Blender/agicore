@@ -1,4 +1,4 @@
-import type { ReputationDecl } from '../../../parser/src/types.js';
+import type { ReputationDecl } from '@agicore/parser';
 
 export function generateReputation(decl: ReputationDecl): string {
   const lines: string[] = [];

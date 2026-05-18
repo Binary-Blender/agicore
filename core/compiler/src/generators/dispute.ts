@@ -1,4 +1,4 @@
-import type { DisputeDecl } from '../../../parser/src/types.js';
+import type { DisputeDecl } from '@agicore/parser';
 
 export function generateDispute(decl: DisputeDecl): string {
   const lines: string[] = [];

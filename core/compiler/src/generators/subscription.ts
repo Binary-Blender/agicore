@@ -1,4 +1,4 @@
-import type { SubscriptionDecl } from '../../../parser/src/types.js';
+import type { SubscriptionDecl } from '@agicore/parser';
 
 export function generateSubscription(decl: SubscriptionDecl): string {
   const lines: string[] = [];
