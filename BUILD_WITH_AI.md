@@ -4,6 +4,20 @@ This is the builder's guide. It tells you what to read, what to run, and what to
 
 ---
 
+## If you are an AI building an Agicore app — read in this order
+
+1. `README.md` — what Agicore is and how the architecture works
+2. `TECH_STACK.md` — exact pinned versions, architecture choices, 3G→4G changes
+3. `CODING_STANDARDS.md` — naming conventions, generated structure, anti-patterns
+4. `core/parser/src/types.ts` — every DSL declaration type and field (the authoritative spec)
+5. `apps/novasyn-chat/novasyn_chat.agi` — production app, idiom guide (AI, ENTITY, COMPILER layers)
+6. `apps/novasyn-mba/novasyn_mba.agi` — production app, expert system layers (RULE, SKILL, WORKFLOW, EVENT)
+7. This file (`BUILD_WITH_AI.md`) — DSL reference, extension process, common pitfalls
+
+Then write your `.agi` file, run the compiler, and iterate.
+
+---
+
 ## Step 1 — Give Claude Code the right context
 
 Point Claude Code at this repo. Then tell it to read these two files before anything else:
@@ -391,6 +405,44 @@ Then read the function body. Every `if (token.type === TokenType.XYZ)` block is 
 
 ---
 
+## Common pitfalls
+
+These are the mistakes that cause silent failures or confusing errors. Read them before you start.
+
+**1. Editing generated files directly**
+Files without `// @agicore-protected` on line 1 are overwritten on every compiler run. Any edits you make to `types.ts`, `store.ts`, `invokes.ts`, `crud.rs`, or `ai_actions.rs` will be wiped. If you need custom logic, add it to the DSL (new IMPL action, new ENTITY, new PREFERENCE) and let the compiler generate it.
+
+**2. Forgetting the parser→compiler sync step**
+If you extend the parser (edit `core/parser/src/`), you must rebuild and sync before compiling:
+```bash
+cd core/parser && npm run build
+cp -r core/parser/dist/. core/compiler/node_modules/@agicore/parser/dist/
+```
+If you skip this, the compiler runs against the old parser. Changes appear to do nothing.
+
+**3. Using `^` in package.json**
+npm adds `^` automatically on install. Remove it. All Agicore projects use exact version strings. See `TECH_STACK.md` for canonical versions and the upgrade procedure.
+
+**4. ENTITY field names that aren't snake_case**
+DSL field names must be snake_case. The compiler generates SQL columns with the exact name you write, TypeScript properties in camelCase (auto-converted), and Rust fields in snake_case. A field named `firstName` would produce a SQL column `firstName` — breaking the snake_case SQL convention.
+
+**5. ACTION names that don't follow verb_noun**
+Tauri command names are derived directly from ACTION names. `ACTION export` generates a command called `export` — which may conflict with reserved words. Use `ACTION export_report`, `ACTION create_student`, etc.
+
+**6. Referencing an entity or action that isn't declared**
+The static validator catches most cross-reference errors, but the compiler won't generate code for things that aren't in the DSL. If your WORKFLOW references an ACTION that doesn't exist, it parses cleanly but produces a workflow step with no backing command. Declare everything the app needs.
+
+**7. Triple-quoted prompts for complex AI text**
+If your AI prompt contains em dashes, `$`, `[`, `]`, or newlines, use triple-quoted strings (`"""..."""`) not regular strings (`"..."`). The lexer handles triple-quoted strings as raw content.
+
+**8. SEED data with wrong field names**
+SEED field names must exactly match the ENTITY field names in the DSL. A mismatch won't error at parse time but will generate invalid SQL. Double-check SEED field names against their ENTITY.
+
+**9. Working around a framework gap instead of filing it**
+If you find yourself writing hand-rolled Rust that should be generated, or copy-pasting patterns across files, that's a framework gap. See EVOLVING.md. The implementation cost of a well-specified gap is low; the cost of undocumented workarounds in generated apps is high.
+
+---
+
 ## Reference files
 
 | File | What it's for |
@@ -404,5 +456,6 @@ Then read the function body. Every `if (token.type === TokenType.XYZ)` block is 
 | `examples/invoice-approval/` | Workflow and expert system patterns |
 | `dsl/grammar.md` | Grammar narrative (types.ts and parser.ts are more current) |
 | `EVOLVING.md` | Methodology for extending the framework when it's missing something |
-| `TECH_STACK.md` | Exact pinned versions for all dependencies (Node, Rust, frontend) |
+| `TECH_STACK.md` | Exact pinned versions for all dependencies (Node, Rust, frontend) + 3G→4G comparison |
+| `CODING_STANDARDS.md` | Naming conventions, generated file structure, error handling, anti-patterns |
 | `ROADMAP.md` | What's implemented, what's planned |

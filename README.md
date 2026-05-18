@@ -98,6 +98,7 @@ agicore/
 |-- START_HERE_WITH_AI.md      # AI-assisted exploration guide (architecture / philosophy)
 |-- EVOLVING.md                # How to extend the framework when it's missing something
 |-- TECH_STACK.md              # Exact pinned versions for all dependencies
+|-- CODING_STANDARDS.md        # Naming conventions, generated structure, anti-patterns
 |-- PHILOSOPHY.md              # Core architectural philosophy
 |-- ROADMAP.md                 # Development roadmap
 |-- LICENSE                    # MIT

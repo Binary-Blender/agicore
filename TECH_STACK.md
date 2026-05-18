@@ -124,6 +124,55 @@ These are the pinned versions used in the Tauri backend of all Agicore-generated
 
 ---
 
+## AI Provider Strategy
+
+Agicore generates a multi-provider AI service from the `AI_SERVICE` declaration. The provider integration strategy is inherited from the 3G NovaSyn stack:
+
+| Provider | Integration | Reason |
+|----------|-------------|--------|
+| Anthropic (Claude) | `@anthropic-ai/sdk` | Best native streaming support |
+| OpenAI / xAI | Raw `fetch()` + SSE parsing | No SDK dep; API is stable and well-documented |
+| Google Gemini | Raw `fetch()` | No SDK dep; consistent with OpenAI approach |
+
+The generated Rust backend proxies all AI calls. The TypeScript frontend receives streaming chunks via Tauri events (`listen()` from `@tauri-apps/api/event`). API keys are stored encrypted in `%APPDATA%\NovaSyn\api-keys.json` — shared across all NovaSyn apps.
+
+---
+
+## 3G NovaSyn → 4G Agicore: What Changed and Why
+
+For anyone familiar with the 3G NovaSyn stack, this table shows every significant architectural change:
+
+| Concern | 3G (NovaSyn / Electron) | 4G (Agicore / Tauri) | Why changed |
+|---------|------------------------|---------------------|-------------|
+| Desktop runtime | Electron 28 (200MB) | Tauri 2 (5MB) | Bundled Chromium is wasteful; system WebView + Rust is leaner |
+| App wiring | Manual: IPC channels → preload → main → store | Generated from DSL | Eliminates entire class of wiring bugs; zero drift between layers |
+| Database access | `better-sqlite3` (Node, synchronous) | `rusqlite` (Rust, bundled) | Same synchronous philosophy; Rust provides memory safety |
+| Migrations | Manual `.sql` files run by `db.ts` | Generated `001_initial.sql` | Compiler owns the schema; no hand-written migration needed |
+| Row mappers | Hand-written (snake_case → camelCase) | Auto via `serde` | Serde rename attributes handle conversion; no mapper drift |
+| IPC wiring | `IPC_CHANNELS` → preload → main process | Tauri commands + typed invoke wrappers | Compiler generates both ends; impossible to forget a channel |
+| Type safety gate | `tsc --noEmit` (renderer + main) | `cargo build` + `tsc --noEmit` | Two compilers verify correctness: Rust + TypeScript |
+| Client settings | localStorage or settings table in DB | `PREFERENCE` declaration (localStorage) | DSL-declared, typed get/set/hook generated automatically |
+| Shared API keys | `%APPDATA%\NovaSyn\api-keys.json` | Same | Preserved exactly — all NovaSyn apps share one key store |
+| Dev workflow | Two terminals (renderer + main) | Single `tauri dev` | Tauri CLI orchestrates both; simpler DX |
+| App bundle size | ~200MB (Electron + Chromium) | ~5MB (Tauri + system WebView) | Order-of-magnitude improvement |
+| Primary key type | UUID v4 (`TEXT PRIMARY KEY`) | Integer auto-increment | Integer FKs are simpler for CRUD; UUIDs available via `uuid` crate in IMPL stubs |
+| Cross-app comms | File-based queue + Vault SQLite | CHANNEL / EVENT / VAULT (DSL layer) | Same concept, now first-class DSL primitives |
+
+### What stayed the same
+
+- React 18 (SPA, no Next.js, no router)
+- Zustand (one store per app)
+- Tailwind CSS (utility-first, CSS custom properties for theming)
+- Vite (bundler, HMR)
+- TypeScript strict mode
+- Schema-first development philosophy
+- Frameless window with custom TitleBar
+- Multi-provider AI with Anthropic SDK + raw fetch for others
+- `%APPDATA%\NovaSyn\api-keys.json` for shared keys
+- No ORM — direct SQL from generated commands
+
+---
+
 ## Runtime Environment
 
 - **Platform**: Windows (primary), macOS/Linux (compatible)
