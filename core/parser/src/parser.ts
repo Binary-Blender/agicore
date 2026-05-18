@@ -3,6 +3,7 @@
 import { Lexer, TokenType, type Token } from './lexer.js';
 import type {
   AgiFile, AppDecl, EntityDecl, ActionDecl, ViewDecl,
+  TopLevelSeedDecl,
   AiServiceDecl, TestDecl, RuleDecl, WorkflowDecl,
   FactDecl, StateDecl, PatternDecl, ScoreDecl, ModuleDecl,
   PipelineDecl, PipelineRow, PipelineModule, PipelineConnection, PipelineModuleType,
@@ -99,6 +100,7 @@ export class Parser {
     const subscriptions: SubscriptionDecl[] = [];
     const disputes: DisputeDecl[] = [];
     const preferences: PreferenceDecl[] = [];
+    const topLevelSeeds: TopLevelSeedDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -222,12 +224,15 @@ export class Parser {
         case TokenType.PREFERENCE_KW:
           preferences.push(this.parsePreference());
           break;
+        case TokenType.SEED:
+          topLevelSeeds.push(this.parseTopLevelSeed());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds };
   }
 
   // --- APP ---
@@ -360,8 +365,12 @@ export class Parser {
         if (this.check(TokenType.FULL)) {
           crud = 'full';
           this.advance();
-        } else {
+        } else if (this.check(TokenType.IDENTIFIER)) {
+          // named ops: create, read, update, delete, list
           crud = this.parseIdentifierList() as CrudOp[];
+        } else {
+          // bare CRUD with no arguments defaults to 'full'
+          crud = 'full';
         }
         continue;
       }
@@ -380,10 +389,19 @@ export class Parser {
         continue;
       }
 
-      // ORDER ASC | DESC — drives generated list query default-sort direction.
+      // ORDER [fieldname] ASC | DESC — drives generated list query default-sort direction.
+      // An optional field name may precede ASC/DESC (e.g. ORDER name ASC).
+      // For multi-key ORDER (ORDER tier ASC, activity_name ASC) we take the
+      // first field's direction and skip the rest.
       // Missing => undefined here; codegen falls back to DESC for back-compat.
       if (token.type === TokenType.ORDER) {
         this.advance();
+        // Skip optional field name(s): consume IDENTIFIER tokens until ASC/DESC
+        while (this.check(TokenType.IDENTIFIER)) {
+          this.advance(); // consume field name
+          // consume comma between multiple ORDER fields
+          this.consumeIf(TokenType.COMMA);
+        }
         const dirTok = this.current();
         if (dirTok.type === TokenType.ASC) {
           order = 'ASC';
@@ -393,6 +411,14 @@ export class Parser {
           this.advance();
         } else {
           this.error(`ORDER must be followed by ASC or DESC, got: ${dirTok.value}`);
+        }
+        // Skip any remaining comma-separated order fields (e.g. ", activity_name ASC")
+        while (this.check(TokenType.COMMA)) {
+          this.advance(); // consume comma
+          // skip optional field name
+          if (this.check(TokenType.IDENTIFIER)) this.advance();
+          // skip direction
+          if (this.check(TokenType.ASC) || this.check(TokenType.DESC)) this.advance();
         }
         continue;
       }
@@ -414,6 +440,17 @@ export class Parser {
         continue;
       }
 
+      // FIELDS { } wrapper block
+      if (token.type === TokenType.FIELDS) {
+        this.advance(); // consume FIELDS
+        this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE) && !this.isAtEnd()) {
+          fields.push(this.parseFieldDefFlex());
+        }
+        this.expectToken(TokenType.RBRACE);
+        continue;
+      }
+
       // Must be a field definition: name: type [= default] [modifiers]
       fields.push(this.parseFieldDef());
     }
@@ -424,6 +461,46 @@ export class Parser {
     if (seeds.length > 0) decl.seeds = seeds;
     if (singleton) decl.singleton = true;
     return decl;
+  }
+
+  /**
+   * Flexible field parser: handles both colon syntax (name: type) and
+   * SQL block syntax (name TYPE [REQUIRED] [DEFAULT value]).
+   * Detects by whether the token after the name is COLON or not.
+   */
+  private parseFieldDefFlex(): FieldDef {
+    const start = this.current().location;
+    const name = this.expectIdentifier();
+    // If next token is COLON, use existing syntax
+    if (this.check(TokenType.COLON)) {
+      this.advance(); // consume colon
+      const type = this.parseType();
+      let defaultValue: LiteralValue | undefined;
+      if (this.check(TokenType.EQUALS)) {
+        this.advance();
+        defaultValue = this.parseLiteral();
+      }
+      const modifiers: FieldModifier[] = [];
+      while (this.check(TokenType.REQUIRED) || this.check(TokenType.UNIQUE) || this.check(TokenType.INDEX)) {
+        modifiers.push(this.advance().value as FieldModifier);
+      }
+      return { name, type, defaultValue, modifiers, span: this.spanFrom(start) };
+    }
+    // SQL block syntax: name TYPE [REQUIRED] [DEFAULT value]
+    const type = this.parseType();
+    const modifiers: FieldModifier[] = [];
+    let defaultValue: LiteralValue | undefined;
+    // optional REQUIRED
+    if (this.check(TokenType.REQUIRED)) {
+      modifiers.push('REQUIRED');
+      this.advance();
+    }
+    // optional DEFAULT value
+    if (this.check(TokenType.DEFAULT)) {
+      this.advance();
+      defaultValue = this.parseLiteral();
+    }
+    return { name, type, defaultValue, modifiers, span: this.spanFrom(start) };
   }
 
   private parseFieldDef(): FieldDef {
@@ -463,9 +540,17 @@ export class Parser {
       [TokenType.TYPE_ID]: 'id',
     };
     const agiType = typeMap[token.type];
-    if (!agiType) this.error(`Expected type, got: ${token.value}`);
-    this.advance();
-    return agiType;
+    if (agiType) { this.advance(); return agiType; }
+    // SQL-style type aliases — these are identifiers in the lexer
+    if (token.type === TokenType.IDENTIFIER) {
+      const sqlAliases: Record<string, AgiType> = {
+        TEXT: 'string', INTEGER: 'number', REAL: 'float',
+        DATE: 'date', DATETIME: 'datetime', BOOLEAN: 'bool',
+      };
+      const mapped = sqlAliases[token.value.toUpperCase()];
+      if (mapped) { this.advance(); return mapped; }
+    }
+    this.error(`Expected type, got: ${token.value}`);
   }
 
   // --- ACTION ---
@@ -497,6 +582,15 @@ export class Parser {
           break;
         case TokenType.AI:
           this.advance();
+          // AI may appear bare (string provided later via PROMPT) or with a string
+          if (this.check(TokenType.STRING_LITERAL)) {
+            ai = this.advance().value;
+          } else {
+            ai = ''; // will be set by PROMPT block if present
+          }
+          break;
+        case TokenType.PROMPT:
+          this.advance();
           ai = this.expectToken(TokenType.STRING_LITERAL).value;
           break;
         case TokenType.STREAM:
@@ -505,7 +599,12 @@ export class Parser {
           break;
         case TokenType.IMPL_KW:
           this.advance();
-          impl = this.expectToken(TokenType.STRING_LITERAL).value;
+          // IMPL may appear bare (use action name as impl id) or with a string
+          if (this.check(TokenType.STRING_LITERAL)) {
+            impl = this.advance().value;
+          } else {
+            impl = name; // default to action name
+          }
           break;
         case TokenType.PATTERN:
           this.advance();
@@ -542,8 +641,29 @@ export class Parser {
   }
 
   private parseActionParams(): ActionParam[] {
+    // Block format: INPUT { fieldname TYPE [REQUIRED] [DEFAULT value] ... }
+    if (this.check(TokenType.LBRACE)) {
+      this.advance(); // consume {
+      const params: ActionParam[] = [];
+      while (!this.check(TokenType.RBRACE) && !this.isAtEnd()) {
+        if (this.isTopLevelKeyword(this.current().type)) break;
+        const name = this.expectIdentifier();
+        const type = this.parseType();
+        let defaultValue: LiteralValue | undefined;
+        // optional REQUIRED modifier
+        if (this.check(TokenType.REQUIRED)) this.advance();
+        // optional DEFAULT value
+        if (this.check(TokenType.DEFAULT)) {
+          this.advance();
+          defaultValue = this.parseLiteral();
+        }
+        params.push({ name, type, defaultValue });
+      }
+      this.expectToken(TokenType.RBRACE);
+      return params;
+    }
+    // Inline comma-separated format: name: type [= default], ...
     const params: ActionParam[] = [];
-    // Parse comma-separated: name: type [= default], ...
     do {
       if (this.check(TokenType.RBRACE)) break;
       // Peek ahead - if next meaningful tokens aren't name:type pattern, break
@@ -563,6 +683,27 @@ export class Parser {
   }
 
   private parseActionOutputs(): ActionOutput[] {
+    // Block format: OUTPUT { fieldname TYPE [REQUIRED] [DEFAULT value] ... }
+    if (this.check(TokenType.LBRACE)) {
+      this.advance(); // consume {
+      const outputs: ActionOutput[] = [];
+      while (!this.check(TokenType.RBRACE) && !this.isAtEnd()) {
+        if (this.isTopLevelKeyword(this.current().type)) break;
+        const name = this.expectIdentifier();
+        // Output type: accept AgiType or SQL alias
+        const type = this.parseOutputType();
+        // absorb optional REQUIRED / DEFAULT modifiers silently
+        if (this.check(TokenType.REQUIRED)) this.advance();
+        if (this.check(TokenType.DEFAULT)) {
+          this.advance();
+          this.parseLiteral(); // consume but discard
+        }
+        outputs.push({ name, type });
+      }
+      this.expectToken(TokenType.RBRACE);
+      return outputs;
+    }
+    // Inline comma-separated format
     const outputs: ActionOutput[] = [];
     do {
       if (this.check(TokenType.RBRACE)) break;
@@ -582,12 +723,28 @@ export class Parser {
       // Handle union suffixes: | null, | undefined, | string, etc.
       while (this.check(TokenType.PIPE)) {
         this.advance(); // consume |
-        const suffix = this.current();
         type += ' | ' + this.advance().value;
       }
       outputs.push({ name, type });
     } while (this.consumeIf(TokenType.COMMA));
     return outputs;
+  }
+
+  /** Parse an output type — accepts AgiType tokens, SQL aliases, or bare identifiers. */
+  private parseOutputType(): string {
+    const token = this.current();
+    // SQL-style identifier aliases
+    if (token.type === TokenType.IDENTIFIER) {
+      const sqlAliases: Record<string, string> = {
+        TEXT: 'string', INTEGER: 'number', REAL: 'float',
+        DATE: 'date', DATETIME: 'datetime', BOOLEAN: 'bool',
+      };
+      const mapped = sqlAliases[token.value.toUpperCase()];
+      if (mapped) { this.advance(); return mapped; }
+      return this.advance().value; // bare entity name or other identifier
+    }
+    // Standard type tokens
+    return this.advance().value;
   }
 
   // --- VIEW ---
@@ -617,7 +774,14 @@ export class Parser {
           break;
         case TokenType.ACTIONS:
           this.advance();
-          actions = this.parseIdentifierList();
+          if (this.check(TokenType.LBRACKET)) {
+            actions = this.parseBracketedIdentifierList();
+          } else if (this.check(TokenType.STRING_LITERAL) && this.current().value === '[]') {
+            this.advance(); // consume '[]' token — empty action list
+            actions = [];
+          } else {
+            actions = this.parseIdentifierList();
+          }
           break;
         case TokenType.SIDEBAR:
           this.advance();
@@ -653,9 +817,16 @@ export class Parser {
       [TokenType.LAYOUT_SETTINGS]: 'settings',
     };
     const lt = layoutMap[token.type];
-    if (!lt) this.error(`Expected layout type, got: ${token.value}`);
-    this.advance();
-    return lt;
+    if (lt) { this.advance(); return lt; }
+    // Identifier aliases: 'list' -> 'table', 'kanban' -> 'cards'
+    if (token.type === TokenType.IDENTIFIER) {
+      const identAliases: Record<string, LayoutType> = {
+        list: 'table', kanban: 'cards', grid: 'cards',
+      };
+      const mapped = identAliases[token.value];
+      if (mapped) { this.advance(); return mapped; }
+    }
+    this.error(`Expected layout type, got: ${token.value}`);
   }
 
   private parseSidebar(): { icon: string } {
@@ -3379,6 +3550,22 @@ export class Parser {
     }
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'preference', name, type, defaultValue, key, span: { start, end } };
+  }
+
+  // --- Top-Level SEED ---
+
+  private parseTopLevelSeed(): TopLevelSeedDecl {
+    const start = this.expectToken(TokenType.SEED).location;
+    const entity = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+    const fields = new Map<string, LiteralValue>();
+    while (!this.check(TokenType.RBRACE) && !this.isAtEnd()) {
+      const key = this.expectIdentifier();
+      const value = this.parseLiteral();
+      fields.set(key, value);
+    }
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'seed', entity, fields, span: { start, end } };
   }
 
   private isTopLevelKeyword(type: TokenType): boolean {

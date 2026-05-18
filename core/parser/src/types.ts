@@ -985,6 +985,20 @@ export interface PreferenceDecl {
   span: SourceSpan;
 }
 
+// --- Top-Level SEED Declaration ---
+
+/**
+ * A top-level SEED block (outside any ENTITY). Each block emits one
+ * `INSERT OR IGNORE INTO <table> (...) VALUES (...)` in the migration SQL.
+ * Fields are space-delimited key-value pairs (no colon, no quotes on keys).
+ */
+export interface TopLevelSeedDecl {
+  kind: 'seed';
+  entity: string;
+  fields: Map<string, LiteralValue>;
+  span: SourceSpan;
+}
+
 // --- Top-Level AST ---
 
 export type Declaration =
@@ -1027,7 +1041,8 @@ export type Declaration =
   | ReputationDecl
   | SubscriptionDecl
   | DisputeDecl
-  | PreferenceDecl;
+  | PreferenceDecl
+  | TopLevelSeedDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -1070,6 +1085,7 @@ export interface AgiFile {
   subscriptions: SubscriptionDecl[];
   disputes: DisputeDecl[];
   preferences: PreferenceDecl[];
+  topLevelSeeds: TopLevelSeedDecl[];
 }
 
 // --- Parse Error ---

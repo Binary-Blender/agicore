@@ -679,6 +679,11 @@ export class Lexer {
         this.skipBlockComment();
         continue;
       }
+      // # single-line comment (also ## double-hash)
+      if (this.peek() === '#') {
+        this.skipLineComment();
+        continue;
+      }
 
       const ch = this.peek();
 
@@ -733,7 +738,11 @@ export class Lexer {
       if (ch === '<') { this.addToken(TokenType.LT, '<'); this.advance(); continue; }
       if (ch === '=') { this.addToken(TokenType.EQUALS, '='); this.advance(); continue; }
 
-      // String literals
+      // String literals — triple-quoted first (multi-line)
+      if (ch === '"' && this.source[this.pos + 1] === '"' && this.source[this.pos + 2] === '"') {
+        this.readTripleQuotedString();
+        continue;
+      }
       if (ch === '"') {
         this.readString();
         continue;
@@ -809,6 +818,24 @@ export class Lexer {
       this.advance();
     }
     throw new LexerError('Unterminated block comment', this.location());
+  }
+
+  private readTripleQuotedString(): void {
+    const loc = this.location();
+    // Consume opening """
+    this.advance(); this.advance(); this.advance();
+    let value = '';
+    while (this.pos < this.source.length) {
+      // Check for closing """
+      if (this.peek() === '"' && this.source[this.pos + 1] === '"' && this.source[this.pos + 2] === '"') {
+        this.advance(); this.advance(); this.advance(); // consume """
+        this.tokens.push({ type: TokenType.STRING_LITERAL, value, location: loc });
+        return;
+      }
+      // Preserve all characters raw (newlines, em dashes, dollar signs, etc.)
+      value += this.advance();
+    }
+    throw new LexerError('Unterminated triple-quoted string literal', loc);
   }
 
   private readString(): void {

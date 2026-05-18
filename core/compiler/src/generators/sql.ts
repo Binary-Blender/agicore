@@ -151,6 +151,17 @@ export function generateSql(ast: AgiFile): Map<string, string> {
       );
     }
   }
+  // Top-level SEED blocks (outside any ENTITY)
+  const topSeeds = (ast as any).topLevelSeeds ?? [];
+  for (const seed of topSeeds) {
+    const table = toTableName(seed.entity);
+    const cols = Array.from((seed.fields as Map<string, unknown>).keys());
+    const vals = (cols as string[]).map((c: string) => sqlSeedLiteral((seed.fields as Map<string, any>).get(c)));
+    seedLines.push(
+      `INSERT OR IGNORE INTO ${table} (${(cols as string[]).join(', ')}) VALUES (${vals.join(', ')});`
+    );
+  }
+
   if (seedLines.length > 0) {
     migration += '\n\n-- SEED: idempotent INSERT OR IGNORE rows from ENTITY SEED blocks\n';
     migration += seedLines.join('\n');
