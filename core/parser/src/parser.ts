@@ -44,6 +44,7 @@ import type {
   RuleCondition, WorkflowStep, OnFailBehavior,
   LiteralValue, SourceLocation, SourceSpan,
   PreferenceDecl,
+  TypeAliasDecl,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -113,6 +114,7 @@ export class Parser {
     const disputes: DisputeDecl[] = [];
     const preferences: PreferenceDecl[] = [];
     const topLevelSeeds: TopLevelSeedDecl[] = [];
+    const typeAliases: TypeAliasDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -260,12 +262,15 @@ export class Parser {
         case TokenType.SEED:
           topLevelSeeds.push(this.parseTopLevelSeed());
           break;
+        case TokenType.TYPE_KW:
+          typeAliases.push(this.parseTypeAlias());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases };
   }
 
   // --- APP ---
@@ -540,7 +545,25 @@ export class Parser {
     const start = this.current().location;
     const name = this.expectIdentifier();
     this.expectToken(TokenType.COLON);
-    const type = this.parseType();
+
+    let type: AgiType;
+    let customType: string | undefined;
+
+    const tok = this.current();
+    const sqlAliases: Record<string, AgiType> = {
+      TEXT: 'string', INTEGER: 'number', REAL: 'float',
+      DATE: 'date', DATETIME: 'datetime', BOOLEAN: 'bool',
+    };
+
+    if (tok.type === TokenType.IDENTIFIER && !sqlAliases[tok.value.toUpperCase()]) {
+      // Custom type alias reference
+      customType = tok.value;
+      type = 'json';
+      this.advance();
+    } else {
+      type = this.parseType();
+      customType = undefined;
+    }
 
     let defaultValue: LiteralValue | undefined;
     if (this.check(TokenType.EQUALS)) {
@@ -557,7 +580,61 @@ export class Parser {
       modifiers.push(this.advance().value as FieldModifier);
     }
 
-    return { name, type, defaultValue, modifiers, span: this.spanFrom(start) };
+    return { name, type, customType, defaultValue, modifiers, span: this.spanFrom(start) };
+  }
+
+  private parseTypeAlias(): TypeAliasDecl {
+    this.expectToken(TokenType.TYPE_KW);
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.EQUALS);
+
+    const parts: string[] = [];
+
+    const typeTokenMap: Partial<Record<TokenType, string>> = {
+      [TokenType.TYPE_STRING]:   'string',
+      [TokenType.TYPE_NUMBER]:   'number',
+      [TokenType.TYPE_FLOAT]:    'number',
+      [TokenType.TYPE_BOOL]:     'boolean',
+      [TokenType.TYPE_DATE]:     'string',
+      [TokenType.TYPE_DATETIME]: 'string',
+      [TokenType.TYPE_JSON]:     'unknown',
+      [TokenType.TYPE_ID]:       'string',
+    };
+
+    while (!this.isAtEnd()) {
+      const tok = this.current();
+      if (typeTokenMap[tok.type] !== undefined) {
+        parts.push(typeTokenMap[tok.type]!);
+        this.advance();
+      } else if (tok.type === TokenType.IDENTIFIER) {
+        parts.push(tok.value);
+        this.advance();
+      } else if (tok.type === TokenType.STRING_LITERAL) {
+        // The lexer tokenizes [] as STRING_LITERAL with value "[]" — treat as array suffix
+        if (tok.value === '[]' && parts.length > 0) {
+          parts[parts.length - 1] += '[]';
+        } else {
+          parts.push(`'${tok.value}'`);
+        }
+        this.advance();
+      } else if (tok.type === TokenType.PIPE) {
+        parts.push(' | ');
+        this.advance();
+      } else if (tok.type === TokenType.LBRACKET) {
+        this.advance();
+        if (this.check(TokenType.RBRACKET)) {
+          this.advance();
+          if (parts.length > 0) {
+            parts[parts.length - 1] += '[]';
+          }
+        }
+      } else {
+        break;
+      }
+    }
+
+    const definition = parts.join('');
+    return { kind: 'typeAlias', name, definition };
   }
 
   private parseType(): AgiType {

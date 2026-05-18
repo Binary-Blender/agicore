@@ -43,6 +43,7 @@ export type LiteralValue = string | number | boolean;
 export interface FieldDef {
   name: string;
   type: AgiType;
+  customType?: string;   // name of a TYPE alias when field references one
   defaultValue?: LiteralValue;
   modifiers: FieldModifier[];
   span: SourceSpan;
@@ -471,6 +472,14 @@ export interface BrainBodyDecl {
   estopGpio?: string;
   commands: string[];
   span: SourceSpan;
+}
+
+// --- TYPE Alias Declaration ---
+
+export interface TypeAliasDecl {
+  kind: 'typeAlias';
+  name: string;
+  definition: string;  // TypeScript-compatible string, e.g. "string[]" or "'draft' | 'published'"
 }
 
 // --- VAULT Declaration (Shared Asset Storage) ---
@@ -1229,6 +1238,7 @@ export interface AgiFile {
   disputes: DisputeDecl[];
   preferences: PreferenceDecl[];
   topLevelSeeds: TopLevelSeedDecl[];
+  typeAliases: TypeAliasDecl[];
 }
 
 // --- Parse Error ---

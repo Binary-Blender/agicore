@@ -36,7 +36,7 @@ export type {
   SubscriptionDecl, SubscriptionTerms, SubscriptionPayment,
   DisputeDecl, DisputeResolution,
   StateNode, StateTransition, ScoreThreshold,
-  Declaration, TopLevelSeedDecl, FieldDef, AgiType, FieldModifier, CrudOp,
+  Declaration, TopLevelSeedDecl, TypeAliasDecl, FieldDef, AgiType, FieldModifier, CrudOp,
   Relationship, ActionParam, ActionOutput, ActionEmitField, ActionEmit, LayoutType,
   ThemeOption, ModelMapping, ModelEntry, TestGiven, TestExpect,
   AssertionOp, RuleCondition, WorkflowStep, OnFailBehavior,

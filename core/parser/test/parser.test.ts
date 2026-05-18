@@ -2688,6 +2688,58 @@ BRAIN_BODY {
   console.error(`  FAIL: BRAIN_BODY parse error: ${err}`);
 }
 
+// --- Test: TYPE alias parsing ---
+section('TYPE alias parsing');
+try {
+  const src = `
+APP test { TITLE "Test" DB test.db }
+
+TYPE TagList    = string[]
+TYPE ThemeId    = "light" | "dark" | "system"
+TYPE PostStatus = "draft" | "published" | "archived"
+`;
+  const result = parse(src);
+  assert(result.typeAliases.length === 3, 'Should have 3 type aliases');
+  const tagList = result.typeAliases[0]!;
+  assert(tagList.name === 'TagList', 'TagList name');
+  assert(tagList.definition === 'string[]', 'TagList definition is string[]');
+  const themeId = result.typeAliases[1]!;
+  assert(themeId.name === 'ThemeId', 'ThemeId name');
+  assert(themeId.definition.includes("'light'"), 'ThemeId has light');
+  assert(themeId.definition.includes('|'), 'ThemeId is a union');
+  const postStatus = result.typeAliases[2]!;
+  assert(postStatus.name === 'PostStatus', 'PostStatus name');
+  assert(postStatus.definition.includes("'draft'"), 'PostStatus has draft member');
+  console.log('  TYPE alias parsing: TagList, ThemeId, PostStatus');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: TYPE alias parsing error: ${err}`);
+}
+
+// --- Test: Entity field with custom TYPE ---
+section('Entity field with custom TYPE alias');
+try {
+  const src = `
+APP test { TITLE "Test" DB test.db }
+TYPE TagList = string[]
+ENTITY Post {
+  title: string REQUIRED
+  tags: TagList = []
+  status: string
+}
+`;
+  const result = parse(src);
+  const post = result.entities[0]!;
+  const tagsField = post.fields.find(f => f.name === 'tags')!;
+  assert(tagsField !== undefined, 'tags field exists');
+  assert(tagsField.customType === 'TagList', 'tags field has customType = TagList');
+  assert(tagsField.type === 'json', 'tags field base type is json');
+  console.log('  Entity field custom type alias: tags: TagList stored correctly');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: Entity field custom TYPE alias error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

@@ -3256,6 +3256,33 @@ SKILLDOC open_support {
   console.log('  SKILLDOC generates markdown, governance manifest, and TS registry');
 }
 
+// --- TYPE alias codegen ---
+section('TYPE alias generates export type in types.ts');
+{
+  const src = GAP_COMPILER_APP + `
+TYPE TagList    = string[]
+TYPE PostStatus = "draft" | "published" | "archived"
+ENTITY Post {
+  TIMESTAMPS
+  title: string REQUIRED
+  tags: TagList = []
+  status: PostStatus
+}
+`;
+  const { files } = compile(src);
+  const types = files.get('src/lib/types.ts')!;
+  assert(types.includes("export type TagList = string[];"), 'TagList alias generated');
+  assert(types.includes("export type PostStatus = 'draft' | 'published' | 'archived';"), 'PostStatus alias generated');
+  // Entity interface uses the alias names
+  assert(types.includes('tags: TagList'), 'Interface uses TagList alias');
+  assert(types.includes('status: PostStatus'), 'Interface uses PostStatus alias');
+  // Type aliases appear before entity interface
+  const tagListPos = types.indexOf('export type TagList');
+  const interfacePos = types.indexOf('export interface Post');
+  assert(tagListPos < interfacePos, 'Type aliases before entity interfaces');
+  console.log('  TYPE alias codegen: export type + entity field references');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

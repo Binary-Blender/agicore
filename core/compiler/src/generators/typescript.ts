@@ -1,7 +1,7 @@
 // TypeScript Code Generator
 // Generates types, invoke wrappers, and Zustand store from ENTITY/ACTION declarations
 
-import type { AgiFile, EntityDecl, ActionDecl, FieldDef, AgiType } from '@agicore/parser';
+import type { AgiFile, EntityDecl, ActionDecl, FieldDef, AgiType, TypeAliasDecl } from '@agicore/parser';
 import { toSnakeCase, toTableName, toCamelCase, toForeignKey, lcFirst } from '../naming.js';
 
 function tsType(agiType: AgiType): string {
@@ -51,6 +51,12 @@ function jsonTsType(field: FieldDef): string {
   return 'unknown';
 }
 
+function fieldTsType(field: FieldDef): string {
+  if (field.customType) return field.customType;
+  if (field.type === 'json') return jsonTsType(field);
+  return tsType(field.type);
+}
+
 function generateInterface(entity: EntityDecl): string {
   const lines: string[] = [];
   lines.push(`export interface ${entity.name} {`);
@@ -59,12 +65,7 @@ function generateInterface(entity: EntityDecl): string {
   for (const field of entity.fields) {
     const name = toCamelCase(field.name);
     const optional = isRequired(field) ? '' : ' | null';
-    if (field.type === 'json') {
-      lines.push(`  ${name}: ${jsonTsType(field)}${optional};`);
-    } else {
-      const type = tsType(field.type);
-      lines.push(`  ${name}: ${type}${optional};`);
-    }
+    lines.push(`  ${name}: ${fieldTsType(field)}${optional};`);
   }
 
   for (const rel of entity.relationships) {
@@ -88,7 +89,7 @@ function generateCreateInput(entity: EntityDecl): string {
 
   for (const field of entity.fields) {
     const name = toCamelCase(field.name);
-    const type = field.type === 'json' ? jsonTsType(field) : tsType(field.type);
+    const type = fieldTsType(field);
     const optional = field.modifiers.includes('REQUIRED') ? '' : '?';
     lines.push(`  ${name}${optional}: ${type};`);
   }
@@ -109,7 +110,7 @@ function generateUpdateInput(entity: EntityDecl): string {
 
   for (const field of entity.fields) {
     const name = toCamelCase(field.name);
-    const type = field.type === 'json' ? jsonTsType(field) : tsType(field.type);
+    const type = fieldTsType(field);
     lines.push(`  ${name}?: ${type};`);
   }
 
@@ -123,6 +124,14 @@ export function generateTypes(ast: AgiFile): string {
     `// App: ${ast.app.name}`,
     '',
   ];
+
+  if (ast.typeAliases.length > 0) {
+    sections.push('// --- Type Aliases ---');
+    for (const ta of ast.typeAliases) {
+      sections.push(`export type ${ta.name} = ${ta.definition};`);
+    }
+    sections.push('');
+  }
 
   for (const entity of ast.entities) {
     sections.push(generateInterface(entity));
