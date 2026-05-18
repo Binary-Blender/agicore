@@ -6,11 +6,12 @@
 
 | Milestone | Tests | Status |
 |---|---|---|
-| DSL Parser | 547 passing | Complete |
-| Tauri Codegen | 801 passing | Complete |
+| DSL Parser | 629 passing | Complete |
+| Tauri Codegen | 874 passing | Complete |
 | Static Validator | 34 passing | Complete |
 | Reference App (NovaSyn Chat 2.0) | End-to-end verified | **MVP Complete** |
-| **Total** | **1,382 passing, 0 failures** | |
+| Phase 7 — Adaptive Intelligence Layer | 40 declaration types | Complete (7.1 + 7.2 + 7.3) |
+| **Total** | **1,537 passing, 0 failures** | |
 
 ---
 
@@ -155,15 +156,24 @@ Validator expansion (completed):
 
 Total after Phase 7.1: **37 declaration types, ~1,500 tests passing.**
 
-### Phase 7.2 — Commerce Layer (pending)
+### Phase 7.2 — Commerce Layer (complete)
 
-- [ ] **REPUTATION** — SPC-driven trust scoring tied to CONTRACT execution history; decays over time, builds with consistent delivery; measurable trust vs engagement-based popularity
-- [ ] **SUBSCRIPTION** — recurring creator support relationships with payment coordination
-- [ ] **DISPUTE** — structured conflict resolution workflow for CONTRACT disagreements
+- [x] **REPUTATION** — SPC-driven trust scoring (METRICS/SPC/DECAY blocks); generates TypeScript metric interface + SPC config + lifecycle state type (new → maturing → mature)
+- [x] **SUBSCRIPTION** — recurring creator support (PROVIDER/SUBSCRIBER/TERMS/PAYMENT); generates TypeScript record interface + config constant with typed perks array
+- [x] **DISPUTE** — structured conflict resolution (CONTRACT ref, STATES, RESOLUTION blocks); generates state + resolution union types, record interface, and transition map state machine
 
-### Phase 7.3 — Codegen Completions (pending)
+**Total after Phase 7.2: 40 declaration types, 629 parser tests + 908 compiler tests passing.**
 
-Several declarations are fully parsed but have limited codegen. Full compiler implementations needed for: ACTION (Tauri command + TypeScript invoke), ROUTER (BabyAI decision tree), COMPILER (semantic extraction pipeline), VAULT (key rotation + audit log), EVENT (Tauri event bus + listener hooks), NBVE (shadow execution harness + SPC metric collection), CONTRACT (lifecycle state machine + SQLite schema).
+### Phase 7.3 — Codegen Completions (complete)
+
+- [x] **EVENT** — Tauri event bus commands (`emit_event`, `get_event_registry`) + TypeScript typed `listen${Name}()` / `emit${Name}()` wrappers
+- [x] **NBVE** — shadow runner class with SPC threshold checks (`isReadyForPromotion()`), `getActiveModel()` promotion logic, per-NBVE config `as const`
+- [x] **CONTRACT** — SQLite lifecycle table (draft→pending_signature→signed→active→completed→cancelled→disputed) + Rust CRUD commands + TypeScript invoke wrappers
+- [x] **REPUTATION** — SQLite `reputation_scores` table + TypeScript Tracker class with `addSample()` / `getState()` / `isEligibleForDecay()` + `parseHalfLife()` utility
+- [x] **SUBSCRIPTION** — SQLite subscriptions table + Rust `create_subscription` / `list_subscriptions` / `cancel_subscription` + TypeScript config constants
+- [x] **DISPUTE** — SQLite disputes table + Rust CRUD + TypeScript state machine (state/resolution union types, `${Name}Transitions` map)
+
+**Total after Phase 7.3: 40 declaration types, 629 parser + 908 compiler = 1,537 tests passing.**
 
 See `idea factory/NEXT_CAPABILITIES.md` for the full Phase 7 through Phase 10 roadmap.
 

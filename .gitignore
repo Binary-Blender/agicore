@@ -1,5 +1,6 @@
 node_modules/
 dist/
+**/_archive/
 *.js
 *.d.ts
 *.js.map

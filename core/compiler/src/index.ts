@@ -27,6 +27,12 @@ import { generateSession } from './generators/session.js';
 import { generateModule } from './generators/module.js';
 import { generateAuthority } from './generators/authority.js';
 import { generateSemanticMemory } from './generators/semantic-memory.js';
+import { generateEvent } from './generators/event.js';
+import { generateNbve } from './generators/nbve.js';
+import { generateContract } from './generators/contract.js';
+import { generateReputation } from './generators/reputation.js';
+import { generateSubscription } from './generators/subscription.js';
+import { generateDispute } from './generators/dispute.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -74,6 +80,12 @@ export function compile(source: string): CompileResult {
     generateModule(ast),
     generateAuthority(ast),
     generateSemanticMemory(ast),
+    generateEvent(ast),
+    generateNbve(ast),
+    generateContract(ast),
+    generateReputation(ast),
+    generateSubscription(ast),
+    generateDispute(ast),
   ];
 
   for (const gen of generators) {
@@ -113,3 +125,9 @@ export { generateSession } from './generators/session.js';
 export { generateModule } from './generators/module.js';
 export { generateAuthority } from './generators/authority.js';
 export { generateSemanticMemory } from './generators/semantic-memory.js';
+export { generateEvent } from './generators/event.js';
+export { generateNbve } from './generators/nbve.js';
+export { generateContract } from './generators/contract.js';
+export { generateReputation } from './generators/reputation.js';
+export { generateSubscription } from './generators/subscription.js';
+export { generateDispute } from './generators/dispute.js';
