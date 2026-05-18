@@ -1132,14 +1132,20 @@ export class Parser {
 
     const conditions: RuleCondition[] = [];
     let action = '';
+    let flag: string | undefined;
+    let severity: RuleDecl['severity'] | undefined;
     let priority = 0;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
 
-      if (token.type === TokenType.WHEN || token.type === TokenType.AND ||
-          token.type === TokenType.OR || token.type === TokenType.UNLESS) {
-        const connector = token.type === TokenType.WHEN ? undefined : token.value as RuleCondition['connector'];
+      // WHEN / IF / AND / OR / UNLESS — condition starters
+      if (token.type === TokenType.WHEN || token.type === TokenType.IF_KW ||
+          token.type === TokenType.AND || token.type === TokenType.OR ||
+          token.type === TokenType.UNLESS) {
+        const connector = (token.type === TokenType.WHEN || token.type === TokenType.IF_KW)
+          ? undefined
+          : token.value as RuleCondition['connector'];
         this.advance();
         const field = this.parseQualifiedName();
         const op = this.advance().value;
@@ -1150,7 +1156,19 @@ export class Parser {
 
       if (token.type === TokenType.THEN) {
         this.advance();
-        action = this.expectIdentifier();
+        if (this.check(TokenType.FLAG_KW)) {
+          this.advance();
+          flag = this.expectToken(TokenType.STRING_LITERAL).value;
+          action = `flag:${flag}`;
+        } else {
+          action = this.expectIdentifier();
+        }
+        continue;
+      }
+
+      if (token.type === TokenType.SEVERITY_KW) {
+        this.advance();
+        severity = this.expectIdentifier() as RuleDecl['severity'];
         continue;
       }
 
@@ -1164,7 +1182,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'rule', name, conditions, action, priority, span: { start, end } };
+    return { kind: 'rule', name, conditions, action, flag, severity, priority, span: { start, end } };
   }
 
   // --- WORKFLOW ---
@@ -1941,6 +1959,8 @@ export class Parser {
     let keywords: string[] = [];
     let domain: string | undefined;
     let path: string | undefined;
+    let content: string | undefined;
+    let appliesTo: string[] | undefined;
     let priority = 0;
 
     while (!this.check(TokenType.RBRACE)) {
@@ -1966,6 +1986,16 @@ export class Parser {
         path = this.expectToken(TokenType.STRING_LITERAL).value;
         continue;
       }
+      if (token.type === TokenType.CONTENT_KW) {
+        this.advance();
+        content = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.APPLIES_TO_KW) {
+        this.advance();
+        appliesTo = this.parseBracketedIdentifierList();
+        continue;
+      }
       if (token.type === TokenType.PRIORITY) {
         this.advance();
         priority = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
@@ -1975,7 +2005,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'skill', name, description, keywords, domain, path, priority, span: { start, end } };
+    return { kind: 'skill', name, description, keywords, domain, path, content, appliesTo, priority, span: { start, end } };
   }
 
   // --- SKILLDOC (Governed Cognition Infrastructure) ---
@@ -2773,6 +2803,7 @@ export class Parser {
     let description = '';
     const payload: EventPayloadField[] = [];
     const subscribers: string[] = [];
+    let schedule: string | undefined;
     let idempotent = false;
     let ttl = 0;
 
@@ -2794,6 +2825,9 @@ export class Parser {
       if (token.type === TokenType.SUBSCRIBERS) {
         this.advance(); subscribers.push(...this.parseBracketedIdentifierList()); continue;
       }
+      if (token.type === TokenType.SCHEDULE) {
+        this.advance(); schedule = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
       if (token.type === TokenType.IDEMPOTENT) {
         this.advance(); idempotent = this.parseBoolValue(); continue;
       }
@@ -2804,7 +2838,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'event', name, description, payload, subscribers, idempotent, ttl, span: { start, end } };
+    return { kind: 'event', name, description, payload, subscribers, schedule, idempotent, ttl, span: { start, end } };
   }
 
   // --- NBVE ---

@@ -2385,6 +2385,111 @@ try {
   console.error(`  FAIL: ENTITY SINGLETON parse error: ${err}`);
 }
 
+// --- Test: RULE with IF / FLAG / SEVERITY ---
+
+section('RULE IF/FLAG/SEVERITY syntax');
+
+const ruleIfFlagTest = `
+APP test { TITLE "Test" DB test.db }
+
+RULE ltv_cac_critical {
+  IF FinancialSnapshot.ltv_cac_ratio < 2
+  THEN FLAG "finance_risk"
+  SEVERITY critical
+  PRIORITY 10
+}
+
+RULE cash_runway_danger {
+  IF FinancialSnapshot.cash_runway_months < 3
+  THEN FLAG "existential_risk"
+  SEVERITY critical
+  PRIORITY 10
+}
+`;
+
+try {
+  const ruleIfResult = parse(ruleIfFlagTest);
+  assert(ruleIfResult.rules.length === 2, `Should have 2 rules, got ${ruleIfResult.rules.length}`);
+  const r0 = ruleIfResult.rules[0]!;
+  assert(r0.name === 'ltv_cac_critical', `Rule name should be ltv_cac_critical, got ${r0.name}`);
+  assert(r0.conditions.length === 1, `Should have 1 condition`);
+  assert(r0.conditions[0]!.field === 'FinancialSnapshot.ltv_cac_ratio', `Condition field should use dot notation`);
+  assert(r0.conditions[0]!.op === '<', `Condition op should be <`);
+  assert(r0.conditions[0]!.value === 2, `Condition value should be 2`);
+  assert(r0.flag === 'finance_risk', `Flag should be finance_risk, got ${r0.flag}`);
+  assert(r0.severity === 'critical', `Severity should be critical, got ${r0.severity}`);
+  assert(r0.priority === 10, `Priority should be 10, got ${r0.priority}`);
+  const r1 = ruleIfResult.rules[1]!;
+  assert(r1.flag === 'existential_risk', `Second rule flag should be existential_risk`);
+  console.log('  RULE IF/FLAG/SEVERITY parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: RULE IF/FLAG/SEVERITY parse error: ${err}`);
+}
+
+// --- Test: SKILL with CONTENT and APPLIES_TO ---
+
+section('SKILL CONTENT/APPLIES_TO syntax');
+
+const skillContentTest = `
+APP test { TITLE "Test" DB test.db }
+
+SKILL finance_frameworks {
+  DESCRIPTION "Core financial frameworks"
+  DOMAIN "finance"
+  CONTENT "LTV:CAC Ratio: Healthy 3:1+, Warning 2:1, Critical below 2:1."
+  APPLIES_TO [finance_advisor, investment_screener]
+  KEYWORDS finance, ltv, cac
+  PRIORITY 8
+}
+`;
+
+try {
+  const skillResult = parse(skillContentTest);
+  assert(skillResult.skills.length === 1, `Should have 1 skill, got ${skillResult.skills.length}`);
+  const sk = skillResult.skills[0]!;
+  assert(sk.name === 'finance_frameworks', `Skill name should be finance_frameworks`);
+  assert(sk.domain === 'finance', `Domain should be finance`);
+  assert(sk.content !== undefined, `Content should be defined`);
+  assert(sk.content!.includes('LTV:CAC'), `Content should include LTV:CAC`);
+  assert(sk.appliesTo !== undefined, `appliesTo should be defined`);
+  assert(sk.appliesTo!.length === 2, `appliesTo should have 2 entries, got ${sk.appliesTo!.length}`);
+  assert(sk.appliesTo![0] === 'finance_advisor', `First appliesTo should be finance_advisor`);
+  assert(sk.priority === 8, `Priority should be 8`);
+  console.log('  SKILL CONTENT/APPLIES_TO parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: SKILL CONTENT/APPLIES_TO parse error: ${err}`);
+}
+
+// --- Test: EVENT with SCHEDULE ---
+
+section('EVENT SCHEDULE syntax');
+
+const eventScheduleTest = `
+APP test { TITLE "Test" DB test.db }
+
+EVENT weekly_review_reminder {
+  DESCRIPTION "Monday morning reminder to complete the weekly business review"
+  SCHEDULE "0 9 * * 1"
+  SUBSCRIBERS [leadership_advisor]
+}
+`;
+
+try {
+  const evSchedResult = parse(eventScheduleTest);
+  assert(evSchedResult.events.length === 1, `Should have 1 event`);
+  const ev = evSchedResult.events[0]!;
+  assert(ev.name === 'weekly_review_reminder', `Event name should be weekly_review_reminder`);
+  assert(ev.schedule === '0 9 * * 1', `Schedule should be cron string, got ${ev.schedule}`);
+  assert(ev.subscribers.length === 1, `Should have 1 subscriber`);
+  assert(ev.subscribers[0] === 'leadership_advisor', `Subscriber should be leadership_advisor`);
+  console.log('  EVENT SCHEDULE parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: EVENT SCHEDULE parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

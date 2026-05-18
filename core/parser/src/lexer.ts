@@ -77,6 +77,9 @@ export enum TokenType {
   UNLESS = 'UNLESS',
   THEN = 'THEN',
   PRIORITY = 'PRIORITY',
+  IF_KW = 'IF_KW',
+  FLAG_KW = 'FLAG_KW',
+  SEVERITY_KW = 'SEVERITY_KW',
 
   // Workflow keywords
   STEP = 'STEP',
@@ -169,6 +172,7 @@ export enum TokenType {
   TASK_TYPES = 'TASK_TYPES',
   MOSH_PIT = 'MOSH_PIT',
   KEYWORDS = 'KEYWORDS',
+  APPLIES_TO_KW = 'APPLIES_TO_KW',
   DOMAIN = 'DOMAIN',
   STALENESS_WINDOW = 'STALENESS_WINDOW',
   STALENESS_DROP = 'STALENESS_DROP',
@@ -605,6 +609,10 @@ const KEYWORDS: Record<string, TokenType> = {
   TYPE: TokenType.TYPE_KW,
   KEY: TokenType.KEY_KW,
   SINGLETON: TokenType.SINGLETON_KW,
+  IF: TokenType.IF_KW,
+  FLAG: TokenType.FLAG_KW,
+  SEVERITY: TokenType.SEVERITY_KW,
+  APPLIES_TO: TokenType.APPLIES_TO_KW,
   true: TokenType.TRUE,
   false: TokenType.FALSE,
   full: TokenType.FULL,

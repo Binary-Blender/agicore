@@ -268,6 +268,8 @@ export interface RuleDecl {
   name: string;
   conditions: RuleCondition[];
   action: string;
+  flag?: string;
+  severity?: 'critical' | 'high' | 'medium' | 'low';
   priority: number;
   span: SourceSpan;
 }
@@ -487,6 +489,8 @@ export interface SkillDecl {
   keywords: string[];
   domain?: string;
   path?: string;
+  content?: string;
+  appliesTo?: string[];
   priority: number;
   span: SourceSpan;
 }
@@ -834,6 +838,7 @@ export interface EventDecl {
   description: string;
   payload: EventPayloadField[];
   subscribers: string[];
+  schedule?: string;
   idempotent: boolean;
   ttl: number;
   span: SourceSpan;
