@@ -163,26 +163,47 @@ The result is systems that are:
 
 ---
 
+## How Agicore Evolves
+
+Agicore does not evolve through centralized roadmap planning. It evolves through **operational pressure** — real applications stress the framework, gaps surface as structured feature requests, and framework sessions close those gaps across every layer (lexer, parser, codegen, tests) before returning to the application. The loop repeats.
+
+This model exists because AI collapses the cost of implementing a well-specified primitive. What remains expensive — and what this model demands — is the discipline to specify gaps precisely rather than work around them silently.
+
+The workflow:
+
+1. **Build a real application** — treat it as a framework stress test, not a demo
+2. **Detect friction** — missing primitives, repeated patterns, rejected syntax
+3. **Write a structured feature request** — syntax proposal, expected output, which app needs it
+4. **Open a framework session** — implement across lexer → types → parser → codegen → tests
+5. **Return to the application** — now with the primitive it needs, expressed in the DSL
+
+Phase 8 was triggered entirely by writing `benders_killer_app.agi`. Six gaps surfaced, were documented in a single feature request file, and were implemented in one session: `ACTION IMPL`, `ACTION PATTERN`, `PREFERENCE`, union output types, `ACTION EMIT`, and `ENTITY SINGLETON`. Parser gained 22 tests, compiler gained 35. One conversation.
+
+See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request template, and why this approach wasn't practical before AI.
+
+---
+
 ## Status — MVP Complete (May 2026)
 
 **The full pipeline works end-to-end.** A single `.agi` file compiles to a running Tauri application. The reference app has been tested in production: API key entry, multi-provider streaming AI responses, conversation history, folder-based knowledge, tag management, and exchange library all work from generated code.
 
 | Layer | Tests | Status |
 |---|---|---|
-| Parser (547 tests) | 547 passing | Complete |
-| Compiler (606 tests) | 606 passing | Complete |
-| Static Validator (20 tests) | 20 passing | Complete |
-| **Total** | **1,173 passing** | **0 failures** |
+| Parser | 651 passing | Complete |
+| Compiler | 909 passing | Complete |
+| Static Validator | 34 passing | Complete |
+| **Total** | **1,594 passing** | **0 failures** |
 
-The DSL covers 34 declaration types across 7 layers:
+The DSL covers 41 declaration types across 8 layers:
 
-- **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST
+- **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST, PREFERENCE
 - **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT
 - **Expert System:** RULE, FACT, STATE, PATTERN, SCORE, MODULE
 - **Cooperative Intelligence:** ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED
 - **Semantic Infrastructure:** PACKET, AUTHORITY, CHANNEL, IDENTITY, FEED
 - **Ambient Intelligence:** NODE, SENSOR, ZONE
 - **Semantic Operating Environment:** SESSION, COMPILER
+- **Adaptive Intelligence:** EVENT, NBVE, CONTRACT, REPUTATION, SUBSCRIPTION, DISPUTE
 
 **What the compiler generates from a single `.agi` file:**
 
