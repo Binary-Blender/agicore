@@ -33,10 +33,11 @@ import type {
   DisputeDecl, DisputeResolution,
   StateNode, StateTransition, ScoreThreshold,
   FieldDef, FieldModifier, AgiType, CrudOp, Relationship, EntityOrder, SeedRecord,
-  ActionParam, ActionOutput, LayoutType, ThemeOption,
+  ActionParam, ActionOutput, ActionEmitField, ActionEmit, LayoutType, ThemeOption,
   ModelEntry, TestGiven, TestExpect, AssertionOp,
   RuleCondition, WorkflowStep, OnFailBehavior,
   LiteralValue, SourceLocation, SourceSpan,
+  PreferenceDecl,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -97,6 +98,7 @@ export class Parser {
     const reputations: ReputationDecl[] = [];
     const subscriptions: SubscriptionDecl[] = [];
     const disputes: DisputeDecl[] = [];
+    const preferences: PreferenceDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -217,12 +219,15 @@ export class Parser {
         case TokenType.DISPUTE_KW:
           disputes.push(this.parseDispute());
           break;
+        case TokenType.PREFERENCE_KW:
+          preferences.push(this.parsePreference());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences };
   }
 
   // --- APP ---
@@ -327,6 +332,11 @@ export class Parser {
   private parseEntity(): EntityDecl {
     const start = this.expectToken(TokenType.ENTITY).location;
     const name = this.expectIdentifier();
+    let singleton = false;
+    if (this.check(TokenType.SINGLETON_KW)) {
+      singleton = true;
+      this.advance();
+    }
     this.expectToken(TokenType.LBRACE);
 
     const fields: FieldDef[] = [];
@@ -412,6 +422,7 @@ export class Parser {
     const decl: EntityDecl = { kind: 'entity', name, fields, timestamps, crud, relationships, span: { start, end } };
     if (order !== undefined) decl.order = order;
     if (seeds.length > 0) decl.seeds = seeds;
+    if (singleton) decl.singleton = true;
     return decl;
   }
 
@@ -468,6 +479,9 @@ export class Parser {
     let output: ActionOutput[] = [];
     let ai: string | undefined;
     let stream = false;
+    let impl: string | undefined;
+    let pattern: string | undefined;
+    let emit: ActionEmit | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -488,13 +502,42 @@ export class Parser {
           this.advance();
           stream = this.parseBoolValue();
           break;
+        case TokenType.IMPL_KW:
+          this.advance();
+          impl = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
+        case TokenType.PATTERN:
+          this.advance();
+          pattern = this.advance().value; // identifier: file_handler, shell_open, etc.
+          break;
+        case TokenType.EMIT_KW: {
+          this.advance();
+          const eventName = this.expectIdentifier();
+          this.expectToken(TokenType.LBRACE);
+          const emitFields: ActionEmitField[] = [];
+          while (!this.check(TokenType.RBRACE)) {
+            const fn2 = this.expectIdentifier();
+            this.expectToken(TokenType.COLON);
+            const ft = this.current().value;
+            this.advance();
+            emitFields.push({ name: fn2, type: ft });
+            this.consumeIf(TokenType.COMMA);
+          }
+          this.expectToken(TokenType.RBRACE);
+          emit = { eventName, fields: emitFields };
+          break;
+        }
         default:
           this.error(`Unexpected field in ACTION: ${token.value}`);
       }
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'action', name, input, output, ai, stream, span: { start, end } };
+    const decl: ActionDecl = { kind: 'action', name, input, output, ai, stream, span: { start, end } };
+    if (impl !== undefined) decl.impl = impl;
+    if (pattern !== undefined) decl.pattern = pattern;
+    if (emit !== undefined) decl.emit = emit;
+    return decl;
   }
 
   private parseActionParams(): ActionParam[] {
@@ -534,6 +577,12 @@ export class Parser {
         type = this.advance().value;
       } else {
         type = this.advance().value; // Accept any token value as type name
+      }
+      // Handle union suffixes: | null, | undefined, | string, etc.
+      while (this.check(TokenType.PIPE)) {
+        this.advance(); // consume |
+        const suffix = this.current();
+        type += ' | ' + this.advance().value;
       }
       outputs.push({ name, type });
     } while (this.consumeIf(TokenType.COMMA));
@@ -3289,6 +3338,35 @@ export class Parser {
       name += '.' + this.expectIdentifier();
     }
     return name;
+  }
+
+  // --- PREFERENCE ---
+
+  private parsePreference(): PreferenceDecl {
+    const start = this.expectToken(TokenType.PREFERENCE_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+    let type = 'string';
+    let defaultValue: LiteralValue = '';
+    let key = '';
+    while (!this.check(TokenType.RBRACE)) {
+      const tok = this.current();
+      if (tok.type === TokenType.TYPE_KW) {
+        this.advance();
+        type = this.current().value; // e.g. "string"
+        this.advance();
+      } else if (tok.type === TokenType.DEFAULT) {
+        this.advance();
+        defaultValue = this.parseLiteral();
+      } else if (tok.type === TokenType.KEY_KW) {
+        this.advance();
+        key = this.expectToken(TokenType.STRING_LITERAL).value;
+      } else {
+        this.error(`Unexpected token in PREFERENCE: ${tok.value}`);
+      }
+    }
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'preference', name, type, defaultValue, key, span: { start, end } };
   }
 
   private isTopLevelKeyword(type: TokenType): boolean {

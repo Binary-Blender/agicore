@@ -2850,6 +2850,173 @@ MODULE InsightHelper {
   assert(!files.has('migrations/semantic_memory.sql'), 'Should NOT emit semantic_memory migration for minimal app');
 }
 
+// ============================================================
+// Gap codegen tests: IMPL, PREFERENCE, SINGLETON
+// ============================================================
+
+const GAP_COMPILER_APP = `APP gap_app { TITLE "Gap App" DB gap.db }`;
+
+// --- Test 7: IMPL action generates a separate protected file ---
+
+section('Gap 1: IMPL action generates protected file');
+
+{
+  const src = GAP_COMPILER_APP + `
+ACTION validate_cf {
+  INPUT token: string
+  OUTPUT valid: bool
+  IMPL "validate_cf_token"
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src-tauri/src/commands/validate_cf.rs'), 'IMPL action should generate its own .rs file');
+  const implFile = files.get('src-tauri/src/commands/validate_cf.rs')!;
+  assert(implFile.startsWith('// @agicore-protected'), 'IMPL file should start with @agicore-protected marker');
+  assert(implFile.includes('pub struct ValidateCfInput'), 'IMPL file should contain input struct');
+  assert(implFile.includes('pub struct ValidateCfOutput'), 'IMPL file should contain output struct');
+  assert(implFile.includes('pub async fn validate_cf'), 'IMPL file should contain the command function');
+  assert(implFile.includes('todo!()'), 'IMPL file stub should include todo!()');
+  // Should NOT be in actions.rs bundle
+  assert(!files.has('src-tauri/src/commands/actions.rs'), 'IMPL-only app should NOT generate actions.rs');
+  // Should be included in mod.rs
+  const modRs = files.get('src-tauri/src/commands/mod.rs')!;
+  assert(modRs.includes('pub mod validate_cf;'), 'mod.rs should include IMPL action module');
+  console.log('  IMPL action protected file generated successfully');
+}
+
+// --- IMPL action with PATTERN = file_handler ---
+
+section('Gap 2: IMPL action with PATTERN file_handler');
+
+{
+  const src = GAP_COMPILER_APP + `
+ACTION pick_file {
+  OUTPUT path: string | null
+  IMPL "pick_file_impl"
+  PATTERN file_handler
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src-tauri/src/commands/pick_file.rs'), 'file_handler IMPL should generate pick_file.rs');
+  const stubFile = files.get('src-tauri/src/commands/pick_file.rs')!;
+  assert(stubFile.includes('tauri_plugin_dialog::DialogExt'), 'file_handler stub should import DialogExt');
+  console.log('  file_handler IMPL pattern generated successfully');
+}
+
+// --- IMPL action with PATTERN = shell_open ---
+
+section('Gap 2: IMPL action with PATTERN shell_open');
+
+{
+  const src = GAP_COMPILER_APP + `
+ACTION open_link {
+  INPUT url: string
+  OUTPUT success: bool
+  IMPL "open_link_impl"
+  PATTERN shell_open
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src-tauri/src/commands/open_link.rs'), 'shell_open IMPL should generate open_link.rs');
+  const stubFile = files.get('src-tauri/src/commands/open_link.rs')!;
+  assert(stubFile.includes('tauri_plugin_shell::ShellExt'), 'shell_open stub should import ShellExt');
+  console.log('  shell_open IMPL pattern generated successfully');
+}
+
+// --- Union output type in TypeScript invokes ---
+
+section('Gap 4: Union output type in TS invoke');
+
+{
+  const src = GAP_COMPILER_APP + `
+ACTION get_token {
+  OUTPUT token: string | null
+}
+`;
+  const { files } = compile(src);
+  const invokes = files.get('src/lib/api.ts')!;
+  assert(invokes.includes('invoke<string | null>'), 'TS invoke should use union type string | null');
+  console.log('  Union output type in TS invoke generated successfully');
+}
+
+// --- Test 8: PREFERENCE generates src/lib/preferences.ts ---
+
+section('Gap 3: PREFERENCE generates preferences.ts');
+
+{
+  const src = GAP_COMPILER_APP + `
+PREFERENCE AppTheme {
+  TYPE string
+  DEFAULT "midnight"
+  KEY "bka_app_theme"
+}
+PREFERENCE ShowSidebar {
+  TYPE bool
+  DEFAULT false
+  KEY "bka_show_sidebar"
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src/lib/preferences.ts'), 'Should generate src/lib/preferences.ts');
+  const prefsFile = files.get('src/lib/preferences.ts')!;
+  assert(prefsFile.includes('// @agicore-generated'), 'preferences.ts should have generated marker');
+  assert(prefsFile.includes('export function usePreference'), 'preferences.ts should export usePreference');
+  assert(prefsFile.includes("getAppTheme"), 'preferences.ts should have getAppTheme accessor');
+  assert(prefsFile.includes("setAppTheme"), 'preferences.ts should have setAppTheme accessor');
+  assert(prefsFile.includes("bka_app_theme"), 'preferences.ts should use the localStorage key');
+  assert(prefsFile.includes("midnight"), 'preferences.ts should include the default value');
+  assert(prefsFile.includes("getShowSidebar"), 'preferences.ts should have getShowSidebar accessor');
+  assert(prefsFile.includes("boolean"), 'preferences.ts should use boolean type for bool prefs');
+  console.log('  PREFERENCE preferences.ts generated successfully');
+}
+
+// No PREFERENCE → no preferences.ts
+{
+  const src = GAP_COMPILER_APP;
+  const { files } = compile(src);
+  assert(!files.has('src/lib/preferences.ts'), 'Should NOT generate preferences.ts when no PREFERENCE declared');
+}
+
+// --- Test 9: SINGLETON entity generates get_or_create pattern ---
+
+section('Gap 6: SINGLETON entity generates get_or_create in Rust');
+
+{
+  const src = GAP_COMPILER_APP + `
+ENTITY AppSettings SINGLETON {
+  TIMESTAMPS
+  theme: string = "dark"
+  notifications_enabled: bool = true
+}
+`;
+  const { files } = compile(src);
+  assert(files.has('src-tauri/src/commands/app_settings.rs'), 'SINGLETON entity should generate .rs file');
+  const settingsRs = files.get('src-tauri/src/commands/app_settings.rs')!;
+  assert(settingsRs.includes("WHERE id = 'singleton'"), 'SINGLETON get should query by id = singleton');
+  assert(settingsRs.includes('pub fn get_app_settings'), 'SINGLETON should generate get command');
+  assert(settingsRs.includes('pub fn update_app_settings'), 'SINGLETON should generate update command');
+  // Should NOT have list/create/delete
+  assert(!settingsRs.includes('pub fn list_app_settings'), 'SINGLETON should NOT have list command');
+  assert(!settingsRs.includes('pub fn create_app_settings'), 'SINGLETON should NOT have create command');
+  assert(!settingsRs.includes('pub fn delete_app_settings'), 'SINGLETON should NOT have delete command');
+
+  // SQL should auto-seed the singleton row
+  const sql = files.get('src-tauri/migrations/001_initial.sql')!;
+  assert(sql.includes("INSERT OR IGNORE INTO app_settings_s (id") || sql.includes("INSERT OR IGNORE INTO app_settingss (id") || sql.includes("INSERT OR IGNORE INTO app_settings"), 'SQL should auto-seed singleton row');
+
+  // TypeScript store should use load/edit (not list/add/remove)
+  const store = files.get('src/store/appStore.ts')!;
+  assert(store.includes('loadAppSettings'), 'Store should have loadAppSettings (not loadAppSettingss)');
+  assert(!store.includes('addAppSettings'), 'Store should NOT have addAppSettings for singleton');
+  assert(!store.includes('removeAppSettings'), 'Store should NOT have removeAppSettings for singleton');
+
+  // TS invokes should use get_ not list_
+  const invokes = files.get('src/lib/api.ts')!;
+  assert(invokes.includes("invoke<AppSettings>('get_app_settings')"), 'TS invoke should call get_app_settings with no args');
+
+  console.log('  SINGLETON entity codegen generated successfully');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

@@ -22,8 +22,19 @@ const AGI_PRIMITIVES: ReadonlySet<string> = new Set([
 ]);
 
 // Action input/output types may be either an AGI primitive OR an Entity name.
-// Map primitives through tsType; pass entity names through unchanged.
+// Map primitives through tsType; pass entity names and union types through unchanged.
 function tsTypeOrEntity(t: string): string {
+  // Pass through union types (e.g. "string | null") directly
+  if (t.includes(' | ')) {
+    // Map the base type and preserve the union suffix
+    const parts = t.split(' | ');
+    return parts.map((part) => {
+      const trimmed = part.trim();
+      if (trimmed === 'null') return 'null';
+      if (trimmed === 'undefined') return 'undefined';
+      return AGI_PRIMITIVES.has(trimmed) ? tsType(trimmed as AgiType) : trimmed;
+    }).join(' | ');
+  }
   return AGI_PRIMITIVES.has(t) ? tsType(t as AgiType) : t;
 }
 
@@ -128,6 +139,19 @@ function generateEntityInvokes(entity: EntityDecl, ast: AgiFile): string {
 
   const currentEntities = ast.app.current ?? [];
 
+  if (entity.singleton) {
+    // Singleton: only get and update — no list/create/delete
+    lines.push(`export const get${name} = () =>`);
+    lines.push(`  invoke<${name}>('get_${snake}');`);
+    lines.push('');
+    if (ops.includes('update')) {
+      lines.push(`export const update${name} = (id: string, input: Update${name}Input) =>`);
+      lines.push(`  invoke<${name}>('update_${snake}', { id, input });`);
+      lines.push('');
+    }
+    return lines.join('\n');
+  }
+
   if (ops.includes('list')) {
     lines.push(`export const list${name}s = () =>`);
     lines.push(`  invoke<${name}[]>('list_${table}');`);
@@ -187,7 +211,32 @@ function generateActionInvoke(action: ActionDecl): string {
   lines.push(`export const ${fnName} = (${params}) =>`);
   lines.push(`  invoke<${returnType}>('${action.name}', { ${argObj} });`);
   lines.push('');
+
+  // If action has EMIT, generate a typed listener function
+  if (action.emit) {
+    const emit = action.emit;
+    const eventName = emit.eventName;
+    const typeName = toPascalCase(eventName) + 'Payload';
+    const listenerName = 'on' + toPascalCase(eventName);
+
+    // Payload type
+    lines.push(`export type ${typeName} = {`);
+    for (const field of emit.fields) {
+      lines.push(`  ${toCamelCase(field.name)}: ${tsTypeOrEntity(field.type)};`);
+    }
+    lines.push(`};`);
+    lines.push(`export const ${listenerName} = (callback: (payload: ${typeName}) => void) => {`);
+    lines.push(`  const { listen } = require('@tauri-apps/api/event');`);
+    lines.push(`  return listen<${typeName}>('${eventName}', (e: { payload: ${typeName} }) => callback(e.payload));`);
+    lines.push(`};`);
+    lines.push('');
+  }
+
   return lines.join('\n');
+}
+
+function toPascalCase(str: string): string {
+  return str.split(/[_\s-]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
 }
 
 export function generateInvokes(ast: AgiFile): string {
@@ -355,18 +404,24 @@ export function generateStore(ast: AgiFile): string {
     ...ast.entities.flatMap(e => {
       const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
       const fns: string[] = [];
-      if (ops.includes('list')) {
-        fns.push(`list${e.name}s`);
-        // Pull in the by-<X> variant for any BELONGS_TO whose target is CURRENT.
-        for (const rel of e.relationships) {
-          if (rel.type !== 'BELONGS_TO') continue;
-          if (!(ast.app.current ?? []).includes(rel.target)) continue;
-          fns.push(`list${e.name}sBy${rel.target}`);
+      if (e.singleton) {
+        // Singletons only get load (get) and update
+        fns.push(`get${e.name}`);
+        if (ops.includes('update')) fns.push(`update${e.name}`);
+      } else {
+        if (ops.includes('list')) {
+          fns.push(`list${e.name}s`);
+          // Pull in the by-<X> variant for any BELONGS_TO whose target is CURRENT.
+          for (const rel of e.relationships) {
+            if (rel.type !== 'BELONGS_TO') continue;
+            if (!(ast.app.current ?? []).includes(rel.target)) continue;
+            fns.push(`list${e.name}sBy${rel.target}`);
+          }
         }
+        if (ops.includes('create')) fns.push(`create${e.name}`);
+        if (ops.includes('update')) fns.push(`update${e.name}`);
+        if (ops.includes('delete')) fns.push(`delete${e.name}`);
       }
-      if (ops.includes('create')) fns.push(`create${e.name}`);
-      if (ops.includes('update')) fns.push(`update${e.name}`);
-      if (ops.includes('delete')) fns.push(`delete${e.name}`);
       return [`  ${fns.join(', ')},`];
     }),
     "} from '../lib/api';",
@@ -426,21 +481,32 @@ export function generateStore(ast: AgiFile): string {
   for (const entity of ast.entities) {
     const name = entity.name;
     const camel = lcFirst(name);
-    const plural = camel + 's';
-    lines.push(`  ${plural}: ${name}[];`);
-    lines.push(`  selected${name}Id: string | null;`);
-    lines.push(`  load${name}s: () => Promise<void>;`);
-    // Filtered loader per CURRENT parent — reads currentXId from store state and
-    // calls the SQL-pushdown variant when set, else falls back to clearing the list.
-    for (const rel of entity.relationships) {
-      if (rel.type !== 'BELONGS_TO') continue;
-      if (!currentEntities.includes(rel.target)) continue;
-      lines.push(`  load${name}sForCurrent${rel.target}: () => Promise<void>;`);
+
+    if (entity.singleton) {
+      // Singleton: just one instance, no list/create/delete
+      lines.push(`  ${camel}: ${name} | null;`);
+      lines.push(`  load${name}: () => Promise<void>;`);
+      const ops = entity.crud === 'full' ? ['update'] : entity.crud;
+      if (ops.includes('update')) {
+        lines.push(`  edit${name}: (input: Update${name}Input) => Promise<void>;`);
+      }
+    } else {
+      const plural = camel + 's';
+      lines.push(`  ${plural}: ${name}[];`);
+      lines.push(`  selected${name}Id: string | null;`);
+      lines.push(`  load${name}s: () => Promise<void>;`);
+      // Filtered loader per CURRENT parent — reads currentXId from store state and
+      // calls the SQL-pushdown variant when set, else falls back to clearing the list.
+      for (const rel of entity.relationships) {
+        if (rel.type !== 'BELONGS_TO') continue;
+        if (!currentEntities.includes(rel.target)) continue;
+        lines.push(`  load${name}sForCurrent${rel.target}: () => Promise<void>;`);
+      }
+      lines.push(`  add${name}: (input: Create${name}Input) => Promise<void>;`);
+      lines.push(`  edit${name}: (id: string, input: Update${name}Input) => Promise<void>;`);
+      lines.push(`  remove${name}: (id: string) => Promise<void>;`);
+      lines.push(`  select${name}: (id: string | null) => void;`);
     }
-    lines.push(`  add${name}: (input: Create${name}Input) => Promise<void>;`);
-    lines.push(`  edit${name}: (id: string, input: Update${name}Input) => Promise<void>;`);
-    lines.push(`  remove${name}: (id: string) => Promise<void>;`);
-    lines.push(`  select${name}: (id: string | null) => void;`);
     lines.push('');
   }
 
@@ -470,44 +536,60 @@ export function generateStore(ast: AgiFile): string {
   for (const entity of ast.entities) {
     const name = entity.name;
     const camel = lcFirst(name);
-    const plural = camel + 's';
 
-    lines.push(`  ${plural}: [],`);
-    lines.push(`  selected${name}Id: null,`);
-    lines.push(`  load${name}s: async () => {`);
-    lines.push(`    const ${plural} = await list${name}s();`);
-    lines.push(`    set({ ${plural} });`);
-    lines.push(`  },`);
-    // Filtered loader: read currentXId from state via get(), call the by-X
-    // variant when present, else clear the list (no parent → nothing to show).
-    for (const rel of entity.relationships) {
-      if (rel.type !== 'BELONGS_TO') continue;
-      if (!currentEntities.includes(rel.target)) continue;
-      const parentName = rel.target;
-      const parentVar = lcFirst(parentName) + 'Id';
-      lines.push(`  load${name}sForCurrent${parentName}: async () => {`);
-      lines.push(`    const ${parentVar} = get().current${parentName}Id;`);
-      lines.push(`    if (${parentVar}) {`);
-      lines.push(`      const ${plural} = await list${name}sBy${parentName}(${parentVar});`);
-      lines.push(`      set({ ${plural} });`);
-      lines.push(`    } else {`);
-      lines.push(`      set({ ${plural}: [] });`);
-      lines.push(`    }`);
+    if (entity.singleton) {
+      const ops = entity.crud === 'full' ? ['update'] : entity.crud;
+      lines.push(`  ${camel}: null,`);
+      lines.push(`  load${name}: async () => {`);
+      lines.push(`    const ${camel} = await get${name}();`);
+      lines.push(`    set({ ${camel} });`);
       lines.push(`  },`);
+      if (ops.includes('update')) {
+        lines.push(`  edit${name}: async (input) => {`);
+        lines.push(`    await update${name}('singleton', input);`);
+        lines.push(`    await get().load${name}();`);
+        lines.push(`  },`);
+      }
+    } else {
+      const plural = camel + 's';
+
+      lines.push(`  ${plural}: [],`);
+      lines.push(`  selected${name}Id: null,`);
+      lines.push(`  load${name}s: async () => {`);
+      lines.push(`    const ${plural} = await list${name}s();`);
+      lines.push(`    set({ ${plural} });`);
+      lines.push(`  },`);
+      // Filtered loader: read currentXId from state via get(), call the by-X
+      // variant when present, else clear the list (no parent → nothing to show).
+      for (const rel of entity.relationships) {
+        if (rel.type !== 'BELONGS_TO') continue;
+        if (!currentEntities.includes(rel.target)) continue;
+        const parentName = rel.target;
+        const parentVar = lcFirst(parentName) + 'Id';
+        lines.push(`  load${name}sForCurrent${parentName}: async () => {`);
+        lines.push(`    const ${parentVar} = get().current${parentName}Id;`);
+        lines.push(`    if (${parentVar}) {`);
+        lines.push(`      const ${plural} = await list${name}sBy${parentName}(${parentVar});`);
+        lines.push(`      set({ ${plural} });`);
+        lines.push(`    } else {`);
+        lines.push(`      set({ ${plural}: [] });`);
+        lines.push(`    }`);
+        lines.push(`  },`);
+      }
+      lines.push(`  add${name}: async (input) => {`);
+      lines.push(`    await create${name}(input);`);
+      lines.push(`    await get().load${name}s();`);
+      lines.push(`  },`);
+      lines.push(`  edit${name}: async (id, input) => {`);
+      lines.push(`    await update${name}(id, input);`);
+      lines.push(`    await get().load${name}s();`);
+      lines.push(`  },`);
+      lines.push(`  remove${name}: async (id) => {`);
+      lines.push(`    await delete${name}(id);`);
+      lines.push(`    await get().load${name}s();`);
+      lines.push(`  },`);
+      lines.push(`  select${name}: (id) => set({ selected${name}Id: id }),`);
     }
-    lines.push(`  add${name}: async (input) => {`);
-    lines.push(`    await create${name}(input);`);
-    lines.push(`    await get().load${name}s();`);
-    lines.push(`  },`);
-    lines.push(`  edit${name}: async (id, input) => {`);
-    lines.push(`    await update${name}(id, input);`);
-    lines.push(`    await get().load${name}s();`);
-    lines.push(`  },`);
-    lines.push(`  remove${name}: async (id) => {`);
-    lines.push(`    await delete${name}(id);`);
-    lines.push(`    await get().load${name}s();`);
-    lines.push(`  },`);
-    lines.push(`  select${name}: (id) => set({ selected${name}Id: id }),`);
     lines.push('');
   }
 

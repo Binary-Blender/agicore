@@ -2225,6 +2225,166 @@ try {
   console.error(`  FAIL: DISPUTE parse error: ${err}`);
 }
 
+// ============================================================
+// Gap tests: Union types, IMPL, PATTERN, EMIT, PREFERENCE, SINGLETON
+// ============================================================
+
+const GAP_APP = `
+APP gap_test {
+  TITLE "Gap Test"
+  DB gap.db
+}
+`;
+
+// --- Test 1: Union type in ACTION OUTPUT ---
+
+section('Gap 4: Union type in ACTION OUTPUT (string | null)');
+
+const unionTypeTest = GAP_APP + `
+ACTION foo {
+  OUTPUT x: string | null
+}
+`;
+
+try {
+  const unionResult = parse(unionTypeTest);
+  const action = unionResult.actions[0];
+  assert(action !== undefined, 'Should have 1 action');
+  assert(action!.output.length === 1, 'Should have 1 output');
+  assert(action!.output[0]!.type === 'string | null', `output[0].type should be 'string | null', got '${action!.output[0]!.type}'`);
+  console.log('  Union type parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: Union type parse error: ${err}`);
+}
+
+// --- Test 2: ACTION IMPL ---
+
+section('Gap 1: ACTION IMPL');
+
+const implTest = GAP_APP + `
+ACTION validate_cf {
+  INPUT token: string
+  OUTPUT valid: bool
+  IMPL "validate_cf_token"
+}
+`;
+
+try {
+  const implResult = parse(implTest);
+  const action = implResult.actions[0];
+  assert(action !== undefined, 'Should have 1 IMPL action');
+  assert(action!.impl === 'validate_cf_token', `impl should be 'validate_cf_token', got '${action!.impl}'`);
+  console.log('  ACTION IMPL parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ACTION IMPL parse error: ${err}`);
+}
+
+// --- Test 3: ACTION PATTERN ---
+
+section('Gap 2: ACTION PATTERN');
+
+const actionPatternTest = GAP_APP + `
+ACTION pick_avatar {
+  OUTPUT path: string | null
+  IMPL "pick_avatar_impl"
+  PATTERN file_handler
+}
+`;
+
+try {
+  const actionPatternResult = parse(actionPatternTest);
+  const action = actionPatternResult.actions[0];
+  assert(action !== undefined, 'Should have 1 action with PATTERN');
+  assert(action!.pattern === 'file_handler', `pattern should be 'file_handler', got '${action!.pattern}'`);
+  console.log('  ACTION PATTERN parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ACTION PATTERN parse error: ${err}`);
+}
+
+// --- Test 4: ACTION EMIT ---
+
+section('Gap 5: ACTION EMIT');
+
+const emitTest = GAP_APP + `
+ACTION publish_site {
+  INPUT site_id: string
+  OUTPUT url: string
+  IMPL "publish_site_impl"
+  EMIT publish_progress {
+    stage: string,
+    fileCount: number
+  }
+}
+`;
+
+try {
+  const emitResult = parse(emitTest);
+  const action = emitResult.actions[0];
+  assert(action !== undefined, 'Should have 1 action with EMIT');
+  assert(action!.emit !== undefined, 'Action should have emit');
+  assert(action!.emit!.eventName === 'publish_progress', `emit.eventName should be 'publish_progress', got '${action!.emit!.eventName}'`);
+  assert(action!.emit!.fields.length === 2, `emit.fields should have 2 fields, got ${action!.emit!.fields.length}`);
+  assert(action!.emit!.fields[0]!.name === 'stage', `emit.fields[0].name should be 'stage', got '${action!.emit!.fields[0]!.name}'`);
+  assert(action!.emit!.fields[0]!.type === 'string', `emit.fields[0].type should be 'string', got '${action!.emit!.fields[0]!.type}'`);
+  console.log('  ACTION EMIT parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ACTION EMIT parse error: ${err}`);
+}
+
+// --- Test 5: PREFERENCE declaration ---
+
+section('Gap 3: PREFERENCE declaration');
+
+const prefTest = GAP_APP + `
+PREFERENCE AppTheme {
+  TYPE string
+  DEFAULT "midnight"
+  KEY "bka_app_theme"
+}
+`;
+
+try {
+  const prefResult = parse(prefTest);
+  assert(prefResult.preferences.length === 1, `Should have 1 preference, got ${prefResult.preferences.length}`);
+  const pref = prefResult.preferences[0]!;
+  assert(pref.kind === 'preference', `kind should be 'preference', got '${pref.kind}'`);
+  assert(pref.name === 'AppTheme', `name should be 'AppTheme', got '${pref.name}'`);
+  assert(pref.type === 'string', `type should be 'string', got '${pref.type}'`);
+  assert(pref.defaultValue === 'midnight', `defaultValue should be 'midnight', got '${pref.defaultValue}'`);
+  assert(pref.key === 'bka_app_theme', `key should be 'bka_app_theme', got '${pref.key}'`);
+  console.log('  PREFERENCE parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: PREFERENCE parse error: ${err}`);
+}
+
+// --- Test 6: ENTITY SINGLETON ---
+
+section('Gap 6: ENTITY SINGLETON');
+
+const singletonTest = GAP_APP + `
+ENTITY AppSettings SINGLETON {
+  TIMESTAMPS
+  theme: string = "dark"
+}
+`;
+
+try {
+  const singletonResult = parse(singletonTest);
+  assert(singletonResult.entities.length === 1, 'Should have 1 entity');
+  const entity = singletonResult.entities[0]!;
+  assert(entity.singleton === true, `singleton should be true, got ${entity.singleton}`);
+  assert(entity.name === 'AppSettings', `name should be 'AppSettings', got '${entity.name}'`);
+  console.log('  ENTITY SINGLETON parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ENTITY SINGLETON parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

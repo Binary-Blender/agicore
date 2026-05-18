@@ -32,10 +32,11 @@ export type {
   DisputeDecl, DisputeResolution,
   StateNode, StateTransition, ScoreThreshold,
   Declaration, FieldDef, AgiType, FieldModifier, CrudOp,
-  Relationship, ActionParam, ActionOutput, LayoutType,
+  Relationship, ActionParam, ActionOutput, ActionEmitField, ActionEmit, LayoutType,
   ThemeOption, ModelMapping, ModelEntry, TestGiven, TestExpect,
   AssertionOp, RuleCondition, WorkflowStep, OnFailBehavior,
   LiteralValue, SourceLocation, SourceSpan, ParseError as ParseErrorType,
+  PreferenceDecl,
 } from './types.js';
 
 import { Parser } from './parser.js';

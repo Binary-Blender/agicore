@@ -3,7 +3,7 @@
 
 import type { AgiFile, EntityDecl, FieldDef, AgiType } from '@agicore/parser';
 import { toSnakeCase, toTableName, toForeignKey, toPascalCase, toCamelCase } from '../naming.js';
-import { actionCommandNames } from './actions.js';
+import { actionCommandNames, implActionCommandNames } from './actions.js';
 import { routerCommandNames } from './router.js';
 import { compilerCommandNames } from './compiler.js';
 import { vaultCommandNames, vaultPath } from './vault.js';
@@ -99,7 +99,106 @@ function generateUpdateInput(entity: EntityDecl): string {
   return lines.join('\n');
 }
 
+function generateSingletonCrudCommands(entity: EntityDecl): string {
+  const table = toTableName(entity.name);
+  const snake = toSnakeCase(entity.name);
+  const name = entity.name;
+  const lines: string[] = [];
+
+  const ops = entity.crud === 'full'
+    ? ['read', 'update']
+    : entity.crud.filter(op => op === 'read' || op === 'update');
+
+  // get_or_create — SELECT, if not found INSERT with id='singleton'
+  if (ops.includes('read') || entity.crud === 'full') {
+    const fieldNames = entity.fields.map(f => toSnakeCase(f.name));
+    const allCols = ['id', ...fieldNames];
+    if (entity.timestamps) allCols.push('created_at', 'updated_at');
+    const placeholders = allCols.map(() => '?').join(', ');
+    const colList = allCols.join(', ');
+
+    lines.push(`#[tauri::command]`);
+    lines.push(`pub fn get_${snake}(db: tauri::State<'_, DbPool>) -> Result<${name}, String> {`);
+    lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
+    lines.push(`    // Try to find the singleton row; create it if missing`);
+    lines.push(`    let existing = conn.query_row("SELECT * FROM ${table} WHERE id = 'singleton'", [], |row| {`);
+    lines.push(`        Ok(${name}::from_row(row))`);
+    lines.push(`    });`);
+    lines.push(`    match existing {`);
+    lines.push(`        Ok(record) => Ok(record),`);
+    lines.push(`        Err(_) => {`);
+    lines.push(`            let now = chrono::Utc::now().to_rfc3339();`);
+    lines.push(`            conn.execute(`);
+    lines.push(`                "INSERT OR IGNORE INTO ${table} (${colList}) VALUES (${placeholders})",`);
+    lines.push(`                rusqlite::params![`);
+    lines.push(`                    "singleton",`);
+    for (const f of entity.fields) {
+      const sn = toSnakeCase(f.name);
+      const rustType2 = (() => {
+        switch (f.type) {
+          case 'string': case 'id': case 'date': case 'datetime': return '""';
+          case 'number': return '0i64';
+          case 'float': return '0f64';
+          case 'bool': return 'false';
+          case 'json': return '"{}"';
+          default: return '""';
+        }
+      })();
+      lines.push(`                    ${rustType2},`);
+    }
+    if (entity.timestamps) {
+      lines.push(`                    &now,`);
+      lines.push(`                    &now,`);
+    }
+    lines.push(`                ],`);
+    lines.push(`            ).map_err(|e| e.to_string())?;`);
+    lines.push(`            drop(conn);`);
+    lines.push(`            get_${snake}(db)`);
+    lines.push(`        }`);
+    lines.push(`    }`);
+    lines.push(`}`);
+    lines.push('');
+  }
+
+  // Update singleton
+  if (ops.includes('update') || entity.crud === 'full') {
+    const hasUpdateableFields = entity.fields.length > 0;
+    const inputParam = hasUpdateableFields ? `input: Update${name}Input` : `_input: Update${name}Input`;
+    lines.push(`#[tauri::command]`);
+    lines.push(`pub fn update_${snake}(db: tauri::State<'_, DbPool>, ${inputParam}) -> Result<${name}, String> {`);
+    lines.push(`    let conn = db.lock().map_err(|e| e.to_string())?;`);
+    lines.push(`    let mut sets: Vec<String> = Vec::new();`);
+    lines.push(`    let mut params: Vec<Box<dyn rusqlite::types::ToSql>> = Vec::new();`);
+    for (const f of entity.fields) {
+      const sn = toSnakeCase(f.name);
+      lines.push(`    if let Some(val) = input.${sn} {`);
+      lines.push(`        sets.push("${sn} = ?".to_string());`);
+      lines.push(`        params.push(Box::new(val));`);
+      lines.push(`    }`);
+    }
+    if (entity.timestamps) {
+      lines.push(`    sets.push("updated_at = ?".to_string());`);
+      lines.push(`    params.push(Box::new(chrono::Utc::now().to_rfc3339()));`);
+    }
+    lines.push(`    params.push(Box::new("singleton".to_string()));`);
+    lines.push(`    let sql = format!("UPDATE ${table} SET {} WHERE id = ?", sets.join(", "));`);
+    lines.push(`    let param_refs: Vec<&dyn rusqlite::types::ToSql> = params.iter().map(|p| p.as_ref()).collect();`);
+    lines.push(`    conn.execute(&sql, param_refs.as_slice()).map_err(|e| e.to_string())?;`);
+    lines.push(`    drop(conn);`);
+    lines.push(`    get_${snake}(db)`);
+    lines.push(`}`);
+    lines.push('');
+  }
+
+  return lines.join('\n');
+}
+
 function generateCrudCommands(entity: EntityDecl, ast: AgiFile): string {
+  // Singleton entities use a separate command generator
+  if (entity.singleton) {
+    return generateSingletonCrudCommands(entity);
+  }
+
   const table = toTableName(entity.name);
   const snake = toSnakeCase(entity.name);
   const name = entity.name;
@@ -331,10 +430,16 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     const modName = toSnakeCase(e.name);
     return `pub mod ${modName};`;
   });
-  // Include actions module when ACTION declarations exist (beyond send_chat and router-owned)
+  // Include actions module when regular (non-IMPL) ACTION declarations exist
   const routerOwnedNames = new Set(['broadcast_chat', 'council_chat']);
-  const hasActions = ast.actions.some(a => a.name !== 'send_chat' && !routerOwnedNames.has(a.name));
+  const hasActions = ast.actions.some(a => a.name !== 'send_chat' && !routerOwnedNames.has(a.name) && a.impl === undefined);
   if (hasActions) modLines.push('pub mod actions;');
+  // Include per-action modules for IMPL actions
+  for (const action of ast.actions) {
+    if (action.impl !== undefined && !routerOwnedNames.has(action.name) && action.name !== 'send_chat') {
+      modLines.push(`pub mod ${toSnakeCase(action.name)};`);
+    }
+  }
   const hasWorkspaces = ast.app.workspaces === true;
   if (hasWorkspaces) modLines.push('pub mod workspaces;');
   const hasReasoners = ast.reasoners.length > 0;
@@ -433,8 +538,11 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     ? ['ai_service::send_chat', 'ai_service::get_api_keys', 'ai_service::set_api_key']
     : [];
 
-  // ACTION commands (all non-send_chat, non-router actions)
+  // ACTION commands (all non-send_chat, non-router, non-IMPL actions)
   const actionCmds = hasActions ? actionCommandNames(ast) : [];
+
+  // IMPL action commands (protected files, separate modules)
+  const implCmds = implActionCommandNames(ast);
 
   // ROUTER commands (broadcast_chat, council_chat)
   const routerCmds = hasRouter ? routerCommandNames(ast) : [];
@@ -481,7 +589,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const semanticMemoryCmds = needsSemanticMemory
     ? ['commands::semantic_memory::mem_store', 'commands::semantic_memory::mem_recall', 'commands::semantic_memory::mem_search', 'commands::semantic_memory::mem_list', 'commands::semantic_memory::mem_forget', 'commands::semantic_memory::mem_prune', 'commands::semantic_memory::mem_stats', 'commands::semantic_memory::mem_namespaces']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

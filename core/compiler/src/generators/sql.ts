@@ -122,8 +122,20 @@ export function generateSql(ast: AgiFile): Map<string, string> {
   // is created on first run and silently no-ops thereafter.
   const seedLines: string[] = [];
   for (const entity of ast.entities) {
-    if (!entity.seeds || entity.seeds.length === 0) continue;
     const table = toTableName(entity.name);
+    // Auto-seed singleton entities with id='singleton'
+    if (entity.singleton) {
+      const cols = ['id'];
+      const vals = ["'singleton'"];
+      if (entity.timestamps) {
+        cols.push('created_at', 'updated_at');
+        vals.push("datetime('now')", "datetime('now')");
+      }
+      seedLines.push(
+        `INSERT OR IGNORE INTO ${table} (${cols.join(', ')}) VALUES (${vals.join(', ')});`
+      );
+    }
+    if (!entity.seeds || entity.seeds.length === 0) continue;
     for (const seed of entity.seeds) {
       // Preserve insertion order so generated SQL is stable across runs.
       const cols = Array.from(seed.fields.keys());

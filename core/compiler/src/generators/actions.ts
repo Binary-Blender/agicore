@@ -291,47 +291,192 @@ function generateCommand(action: ActionDecl, ast: AgiFile): string[] {
   return lines;
 }
 
+// ─── IMPL action stub generator ──────────────────────────────────────────────
+
+function rustOutputType(typeStr: string): string {
+  // Strip union suffixes to get base type for Rust
+  const base = typeStr.split(' | ')[0]!.trim();
+  const isOptional = typeStr.includes('| null') || typeStr.includes('| undefined');
+  const rustBase = (() => {
+    switch (base) {
+      case 'string':   return 'String';
+      case 'number':   return 'i64';
+      case 'float':    return 'f64';
+      case 'bool':     return 'bool';
+      case 'json':     return 'serde_json::Value';
+      default:         return 'String';
+    }
+  })();
+  return isOptional ? `Option<${rustBase}>` : rustBase;
+}
+
+function generateImplStub(action: ActionDecl): string[] {
+  const snakeName = toSnakeCase(action.name);
+  const pascalName = toPascalCase(action.name);
+  const lines: string[] = [];
+
+  lines.push('// @agicore-protected — fill in your Rust logic; this file won\'t be overwritten');
+
+  // Pattern-specific imports
+  if (action.pattern === 'file_handler') {
+    lines.push('use tauri_plugin_dialog::DialogExt;');
+  } else if (action.pattern === 'shell_open') {
+    lines.push('use tauri_plugin_shell::ShellExt;');
+  }
+
+  lines.push('use serde::{Deserialize, Serialize};');
+  lines.push('use crate::db::DbPool;');
+  lines.push('');
+
+  // Input struct
+  lines.push('#[derive(Debug, Deserialize)]');
+  lines.push('#[serde(rename_all = "camelCase")]');
+  lines.push(`pub struct ${pascalName}Input {`);
+  for (const param of action.input) {
+    const rustName = toSnakeCase(param.name);
+    const base = (() => {
+      switch (param.type as string) {
+        case 'string':   return 'String';
+        case 'number':   return 'i64';
+        case 'float':    return 'f64';
+        case 'bool':     return 'bool';
+        default:         return 'String';
+      }
+    })();
+    if (param.defaultValue !== undefined) {
+      lines.push(`    #[serde(default)]`);
+      lines.push(`    pub ${rustName}: Option<${base}>,`);
+    } else {
+      lines.push(`    pub ${rustName}: ${base},`);
+    }
+  }
+  lines.push('}');
+  lines.push('');
+
+  // Output struct
+  lines.push('#[derive(Debug, Serialize)]');
+  lines.push('#[serde(rename_all = "camelCase")]');
+  lines.push(`pub struct ${pascalName}Output {`);
+  for (const out of action.output) {
+    const rustName = toSnakeCase(out.name);
+    lines.push(`    pub ${rustName}: ${rustOutputType(out.type)},`);
+  }
+  lines.push('}');
+  lines.push('');
+
+  // Command signature — varies by pattern
+  if (action.pattern === 'file_handler') {
+    lines.push('#[tauri::command]');
+    lines.push(`pub async fn ${snakeName}(`);
+    lines.push(`    app: tauri::AppHandle,`);
+    lines.push(`    _db: tauri::State<'_, DbPool>,`);
+    lines.push(`) -> Result<${pascalName}Output, String> {`);
+    lines.push(`    // TODO: implement file picker`);
+    lines.push(`    // let file = app.dialog().file().pick_file().await;`);
+    if (action.emit) {
+      lines.push(`    // Emit progress events like this:`);
+      lines.push(`    // app.emit("${action.emit.eventName}", &serde_json::json!({ ${action.emit.fields.map(f => `"${f.name}": ""`).join(', ')} })).ok();`);
+    }
+    lines.push(`    todo!()`);
+    lines.push(`}`);
+  } else if (action.pattern === 'shell_open') {
+    lines.push('#[tauri::command]');
+    lines.push(`pub async fn ${snakeName}(`);
+    lines.push(`    app: tauri::AppHandle,`);
+    lines.push(`    input: ${pascalName}Input,`);
+    lines.push(`) -> Result<${pascalName}Output, String> {`);
+    lines.push(`    // TODO: implement shell open`);
+    lines.push(`    // app.shell().open(&input.url, None).map_err(|e| e.to_string())?;`);
+    if (action.emit) {
+      lines.push(`    // Emit progress events like this:`);
+      lines.push(`    // app.emit("${action.emit.eventName}", &serde_json::json!({ ${action.emit.fields.map(f => `"${f.name}": ""`).join(', ')} })).ok();`);
+    }
+    lines.push(`    todo!()`);
+    lines.push(`}`);
+  } else {
+    lines.push('#[tauri::command]');
+    lines.push(`pub async fn ${snakeName}(`);
+    if (action.input.length > 0) {
+      lines.push(`    input: ${pascalName}Input,`);
+    }
+    lines.push(`    _db: tauri::State<'_, DbPool>,`);
+    lines.push(`) -> Result<${pascalName}Output, String> {`);
+    if (action.emit) {
+      lines.push(`    // Emit progress events like this:`);
+      lines.push(`    // app_handle.emit("${action.emit.eventName}", &serde_json::json!({ ${action.emit.fields.map(f => `"${f.name}": ""`).join(', ')} })).ok();`);
+    }
+    lines.push(`    // TODO: implement ${snakeName}`);
+    lines.push(`    todo!()`);
+    lines.push(`}`);
+  }
+
+  return lines;
+}
+
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export function generateActions(ast: AgiFile): Map<string, string> {
   const files = new Map<string, string>();
 
-  const actions = ast.actions.filter(
+  const allActions = ast.actions.filter(
     (a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name),
   );
-  if (actions.length === 0) return files;
 
-  const lines: string[] = [
-    '// Agicore Generated — DO NOT EDIT BY HAND',
-    '// Re-run `agicore generate` to regenerate.',
-    '// Action commands generated from ACTION declarations.',
-    '',
-    '#![allow(unused_imports)]',
-    '',
-    'use serde::{Deserialize, Serialize};',
-    'use crate::db::DbPool;',
-    '',
-  ];
+  // Split into impl (protected) and regular (bundled) actions
+  const implActions = allActions.filter((a) => a.impl !== undefined);
+  const regularActions = allActions.filter((a) => a.impl === undefined);
 
-  for (const action of actions) {
-    lines.push(`// --- ${action.name} ---`);
-    lines.push('');
-    lines.push(...generateInputStruct(action));
-    lines.push('');
-    lines.push(...generateCommand(action, ast));
-    lines.push('');
+  // Regular actions — bundle into actions.rs as before
+  if (regularActions.length > 0) {
+    const lines: string[] = [
+      '// Agicore Generated — DO NOT EDIT BY HAND',
+      '// Re-run `agicore generate` to regenerate.',
+      '// Action commands generated from ACTION declarations.',
+      '',
+      '#![allow(unused_imports)]',
+      '',
+      'use serde::{Deserialize, Serialize};',
+      'use crate::db::DbPool;',
+      '',
+    ];
+
+    for (const action of regularActions) {
+      lines.push(`// --- ${action.name} ---`);
+      lines.push('');
+      lines.push(...generateInputStruct(action));
+      lines.push('');
+      lines.push(...generateCommand(action, ast));
+      lines.push('');
+    }
+
+    files.set('src-tauri/src/commands/actions.rs', lines.join('\n'));
   }
 
-  files.set('src-tauri/src/commands/actions.rs', lines.join('\n'));
+  // IMPL actions — each gets its own protected file
+  for (const action of implActions) {
+    const snakeName = toSnakeCase(action.name);
+    const stubLines = generateImplStub(action);
+    files.set(`src-tauri/src/commands/${snakeName}.rs`, stubLines.join('\n') + '\n');
+  }
+
   return files;
 }
 
 /**
  * Returns the list of action command identifiers for registration in main.rs.
- * Only actions emitted by this generator (not AI_SERVICE_OWNED or ROUTER_OWNED).
+ * Only regular (non-IMPL) actions emitted by this generator.
  */
 export function actionCommandNames(ast: AgiFile): string[] {
   return ast.actions
-    .filter((a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name))
+    .filter((a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name) && a.impl === undefined)
     .map((a) => `commands::actions::${toSnakeCase(a.name)}`);
+}
+
+/**
+ * Returns the list of IMPL action command identifiers for registration in main.rs.
+ */
+export function implActionCommandNames(ast: AgiFile): string[] {
+  return ast.actions
+    .filter((a) => !AI_SERVICE_OWNED.has(a.name) && !ROUTER_OWNED.has(a.name) && a.impl !== undefined)
+    .map((a) => `commands::${toSnakeCase(a.name)}::${toSnakeCase(a.name)}`);
 }

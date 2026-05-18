@@ -300,6 +300,14 @@ export enum TokenType {
   FALSE = 'FALSE',
   FULL = 'FULL',
 
+  // New Gap keywords
+  IMPL_KW = 'IMPL_KW',
+  EMIT_KW = 'EMIT_KW',
+  PREFERENCE_KW = 'PREFERENCE_KW',
+  TYPE_KW = 'TYPE_KW',
+  KEY_KW = 'KEY_KW',
+  SINGLETON_KW = 'SINGLETON_KW',
+
   // Symbols
   LBRACE = 'LBRACE',
   RBRACE = 'RBRACE',
@@ -314,6 +322,7 @@ export enum TokenType {
   LTE = 'LTE',
   NEQ = 'NEQ',
   EQ_EQ = 'EQ_EQ',
+  PIPE = 'PIPE',
 
   // Layout values
   LAYOUT_TABLE = 'LAYOUT_TABLE',
@@ -590,6 +599,12 @@ const KEYWORDS: Record<string, TokenType> = {
   GENERATE: TokenType.GENERATE,
   DETECT: TokenType.DETECT,
   PRESERVE: TokenType.PRESERVE,
+  IMPL: TokenType.IMPL_KW,
+  EMIT: TokenType.EMIT_KW,
+  PREFERENCE: TokenType.PREFERENCE_KW,
+  TYPE: TokenType.TYPE_KW,
+  KEY: TokenType.KEY_KW,
+  SINGLETON: TokenType.SINGLETON_KW,
   true: TokenType.TRUE,
   false: TokenType.FALSE,
   full: TokenType.FULL,
@@ -672,6 +687,7 @@ export class Lexer {
       if (ch === ':') { this.addToken(TokenType.COLON, ':'); this.advance(); continue; }
       if (ch === ',') { this.addToken(TokenType.COMMA, ','); this.advance(); continue; }
       if (ch === '.') { this.addToken(TokenType.DOT, '.'); this.advance(); continue; }
+      if (ch === '|') { this.addToken(TokenType.PIPE, '|'); this.advance(); continue; }
       if (ch === '/') { this.addToken(TokenType.SLASH, '/'); this.advance(); continue; }
 
       // Bracket tokens: [] is JSON literal shorthand, [x] is a list

@@ -119,6 +119,8 @@ export interface EntityDecl {
   order?: EntityOrder;
   /** Zero or more SEED blocks (each yields one INSERT OR IGNORE). */
   seeds?: SeedRecord[];
+  /** When true, only one row exists (id = 'singleton'); no create/list/delete. */
+  singleton?: boolean;
   span: SourceSpan;
 }
 
@@ -135,6 +137,16 @@ export interface ActionOutput {
   type: string; // Can be AgiType or an Entity name
 }
 
+export interface ActionEmitField {
+  name: string;
+  type: string;
+}
+
+export interface ActionEmit {
+  eventName: string;
+  fields: ActionEmitField[];
+}
+
 export interface ActionDecl {
   kind: 'action';
   name: string;
@@ -142,6 +154,9 @@ export interface ActionDecl {
   output: ActionOutput[];
   ai?: string;
   stream: boolean;
+  impl?: string;
+  pattern?: string;
+  emit?: ActionEmit;
   span: SourceSpan;
 }
 
@@ -959,6 +974,17 @@ export interface DisputeDecl {
   span: SourceSpan;
 }
 
+// --- PREFERENCE Declaration ---
+
+export interface PreferenceDecl {
+  kind: 'preference';
+  name: string;
+  type: string;        // 'string' | 'number' | 'bool'
+  defaultValue: LiteralValue;
+  key: string;         // localStorage key
+  span: SourceSpan;
+}
+
 // --- Top-Level AST ---
 
 export type Declaration =
@@ -1000,7 +1026,8 @@ export type Declaration =
   | ContractDecl
   | ReputationDecl
   | SubscriptionDecl
-  | DisputeDecl;
+  | DisputeDecl
+  | PreferenceDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -1042,6 +1069,7 @@ export interface AgiFile {
   reputations: ReputationDecl[];
   subscriptions: SubscriptionDecl[];
   disputes: DisputeDecl[];
+  preferences: PreferenceDecl[];
 }
 
 // --- Parse Error ---
