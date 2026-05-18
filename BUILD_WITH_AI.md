@@ -22,6 +22,10 @@ novasyn_chat.agi is a complete real application — use it as the idiom guide.
 
 The examples are clean and minimal — good for isolated feature reference. NovaSyn Chat is a production application that uses 31 declaration types across 7 layers. It shows how things actually fit together at scale: how ENTITY relationships compose, how ACTION and AI_SERVICE interact, how COMPILER transitions chain semantic state. If you're building something serious, this is the model.
 
+**Second reference app — `apps/novasyn-mba/novasyn_mba.agi`**
+
+NovaSyn MBA is the second production application (1,227 lines, 41 declaration types). It shows the full surface of the expert system and orchestration layers: RULE with IF/FLAG/SEVERITY, SKILL with CONTENT and APPLIES_TO, WORKFLOW chaining, and EVENT with SCHEDULE. If you're using those layers, read this file alongside NovaSyn Chat.
+
 ---
 
 ## Step 2 — Write your `.agi` file
@@ -169,6 +173,68 @@ ACTION upload_file {
 }
 ```
 
+**RULE (expert system health checks):**
+
+```agi
+## Classic syntax (WHEN + named action)
+RULE auto_approve_small {
+  WHEN   invoice.amount <= 500
+  UNLESS vendor.trust_level == "low"
+  THEN   auto_approve
+  PRIORITY 5
+}
+
+## Modern syntax (IF + FLAG + SEVERITY — cleaner for alert rules)
+RULE ltv_cac_critical {
+  IF   FinancialSnapshot.ltv_cac_ratio < 2
+  THEN FLAG "finance_risk"
+  SEVERITY critical
+  PRIORITY 10
+}
+```
+
+`IF` is an alias for `WHEN`. `THEN FLAG "name"` sets `rule.flag` and `rule.action = "flag:name"` — use it for data health alert rules. `SEVERITY` values: `critical`, `high`, `medium`, `low`.
+
+**SKILL (domain knowledge injected at prompt-time):**
+
+```agi
+SKILL finance_frameworks {
+  DESCRIPTION "Core financial frameworks"
+  DOMAIN      "finance"
+  CONTENT     "LTV:CAC Ratio: Healthy 3:1+, Warning 2:1, Critical below 2:1. ..."
+  APPLIES_TO  [finance_advisor, investment_screener]
+  KEYWORDS    finance, ltv, cac, runway
+  PRIORITY    8
+}
+```
+
+`CONTENT` embeds a knowledge string that can be injected into AI prompts at runtime. `APPLIES_TO` is a bracketed list of ACTION names this skill context applies to.
+
+**EVENT (time-based or data-driven triggers):**
+
+```agi
+## Scheduled event (cron)
+EVENT weekly_review_reminder {
+  DESCRIPTION "Monday morning reminder"
+  SCHEDULE    "0 9 * * 1"
+  SUBSCRIBERS [leadership_advisor]
+}
+
+## Data-driven event (payload-based)
+EVENT batch_rejected {
+  DESCRIPTION "Fires when QC rejects a batch"
+  PAYLOAD {
+    batch_id:         string
+    rejection_reason: string
+  }
+  SUBSCRIBERS [audit_logger]
+  IDEMPOTENT  true
+  TTL         3600
+}
+```
+
+`SCHEDULE` accepts any cron expression. If present, the event fires on that schedule.
+
 **PREFERENCE (client-side settings, no DB round-trip):**
 
 ```agi
@@ -180,16 +246,27 @@ PREFERENCE app_theme {
 // generates getAppTheme(), setAppTheme(), useAppTheme() hook
 ```
 
-**WORKFLOW (sequential or parallel steps with AI execution):**
+**WORKFLOW (sequential steps, each referencing a declared ACTION):**
 
 ```agi
 WORKFLOW onboard_user {
-  DESCRIPTION "New user onboarding sequence"
-  STEP verify_identity   { ACTION validate_cf_token }
-  STEP create_workspace  { ACTION provision_workspace  DEPENDS_ON verify_identity }
-  STEP send_welcome      { ACTION send_welcome_email   DEPENDS_ON create_workspace }
+  STEP verify_identity {
+    ACTION validate_cf_token
+    ON_FAIL stop
+  }
+  STEP create_workspace {
+    ACTION provision_workspace
+    INPUT user_id: "current_user"
+    ON_FAIL stop
+  }
+  STEP send_welcome {
+    ACTION send_welcome_email
+    ON_FAIL skip
+  }
 }
 ```
+
+Steps run in declaration order. `ON_FAIL` options: `stop`, `skip`, `retry`, `fallback`. `INPUT` is a flat `key: value` map (no braces, no comma separators). WORKFLOW does not support DESCRIPTION or DEPENDS_ON.
 
 ---
 
@@ -199,15 +276,104 @@ This is expected. Agicore evolves through operational pressure — your app will
 
 **What to do:**
 
-1. Don't work around the gap in generated code. Generated files get wiped.
+1. Don't work around the gap in generated code. Generated files get wiped on regen.
 2. Write a structured feature request in `idea factory/` (see the template in [EVOLVING.md](EVOLVING.md)).
-3. Switch to a framework session: tell Claude Code you're extending the framework, point it at `core/parser/src/lexer.ts`, `core/parser/src/types.ts`, `core/parser/src/parser.ts`, and the relevant generator in `core/compiler/src/generators/`.
-4. The pattern is always the same: lexer token → AST type → parse rule → codegen output → tests.
-5. Return to your app with the new primitive.
+3. Switch to a framework session. Tell Claude Code you're extending the framework and point it at: `core/parser/src/lexer.ts`, `core/parser/src/types.ts`, `core/parser/src/parser.ts`, and the relevant generator in `core/compiler/src/generators/`.
+4. The implementation order is always: **lexer token → AST type → parse function → codegen output → tests**.
+5. After rebuilding the parser, sync the dist: `cp -r core/parser/dist/. core/compiler/node_modules/@agicore/parser/dist/`
+6. Return to your app with the new primitive.
 
-For non-framework custom logic right now, use `ACTION IMPL` to get a protected Rust stub the compiler won't overwrite.
+For custom logic you need right now without a framework session, use `ACTION IMPL` to get a protected Rust stub the compiler won't overwrite.
 
 The file `idea factory/bka_stress_test_gaps.md` is a real example of a feature request document that became a framework session (Phase 8). Six gaps, one session.
+
+---
+
+## How to extend the parser (the exact steps)
+
+When extending a declaration (adding a new keyword or field), follow this sequence precisely:
+
+**Step 1 — Check the lexer first**
+
+Before adding a new token, grep `core/parser/src/lexer.ts` for the keyword. Many keywords already exist in the `TokenType` enum and the keyword map but aren't wired into the declaration you need them in. Example: `SCHEDULE` and `CONTENT` both existed before they were used in `EVENT` and `SKILL`. Re-using an existing token is always preferable to adding a new one.
+
+```bash
+grep -n "SCHEDULE\|CONTENT" core/parser/src/lexer.ts
+```
+
+**Step 2 — Add the token (only if it doesn't exist)**
+
+Add to the `TokenType` enum in `lexer.ts`:
+```typescript
+SEVERITY_KW = 'SEVERITY_KW',
+```
+
+Add to the keyword map (also in `lexer.ts`):
+```typescript
+SEVERITY: TokenType.SEVERITY_KW,
+```
+
+**Step 3 — Extend the AST type in `types.ts`**
+
+```typescript
+export interface RuleDecl {
+  // ... existing fields ...
+  severity?: 'critical' | 'high' | 'medium' | 'low';  // ← add new field
+}
+```
+
+**Step 4 — Wire into the parse function in `parser.ts`**
+
+Find the parse function for your declaration (e.g., `parseRule()`). Add a handler in the `while (!this.check(RBRACE))` loop:
+
+```typescript
+if (token.type === TokenType.SEVERITY_KW) {
+  this.advance();
+  severity = this.expectIdentifier() as RuleDecl['severity'];
+  continue;
+}
+```
+
+Include the new field in the returned object literal.
+
+**Step 5 — Build the parser and sync**
+
+```bash
+cd core/parser && npm run build
+cp -r core/parser/dist/. core/compiler/node_modules/@agicore/parser/dist/
+```
+
+**Step 6 — Add tests**
+
+In `core/parser/test/parser.test.ts`, find the `// --- Summary ---` block at the end. Add a new test section before it:
+
+```typescript
+section('RULE SEVERITY syntax');
+
+try {
+  const result = parse(`
+    APP t { TITLE "T" DB t.db }
+    RULE my_rule { IF Entity.field < 2 THEN FLAG "alert" SEVERITY critical PRIORITY 5 }
+  `);
+  assert(result.rules[0]!.severity === 'critical', 'severity should be critical');
+  console.log('  RULE SEVERITY parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ${err}`);
+}
+```
+
+The test runner uses `section()`, `assert()`, and `failed++` — no external test framework. New tests go before the Summary block. Run with `npm test` in `core/parser/`.
+
+**Step 7 — Check what the existing parse function supports**
+
+To understand what keywords a declaration already handles, read its parse function directly — not the grammar doc. Search in `parser.ts`:
+
+```bash
+grep -n "parseRule\|parseSkill\|parseWorkflow" core/parser/src/parser.ts
+```
+
+Then read the function body. Every `if (token.type === TokenType.XYZ)` block is a supported keyword. If a keyword isn't there, it's not supported — add it.
 
 ---
 
@@ -230,9 +396,12 @@ The file `idea factory/bka_stress_test_gaps.md` is a real example of a feature r
 | File | What it's for |
 |------|--------------|
 | `core/parser/src/types.ts` | Every declaration type and field — the authoritative DSL spec |
-| `apps/novasyn-chat/novasyn_chat.agi` | Full production app — 595 lines, 31 declaration types |
-| `examples/home-academy/home_academy.agi` | Simpler example — good for entity/action/view patterns |
+| `core/parser/src/parser.ts` | Parse functions — the ground truth for what each declaration currently accepts |
+| `core/parser/src/lexer.ts` | Token enum and keyword map — check here before adding a new token |
+| `apps/novasyn-chat/novasyn_chat.agi` | Production app — 595 lines, 31 declaration types (AI, ENTITY, ACTION, COMPILER) |
+| `apps/novasyn-mba/novasyn_mba.agi` | Production app — 1,227 lines, 41 declaration types (RULE, SKILL, WORKFLOW, EVENT) |
+| `examples/home-academy/home_academy.agi` | Minimal example — entity/action/view patterns |
 | `examples/invoice-approval/` | Workflow and expert system patterns |
-| `dsl/grammar.md` | Grammar narrative (types.ts is more current) |
-| `EVOLVING.md` | How to extend the framework when it's missing something |
+| `dsl/grammar.md` | Grammar narrative (types.ts and parser.ts are more current) |
+| `EVOLVING.md` | Methodology for extending the framework when it's missing something |
 | `ROADMAP.md` | What's implemented, what's planned |

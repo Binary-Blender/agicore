@@ -100,6 +100,25 @@ This is what operational pressure as a feature driver looks like in practice.
 
 ---
 
+## A Second Example — A Different Pattern
+
+**Phase 10** was triggered by compiling `novasyn_mba.agi`. The MBA file used syntax the parser didn't yet support, but the gap analysis revealed something different from Phase 8: most of the missing keywords either already existed in the lexer but weren't wired into the target declaration, or could be expressed as aliases for existing keywords rather than net-new concepts. This is a distinct pattern worth recognizing.
+
+| Gap | Root cause | What was built |
+|-----|-----------|----------------|
+| `IF` in RULE | Parser only accepted `WHEN` | `IF_KW` as alias — same parse path, different keyword |
+| `FLAG "name"` in RULE | THEN only accepted action name identifiers | `FLAG_KW` branch: sets `rule.flag` + synthesizes `action = "flag:name"` |
+| `SEVERITY` in RULE | Field didn't exist | New `severity` field on `RuleDecl`; 4 valid values |
+| `CONTENT` in SKILL | `CONTENT_KW` token already existed (used in SKILLDOC) | Wired existing token into `parseSkill()` — zero lexer changes |
+| `APPLIES_TO` in SKILL | Didn't exist | New token + bracket-list parser in `parseSkill()` |
+| `SCHEDULE` in EVENT | `SCHEDULE` token already existed (used in REASONER) | Wired existing token into `parseEvent()` — zero lexer changes |
+
+Three of the six gaps required zero lexer changes — the token already existed but wasn't connected to the declaration that needed it. This happens because the lexer is keyword-first: once `SCHEDULE` is in the map, it tokenizes anywhere in any file, but the parser only dispatches it where it's explicitly handled.
+
+**The lesson:** Before adding a new token, grep the keyword map in `lexer.ts`. If the token exists, the work is in the parse function, not the lexer. This saves a step and keeps the keyword map clean.
+
+---
+
 ## The Manufacturing Analogy
 
 This process has a strong structural resemblance to industrial continuous improvement systems — Kaizen, lean manufacturing, production-line refinement. Applications are production environments. Operational friction is a defect signal. Feature requests are improvement tickets. Framework sessions are the engineering response. The loop closes and the next production run is better.
