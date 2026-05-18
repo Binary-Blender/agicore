@@ -41,6 +41,7 @@ import { generateActuator } from './generators/actuator.js';
 import { generatePlatform } from './generators/platform.js';
 import { generateNullclaw } from './generators/nullclaw.js';
 import { generateBrainBody } from './generators/brain-body.js';
+import { generateSkillDoc } from './generators/skilldoc.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -102,6 +103,7 @@ export function compile(source: string): CompileResult {
     generatePlatform(ast),
     generateNullclaw(ast),
     generateBrainBody(ast),
+    generateSkillDoc(ast),
   ];
 
   for (const gen of generators) {
@@ -154,3 +156,4 @@ export { generateActuator } from './generators/actuator.js';
 export { generatePlatform } from './generators/platform.js';
 export { generateNullclaw } from './generators/nullclaw.js';
 export { generateBrainBody } from './generators/brain-body.js';
+export { generateSkillDoc } from './generators/skilldoc.js';

@@ -3183,6 +3183,79 @@ ENTITY TaggedItem {
   console.log('  json field types use default-value-aware TypeScript types');
 }
 
+// --- SKILLDOC codegen ---
+section('SKILLDOC generates governed cognition infrastructure');
+{
+  const src = GAP_COMPILER_APP + `
+SKILLDOC aerospace_qc {
+  DESCRIPTION  "Aerospace quality control inspection protocol"
+  VERSION      "2.1.0"
+  DOMAIN       "quality-assurance"
+  PRIORITY     95
+  KEYWORDS     inspection, safety, compliance, audit
+  GOVERNANCE {
+    SIGNED_BY    QaAuthority
+    REQUIRE      clearance_level_3, qa_certified
+    EXECUTE_ONLY read_report, submit_finding
+    DISALLOW     delete_record, override_finding
+    AUDIT        all_actions
+  }
+  COMPRESSION {
+    SEMANTIC_DENSITY   0.9
+    INTENT_PRESERVATION 0.95
+    TOKEN_EFFICIENCY   0.8
+  }
+}
+
+SKILLDOC open_support {
+  DESCRIPTION  "General customer support guidelines"
+  PRIORITY     50
+  KEYWORDS     support, help, customer
+}
+`;
+  const { files } = compile(src);
+
+  // Markdown skill doc
+  const mdFile = files.get('scaffold/skilldocs/aerospace_qc.md');
+  assert(mdFile !== undefined, 'Should generate aerospace_qc.md');
+  assert(mdFile!.includes('name: aerospace_qc'), 'Markdown frontmatter has name');
+  assert(mdFile!.includes('version: 2.1.0'), 'Markdown frontmatter has version');
+  assert(mdFile!.includes('domain: quality-assurance'), 'Markdown frontmatter has domain');
+  assert(mdFile!.includes('signed_by: QaAuthority'), 'Markdown frontmatter has signed_by');
+  assert(mdFile!.includes('audit: all_actions'), 'Markdown frontmatter has audit');
+  assert(mdFile!.includes('## Governance'), 'Markdown has Governance section');
+  assert(mdFile!.includes('Disallowed'), 'Markdown lists disallowed operations');
+  assert(mdFile!.includes('## Compression Targets'), 'Markdown has Compression section');
+
+  // Open skilldoc — no governance
+  const openMd = files.get('scaffold/skilldocs/open_support.md');
+  assert(openMd !== undefined, 'Should generate open_support.md');
+  assert(!openMd!.includes('## Governance'), 'Open skilldoc has no governance section');
+
+  // Governance manifest JSON
+  const jsonFile = files.get('scaffold/skilldocs/aerospace_qc.json');
+  assert(jsonFile !== undefined, 'Should generate aerospace_qc.json');
+  const manifest = JSON.parse(jsonFile!);
+  assert(manifest.name === 'aerospace_qc', 'Manifest name correct');
+  assert(manifest.governance.audit === 'all_actions', 'Manifest governance.audit correct');
+  assert(Array.isArray(manifest.governance.disallow) && manifest.governance.disallow.includes('delete_record'), 'Manifest disallow list correct');
+  assert(manifest.compression.semanticDensity === 0.9, 'Manifest compression correct');
+
+  // TypeScript registry
+  const tsFile = files.get('src/lib/skilldocs.ts');
+  assert(tsFile !== undefined, 'Should generate src/lib/skilldocs.ts');
+  assert(tsFile!.includes('SKILLDOC_REGISTRY'), 'Registry export present');
+  assert(tsFile!.includes("'aerospace_qc'"), 'aerospace_qc in registry');
+  assert(tsFile!.includes("'open_support'"), 'open_support in registry');
+  assert(tsFile!.includes('export type SkillDocName'), 'SkillDocName union type present');
+  assert(tsFile!.includes('matchSkillDocs'), 'matchSkillDocs function present');
+  assert(tsFile!.includes('buildSkillDocContext'), 'buildSkillDocContext function present');
+  assert(tsFile!.includes('isOperationPermitted'), 'isOperationPermitted function present');
+  assert(tsFile!.includes('skillDocDomains'), 'skillDocDomains function present');
+
+  console.log('  SKILLDOC generates markdown, governance manifest, and TS registry');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

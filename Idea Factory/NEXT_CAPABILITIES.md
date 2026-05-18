@@ -6,6 +6,29 @@
 
 ---
 
+## Phase 15 — What Was Just Implemented (May 2026)
+
+### LOG declaration (Phase 12)
+File-based Rust logger using `std::fs` only — zero Cargo dependencies. Five levels (trace/debug/info/warn/error), three targets (file/stdout/both), configurable rotation. Generates `src-tauri/src/logger.rs` with `init_logger()`, `log()`, and 5 macros (`log_trace!` through `log_error!`). See `LOGGING.md`.
+
+### MACRO + MACRO_REGISTRY (Phase 13)
+Cross-app capability exposure. MACRO declares a named parameterized capability with PARAMS and an ACTION delegate. MACRO_REGISTRY declares what this app EXPOSES and what it INVOKES from other apps with BINDING directives. Generates `src-tauri/src/macros.rs` stubs and `src/lib/macros.ts` typed wrappers. See `MACROS.md`.
+
+### Embedded stack — Phase 14 (May 2026)
+Full robotics and sensor array support: ACTUATOR (motor/servo/relay/LED/neopixel with SAFE_STATE and WATCHDOG), PLATFORM (cross-compile targets: rpi5/rpi4/esp32s3/stm32h7/stm32f4/x86), NULLCLAW (678KB Zig agent binary — providers, tools, personality), BRAIN_BODY (UART framed protocol with heartbeat, watchdog, E-stop). All existing embedded declarations (NODE/SENSOR/ZONE) gained codegen. See `EMBEDDED.md` and `NULLCLAW.md`.
+
+### SKILLDOC governed cognition infrastructure — Phase 15 (May 2026)
+Skill docs are now first-class deployable artifacts. Each SKILLDOC compiles to:
+- `scaffold/skilldocs/<name>.md` — deployable signed markdown with YAML frontmatter
+- `scaffold/skilldocs/<name>.json` — governance manifest for provisioning/audit pipelines
+- `src/lib/skilldocs.ts` — TypeScript registry with `matchSkillDocs()` (governance-aware, filters by REQUIRE clearance), `buildSkillDocContext()` (respects EXECUTE_ONLY/DISALLOW), `isOperationPermitted()`, `skillDocDomains()`
+
+Governance fields: SIGNED_BY, REQUIRE (clearance levels), EXECUTE_ONLY (operation allowlist), DISALLOW (operation denylist), AUDIT (none/errors/all_access/all_actions). COMPRESSION targets: SEMANTIC_DENSITY, INTENT_PRESERVATION, TOKEN_EFFICIENCY. See `SKILLDOCS.md`.
+
+**Test count after Phase 15:** 720 parser + 968 compiler + 34 validator = **1,722 passing, 0 failed**
+
+---
+
 ## Phase 7 Summary
 
 The core DSL grammar is stable. The next leap adds **runtime intelligence adaptation**, **async event orchestration**, and **semantic economic coordination** — three capability dimensions that turn Agicore from a systems-authoring tool into a self-optimizing operational platform.
@@ -246,9 +269,7 @@ Long-horizon UX direction. Not a near-term implementation target.
 | `Agicore Semantic Commerce & Contract Infrastructure.md` | Phase 7.2 pending | Keep |
 | `Agicore Semantic Glyph Interface System.md` | Phase 10 vision | Keep |
 | `Agicore Spatial Semantic Desktop.md` | Phase 10 vision | Keep |
-| `agicore_future_of_skill_docs_and_cognitive_infrastructure.md` | SKILLDOC codegen target | Keep |
 | `agicore_semantic_packets_and_distributed_orchestration 02.md` | Phase 8 reference | Keep |
-| `novasyn_semantic_session_transitions_and_compilation.md` | COMPILER codegen target | Keep |
 | `ui_dsl_requirements_specification.md` | VIEW codegen enhancement target | Keep |
 | `agicore_repo_master_plan.md` | Superseded by ROADMAP.md | Archived |
 | `Agicore BabyAI Runtime Architecture.md` | Sprint 12 done | Archived |

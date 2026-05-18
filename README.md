@@ -108,6 +108,7 @@ agicore/
 |-- MACROS.md                  # MACRO + MACRO_REGISTRY: cross-app capability exposure
 |-- EMBEDDED.md                # NODE, SENSOR, ZONE, ACTUATOR, PLATFORM, BRAIN_BODY: robots + IoT
 |-- NULLCLAW.md                # NullClaw agent runtime: tool bindings, providers, safety
+|-- SKILLDOCS.md               # SKILLDOC governance: signed skill docs, clearance, audit
 |-- LICENSE                    # MIT
 |
 |-- dsl/                       # DSL grammar specification
@@ -201,11 +202,11 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 | Layer | Tests | Status |
 |---|---|---|
 | Parser | 720 passing | Complete |
-| Compiler | 943 passing | Complete |
+| Compiler | 968 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,697 passing** | **0 failures** |
+| **Total** | **1,722 passing** | **0 failures** |
 
-The DSL covers 41 declaration types across 8 layers:
+The DSL covers 45 declaration types across 8 layers:
 
 - **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST, PREFERENCE
 - **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT
