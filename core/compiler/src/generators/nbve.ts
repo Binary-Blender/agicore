@@ -87,10 +87,23 @@ export class ${decl.name}ShadowRunner {
     return false;
   }
 
-  getActiveModel(): string {
+  getActiveModel(): string {${decl.chain ? `
+    // Chain ${decl.chain} governs model selection when escalated
+    const chain = (globalThis as any).__escalationChains?.['${decl.chain}'];
+    if (chain) return chain.currentRole();` : ''}
     return this.promoted
       ? ${decl.name}Config.shadow
       : ${decl.name}Config.production;
+  }
+
+  onFallback(): void {${decl.chain ? `
+    const chain = (globalThis as any).__escalationChains?.['${decl.chain}'];
+    chain?.recordViolation();` : ''}
+  }
+
+  onStableResult(): void {${decl.chain ? `
+    const chain = (globalThis as any).__escalationChains?.['${decl.chain}'];
+    chain?.recordStableResult();` : ''}
   }
 }`;
   }).join('\n\n');

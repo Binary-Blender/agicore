@@ -48,6 +48,7 @@ import type {
   ThemeDecl, ThemePalette, ThemeBackground, ThemeDensity, ThemeMotif, ThemeRadius,
   StagesDecl, StagesTransition, StagesCondition, StagesConditionOp, StagesMatchMode,
   CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
+  EscalationChainDecl, EscalationOnConditions, DeescalationOnConditions,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -121,6 +122,7 @@ export class Parser {
     const themes: ThemeDecl[] = [];
     const stages: StagesDecl[] = [];
     const cognitionRoles: CognitionRoleDecl[] = [];
+    const escalationChains: EscalationChainDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -280,12 +282,15 @@ export class Parser {
         case TokenType.COGNITION_ROLE_KW:
           cognitionRoles.push(this.parseCognitionRole());
           break;
+        case TokenType.ESCALATION_CHAIN_KW:
+          escalationChains.push(this.parseEscalationChain());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains };
   }
 
   // --- APP ---
@@ -3113,6 +3118,71 @@ export class Parser {
     return { kind: 'cognition_role', name, responsibilities, qcProfile, escalateTo, modelHierarchy, promotionPolicy, fallbackPolicy, span: { start, end } };
   }
 
+  private parseEscalationChain(): EscalationChainDecl {
+    const start = this.expectToken(TokenType.ESCALATION_CHAIN_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let roles: string[] = [];
+    let escalateOn: EscalationOnConditions = { explicit: true };
+    let deescalateOn: DeescalationOnConditions = {};
+    let cooldown = '300s';
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.ROLES_KW) {
+        this.advance(); roles = this.parseIdentifierList(); continue;
+      }
+      if (token.type === TokenType.ESCALATE_ON_KW) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const eo: EscalationOnConditions = { explicit: false };
+        while (!this.check(TokenType.RBRACE)) {
+          const t = this.current();
+          if (t.type === TokenType.SPC_VIOLATION_KW) {
+            this.advance(); eo.spcViolation = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (t.type === TokenType.ERROR_RATE_KW) {
+            this.advance(); eo.errorRate = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (t.type === TokenType.EXPLICIT_KW) {
+            this.advance(); eo.explicit = this.parseBoolValue();
+          } else {
+            this.error(`Unexpected token in ESCALATE_ON: ${t.value}`);
+          }
+        }
+        this.expectToken(TokenType.RBRACE);
+        escalateOn = eo;
+        continue;
+      }
+      if (token.type === TokenType.DEESCALATE_ON_KW) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const deo: DeescalationOnConditions = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const t = this.current();
+          if (t.type === TokenType.STABILITY_WINDOW_KW) {
+            this.advance(); deo.stabilityWindow = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (t.type === TokenType.ERROR_RATE_KW) {
+            this.advance(); deo.errorRate = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else {
+            this.error(`Unexpected token in DEESCALATE_ON: ${t.value}`);
+          }
+        }
+        this.expectToken(TokenType.RBRACE);
+        deescalateOn = deo;
+        continue;
+      }
+      if (token.type === TokenType.COOLDOWN_KW) {
+        this.advance(); cooldown = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      this.error(`Unexpected token in ESCALATION_CHAIN: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'escalation_chain', name, description, roles, escalateOn, deescalateOn, cooldown, span: { start, end } };
+  }
+
   private parseLifecycle(): LifecycleDecl {
     const start = this.expectToken(TokenType.LIFECYCLE).location;
     const name = this.expectIdentifier();
@@ -3575,6 +3645,7 @@ export class Parser {
     const metrics: string[] = [];
     let promotion: 'auto' | 'manual' = 'manual';
     let fallback: 'production' | 'shadow' = 'production';
+    let chain: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -3619,11 +3690,14 @@ export class Parser {
       if (token.type === TokenType.FALLBACK) {
         this.advance(); fallback = this.expectIdentifier() as 'production' | 'shadow'; continue;
       }
+      if (token.type === TokenType.CHAIN_KW) {
+        this.advance(); chain = this.expectIdentifier(); continue;
+      }
       this.error(`Unexpected token in NBVE: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'nbve', name, description, production, shadow, spc, metrics, promotion, fallback, span: { start, end } };
+    return { kind: 'nbve', name, description, production, shadow, spc, metrics, promotion, fallback, chain, span: { start, end } };
   }
 
   // --- CONTRACT ---

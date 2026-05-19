@@ -1076,6 +1076,31 @@ export interface NbveDecl {
   metrics: string[];
   promotion: 'auto' | 'manual';
   fallback: 'production' | 'shadow';
+  chain?: string;
+  span: SourceSpan;
+}
+
+// --- ESCALATION_CHAIN Declaration (Dynamic Model Escalation) ---
+
+export interface EscalationOnConditions {
+  spcViolation?: number;
+  errorRate?: number;
+  explicit: boolean;
+}
+
+export interface DeescalationOnConditions {
+  stabilityWindow?: number;
+  errorRate?: number;
+}
+
+export interface EscalationChainDecl {
+  kind: 'escalation_chain';
+  name: string;
+  description: string;
+  roles: string[];
+  escalateOn: EscalationOnConditions;
+  deescalateOn: DeescalationOnConditions;
+  cooldown: string;
   span: SourceSpan;
 }
 
@@ -1269,7 +1294,8 @@ export type Declaration =
   | TopLevelSeedDecl
   | ThemeDecl
   | StagesDecl
-  | CognitionRoleDecl;
+  | CognitionRoleDecl
+  | EscalationChainDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -1324,6 +1350,7 @@ export interface AgiFile {
   themes: ThemeDecl[];
   stages: StagesDecl[];
   cognitionRoles: CognitionRoleDecl[];
+  escalationChains: EscalationChainDecl[];
 }
 
 // --- Parse Error ---

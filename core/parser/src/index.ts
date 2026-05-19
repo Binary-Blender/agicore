@@ -43,6 +43,9 @@ export type {
   LiteralValue, SourceLocation, SourceSpan, ParseError as ParseErrorType,
   PreferenceDecl,
   ThemeDecl, ThemePalette, ThemeBackground, ThemeDensity, ThemeMotif, ThemeRadius,
+  StagesDecl, StagesTransition, StagesCondition, StagesConditionOp, StagesMatchMode,
+  CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
+  EscalationChainDecl, EscalationOnConditions, DeescalationOnConditions,
 } from './types.js';
 
 import { Parser } from './parser.js';

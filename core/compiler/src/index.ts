@@ -45,6 +45,7 @@ import { generateSkillDoc } from './generators/skilldoc.js';
 import { generateTheme } from './generators/theme.js';
 import { generateStages } from './generators/stages.js';
 import { generateCognitionRole } from './generators/cognition-role.js';
+import { generateEscalationChain } from './generators/escalation-chain.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -110,6 +111,7 @@ export function compile(source: string): CompileResult {
     generateTheme(ast),
     generateStages(ast),
     generateCognitionRole(ast),
+    generateEscalationChain(ast),
   ];
 
   for (const gen of generators) {
@@ -166,3 +168,4 @@ export { generateSkillDoc } from './generators/skilldoc.js';
 export { generateTheme } from './generators/theme.js';
 export { generateStages } from './generators/stages.js';
 export { generateCognitionRole } from './generators/cognition-role.js';
+export { generateEscalationChain } from './generators/escalation-chain.js';

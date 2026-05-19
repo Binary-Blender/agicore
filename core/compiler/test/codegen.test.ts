@@ -3664,6 +3664,113 @@ ACTION generate_migration {
   console.log('  ACTION ROLE: role field parsed and stored on ActionDecl');
 }
 
+section('ESCALATION_CHAIN declaration');
+{
+  const chainSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+
+ESCALATION_CHAIN EngineeringChain {
+  DESCRIPTION  "Software engineering escalation chain"
+  ROLES        ImplementationWorker, SoftwareEngineer, SeniorArchitect
+  ESCALATE_ON {
+    SPC_VIOLATION    3
+    ERROR_RATE       0.15
+    EXPLICIT         true
+  }
+  DEESCALATE_ON {
+    STABILITY_WINDOW 50
+    ERROR_RATE       0.05
+  }
+  COOLDOWN     "300s"
+}
+`;
+
+  const { ast, files } = compile(chainSource);
+
+  assert(ast.escalationChains.length === 1, 'ESCALATION_CHAIN: parser should find 1 chain');
+
+  const chain = ast.escalationChains[0]!;
+  assert(chain.name === 'EngineeringChain', 'ESCALATION_CHAIN: name should be EngineeringChain');
+  assert(chain.description === 'Software engineering escalation chain', 'ESCALATION_CHAIN: description parsed');
+  assert(chain.roles.length === 3, 'ESCALATION_CHAIN: should have 3 roles');
+  assert(chain.roles[0] === 'ImplementationWorker', 'ESCALATION_CHAIN: first role is ImplementationWorker');
+  assert(chain.roles[2] === 'SeniorArchitect', 'ESCALATION_CHAIN: last role is SeniorArchitect');
+  assert(chain.escalateOn.spcViolation === 3, 'ESCALATION_CHAIN: spcViolation threshold = 3');
+  assert(chain.escalateOn.errorRate === 0.15, 'ESCALATION_CHAIN: escalate errorRate = 0.15');
+  assert(chain.escalateOn.explicit === true, 'ESCALATION_CHAIN: explicit escalation allowed');
+  assert(chain.deescalateOn.stabilityWindow === 50, 'ESCALATION_CHAIN: stabilityWindow = 50');
+  assert(chain.deescalateOn.errorRate === 0.05, 'ESCALATION_CHAIN: deescalate errorRate = 0.05');
+  assert(chain.cooldown === '300s', 'ESCALATION_CHAIN: cooldown = 300s');
+
+  assert(files.has('src/lib/escalation-chain.ts'), 'ESCALATION_CHAIN: should generate src/lib/escalation-chain.ts');
+  assert(files.has('scaffold/escalation-chains/EngineeringChain.md'), 'ESCALATION_CHAIN: should generate scaffold doc');
+
+  const chainTs = files.get('src/lib/escalation-chain.ts')!;
+  assert(chainTs.includes('EngineeringChainEscalationChain'), 'ESCALATION_CHAIN: engine class generated');
+  assert(chainTs.includes('EscalationChainEngine'), 'ESCALATION_CHAIN: interface exported');
+  assert(chainTs.includes('escalate()'), 'ESCALATION_CHAIN: escalate() method generated');
+  assert(chainTs.includes('deescalate()'), 'ESCALATION_CHAIN: deescalate() method generated');
+  assert(chainTs.includes('recordViolation()'), 'ESCALATION_CHAIN: recordViolation() method generated');
+  assert(chainTs.includes('recordStableResult()'), 'ESCALATION_CHAIN: recordStableResult() method generated');
+  assert(chainTs.includes('isOnCooldown()'), 'ESCALATION_CHAIN: isOnCooldown() method generated');
+  assert(chainTs.includes('ESCALATION_CHAINS'), 'ESCALATION_CHAIN: registry exported');
+  assert(chainTs.includes('getChain'), 'ESCALATION_CHAIN: getChain() helper exported');
+  assert(chainTs.includes('300000'), 'ESCALATION_CHAIN: cooldown parsed to ms (300s = 300000ms)');
+
+  const doc = files.get('scaffold/escalation-chains/EngineeringChain.md')!;
+  assert(doc.includes('EngineeringChain'), 'ESCALATION_CHAIN: doc includes chain name');
+  assert(doc.includes('ImplementationWorker'), 'ESCALATION_CHAIN: doc lists entry role');
+  assert(doc.includes('SeniorArchitect'), 'ESCALATION_CHAIN: doc lists ceiling role');
+  assert(doc.includes('300s'), 'ESCALATION_CHAIN: doc shows cooldown');
+
+  console.log('  ESCALATION_CHAIN: parser + engine class + registry + scaffold doc verified');
+}
+
+section('NBVE CHAIN field');
+{
+  const nbveChainSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+
+ESCALATION_CHAIN EngineeringChain {
+  DESCRIPTION  "Eng chain"
+  ROLES        WorkerBee, SeniorDev
+  ESCALATE_ON {
+    SPC_VIOLATION  2
+    EXPLICIT       true
+  }
+  DEESCALATE_ON {
+    STABILITY_WINDOW 30
+  }
+  COOLDOWN "60s"
+}
+
+NBVE code_gen_nbve {
+  DESCRIPTION  "Code generation shadow test"
+  PRODUCTION   "sonnet"
+  SHADOW       "haiku"
+  CHAIN        EngineeringChain
+  METRICS      [ semantic_accuracy ]
+  PROMOTION    auto
+  FALLBACK     production
+}
+`;
+
+  const { ast, files } = compile(nbveChainSource);
+
+  const nbve = ast.nbves.find(n => n.name === 'code_gen_nbve')!;
+  assert(nbve !== undefined, 'NBVE CHAIN: nbve should be parsed');
+  assert(nbve.chain === 'EngineeringChain', 'NBVE CHAIN: chain field should be EngineeringChain');
+
+  const nbveTs = files.get('src/lib/nbve.ts')!;
+  assert(nbveTs.includes('EngineeringChain'), 'NBVE CHAIN: generated code should reference EngineeringChain');
+  assert(nbveTs.includes('__escalationChains'), 'NBVE CHAIN: getActiveModel should use __escalationChains');
+  assert(nbveTs.includes('onFallback'), 'NBVE CHAIN: onFallback() method generated');
+  assert(nbveTs.includes('onStableResult'), 'NBVE CHAIN: onStableResult() method generated');
+  assert(nbveTs.includes('recordViolation'), 'NBVE CHAIN: onFallback calls recordViolation on chain');
+
+  console.log('  NBVE CHAIN: chain field parsed, getActiveModel + onFallback + onStableResult wired');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

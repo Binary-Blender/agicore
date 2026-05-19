@@ -202,16 +202,16 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 | Layer | Tests | Status |
 |---|---|---|
 | Parser | 763 passing | Complete |
-| Compiler | 1,051 passing | Complete |
+| Compiler | 1,086 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,848 passing** | **0 failures** |
+| **Total** | **1,883 passing** | **0 failures** |
 
-The DSL covers 48 declaration types across 8 layers:
+The DSL covers 49 declaration types across 8 layers:
 
 - **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST, PREFERENCE
 - **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT, STAGES
 - **Expert System:** RULE, FACT, STATE, PATTERN, SCORE, MODULE
-- **Cooperative Intelligence:** ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED, COGNITION_ROLE
+- **Cooperative Intelligence:** ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED, COGNITION_ROLE, ESCALATION_CHAIN
 - **Semantic Infrastructure:** PACKET, AUTHORITY, CHANNEL, IDENTITY, FEED
 - **Ambient Intelligence:** NODE, SENSOR, ZONE
 - **Semantic Operating Environment:** SESSION, COMPILER
@@ -226,6 +226,7 @@ The DSL covers 48 declaration types across 8 layers:
 - React components: list views, form modals, AI chat with streaming, model picker, API key modal
 - Expert system runtime (RULE/FACT/STATE/PATTERN/SCORE) and orchestration engine (WORKFLOW/PIPELINE with BFS parallel execution and SPC sampling)
 - ROUTER with multi-tier fallback and per-tier circuit breakers
+- ESCALATION_CHAIN dynamic model escalation engine with SPC-triggered role promotion, stability-window de-escalation, and cooldown enforcement; NBVE CHAIN field wires shadow runners to chain engines
 - COMPILER semantic transitions ("Send To" — save conversations to exchanges, folders, or documents)
 - Tauri configuration, capabilities ACL, tray icon, global hotkey, system tray
 - Static validation before generation: 12 semantic checks, errors abort, warnings continue
