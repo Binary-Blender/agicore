@@ -46,6 +46,7 @@ export type {
   StagesDecl, StagesTransition, StagesCondition, StagesConditionOp, StagesMatchMode,
   CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
   EscalationChainDecl, EscalationOnConditions, DeescalationOnConditions,
+  QcMeshDecl, QcMeshConsensus, QcMeshOnFail, QcMeshSpc,
 } from './types.js';
 
 import { Parser } from './parser.js';

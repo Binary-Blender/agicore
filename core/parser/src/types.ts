@@ -1104,6 +1104,30 @@ export interface EscalationChainDecl {
   span: SourceSpan;
 }
 
+// --- QC_MESH Declaration (Consensus-based judgment drift detection) ---
+
+export type QcMeshConsensus = 'majority' | 'all' | number;
+export type QcMeshOnFail = 'escalate' | 'reject' | 'flag';
+
+export interface QcMeshSpc {
+  minEvaluators: number;
+  maxEvaluators: number;
+  driftRate: number;
+  stabilityWindow: number;
+}
+
+export interface QcMeshDecl {
+  kind: 'qc_mesh';
+  name: string;
+  description: string;
+  evaluators: string[];
+  criteria: string;
+  consensus: QcMeshConsensus;
+  onFail: QcMeshOnFail;
+  spc: QcMeshSpc;
+  span: SourceSpan;
+}
+
 // --- CONTRACT Declaration ---
 
 export type PaymentMethod = 'ach' | 'stripe' | 'paypal' | 'crypto' | 'external';
@@ -1295,7 +1319,8 @@ export type Declaration =
   | ThemeDecl
   | StagesDecl
   | CognitionRoleDecl
-  | EscalationChainDecl;
+  | EscalationChainDecl
+  | QcMeshDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -1351,6 +1376,7 @@ export interface AgiFile {
   stages: StagesDecl[];
   cognitionRoles: CognitionRoleDecl[];
   escalationChains: EscalationChainDecl[];
+  qcMeshes: QcMeshDecl[];
 }
 
 // --- Parse Error ---

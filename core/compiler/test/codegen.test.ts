@@ -3771,6 +3771,93 @@ NBVE code_gen_nbve {
   console.log('  NBVE CHAIN: chain field parsed, getActiveModel + onFallback + onStableResult wired');
 }
 
+section('QC_MESH declaration');
+{
+  const meshSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+
+QC_MESH EditorialAlignment {
+  DESCRIPTION   "Judgment drift detection for editorial synthesis"
+  EVALUATORS    [ "claude-opus", "gpt-4o", "gemini-pro", "mistral-large", "llama-3-70b" ]
+  CRITERIA      editorial_values
+  CONSENSUS     majority
+  ON_FAIL       escalate
+  SPC {
+    MIN_EVALUATORS   3
+    MAX_EVALUATORS   7
+    DRIFT_RATE       0.05
+    STABILITY_WINDOW 100
+  }
+}
+`;
+
+  const { ast, files } = compile(meshSource);
+
+  assert(ast.qcMeshes.length === 1, 'QC_MESH: parser should find 1 mesh');
+
+  const mesh = ast.qcMeshes[0]!;
+  assert(mesh.name === 'EditorialAlignment', 'QC_MESH: name parsed');
+  assert(mesh.evaluators.length === 5, 'QC_MESH: 5 evaluators parsed');
+  assert(mesh.evaluators[0] === 'claude-opus', 'QC_MESH: first evaluator is claude-opus');
+  assert(mesh.evaluators[4] === 'llama-3-70b', 'QC_MESH: last evaluator is llama-3-70b');
+  assert(mesh.criteria === 'editorial_values', 'QC_MESH: criteria reference parsed');
+  assert(mesh.consensus === 'majority', 'QC_MESH: consensus = majority');
+  assert(mesh.onFail === 'escalate', 'QC_MESH: onFail = escalate');
+  assert(mesh.spc.minEvaluators === 3, 'QC_MESH: minEvaluators = 3');
+  assert(mesh.spc.maxEvaluators === 7, 'QC_MESH: maxEvaluators = 7');
+  assert(mesh.spc.driftRate === 0.05, 'QC_MESH: driftRate = 0.05');
+  assert(mesh.spc.stabilityWindow === 100, 'QC_MESH: stabilityWindow = 100');
+
+  assert(files.has('src/lib/qc-mesh.ts'), 'QC_MESH: should generate src/lib/qc-mesh.ts');
+  assert(files.has('scaffold/qc-meshes/EditorialAlignment.md'), 'QC_MESH: should generate scaffold doc');
+
+  const meshTs = files.get('src/lib/qc-mesh.ts')!;
+  assert(meshTs.includes('EditorialAlignmentQcMesh'), 'QC_MESH: engine class generated');
+  assert(meshTs.includes('QcMeshEngine'), 'QC_MESH: interface exported');
+  assert(meshTs.includes('MeshVerdict'), 'QC_MESH: MeshVerdict type exported');
+  assert(meshTs.includes('EvaluatorResult'), 'QC_MESH: EvaluatorResult type exported');
+  assert(meshTs.includes('claude-opus'), 'QC_MESH: evaluator list includes claude-opus');
+  assert(meshTs.includes('llama-3-70b'), 'QC_MESH: evaluator list includes llama-3-70b');
+  assert(meshTs.includes('driftDetected'), 'QC_MESH: driftDetected field in verdict');
+  assert(meshTs.includes('adjustMeshSize'), 'QC_MESH: SPC mesh sizing method generated');
+  assert(meshTs.includes('QC_MESHES'), 'QC_MESH: registry exported');
+  assert(meshTs.includes('getMesh'), 'QC_MESH: getMesh() helper exported');
+
+  const doc = files.get('scaffold/qc-meshes/EditorialAlignment.md')!;
+  assert(doc.includes('EditorialAlignment'), 'QC_MESH: doc includes mesh name');
+  assert(doc.includes('editorial_values'), 'QC_MESH: doc references criteria');
+  assert(doc.includes('6σ'), 'QC_MESH: doc includes sigma quality estimate');
+  assert(doc.includes('claude-opus'), 'QC_MESH: doc lists evaluators');
+
+  console.log('  QC_MESH: parser + engine class + SPC sizing + registry + scaffold doc verified');
+}
+
+section('QC_MESH consensus threshold variant');
+{
+  const thresholdSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+QC_MESH StrictMesh {
+  DESCRIPTION  "Strict consensus mesh"
+  EVALUATORS   [ "claude-opus", "gpt-4o", "gemini-pro" ]
+  CRITERIA     strict_values
+  CONSENSUS    threshold 0.8
+  ON_FAIL      reject
+  SPC {
+    MIN_EVALUATORS  3
+    MAX_EVALUATORS  5
+    DRIFT_RATE      0.03
+    STABILITY_WINDOW 50
+  }
+}
+`;
+  const { ast } = compile(thresholdSource);
+  const mesh = ast.qcMeshes[0]!;
+  assert(mesh.consensus === 0.8, 'QC_MESH threshold: numeric consensus parsed as 0.8');
+  assert(mesh.onFail === 'reject', 'QC_MESH threshold: onFail = reject');
+
+  console.log('  QC_MESH threshold variant: numeric consensus and reject on-fail verified');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

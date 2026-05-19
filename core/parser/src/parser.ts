@@ -49,6 +49,7 @@ import type {
   StagesDecl, StagesTransition, StagesCondition, StagesConditionOp, StagesMatchMode,
   CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
   EscalationChainDecl, EscalationOnConditions, DeescalationOnConditions,
+  QcMeshDecl, QcMeshConsensus, QcMeshOnFail, QcMeshSpc,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -123,6 +124,7 @@ export class Parser {
     const stages: StagesDecl[] = [];
     const cognitionRoles: CognitionRoleDecl[] = [];
     const escalationChains: EscalationChainDecl[] = [];
+    const qcMeshes: QcMeshDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -285,12 +287,15 @@ export class Parser {
         case TokenType.ESCALATION_CHAIN_KW:
           escalationChains.push(this.parseEscalationChain());
           break;
+        case TokenType.QC_MESH_KW:
+          qcMeshes.push(this.parseQcMesh());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains, qcMeshes };
   }
 
   // --- APP ---
@@ -3181,6 +3186,70 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'escalation_chain', name, description, roles, escalateOn, deescalateOn, cooldown, span: { start, end } };
+  }
+
+  private parseQcMesh(): QcMeshDecl {
+    const start = this.expectToken(TokenType.QC_MESH_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let evaluators: string[] = [];
+    let criteria = '';
+    let consensus: QcMeshConsensus = 'majority';
+    let onFail: QcMeshOnFail = 'escalate';
+    let spc: QcMeshSpc = { minEvaluators: 3, maxEvaluators: 5, driftRate: 0.05, stabilityWindow: 50 };
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.EVALUATORS_KW) {
+        this.advance(); evaluators = this.parseBracketedStringList(); continue;
+      }
+      if (token.type === TokenType.CRITERIA_KW) {
+        this.advance(); criteria = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.CONSENSUS_KW) {
+        this.advance();
+        const t = this.current();
+        if (t.type === TokenType.IDENTIFIER && t.value === 'threshold') {
+          this.advance(); consensus = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        } else {
+          consensus = this.expectIdentifier() as 'majority' | 'all';
+        }
+        continue;
+      }
+      if (token.type === TokenType.ON_FAIL) {
+        this.advance(); onFail = this.expectIdentifier() as QcMeshOnFail; continue;
+      }
+      if (token.type === TokenType.SPC) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        const parsed: Partial<QcMeshSpc> = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const t = this.current();
+          if (t.type === TokenType.MIN_EVALUATORS_KW) {
+            this.advance(); parsed.minEvaluators = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (t.type === TokenType.MAX_EVALUATORS_KW) {
+            this.advance(); parsed.maxEvaluators = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (t.type === TokenType.DRIFT_RATE_KW) {
+            this.advance(); parsed.driftRate = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else if (t.type === TokenType.STABILITY_WINDOW_KW) {
+            this.advance(); parsed.stabilityWindow = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          } else {
+            this.error(`Unexpected token in QC_MESH SPC: ${t.value}`);
+          }
+        }
+        this.expectToken(TokenType.RBRACE);
+        spc = { ...spc, ...parsed };
+        continue;
+      }
+      this.error(`Unexpected token in QC_MESH: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'qc_mesh', name, description, evaluators, criteria, consensus, onFail, spc, span: { start, end } };
   }
 
   private parseLifecycle(): LifecycleDecl {
