@@ -3489,6 +3489,91 @@ VIEW content_pipeline {
   console.log('  kanban VIEW layout component generated with GROUP_BY');
 }
 
+// =====================================================================
+// SENSITIVE field annotation
+// =====================================================================
+
+section('SENSITIVE field annotation');
+{
+  const sensitiveSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+ENTITY SocialAccount {
+  platform:     string REQUIRED
+  handle:       string REQUIRED
+  instance_url: string
+  access_token: string SENSITIVE
+  TIMESTAMPS
+}
+`;
+
+  const { ast, files } = compile(sensitiveSource);
+
+  const entity = ast.entities.find(e => e.name === 'SocialAccount')!;
+  const field = entity.fields.find(f => f.name === 'access_token')!;
+  assert(
+    field.modifiers.includes('SENSITIVE'),
+    'SENSITIVE: parser should record SENSITIVE modifier on field'
+  );
+
+  const rustKey = [...files.keys()].find(k => k.includes('social_account'));
+  const rustContent = rustKey ? files.get(rustKey)! : '';
+  assert(
+    rustContent.includes('skip_serializing'),
+    'SENSITIVE: Rust struct should have #[serde(skip_serializing)] on SENSITIVE field'
+  );
+
+  const tsKey = [...files.keys()].find(k => k.endsWith('types.ts'));
+  const tsContent = tsKey ? files.get(tsKey)! : '';
+  assert(
+    tsContent.includes('never') || tsContent.includes('SENSITIVE'),
+    'SENSITIVE: TypeScript interface should redact or mark SENSITIVE field'
+  );
+
+  console.log('  SENSITIVE field annotation: parser + Rust serde + TypeScript verified');
+}
+
+// =====================================================================
+// PATTERN oauth_callback
+// =====================================================================
+
+section('PATTERN oauth_callback');
+{
+  const oauthSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+ACTION connect_mastodon {
+  INPUT   instance_url: string, client_id: string, client_secret: string
+  OUTPUT  ok: bool, access_token: string
+  IMPL    "connect_mastodon"
+  PATTERN oauth_callback
+}
+`;
+
+  const { files } = compile(oauthSource);
+
+  const stubPath = [...files.keys()].find(k => k.includes('connect_mastodon'));
+  assert(!!stubPath, 'PATTERN oauth_callback: should generate a Rust stub file');
+
+  const stubContent = files.get(stubPath!)!;
+  assert(
+    stubContent.includes('TcpListener'),
+    'PATTERN oauth_callback: stub should reference TcpListener for callback server'
+  );
+  assert(
+    stubContent.includes('ShellExt'),
+    'PATTERN oauth_callback: stub should import ShellExt for browser open'
+  );
+  assert(
+    stubContent.includes('oauth_callback'),
+    'PATTERN oauth_callback: stub should document the PKCE flow steps'
+  );
+  assert(
+    stubContent.includes('21337'),
+    'PATTERN oauth_callback: stub should include default callback port 21337'
+  );
+
+  console.log('  PATTERN oauth_callback: stub generated with TcpListener + ShellExt + PKCE outline');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

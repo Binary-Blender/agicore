@@ -202,9 +202,9 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 | Layer | Tests | Status |
 |---|---|---|
 | Parser | 763 passing | Complete |
-| Compiler | 1,018 passing | Complete |
+| Compiler | 1,026 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,815 passing** | **0 failures** |
+| **Total** | **1,823 passing** | **0 failures** |
 
 The DSL covers 47 declaration types across 8 layers:
 

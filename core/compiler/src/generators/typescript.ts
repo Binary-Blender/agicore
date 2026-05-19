@@ -64,8 +64,12 @@ function generateInterface(entity: EntityDecl): string {
 
   for (const field of entity.fields) {
     const name = toCamelCase(field.name);
-    const optional = isRequired(field) ? '' : ' | null';
-    lines.push(`  ${name}: ${fieldTsType(field)}${optional};`);
+    if (field.modifiers.includes('SENSITIVE')) {
+      lines.push(`  ${name}?: never; // SENSITIVE — redacted from frontend serialization`);
+    } else {
+      const optional = isRequired(field) ? '' : ' | null';
+      lines.push(`  ${name}: ${fieldTsType(field)}${optional};`);
+    }
   }
 
   for (const rel of entity.relationships) {

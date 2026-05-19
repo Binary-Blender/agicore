@@ -39,6 +39,9 @@ function generateStruct(entity: EntityDecl): string {
   for (const field of entity.fields) {
     const fieldName = toSnakeCase(field.name);
     const fieldType = rustType(field.type, isRequired(field));
+    if (field.modifiers.includes('SENSITIVE')) {
+      lines.push(`    #[serde(skip_serializing)]`);
+    }
     lines.push(`    pub ${fieldName}: ${fieldType},`);
   }
 

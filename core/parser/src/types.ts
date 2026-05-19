@@ -24,7 +24,7 @@ export type AgiType =
   | 'json'
   | 'id';
 
-export type FieldModifier = 'REQUIRED' | 'UNIQUE' | 'INDEX';
+export type FieldModifier = 'REQUIRED' | 'UNIQUE' | 'INDEX' | 'SENSITIVE';
 
 export type CrudOp = 'create' | 'read' | 'update' | 'delete' | 'list';
 

@@ -326,6 +326,10 @@ function generateImplStub(action: ActionDecl): string[] {
     lines.push('use tauri_plugin_dialog::DialogExt;');
   } else if (action.pattern === 'shell_open') {
     lines.push('use tauri_plugin_shell::ShellExt;');
+  } else if (action.pattern === 'oauth_callback') {
+    lines.push('use tauri_plugin_shell::ShellExt;');
+    lines.push('use std::net::TcpListener;');
+    lines.push('use std::io::{BufRead, BufReader, Write};');
   }
 
   lines.push('use serde::{Deserialize, Serialize};');
@@ -401,6 +405,31 @@ function generateImplStub(action: ActionDecl): string[] {
       lines.push(`    // app.emit("${action.emit.eventName}", &serde_json::json!({ ${action.emit.fields.map(f => `"${f.name}": ""`).join(', ')} })).ok();`);
     }
     lines.push(`    todo!()`);
+    lines.push(`}`);
+  } else if (action.pattern === 'oauth_callback') {
+    lines.push('#[tauri::command]');
+    lines.push(`pub async fn ${snakeName}(`);
+    lines.push(`    app: tauri::AppHandle,`);
+    if (action.input.length > 0) {
+      lines.push(`    input: ${pascalName}Input,`);
+    }
+    lines.push(`) -> Result<${returnType}, String> {`);
+    lines.push(`    // PATTERN oauth_callback — PKCE OAuth 2.0 desktop flow`);
+    lines.push(`    // Default callback port: 21337 (override as needed)`);
+    lines.push(`    // 1. Build auth URL with PKCE code_verifier + code_challenge (S256)`);
+    lines.push(`    //    let (verifier, challenge) = pkce_pair();`);
+    lines.push(`    //    let auth_url = format!("{}/oauth/authorize?response_type=code&client_id={}&redirect_uri=http://127.0.0.1:21337&code_challenge={}&code_challenge_method=S256", ...);`);
+    lines.push(`    // 2. Open OS browser`);
+    lines.push(`    //    app.shell().open(&auth_url, None).map_err(|e| e.to_string())?;`);
+    lines.push(`    // 3. Spin up temporary callback server`);
+    lines.push(`    //    let listener = TcpListener::bind("127.0.0.1:21337").map_err(|e| e.to_string())?;`);
+    lines.push(`    //    let (mut stream, _) = listener.accept().map_err(|e| e.to_string())?;`);
+    lines.push(`    // 4. Parse authorization code from GET /?code=XXX`);
+    lines.push(`    //    let code = parse_code_from_request(&stream)?;`);
+    lines.push(`    //    stream.write_all(b"HTTP/1.1 200 OK\\r\\n\\r\\nAuthorized. You can close this tab.").ok();`);
+    lines.push(`    // 5. Exchange code for access token via POST to /oauth/token`);
+    lines.push(`    //    let token = exchange_code(code, verifier, ...).await?;`);
+    lines.push(`    todo!("implement oauth_callback flow")`);
     lines.push(`}`);
   } else {
     lines.push('#[tauri::command]');

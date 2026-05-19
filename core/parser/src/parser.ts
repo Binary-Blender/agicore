@@ -529,7 +529,7 @@ export class Parser {
         defaultValue = this.parseLiteral();
       }
       const modifiers: FieldModifier[] = [];
-      while (this.check(TokenType.REQUIRED) || this.check(TokenType.UNIQUE) || this.check(TokenType.INDEX)) {
+      while (this.check(TokenType.REQUIRED) || this.check(TokenType.UNIQUE) || this.check(TokenType.INDEX) || this.check(TokenType.SENSITIVE)) {
         modifiers.push(this.advance().value as FieldModifier);
       }
       return { name, type, defaultValue, modifiers, span: this.spanFrom(start) };
@@ -585,7 +585,8 @@ export class Parser {
     while (
       this.check(TokenType.REQUIRED) ||
       this.check(TokenType.UNIQUE) ||
-      this.check(TokenType.INDEX)
+      this.check(TokenType.INDEX) ||
+      this.check(TokenType.SENSITIVE)
     ) {
       modifiers.push(this.advance().value as FieldModifier);
     }
