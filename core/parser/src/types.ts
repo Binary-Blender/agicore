@@ -179,6 +179,7 @@ export interface ActionDecl {
   impl?: string;
   pattern?: string;
   emit?: ActionEmit;
+  role?: string;
   span: SourceSpan;
 }
 
@@ -743,6 +744,23 @@ export interface TriggerDecl {
   span: SourceSpan;
 }
 
+// --- COGNITION_ROLE Declaration ---
+
+export type PromotionPolicy = 'SPC_AUTOMATIC' | 'MANUAL' | 'DISABLED';
+export type FallbackPolicy  = 'ESCALATE' | 'DEGRADE' | 'FAIL';
+
+export interface CognitionRoleDecl {
+  kind: 'cognition_role';
+  name: string;
+  responsibilities: string[];
+  qcProfile?: string;
+  escalateTo?: string;
+  modelHierarchy: string[];
+  promotionPolicy: PromotionPolicy;
+  fallbackPolicy: FallbackPolicy;
+  span: SourceSpan;
+}
+
 // --- STAGES Declaration (Entity Field State Machine) ---
 
 export type StagesConditionOp =
@@ -1250,7 +1268,8 @@ export type Declaration =
   | PreferenceDecl
   | TopLevelSeedDecl
   | ThemeDecl
-  | StagesDecl;
+  | StagesDecl
+  | CognitionRoleDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -1304,6 +1323,7 @@ export interface AgiFile {
   typeAliases: TypeAliasDecl[];
   themes: ThemeDecl[];
   stages: StagesDecl[];
+  cognitionRoles: CognitionRoleDecl[];
 }
 
 // --- Parse Error ---

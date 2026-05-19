@@ -47,6 +47,7 @@ import type {
   TypeAliasDecl,
   ThemeDecl, ThemePalette, ThemeBackground, ThemeDensity, ThemeMotif, ThemeRadius,
   StagesDecl, StagesTransition, StagesCondition, StagesConditionOp, StagesMatchMode,
+  CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -119,6 +120,7 @@ export class Parser {
     const typeAliases: TypeAliasDecl[] = [];
     const themes: ThemeDecl[] = [];
     const stages: StagesDecl[] = [];
+    const cognitionRoles: CognitionRoleDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -275,12 +277,15 @@ export class Parser {
         case TokenType.STAGES_KW:
           stages.push(this.parseStages());
           break;
+        case TokenType.COGNITION_ROLE_KW:
+          cognitionRoles.push(this.parseCognitionRole());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles };
   }
 
   // --- APP ---
@@ -688,6 +693,7 @@ export class Parser {
     let impl: string | undefined;
     let pattern: string | undefined;
     let emit: ActionEmit | undefined;
+    let role: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -731,6 +737,10 @@ export class Parser {
           this.advance();
           pattern = this.advance().value; // identifier: file_handler, shell_open, etc.
           break;
+        case TokenType.ROLE_KW:
+          this.advance();
+          role = this.expectIdentifier();
+          break;
         case TokenType.EMIT_KW: {
           this.advance();
           const eventName = this.expectIdentifier();
@@ -758,6 +768,7 @@ export class Parser {
     if (impl !== undefined) decl.impl = impl;
     if (pattern !== undefined) decl.pattern = pattern;
     if (emit !== undefined) decl.emit = emit;
+    if (role !== undefined) decl.role = role;
     return decl;
   }
 
@@ -3050,6 +3061,56 @@ export class Parser {
       this.error(`Expected value in STAGES condition, got: ${valToken.value}`);
     }
     return { op: op!, entity, field, value };
+  }
+
+  // --- COGNITION_ROLE ---
+
+  private parseCognitionRole(): CognitionRoleDecl {
+    const start = this.expectToken(TokenType.COGNITION_ROLE_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let responsibilities: string[] = [];
+    let qcProfile: string | undefined;
+    let escalateTo: string | undefined;
+    let modelHierarchy: string[] = [];
+    let promotionPolicy: PromotionPolicy = 'SPC_AUTOMATIC';
+    let fallbackPolicy: FallbackPolicy = 'ESCALATE';
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      switch (token.type) {
+        case TokenType.RESPONSIBILITIES_KW:
+          this.advance();
+          responsibilities = this.parseIdentifierList();
+          break;
+        case TokenType.QC_PROFILE_KW:
+          this.advance();
+          qcProfile = this.expectIdentifier();
+          break;
+        case TokenType.ESCALATE_TO_KW:
+          this.advance();
+          escalateTo = this.expectIdentifier();
+          break;
+        case TokenType.MODEL_HIERARCHY_KW:
+          this.advance();
+          modelHierarchy = this.parseIdentifierList();
+          break;
+        case TokenType.PROMOTION_POLICY_KW:
+          this.advance();
+          promotionPolicy = this.expectIdentifier() as PromotionPolicy;
+          break;
+        case TokenType.FALLBACK_POLICY_KW:
+          this.advance();
+          fallbackPolicy = this.expectIdentifier() as FallbackPolicy;
+          break;
+        default:
+          this.error(`Unexpected field in COGNITION_ROLE: ${token.value}`);
+      }
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'cognition_role', name, responsibilities, qcProfile, escalateTo, modelHierarchy, promotionPolicy, fallbackPolicy, span: { start, end } };
   }
 
   private parseLifecycle(): LifecycleDecl {

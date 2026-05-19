@@ -44,6 +44,7 @@ import { generateBrainBody } from './generators/brain-body.js';
 import { generateSkillDoc } from './generators/skilldoc.js';
 import { generateTheme } from './generators/theme.js';
 import { generateStages } from './generators/stages.js';
+import { generateCognitionRole } from './generators/cognition-role.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -108,6 +109,7 @@ export function compile(source: string): CompileResult {
     generateSkillDoc(ast),
     generateTheme(ast),
     generateStages(ast),
+    generateCognitionRole(ast),
   ];
 
   for (const gen of generators) {
@@ -163,3 +165,4 @@ export { generateBrainBody } from './generators/brain-body.js';
 export { generateSkillDoc } from './generators/skilldoc.js';
 export { generateTheme } from './generators/theme.js';
 export { generateStages } from './generators/stages.js';
+export { generateCognitionRole } from './generators/cognition-role.js';

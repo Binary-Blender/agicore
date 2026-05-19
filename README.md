@@ -202,16 +202,16 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 | Layer | Tests | Status |
 |---|---|---|
 | Parser | 763 passing | Complete |
-| Compiler | 1,026 passing | Complete |
+| Compiler | 1,051 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,823 passing** | **0 failures** |
+| **Total** | **1,848 passing** | **0 failures** |
 
-The DSL covers 47 declaration types across 8 layers:
+The DSL covers 48 declaration types across 8 layers:
 
 - **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST, PREFERENCE
 - **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT, STAGES
 - **Expert System:** RULE, FACT, STATE, PATTERN, SCORE, MODULE
-- **Cooperative Intelligence:** ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED
+- **Cooperative Intelligence:** ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED, COGNITION_ROLE
 - **Semantic Infrastructure:** PACKET, AUTHORITY, CHANNEL, IDENTITY, FEED
 - **Ambient Intelligence:** NODE, SENSOR, ZONE
 - **Semantic Operating Environment:** SESSION, COMPILER

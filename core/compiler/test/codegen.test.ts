@@ -3574,6 +3574,96 @@ ACTION connect_mastodon {
   console.log('  PATTERN oauth_callback: stub generated with TcpListener + ShellExt + PKCE outline');
 }
 
+// =====================================================================
+// COGNITION_ROLE — organizational cognition abstraction
+// =====================================================================
+
+section('COGNITION_ROLE declaration');
+{
+  const cognitionSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+
+COGNITION_ROLE SoftwareEngineer {
+  RESPONSIBILITIES  implementation, refactoring, workflow_continuation
+  QC_PROFILE        CODE_QC
+  ESCALATE_TO       SeniorArchitect
+  MODEL_HIERARCHY   opus, sonnet, haiku
+  PROMOTION_POLICY  SPC_AUTOMATIC
+  FALLBACK_POLICY   ESCALATE
+}
+
+COGNITION_ROLE SeniorArchitect {
+  RESPONSIBILITIES  architecture, system_design, code_review
+  MODEL_HIERARCHY   opus
+  PROMOTION_POLICY  MANUAL
+  FALLBACK_POLICY   FAIL
+}
+`;
+
+  const { ast, files } = compile(cognitionSource);
+
+  assert(ast.cognitionRoles.length === 2, 'COGNITION_ROLE: parser should find 2 roles');
+
+  const eng = ast.cognitionRoles.find(r => r.name === 'SoftwareEngineer')!;
+  assert(eng !== undefined, 'COGNITION_ROLE: SoftwareEngineer should be parsed');
+  assert(eng.responsibilities.includes('implementation'), 'COGNITION_ROLE: responsibilities should include implementation');
+  assert(eng.escalateTo === 'SeniorArchitect', 'COGNITION_ROLE: escalateTo should be SeniorArchitect');
+  assert(eng.modelHierarchy[0] === 'opus', 'COGNITION_ROLE: primary model should be opus');
+  assert(eng.promotionPolicy === 'SPC_AUTOMATIC', 'COGNITION_ROLE: promotionPolicy should be SPC_AUTOMATIC');
+  assert(eng.fallbackPolicy === 'ESCALATE', 'COGNITION_ROLE: fallbackPolicy should be ESCALATE');
+  assert(eng.qcProfile === 'CODE_QC', 'COGNITION_ROLE: qcProfile should be CODE_QC');
+
+  assert(files.has('src/lib/cognition-roles.ts'), 'COGNITION_ROLE: should generate src/lib/cognition-roles.ts');
+  assert(files.has('scaffold/cognition-org-chart.md'), 'COGNITION_ROLE: should generate org chart');
+  assert(files.has('scaffold/cognition-roles/SoftwareEngineer.md'), 'COGNITION_ROLE: should generate SoftwareEngineer role doc');
+  assert(files.has('scaffold/cognition-roles/SeniorArchitect.md'), 'COGNITION_ROLE: should generate SeniorArchitect role doc');
+
+  const registry = files.get('src/lib/cognition-roles.ts')!;
+  assert(registry.includes('COGNITION_ROLES'), 'COGNITION_ROLE: registry should export COGNITION_ROLES');
+  assert(registry.includes('resolveRole'), 'COGNITION_ROLE: registry should export resolveRole()');
+  assert(registry.includes('primaryModel'), 'COGNITION_ROLE: registry should export primaryModel()');
+  assert(registry.includes('escalationTarget'), 'COGNITION_ROLE: registry should export escalationTarget()');
+  assert(registry.includes('rolesForResponsibility'), 'COGNITION_ROLE: registry should export rolesForResponsibility()');
+  assert(registry.includes('SoftwareEngineer'), 'COGNITION_ROLE: registry should contain SoftwareEngineer');
+  assert(registry.includes('SeniorArchitect'), 'COGNITION_ROLE: registry should contain SeniorArchitect');
+
+  const orgChart = files.get('scaffold/cognition-org-chart.md')!;
+  assert(orgChart.includes('SoftwareEngineer'), 'COGNITION_ROLE: org chart should include SoftwareEngineer');
+  assert(orgChart.includes('SeniorArchitect'), 'COGNITION_ROLE: org chart should include SeniorArchitect');
+  assert(orgChart.includes('opus'), 'COGNITION_ROLE: org chart should show primary model');
+
+  const engDoc = files.get('scaffold/cognition-roles/SoftwareEngineer.md')!;
+  assert(engDoc.includes('SPC_AUTOMATIC'), 'COGNITION_ROLE: role doc should describe promotion policy');
+  assert(engDoc.includes('SeniorArchitect'), 'COGNITION_ROLE: role doc should name escalation target');
+
+  console.log('  COGNITION_ROLE: parser + registry + org chart + role docs verified');
+}
+
+section('ACTION ROLE field');
+{
+  const actionRoleSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+COGNITION_ROLE SoftwareEngineer {
+  RESPONSIBILITIES  implementation
+  MODEL_HIERARCHY   sonnet
+  PROMOTION_POLICY  SPC_AUTOMATIC
+  FALLBACK_POLICY   ESCALATE
+}
+ACTION generate_migration {
+  INPUT  schema: string
+  OUTPUT sql: string
+  AI     """Generate a SQL migration for: {{schema}}"""
+  ROLE   SoftwareEngineer
+}
+`;
+
+  const { ast } = compile(actionRoleSource);
+  const action = ast.actions.find(a => a.name === 'generate_migration')!;
+  assert(action.role === 'SoftwareEngineer', 'ACTION ROLE: should parse ROLE field on ACTION');
+
+  console.log('  ACTION ROLE: role field parsed and stored on ActionDecl');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);
