@@ -46,6 +46,7 @@ import type {
   PreferenceDecl,
   TypeAliasDecl,
   ThemeDecl, ThemePalette, ThemeBackground, ThemeDensity, ThemeMotif, ThemeRadius,
+  StagesDecl, StagesTransition, StagesCondition, StagesConditionOp, StagesMatchMode,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -117,6 +118,7 @@ export class Parser {
     const topLevelSeeds: TopLevelSeedDecl[] = [];
     const typeAliases: TypeAliasDecl[] = [];
     const themes: ThemeDecl[] = [];
+    const stages: StagesDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -270,12 +272,15 @@ export class Parser {
         case TokenType.THEME:
           themes.push(this.parseTheme());
           break;
+        case TokenType.STAGES_KW:
+          stages.push(this.parseStages());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages };
   }
 
   // --- APP ---
@@ -879,6 +884,7 @@ export class Parser {
     let emoji: string | undefined;
     let columns: number | undefined;
     let featured: string[] | undefined;
+    let groupBy: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -934,13 +940,17 @@ export class Parser {
             featured = this.parseIdentifierList();
           }
           break;
+        case TokenType.GROUP_BY_KW:
+          this.advance();
+          groupBy = this.expectIdentifier();
+          break;
         default:
           this.error(`Unexpected field in VIEW: ${token.value}`);
       }
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'view', name, entity, layout, actions, sidebar, fields, title, subtitle, emoji, columns, featured, span: { start, end } };
+    return { kind: 'view', name, entity, layout, actions, sidebar, fields, title, subtitle, emoji, columns, featured, groupBy, span: { start, end } };
   }
 
   private parseLayoutType(): LayoutType {
@@ -958,13 +968,14 @@ export class Parser {
       [TokenType.LAYOUT_GALLERY]: 'gallery',
       [TokenType.LAYOUT_LANDING]: 'landing',
       [TokenType.LAYOUT_DASHBOARD]: 'dashboard',
+      [TokenType.LAYOUT_KANBAN]: 'kanban',
     };
     const lt = layoutMap[token.type];
     if (lt) { this.advance(); return lt; }
-    // Identifier aliases: 'list' -> 'table', 'kanban' -> 'cards'
+    // Identifier aliases: 'list' -> 'table', 'grid' -> 'gallery'
     if (token.type === TokenType.IDENTIFIER) {
       const identAliases: Record<string, LayoutType> = {
-        list: 'table', kanban: 'cards', grid: 'cards',
+        list: 'table', grid: 'gallery',
       };
       const mapped = identAliases[token.value];
       if (mapped) { this.advance(); return mapped; }
@@ -2931,6 +2942,114 @@ export class Parser {
   }
 
   // --- LIFECYCLE ---
+
+  // --- STAGES ---
+
+  private parseStages(): StagesDecl {
+    const start = this.expectToken(TokenType.STAGES_KW).location;
+    // Parse "Entity.field" as entity + dot + field
+    const entityName = this.expectIdentifier();
+    this.expectToken(TokenType.DOT);
+    const fieldName = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    const transitions: StagesTransition[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      if (this.check(TokenType.TRANSITION)) {
+        transitions.push(this.parseStagesTransition());
+      } else {
+        this.error(`Unexpected token in STAGES: ${this.current().value}`);
+      }
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'stages', entity: entityName, field: fieldName, transitions, span: { start, end } };
+  }
+
+  private parseStagesTransition(): StagesTransition {
+    this.expectToken(TokenType.TRANSITION);
+    const from = this.expectToken(TokenType.STRING_LITERAL).value;
+    this.expectToken(TokenType.ARROW);
+    const to = this.expectToken(TokenType.STRING_LITERAL).value;
+    this.expectToken(TokenType.LBRACE);
+
+    let match: StagesMatchMode = 'all';
+    const conditions: StagesCondition[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.MATCH) {
+        this.advance();
+        const mode = this.expectIdentifier();
+        match = mode === 'any' ? 'any' : 'all';
+      } else if (token.type === TokenType.REQUIRE_KW) {
+        this.advance();
+        conditions.push(this.parseStagesCondition());
+      } else {
+        this.error(`Unexpected token in TRANSITION: ${token.value}`);
+      }
+    }
+
+    this.expectToken(TokenType.RBRACE);
+    return { from, to, match, conditions };
+  }
+
+  private parseStagesCondition(): StagesCondition {
+    const entity = this.expectIdentifier();
+
+    // Check if next is COUNT keyword
+    if (this.check(TokenType.COUNT_KW)) {
+      this.advance();
+      this.expectToken(TokenType.GTE);
+      const count = parseInt(this.expectToken(TokenType.NUMBER_LITERAL).value, 10);
+      // Optional WHERE field = value
+      if (this.check(TokenType.WHERE_KW)) {
+        this.advance();
+        const whereField = this.expectIdentifier();
+        this.expectToken(TokenType.EQUALS);
+        const whereValue = this.expectToken(TokenType.STRING_LITERAL).value;
+        return { op: 'count_gte_where', entity, count, whereField, whereValue };
+      }
+      return { op: 'count_gte', entity, count };
+    }
+
+    // Otherwise: Entity.field op value
+    this.expectToken(TokenType.DOT);
+    const field = this.expectIdentifier();
+
+    const token = this.current();
+    if (token.type === TokenType.IS) {
+      this.advance();
+      this.expectToken(TokenType.NOT);
+      this.expectToken(TokenType.NULL);
+      return { op: 'is_not_null', entity, field };
+    }
+
+    const opMap: Partial<Record<string, StagesConditionOp>> = {
+      [TokenType.GT]: 'gt',
+      [TokenType.LT]: 'lt',
+      [TokenType.GTE]: 'gte',
+      [TokenType.LTE]: 'lte',
+      [TokenType.EQUALS]: 'eq',
+    };
+    const op = opMap[token.type];
+    if (!op) this.error(`Expected comparison operator in STAGES condition, got: ${token.value}`);
+    this.advance();
+
+    const valToken = this.current();
+    let value: string | number;
+    if (valToken.type === TokenType.NUMBER_LITERAL) {
+      value = parseFloat(valToken.value);
+      this.advance();
+    } else if (valToken.type === TokenType.STRING_LITERAL) {
+      value = valToken.value;
+      this.advance();
+    } else {
+      this.error(`Expected value in STAGES condition, got: ${valToken.value}`);
+    }
+    return { op: op!, entity, field, value };
+  }
 
   private parseLifecycle(): LifecycleDecl {
     const start = this.expectToken(TokenType.LIFECYCLE).location;

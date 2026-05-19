@@ -3407,6 +3407,88 @@ VIEW Stats {
   console.log('  Landing + Dashboard components emitted');
 }
 
+// =====================================================================
+// STAGES — entity field state machine
+// =====================================================================
+
+section('STAGES: entity field state machine');
+{
+  const stagesSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+STAGES Business.stage {
+  TRANSITION "Idea" -> "Validated" {
+    REQUIRE StrategicPosition.value_proposition IS NOT NULL
+    REQUIRE SalesContact COUNT >= 1
+  }
+  TRANSITION "Building" -> "Active" {
+    MATCH any
+    REQUIRE FinancialSnapshot.revenue > 0
+    REQUIRE SalesContact COUNT >= 3 WHERE stage = "closed_won"
+  }
+}
+`;
+
+  const { files } = compile(stagesSource);
+
+  assert(files.has('src/lib/stages.ts'), 'STAGES: stages.ts should be generated');
+
+  const content = files.get('src/lib/stages.ts')!;
+  assert(content.includes('canBusinessStageTransition'), 'STAGES: should export canBusinessStageTransition');
+  assert(content.includes('"Idea"'), 'STAGES: should include Idea state');
+  assert(content.includes('"Validated"'), 'STAGES: should include Validated state');
+  assert(content.includes('"Building"'), 'STAGES: should include Building state');
+  assert(content.includes('"Active"'), 'STAGES: should include Active state');
+  assert(
+    content.includes('"match": "any"') || content.includes('"match":"any"'),
+    'STAGES: Building->Active should be match:any'
+  );
+  assert(content.includes('closed_won'), 'STAGES: WHERE clause value should appear in stages.ts');
+  assert(
+    files.has('scaffold/stages/business_stage.md'),
+    'STAGES: should generate scaffold/stages/business_stage.md'
+  );
+
+  console.log('  STAGES state machine generator verified');
+}
+
+// =====================================================================
+// kanban VIEW layout
+// =====================================================================
+
+section('kanban VIEW layout');
+{
+  const kanbanSource = `
+APP test_app { TITLE "Test" WINDOW 800x600 DB test.db THEME dark }
+ENTITY ContentPipelineItem {
+  idea: string REQUIRED
+  status: string
+  TIMESTAMPS
+}
+VIEW content_pipeline {
+  ENTITY ContentPipelineItem
+  LAYOUT kanban
+  GROUP_BY status
+  ACTIONS []
+}
+`;
+
+  const { files } = compile(kanbanSource);
+
+  assert(
+    files.has('src/components/content_pipeline.tsx'),
+    'kanban VIEW: should generate content_pipeline.tsx'
+  );
+
+  const content = files.get('src/components/content_pipeline.tsx')!;
+  assert(
+    content.includes('flex') && content.includes('col'),
+    'kanban VIEW: component should have kanban column layout'
+  );
+  assert(content.includes('status'), 'kanban VIEW: component should group by status field');
+
+  console.log('  kanban VIEW layout component generated with GROUP_BY');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

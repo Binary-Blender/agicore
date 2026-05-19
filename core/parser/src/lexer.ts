@@ -374,6 +374,10 @@ export enum TokenType {
   EMOJI_KW = 'EMOJI_KW',
   COLUMNS_KW = 'COLUMNS_KW',
   FEATURED_KW = 'FEATURED_KW',
+  GROUP_BY_KW = 'GROUP_BY_KW',
+  STAGES_KW = 'STAGES_KW',
+  COUNT_KW = 'COUNT_KW',
+  WHERE_KW = 'WHERE_KW',
 
   // Layout values
   LAYOUT_TABLE = 'LAYOUT_TABLE',
@@ -388,6 +392,7 @@ export enum TokenType {
   LAYOUT_GALLERY = 'LAYOUT_GALLERY',
   LAYOUT_LANDING = 'LAYOUT_LANDING',
   LAYOUT_DASHBOARD = 'LAYOUT_DASHBOARD',
+  LAYOUT_KANBAN = 'LAYOUT_KANBAN',
 
   // On-fail values
   FAIL_STOP = 'FAIL_STOP',
@@ -713,6 +718,7 @@ const KEYWORDS: Record<string, TokenType> = {
   gallery: TokenType.LAYOUT_GALLERY,
   landing: TokenType.LAYOUT_LANDING,
   dashboard: TokenType.LAYOUT_DASHBOARD,
+  kanban: TokenType.LAYOUT_KANBAN,
   PALETTE: TokenType.PALETTE_KW,
   ACCENT: TokenType.ACCENT_KW,
   BACKGROUND: TokenType.BACKGROUND_KW,
@@ -724,6 +730,10 @@ const KEYWORDS: Record<string, TokenType> = {
   EMOJI: TokenType.EMOJI_KW,
   COLUMNS: TokenType.COLUMNS_KW,
   FEATURED: TokenType.FEATURED_KW,
+  GROUP_BY: TokenType.GROUP_BY_KW,
+  STAGES: TokenType.STAGES_KW,
+  COUNT: TokenType.COUNT_KW,
+  WHERE: TokenType.WHERE_KW,
   stop: TokenType.FAIL_STOP,
   skip: TokenType.FAIL_SKIP,
   retry: TokenType.FAIL_RETRY,

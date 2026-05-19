@@ -30,7 +30,7 @@ export type CrudOp = 'create' | 'read' | 'update' | 'delete' | 'list';
 
 export type ThemeOption = 'dark' | 'light' | 'system';
 
-export type LayoutType = 'table' | 'form' | 'detail' | 'cards' | 'split' | 'custom' | 'document_editor' | 'settings' | 'hero' | 'gallery' | 'landing' | 'dashboard';
+export type LayoutType = 'table' | 'form' | 'detail' | 'cards' | 'split' | 'custom' | 'document_editor' | 'settings' | 'hero' | 'gallery' | 'landing' | 'dashboard' | 'kanban';
 
 // --- THEME Declaration (visual identity) ---
 
@@ -197,6 +197,7 @@ export interface ViewDecl {
   emoji?: string;
   columns?: number;
   featured?: string[];
+  groupBy?: string;
   span: SourceSpan;
 }
 
@@ -742,6 +743,41 @@ export interface TriggerDecl {
   span: SourceSpan;
 }
 
+// --- STAGES Declaration (Entity Field State Machine) ---
+
+export type StagesConditionOp =
+  | 'is_not_null'
+  | 'gt' | 'lt' | 'gte' | 'lte' | 'eq'
+  | 'count_gte'
+  | 'count_gte_where';
+
+export type StagesMatchMode = 'all' | 'any';
+
+export interface StagesCondition {
+  op: StagesConditionOp;
+  entity: string;
+  field?: string;
+  value?: string | number;
+  count?: number;
+  whereField?: string;
+  whereValue?: string;
+}
+
+export interface StagesTransition {
+  from: string;
+  to: string;
+  match: StagesMatchMode;
+  conditions: StagesCondition[];
+}
+
+export interface StagesDecl {
+  kind: 'stages';
+  entity: string;
+  field: string;
+  transitions: StagesTransition[];
+  span: SourceSpan;
+}
+
 // --- LIFECYCLE Declaration (Temporal Graduation) ---
 
 export interface LifecycleEscalation {
@@ -1213,7 +1249,8 @@ export type Declaration =
   | DisputeDecl
   | PreferenceDecl
   | TopLevelSeedDecl
-  | ThemeDecl;
+  | ThemeDecl
+  | StagesDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -1266,6 +1303,7 @@ export interface AgiFile {
   topLevelSeeds: TopLevelSeedDecl[];
   typeAliases: TypeAliasDecl[];
   themes: ThemeDecl[];
+  stages: StagesDecl[];
 }
 
 // --- Parse Error ---
