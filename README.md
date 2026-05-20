@@ -202,11 +202,11 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 | Layer | Tests | Status |
 |---|---|---|
 | Parser | 763 passing | Complete |
-| Compiler | 1,116 passing | Complete |
+| Compiler | 1,181 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,913 passing** | **0 failures** |
+| **Total** | **1,978 passing** | **0 failures** |
 
-The DSL covers 50 declaration types across 8 layers:
+The DSL covers 53 declaration types across 9 layers:
 
 - **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST, PREFERENCE
 - **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT, STAGES
@@ -216,6 +216,7 @@ The DSL covers 50 declaration types across 8 layers:
 - **Ambient Intelligence:** NODE, SENSOR, ZONE
 - **Semantic Operating Environment:** SESSION, COMPILER
 - **Adaptive Intelligence:** EVENT, NBVE, CONTRACT, REPUTATION, SUBSCRIPTION, DISPUTE
+- **Deployment:** TARGET, AUTH, TENANT
 
 **What the compiler generates from a single `.agi` file:**
 

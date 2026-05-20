@@ -50,6 +50,9 @@ import type {
   CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
   EscalationChainDecl, EscalationOnConditions, DeescalationOnConditions,
   QcMeshDecl, QcMeshConsensus, QcMeshOnFail, QcMeshSpc,
+  TargetDecl, TargetRuntime, TargetFrontend, TargetDeploy,
+  AuthDecl, AuthStrategy,
+  TenantDecl, TenantModel, TenantIsolation,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -125,6 +128,9 @@ export class Parser {
     const cognitionRoles: CognitionRoleDecl[] = [];
     const escalationChains: EscalationChainDecl[] = [];
     const qcMeshes: QcMeshDecl[] = [];
+    let target: TargetDecl | undefined;
+    let auth: AuthDecl | undefined;
+    let tenant: TenantDecl | undefined;
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -290,12 +296,21 @@ export class Parser {
         case TokenType.QC_MESH_KW:
           qcMeshes.push(this.parseQcMesh());
           break;
+        case TokenType.TARGET_KW:
+          target = this.parseTarget();
+          break;
+        case TokenType.AUTH_KW:
+          auth = this.parseAuth();
+          break;
+        case TokenType.TENANT_KW:
+          tenant = this.parseTenant();
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains, qcMeshes };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains, qcMeshes, target, auth, tenant };
   }
 
   // --- APP ---
@@ -4447,6 +4462,96 @@ export class Parser {
     }
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'preference', name, type, defaultValue, key, span: { start, end } };
+  }
+
+  // --- TARGET ---
+
+  private parseTarget(): TargetDecl {
+    const start = this.expectToken(TokenType.TARGET_KW).location;
+    // consume optional name identifier (e.g. "web") if present before {
+    if (this.check(TokenType.IDENTIFIER)) this.advance();
+    this.expectToken(TokenType.LBRACE);
+
+    let runtime: TargetRuntime = 'axum';
+    let frontend: TargetFrontend = 'react';
+    let deploy: TargetDeploy = 'docker';
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.RUNTIME_KW) {
+        this.advance(); runtime = this.expectIdentifier() as TargetRuntime; continue;
+      }
+      if (token.type === TokenType.FRONTEND_KW) {
+        this.advance(); frontend = this.expectIdentifier() as TargetFrontend; continue;
+      }
+      if (token.type === TokenType.DEPLOY_KW) {
+        this.advance(); deploy = this.expectIdentifier() as TargetDeploy; continue;
+      }
+      this.error(`Unexpected token in TARGET: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'target', runtime, frontend, deploy, span: { start, end } };
+  }
+
+  // --- AUTH ---
+
+  private parseAuth(): AuthDecl {
+    const start = this.expectToken(TokenType.AUTH_KW).location;
+    this.expectToken(TokenType.LBRACE);
+
+    let strategy: AuthStrategy = 'jwt';
+    let providers: string[] = [];
+    let expiry = '8h';
+    let refresh = false;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.STRATEGY_KW) {
+        this.advance(); strategy = this.expectIdentifier() as AuthStrategy; continue;
+      }
+      if (token.type === TokenType.PROVIDERS) {
+        this.advance(); providers = this.parseIdentifierList(); continue;
+      }
+      if (token.type === TokenType.EXPIRY_KW) {
+        this.advance(); expiry = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.REFRESH_KW) {
+        this.advance(); refresh = this.parseBoolValue(); continue;
+      }
+      this.error(`Unexpected token in AUTH: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'auth', strategy, providers, expiry, refresh, span: { start, end } };
+  }
+
+  // --- TENANT ---
+
+  private parseTenant(): TenantDecl {
+    const start = this.expectToken(TokenType.TENANT_KW).location;
+    this.expectToken(TokenType.LBRACE);
+
+    let model: TenantModel = 'row_level';
+    let key = 'tenant_id';
+    let isolate: TenantIsolation = 'strict';
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.MODEL) {
+        this.advance(); model = this.expectIdentifier() as TenantModel; continue;
+      }
+      if (token.type === TokenType.KEY_KW) {
+        this.advance(); key = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.ISOLATE_KW) {
+        this.advance(); isolate = this.expectIdentifier() as TenantIsolation; continue;
+      }
+      this.error(`Unexpected token in TENANT: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'tenant', model, key, isolate, span: { start, end } };
   }
 
   // --- Top-Level SEED ---

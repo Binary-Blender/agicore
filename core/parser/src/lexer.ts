@@ -400,6 +400,17 @@ export enum TokenType {
   MAX_EVALUATORS_KW = 'MAX_EVALUATORS_KW',
   DRIFT_RATE_KW = 'DRIFT_RATE_KW',
 
+  // Web target keywords
+  AUTH_KW = 'AUTH_KW',
+  TENANT_KW = 'TENANT_KW',
+  RUNTIME_KW = 'RUNTIME_KW',
+  FRONTEND_KW = 'FRONTEND_KW',
+  DEPLOY_KW = 'DEPLOY_KW',
+  STRATEGY_KW = 'STRATEGY_KW',
+  REFRESH_KW = 'REFRESH_KW',
+  EXPIRY_KW = 'EXPIRY_KW',
+  ISOLATE_KW = 'ISOLATE_KW',
+
   // Extended VIEW keywords
   SUBTITLE_KW = 'SUBTITLE_KW',
   EMOJI_KW = 'EMOJI_KW',
@@ -790,6 +801,15 @@ const KEYWORDS: Record<string, TokenType> = {
   MIN_EVALUATORS: TokenType.MIN_EVALUATORS_KW,
   MAX_EVALUATORS: TokenType.MAX_EVALUATORS_KW,
   DRIFT_RATE: TokenType.DRIFT_RATE_KW,
+  AUTH: TokenType.AUTH_KW,
+  TENANT: TokenType.TENANT_KW,
+  RUNTIME: TokenType.RUNTIME_KW,
+  FRONTEND: TokenType.FRONTEND_KW,
+  DEPLOY: TokenType.DEPLOY_KW,
+  STRATEGY: TokenType.STRATEGY_KW,
+  REFRESH: TokenType.REFRESH_KW,
+  EXPIRY: TokenType.EXPIRY_KW,
+  ISOLATE: TokenType.ISOLATE_KW,
   stop: TokenType.FAIL_STOP,
   skip: TokenType.FAIL_SKIP,
   retry: TokenType.FAIL_RETRY,

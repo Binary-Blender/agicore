@@ -47,6 +47,9 @@ import { generateStages } from './generators/stages.js';
 import { generateCognitionRole } from './generators/cognition-role.js';
 import { generateEscalationChain } from './generators/escalation-chain.js';
 import { generateQcMesh } from './generators/qc-mesh.js';
+import { generateAxum } from './generators/axum.js';
+import { generateDocker } from './generators/docker.js';
+import { generateWebClient } from './generators/web-client.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -114,6 +117,9 @@ export function compile(source: string): CompileResult {
     generateCognitionRole(ast),
     generateEscalationChain(ast),
     generateQcMesh(ast),
+    generateAxum(ast),
+    generateDocker(ast),
+    generateWebClient(ast),
   ];
 
   for (const gen of generators) {
@@ -172,3 +178,6 @@ export { generateStages } from './generators/stages.js';
 export { generateCognitionRole } from './generators/cognition-role.js';
 export { generateEscalationChain } from './generators/escalation-chain.js';
 export { generateQcMesh } from './generators/qc-mesh.js';
+export { generateAxum } from './generators/axum.js';
+export { generateDocker } from './generators/docker.js';
+export { generateWebClient } from './generators/web-client.js';

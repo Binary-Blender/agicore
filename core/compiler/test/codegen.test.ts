@@ -3858,6 +3858,198 @@ QC_MESH StrictMesh {
   console.log('  QC_MESH threshold variant: numeric consensus and reject on-fail verified');
 }
 
+section('TARGET / AUTH / TENANT declarations');
+{
+  const webSource = `
+APP my_saas { TITLE "My SaaS" WINDOW 1200x800 DB app.db THEME dark }
+
+TARGET web {
+  RUNTIME   axum
+  FRONTEND  react
+  DEPLOY    docker
+}
+
+AUTH {
+  STRATEGY  jwt
+  PROVIDERS google, github
+  EXPIRY    "8h"
+  REFRESH   true
+}
+
+TENANT {
+  MODEL    row_level
+  KEY      tenant_id
+  ISOLATE  strict
+}
+`;
+  const { ast } = compile(webSource);
+
+  assert(ast.target !== undefined, 'TARGET: should parse declaration');
+  assert(ast.target!.runtime === 'axum', 'TARGET: runtime = axum');
+  assert(ast.target!.frontend === 'react', 'TARGET: frontend = react');
+  assert(ast.target!.deploy === 'docker', 'TARGET: deploy = docker');
+
+  assert(ast.auth !== undefined, 'AUTH: should parse declaration');
+  assert(ast.auth!.strategy === 'jwt', 'AUTH: strategy = jwt');
+  assert(ast.auth!.providers.includes('google'), 'AUTH: providers includes google');
+  assert(ast.auth!.providers.includes('github'), 'AUTH: providers includes github');
+  assert(ast.auth!.expiry === '8h', 'AUTH: expiry = 8h');
+  assert(ast.auth!.refresh === true, 'AUTH: refresh = true');
+
+  assert(ast.tenant !== undefined, 'TENANT: should parse declaration');
+  assert(ast.tenant!.model === 'row_level', 'TENANT: model = row_level');
+  assert(ast.tenant!.key === 'tenant_id', 'TENANT: key = tenant_id');
+  assert(ast.tenant!.isolate === 'strict', 'TENANT: isolate = strict');
+
+  console.log('  TARGET / AUTH / TENANT: all three declarations parsed correctly');
+}
+
+section('Axum web target code generation');
+{
+  const webAppSource = `
+APP my_saas { TITLE "My SaaS" WINDOW 1200x800 DB app.db THEME dark }
+
+TARGET web {
+  RUNTIME   axum
+  FRONTEND  react
+  DEPLOY    docker
+}
+
+AUTH {
+  STRATEGY  jwt
+  PROVIDERS google
+  EXPIRY    "8h"
+  REFRESH   true
+}
+
+TENANT {
+  MODEL    row_level
+  KEY      tenant_id
+  ISOLATE  strict
+}
+
+ENTITY Customer {
+  tenant_id: string REQUIRED
+  name:      string REQUIRED
+  email:     string REQUIRED UNIQUE
+  plan:      string
+  active:    bool = true
+  TIMESTAMPS
+  CRUD create, read, update, delete, list
+}
+
+ACTION summarize_customer {
+  INPUT   customer_id: string
+  OUTPUT  summary: string
+  AI      "Summarize the activity for customer {{customer_id}}"
+}
+`;
+  const { ast, files } = compile(webAppSource);
+
+  // Parser
+  assert(ast.target?.runtime === 'axum', 'Axum: target parsed');
+  assert(ast.entities.length === 1, 'Axum: entity parsed');
+
+  // Axum backend files
+  assert(files.has('Cargo.toml'), 'Axum: Cargo.toml generated');
+  assert(files.has('src/main.rs'), 'Axum: src/main.rs generated');
+  assert(files.has('src/db.rs'), 'Axum: src/db.rs generated');
+  assert(files.has('src/error.rs'), 'Axum: src/error.rs generated');
+  assert(files.has('src/middleware/auth.rs'), 'Axum: middleware/auth.rs generated');
+  assert(files.has('src/models/mod.rs'), 'Axum: models/mod.rs generated');
+  assert(files.has('src/routes/mod.rs'), 'Axum: routes/mod.rs generated');
+  assert(files.has('src/models/customer.rs'), 'Axum: models/customer.rs generated');
+  assert(files.has('src/routes/customer.rs'), 'Axum: routes/customer.rs generated');
+  assert(files.has('src/routes/actions.rs'), 'Axum: routes/actions.rs generated');
+
+  // Cargo.toml content
+  const cargo = files.get('Cargo.toml')!;
+  assert(cargo.includes('axum'), 'Axum: Cargo.toml includes axum');
+  assert(cargo.includes('sqlx'), 'Axum: Cargo.toml includes sqlx');
+  assert(cargo.includes('jsonwebtoken'), 'Axum: Cargo.toml includes jsonwebtoken');
+  assert(cargo.includes('tokio'), 'Axum: Cargo.toml includes tokio');
+
+  // main.rs content
+  const mainRs = files.get('src/main.rs')!;
+  assert(mainRs.includes('tokio::main'), 'Axum: main.rs has tokio::main');
+  assert(mainRs.includes('PgPool'), 'Axum: main.rs uses PgPool');
+  assert(mainRs.includes('axum::serve'), 'Axum: main.rs uses axum::serve');
+  assert(mainRs.includes('CorsLayer'), 'Axum: main.rs includes CORS');
+
+  // Auth middleware
+  const authRs = files.get('src/middleware/auth.rs')!;
+  assert(authRs.includes('AuthClaims'), 'Axum: AuthClaims struct generated');
+  assert(authRs.includes('tenant_id'), 'Axum: AuthClaims has tenant_id');
+  assert(authRs.includes('Bearer'), 'Axum: JWT Bearer extraction');
+  assert(authRs.includes('generate_token'), 'Axum: generate_token helper');
+
+  // Entity routes with tenant isolation
+  const customerRoutes = files.get('src/routes/customer.rs')!;
+  assert(customerRoutes.includes('tenant_id'), 'Axum: routes enforce tenant isolation');
+  assert(customerRoutes.includes('auth.tenant_id'), 'Axum: tenant_id from auth claims, not request');
+  assert(customerRoutes.includes('/api/customers'), 'Axum: correct route path');
+  assert(customerRoutes.includes('fetch_all'), 'Axum: list handler uses fetch_all');
+  assert(customerRoutes.includes('fetch_optional'), 'Axum: get_one uses fetch_optional');
+  assert(customerRoutes.includes('NO_CONTENT'), 'Axum: delete returns 204');
+
+  // Docker files
+  assert(files.has('Dockerfile'), 'Docker: Dockerfile generated');
+  assert(files.has('docker-compose.yml'), 'Docker: docker-compose.yml generated');
+  assert(files.has('.env.example'), 'Docker: .env.example generated');
+
+  const dockerfile = files.get('Dockerfile')!;
+  assert(dockerfile.includes('rust:'), 'Docker: Dockerfile uses rust image');
+  assert(dockerfile.includes('node:'), 'Docker: Dockerfile uses node image');
+  assert(dockerfile.includes('EXPOSE'), 'Docker: Dockerfile exposes port');
+
+  const compose = files.get('docker-compose.yml')!;
+  assert(compose.includes('postgres:'), 'Docker: compose includes postgres service');
+  assert(compose.includes('DATABASE_URL'), 'Docker: compose sets DATABASE_URL');
+  assert(compose.includes('healthcheck'), 'Docker: compose has DB healthcheck');
+
+  // Web client
+  assert(files.has('frontend/src/api/client.ts'), 'WebClient: base client generated');
+  assert(files.has('frontend/src/api/customer.ts'), 'WebClient: entity client generated');
+
+  const baseClient = files.get('frontend/src/api/client.ts')!;
+  assert(baseClient.includes('apiFetch'), 'WebClient: apiFetch function');
+  assert(baseClient.includes('Authorization'), 'WebClient: auth header injection');
+  assert(baseClient.includes('setAuthToken'), 'WebClient: token management');
+
+  const entityClient = files.get('frontend/src/api/customer.ts')!;
+  assert(entityClient.includes('listCustomers'), 'WebClient: list function');
+  assert(entityClient.includes('getCustomer'), 'WebClient: get function');
+  assert(entityClient.includes('createCustomer'), 'WebClient: create function');
+  assert(entityClient.includes('deleteCustomer'), 'WebClient: delete function');
+  assert(entityClient.includes('interface Customer'), 'WebClient: Customer interface');
+  assert(entityClient.includes('interface CreateCustomer'), 'WebClient: CreateCustomer interface');
+
+  console.log('  Axum web target: Cargo.toml, main.rs, auth middleware, entity routes, Docker, web client all verified');
+}
+
+section('Web target SQL: PostgreSQL dialect');
+{
+  const pgSource = `
+APP pg_app { TITLE "PG App" WINDOW 800x600 DB app.db THEME dark }
+TARGET web { RUNTIME axum FRONTEND react DEPLOY docker }
+ENTITY Product {
+  name:       string REQUIRED
+  price:      float
+  in_stock:   bool = true
+  launched:   datetime
+  TIMESTAMPS
+  CRUD create, read, list
+}
+`;
+  const { files } = compile(pgSource);
+  const sql = files.get('migrations/001_initial.sql') ?? '';
+
+  assert(sql.includes('TIMESTAMPTZ') || sql.includes('BOOLEAN') || sql.includes('DOUBLE PRECISION') || sql.includes('UUID'),
+    'PostgreSQL: migration uses PostgreSQL types');
+
+  console.log('  PostgreSQL dialect: migration uses appropriate PG types');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

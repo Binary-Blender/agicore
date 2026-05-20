@@ -1128,6 +1128,46 @@ export interface QcMeshDecl {
   span: SourceSpan;
 }
 
+// --- TARGET Declaration (Compilation profile) ---
+
+export type TargetRuntime  = 'axum' | 'tauri';
+export type TargetFrontend = 'react' | 'nextjs';
+export type TargetDeploy   = 'docker' | 'k8s' | 'lambda' | 'fly';
+
+export interface TargetDecl {
+  kind: 'target';
+  runtime: TargetRuntime;
+  frontend: TargetFrontend;
+  deploy: TargetDeploy;
+  span: SourceSpan;
+}
+
+// --- AUTH Declaration (Authentication configuration) ---
+
+export type AuthStrategy = 'jwt' | 'session' | 'oauth' | 'saml';
+
+export interface AuthDecl {
+  kind: 'auth';
+  strategy: AuthStrategy;
+  providers: string[];
+  expiry: string;
+  refresh: boolean;
+  span: SourceSpan;
+}
+
+// --- TENANT Declaration (Multi-tenancy model) ---
+
+export type TenantModel     = 'row_level' | 'schema' | 'database';
+export type TenantIsolation = 'strict' | 'advisory';
+
+export interface TenantDecl {
+  kind: 'tenant';
+  model: TenantModel;
+  key: string;
+  isolate: TenantIsolation;
+  span: SourceSpan;
+}
+
 // --- CONTRACT Declaration ---
 
 export type PaymentMethod = 'ach' | 'stripe' | 'paypal' | 'crypto' | 'external';
@@ -1320,7 +1360,10 @@ export type Declaration =
   | StagesDecl
   | CognitionRoleDecl
   | EscalationChainDecl
-  | QcMeshDecl;
+  | QcMeshDecl
+  | TargetDecl
+  | AuthDecl
+  | TenantDecl;
 
 export interface AgiFile {
   app: AppDecl;
@@ -1377,6 +1420,9 @@ export interface AgiFile {
   cognitionRoles: CognitionRoleDecl[];
   escalationChains: EscalationChainDecl[];
   qcMeshes: QcMeshDecl[];
+  target?: TargetDecl;
+  auth?: AuthDecl;
+  tenant?: TenantDecl;
 }
 
 // --- Parse Error ---

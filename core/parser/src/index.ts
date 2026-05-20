@@ -47,6 +47,9 @@ export type {
   CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
   EscalationChainDecl, EscalationOnConditions, DeescalationOnConditions,
   QcMeshDecl, QcMeshConsensus, QcMeshOnFail, QcMeshSpc,
+  TargetDecl, TargetRuntime, TargetFrontend, TargetDeploy,
+  AuthDecl, AuthStrategy,
+  TenantDecl, TenantModel, TenantIsolation,
 } from './types.js';
 
 import { Parser } from './parser.js';
