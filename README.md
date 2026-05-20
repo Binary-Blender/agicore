@@ -157,27 +157,35 @@ See [`apps/novasyn-chat/README.md`](apps/novasyn-chat/README.md) for setup and a
 
 ---
 
-### Accelerando ERP/CRM + OIE — The Startup Machine
+### The Accelerando Stack — Three `.agi` Files, One Enterprise Platform
 
-Two `.agi` files. One `docker-compose up`. A complete AI-native business platform.
+```
+accelerando_erp.agi   →  ERP/CRM web service   (Axum + React + PostgreSQL)
+accelerando_oie.agi   →  Intelligence layer     (Tauri desktop, AI reasoning)
+accelerando_es.agi    →  Governance layer       (Tauri desktop, deterministic rules)
+```
 
 **`apps/accelerando-erp/`** — Full-spec ERP/CRM (web target):
 - 32 entities across 10 modules: CRM, Finance/GL, Sales, Service, Procurement, Inventory, Manufacturing, Projects, HR
-- 12 STAGES state machines: Lead pipeline, Opportunity funnel, Invoice approval, PO lifecycle, Manufacturing orders, Project/Task, Timesheet approval, and more
+- 12 STAGES state machines: Lead pipeline, Opportunity funnel, Invoice approval, PO lifecycle, and more
 - 32 business actions with EMIT telemetry — full coverage of the Accelerando service catalog
-- 3 WORKFLOWs: high-value invoice review, deal-won project creation, inventory replenishment
 - Compiles to: Axum REST API, React frontend, PostgreSQL, multi-stage Docker, JWT auth, row-level tenant isolation
 
-**`apps/accelerando-oie/`** — Organizational Intelligence Engine (desktop):
-- Ingests every ERP/CRM action via typed CHANNEL
-- 4 REASONERs (daily batch, weekly trend, on-demand, personal coach)
+**`apps/accelerando-oie/`** — Organizational Intelligence Engine (AI layer):
+- 4 REASONERs: daily batch, weekly trend, on-demand, personal coach
 - QC_MESH: 4 independent evaluators, majority consensus, exceeds 5σ quality detection
-- ESCALATION_CHAIN + NBVE: statistical model quality governance under load
-- Compiles to: Tauri desktop app, SQLite, frameless window, system tray
+- ESCALATION_CHAIN + NBVE: statistical model quality governance under telemetry load
+- OIE asks: *"What is happening?"* — AI, probabilistic, retrospective
 
-The OIE's demo insights (invoice bottleneck, quote-to-cash gap, escalation spike) trace directly to activity in the ERP. The seed data is coherent across both apps.
+**`apps/accelerando-es/`** — Expert System (governance layer):
+- 6 governance MODULEs: CreditControl, ApprovalMatrix, SLAEnforcement, LeadScoring, InventoryControl, FinancialControls
+- 7 FACTs, 34 RULEs, 2 SCOREs, 5 STATE machines, 5 PATTERNs
+- ES asks: *"What should happen right now?"* — deterministic, instantaneous, auditable
+- ES decisions feed back as telemetry — OIE reasons over rule-firing patterns as meta-intelligence
 
-See [`apps/accelerando-erp/README.md`](apps/accelerando-erp/README.md) and [`apps/accelerando-oie/README.md`](apps/accelerando-oie/README.md).
+The three apps are coherent: ERP generates activity → ES enforces policy → OIE surfaces intelligence. Every seed row traces across all three layers.
+
+See [`apps/accelerando-erp/README.md`](apps/accelerando-erp/README.md), [`apps/accelerando-oie/README.md`](apps/accelerando-oie/README.md), and [`apps/accelerando-es/README.md`](apps/accelerando-es/README.md).
 
 ---
 
