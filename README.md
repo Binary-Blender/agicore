@@ -161,11 +161,12 @@ See [`apps/novasyn-chat/README.md`](apps/novasyn-chat/README.md) for setup and a
 
 Two `.agi` files. One `docker-compose up`. A complete AI-native business platform.
 
-**`apps/accelerando-erp/`** — Multi-tenant ERP/CRM (web target):
-- 10 entities: Customer, Contact, Vendor, Product, Employee, Quote, Invoice, ServiceTicket + line items
-- 3 STAGES state machines: Quote pipeline, Invoice approval, Service ticket lifecycle
-- 9 business actions with EMIT telemetry (CreateInvoice, ApproveInvoice, ConvertQuoteToInvoice, EscalateToTier2, ...)
-- Compiles to: Axum REST API, React frontend, PostgreSQL, multi-stage Docker, JWT auth, tenant isolation
+**`apps/accelerando-erp/`** — Full-spec ERP/CRM (web target):
+- 32 entities across 10 modules: CRM, Finance/GL, Sales, Service, Procurement, Inventory, Manufacturing, Projects, HR
+- 12 STAGES state machines: Lead pipeline, Opportunity funnel, Invoice approval, PO lifecycle, Manufacturing orders, Project/Task, Timesheet approval, and more
+- 32 business actions with EMIT telemetry — full coverage of the Accelerando service catalog
+- 3 WORKFLOWs: high-value invoice review, deal-won project creation, inventory replenishment
+- Compiles to: Axum REST API, React frontend, PostgreSQL, multi-stage Docker, JWT auth, row-level tenant isolation
 
 **`apps/accelerando-oie/`** — Organizational Intelligence Engine (desktop):
 - Ingests every ERP/CRM action via typed CHANNEL
