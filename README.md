@@ -136,7 +136,9 @@ agicore/
 
 ---
 
-## Reference Application: NovaSyn Chat 2.0
+## Reference Applications
+
+### NovaSyn Chat 2.0 — Desktop AI Client
 
 The `apps/novasyn-chat/` directory contains the first real application built on Agicore — a multi-provider AI chat client generated from a single `.agi` source file. **This application is proven working end-to-end.**
 
@@ -152,6 +154,29 @@ Verified features (all from generated code):
 The app drives Agicore's evolution: every bug encountered while building it became a framework fix; every hand-extension is a codegen candidate. The commit history tracks framework hardening alongside the app's development.
 
 See [`apps/novasyn-chat/README.md`](apps/novasyn-chat/README.md) for setup and architecture notes.
+
+---
+
+### Accelerando ERP/CRM + OIE — The Startup Machine
+
+Two `.agi` files. One `docker-compose up`. A complete AI-native business platform.
+
+**`apps/accelerando-erp/`** — Multi-tenant ERP/CRM (web target):
+- 10 entities: Customer, Contact, Vendor, Product, Employee, Quote, Invoice, ServiceTicket + line items
+- 3 STAGES state machines: Quote pipeline, Invoice approval, Service ticket lifecycle
+- 9 business actions with EMIT telemetry (CreateInvoice, ApproveInvoice, ConvertQuoteToInvoice, EscalateToTier2, ...)
+- Compiles to: Axum REST API, React frontend, PostgreSQL, multi-stage Docker, JWT auth, tenant isolation
+
+**`apps/accelerando-oie/`** — Organizational Intelligence Engine (desktop):
+- Ingests every ERP/CRM action via typed CHANNEL
+- 4 REASONERs (daily batch, weekly trend, on-demand, personal coach)
+- QC_MESH: 4 independent evaluators, majority consensus, exceeds 5σ quality detection
+- ESCALATION_CHAIN + NBVE: statistical model quality governance under load
+- Compiles to: Tauri desktop app, SQLite, frameless window, system tray
+
+The OIE's demo insights (invoice bottleneck, quote-to-cash gap, escalation spike) trace directly to activity in the ERP. The seed data is coherent across both apps.
+
+See [`apps/accelerando-erp/README.md`](apps/accelerando-erp/README.md) and [`apps/accelerando-oie/README.md`](apps/accelerando-oie/README.md).
 
 ---
 
