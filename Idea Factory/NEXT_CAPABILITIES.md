@@ -230,9 +230,18 @@ Several declarations are fully parsed but have limited codegen output. These nee
 
 **Source:** `Agicore & Distributed Semantic Systems.md`
 
-### Phase 8.3 — Cooperative Compute Accounting (future)
-- Contribution = access, not speculation
-- Compute contribution tracked in mesh_topology / routing_log
+### Phase 8.3 — Cooperative Compute Accounting (complete — commit `ae6a9a8`)
+
+- [x] `NodeContributes` interface: `{ cpu, gpu, storageGb, bandwidthMbps }`
+- [x] `NODE` gains `CONTRIBUTES { cpu: N gpu: N storage_gb: N bandwidth_mbps: N }` block
+- [x] `MESH` gains `ACCOUNTING true/false` — enables contribution tracking
+- [x] SQL: `mesh_contributions` table (resource_type, amount, direction credit/debit) + `mesh_contribution_balance` VIEW
+- [x] TypeScript: per-mesh `${mesh}RecordContribution()` and `${mesh}GetBalance()` async helpers
+- [x] Node `contributes` inlined into mesh config nodes array for route() to use
+
+Philosophy: contribution = access, not speculation. BitTorrent ratios, not crypto.
+
+**Total after Phase 8.3: 41 declaration types, 832 parser + 1556 compiler + 34 validator = 2422 tests passing.**
 
 **Source:** `Agicore Cooperative Distributed Infrastructure.md`
 

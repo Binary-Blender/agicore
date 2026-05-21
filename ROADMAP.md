@@ -13,7 +13,8 @@
 | Phase 7 — Adaptive Intelligence Layer | 40 declaration types | Complete (7.1 + 7.2 + 7.3) |
 | Phase 8.1 — Distributed Orchestration | 41 declaration types | Complete (MESH, NODE network fields, CHANNEL OVERFLOW_TO) |
 | Phase 8.2 — EVENT-Driven Distributed Workflows | 41 declaration types | Complete (EVENT SUBSCRIBERS, CHANNEL FROM/TO_NODE, AUTHORITY GOVERNS) |
-| **Total** | **2,385 passing, 0 failures** | |
+| Phase 8.3 — Cooperative Compute Accounting | 41 declaration types | Complete (NODE CONTRIBUTES, MESH ACCOUNTING, SQL balance view, TS helpers) |
+| **Total** | **2,422 passing, 0 failures** | |
 
 ---
 
