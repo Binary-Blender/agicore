@@ -33,6 +33,7 @@ import { generateContract } from './generators/contract.js';
 import { generateReputation } from './generators/reputation.js';
 import { generateSubscription } from './generators/subscription.js';
 import { generateDispute } from './generators/dispute.js';
+import { generateMesh } from './generators/mesh.js';
 import { generatePreference } from './generators/preference.js';
 import { generateLog } from './generators/logging.js';
 import { generateMacroRegistry } from './generators/macro-registry.js';
@@ -103,6 +104,7 @@ export function compile(source: string): CompileResult {
     generateReputation(ast),
     generateSubscription(ast),
     generateDispute(ast),
+    generateMesh(ast),
     generatePreference(ast),
     generateLog(ast),
     generateMacroRegistry(ast),
@@ -165,6 +167,7 @@ export { generateContract } from './generators/contract.js';
 export { generateReputation } from './generators/reputation.js';
 export { generateSubscription } from './generators/subscription.js';
 export { generateDispute } from './generators/dispute.js';
+export { generateMesh } from './generators/mesh.js';
 export { generateLog } from './generators/logging.js';
 export { generateMacroRegistry } from './generators/macro-registry.js';
 export { generateNode } from './generators/node.js';

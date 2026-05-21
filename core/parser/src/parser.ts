@@ -49,7 +49,7 @@ import type {
   StagesDecl, StagesTransition, StagesCondition, StagesConditionOp, StagesMatchMode,
   CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
   EscalationChainDecl, EscalationOnConditions, DeescalationOnConditions,
-  QcMeshDecl, QcMeshConsensus, QcMeshOnFail, QcMeshSpc,
+  QcMeshDecl, QcMeshConsensus, QcMeshOnFail, QcMeshSpc, MeshDecl,
   TargetDecl, TargetRuntime, TargetFrontend, TargetDeploy,
   AuthDecl, AuthStrategy,
   TenantDecl, TenantModel, TenantIsolation,
@@ -128,6 +128,7 @@ export class Parser {
     const cognitionRoles: CognitionRoleDecl[] = [];
     const escalationChains: EscalationChainDecl[] = [];
     const qcMeshes: QcMeshDecl[] = [];
+    const meshes: MeshDecl[] = [];
     let target: TargetDecl | undefined;
     let auth: AuthDecl | undefined;
     let tenant: TenantDecl | undefined;
@@ -296,6 +297,9 @@ export class Parser {
         case TokenType.QC_MESH_KW:
           qcMeshes.push(this.parseQcMesh());
           break;
+        case TokenType.MESH_KW:
+          meshes.push(this.parseMesh());
+          break;
         case TokenType.TARGET_KW:
           target = this.parseTarget();
           break;
@@ -310,7 +314,7 @@ export class Parser {
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains, qcMeshes, target, auth, tenant };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains, qcMeshes, meshes, target, auth, tenant };
   }
 
   // --- APP ---
@@ -3283,6 +3287,41 @@ export class Parser {
     return { kind: 'qc_mesh', name, description, evaluators, criteria, consensus, onFail, spc, span: { start, end } };
   }
 
+  private parseMesh(): MeshDecl {
+    const start = this.expectToken(TokenType.MESH_KW).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let description = '';
+    let nodes: string[] = [];
+    let authority: string | undefined;
+    let packets: string[] = [];
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.NODES) {
+        this.advance();
+        nodes = this.check(TokenType.LBRACKET) ? this.parseBracketedIdentifierList() : this.parseIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.AUTHORITY_KW) {
+        this.advance(); authority = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.PACKET) {
+        this.advance();
+        packets = this.check(TokenType.LBRACKET) ? this.parseBracketedIdentifierList() : this.parseIdentifierList();
+        continue;
+      }
+      this.error(`Unexpected token in MESH: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return { kind: 'mesh', name, description, nodes, authority, packets, span: { start, end } };
+  }
+
   private parseLifecycle(): LifecycleDecl {
     const start = this.expectToken(TokenType.LIFECYCLE).location;
     const name = this.expectIdentifier();
@@ -3578,6 +3617,7 @@ export class Parser {
     let timeout = 30000;
     let ordering: ChannelOrdering | undefined;
     let deadLetter: string | undefined;
+    let overflowTo: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -3612,11 +3652,14 @@ export class Parser {
       if (token.type === TokenType.DEAD_LETTER) {
         this.advance(); deadLetter = this.expectIdentifier(); continue;
       }
+      if (token.type === TokenType.OVERFLOW_TO) {
+        this.advance(); overflowTo = this.expectIdentifier(); continue;
+      }
       this.error(`Unexpected token in CHANNEL: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, ordering, deadLetter, span: { start, end } };
+    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, ordering, deadLetter, overflowTo, span: { start, end } };
   }
 
   // --- SESSION ---
@@ -4050,6 +4093,7 @@ export class Parser {
     let description = '', type: NodeType = 'environment', hardware = '', aiTier: AiTier = 'edge';
     let comms: string[] = [], sensorRefs: string[] = [], zone: string | undefined;
     let offline = true, safety: SafetyLevel = 'low';
+    let endpoint: string | undefined, capabilities: string[] = [], trustLevel = 1.0;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -4062,11 +4106,14 @@ export class Parser {
       if (token.type === TokenType.ZONE) { this.advance(); zone = this.expectIdentifier(); continue; }
       if (token.type === TokenType.OFFLINE) { this.advance(); offline = this.parseBoolValue(); continue; }
       if (token.type === TokenType.SAFETY) { this.advance(); safety = this.expectIdentifier() as SafetyLevel; continue; }
+      if (token.type === TokenType.ENDPOINT) { this.advance(); endpoint = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
+      if (token.type === TokenType.CAPABILITY) { this.advance(); capabilities = this.parseIdentifierList(); continue; }
+      if (token.type === TokenType.TRUST_LEVEL) { this.advance(); trustLevel = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue; }
       this.error(`Unexpected token in NODE: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'node', name, description, type, hardware, aiTier, comms, sensors: sensorRefs, zone, offline, safety, span: { start, end } };
+    return { kind: 'node', name, description, type, hardware, aiTier, comms, sensors: sensorRefs, zone, offline, safety, endpoint, capabilities, trustLevel, span: { start, end } };
   }
 
   // --- SENSOR ---

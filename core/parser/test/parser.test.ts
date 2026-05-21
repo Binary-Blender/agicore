@@ -2935,6 +2935,130 @@ ENTITY Page { title: string }
   console.error(`  FAIL: Extended VIEW layouts error: ${err}`);
 }
 
+// --- Phase 8: CHANNEL OVERFLOW_TO ---
+
+section('CHANNEL OVERFLOW_TO field');
+
+try {
+  const ch8Src = `
+APP test_ch8 { TITLE "Test" DB test.db }
+
+CHANNEL primary_q {
+  DESCRIPTION  "Primary queue"
+  PROTOCOL     queue
+  DIRECTION    bidirectional
+  PACKET       Event
+  RETRY        3
+  TIMEOUT      30000
+  OVERFLOW_TO  overflow_node
+}
+
+CHANNEL overflow_node {
+  DESCRIPTION  "Overflow target"
+  PROTOCOL     queue
+  DIRECTION    inbound
+  PACKET       Event
+}
+`;
+  const ch8Result = parse(ch8Src);
+  assert(ch8Result.channels.length === 2, 'CHANNEL OVERFLOW_TO: should have 2 channels');
+  assert(ch8Result.channels[0]!.overflowTo === 'overflow_node', 'CHANNEL OVERFLOW_TO: overflowTo should be overflow_node');
+  assert(ch8Result.channels[1]!.overflowTo === undefined, 'CHANNEL OVERFLOW_TO: overflow target has no overflowTo');
+  console.log('  CHANNEL OVERFLOW_TO: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: CHANNEL OVERFLOW_TO error: ${err}`);
+}
+
+// --- Phase 8: NODE network participation fields ---
+
+section('NODE ENDPOINT + CAPABILITIES + TRUST_LEVEL');
+
+try {
+  const node8Src = `
+APP test_node8 { TITLE "Test" DB test.db }
+
+NODE CreatorLaptop {
+  DESCRIPTION  "Creator's local machine"
+  TYPE         personal
+  HARDWARE     "MacBook Pro M3"
+  AI_TIER      hybrid
+  ENDPOINT     "https://creator.example.com/node"
+  CAPABILITY   image_generation, semantic_compression, validation
+  TRUST_LEVEL  0.9
+  OFFLINE      false
+  SAFETY       medium
+}
+
+NODE BasicNode {
+  DESCRIPTION  "Node with defaults"
+  TYPE         environment
+  HARDWARE     "Raspberry Pi 5"
+  AI_TIER      edge
+  OFFLINE      true
+  SAFETY       low
+}
+`;
+  const node8Result = parse(node8Src);
+  assert(node8Result.nodes.length === 2, 'NODE Phase8: should have 2 nodes');
+  const creator = node8Result.nodes[0]!;
+  const basic = node8Result.nodes[1]!;
+
+  assert(creator.endpoint === 'https://creator.example.com/node', 'NODE Phase8: endpoint parsed');
+  assert(creator.capabilities.length === 3, 'NODE Phase8: 3 capabilities parsed');
+  assert(creator.capabilities[0] === 'image_generation', 'NODE Phase8: first capability is image_generation');
+  assert(creator.capabilities[1] === 'semantic_compression', 'NODE Phase8: second capability is semantic_compression');
+  assert(creator.capabilities[2] === 'validation', 'NODE Phase8: third capability is validation');
+  assert(creator.trustLevel === 0.9, 'NODE Phase8: trustLevel is 0.9');
+
+  assert(basic.endpoint === undefined, 'NODE Phase8: endpoint is optional, defaults to undefined');
+  assert(basic.capabilities.length === 0, 'NODE Phase8: capabilities defaults to empty array');
+  assert(basic.trustLevel === 1.0, 'NODE Phase8: trustLevel defaults to 1.0');
+  console.log('  NODE ENDPOINT + CAPABILITIES + TRUST_LEVEL: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: NODE Phase8 error: ${err}`);
+}
+
+// --- Phase 8: MESH declaration ---
+
+section('MESH declaration');
+
+try {
+  const mesh8Src = `
+APP test_mesh { TITLE "Test" DB test.db }
+
+AUTHORITY CreatorAuthority {
+  DESCRIPTION "Trust authority for creator mesh"
+}
+
+MESH CreatorNetwork {
+  DESCRIPTION "Trusted compute mesh for creator tools"
+  NODES       [CreatorLaptop, PartnerNode, BackupNode]
+  AUTHORITY   CreatorAuthority
+  PACKET      ImageRequest, CompressionJob
+}
+`;
+  const mesh8Result = parse(mesh8Src);
+  assert(mesh8Result.meshes.length === 1, 'MESH: should have 1 MESH declaration');
+  const mesh = mesh8Result.meshes[0]!;
+  assert(mesh.kind === 'mesh', 'MESH: kind should be mesh');
+  assert(mesh.name === 'CreatorNetwork', 'MESH: name should be CreatorNetwork');
+  assert(mesh.description === 'Trusted compute mesh for creator tools', 'MESH: description should match');
+  assert(mesh.nodes.length === 3, 'MESH: should have 3 nodes');
+  assert(mesh.nodes[0] === 'CreatorLaptop', 'MESH: first node is CreatorLaptop');
+  assert(mesh.nodes[1] === 'PartnerNode', 'MESH: second node is PartnerNode');
+  assert(mesh.nodes[2] === 'BackupNode', 'MESH: third node is BackupNode');
+  assert(mesh.authority === 'CreatorAuthority', 'MESH: authority should be CreatorAuthority');
+  assert(mesh.packets.length === 2, 'MESH: should have 2 packet types');
+  assert(mesh.packets[0] === 'ImageRequest', 'MESH: first packet is ImageRequest');
+  assert(mesh.packets[1] === 'CompressionJob', 'MESH: second packet is CompressionJob');
+  console.log('  MESH: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: MESH parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

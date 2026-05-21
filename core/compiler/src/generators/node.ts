@@ -29,6 +29,10 @@ export interface ${pascalCase(n.name)}State {
   safetyLevel: '${n.safety}';
   lastSeen: string;
   sensors: Record<string, unknown>;
+  // Phase 8: network participation
+  endpoint: ${n.endpoint ? `'${n.endpoint}'` : 'undefined'};
+  capabilities: ${n.capabilities.length ? `[${n.capabilities.map(c => `'${c}'`).join(', ')}]` : '[]'};
+  trustLevel: ${n.trustLevel};
 }`).join('\n');
 
   const zoneInterfaces = zones.map(z => `
@@ -78,6 +82,9 @@ pub struct ${pascalRust(n.name)}State {
   pub online: bool,
   pub last_seen: String,
   pub sensors: std::collections::HashMap<String, serde_json::Value>,
+  pub endpoint: Option<String>,
+  pub capabilities: Vec<String>,
+  pub trust_level: f64,
 }`).join('\n');
 
   return `// Agicore Generated — DO NOT EDIT BY HAND

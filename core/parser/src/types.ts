@@ -915,6 +915,8 @@ export interface ChannelDecl {
   timeout: number;
   ordering?: ChannelOrdering;
   deadLetter?: string;
+  /** Phase 8: target channel or node name for overflow routing */
+  overflowTo?: string;
   span: SourceSpan;
 }
 
@@ -974,6 +976,27 @@ export interface NodeDecl {
   zone?: string;
   offline: boolean;
   safety: SafetyLevel;
+  /** Phase 8: network address for distributed participation */
+  endpoint?: string;
+  /** Phase 8: semantic workload types this node accepts */
+  capabilities: string[];
+  /** Phase 8: 0.0–1.0 trust score for inter-node routing (default 1.0) */
+  trustLevel: number;
+  span: SourceSpan;
+}
+
+// --- MESH Declaration (Distributed Compute Mesh) ---
+
+export interface MeshDecl {
+  kind: 'mesh';
+  name: string;
+  description: string;
+  /** NODE names participating in this mesh */
+  nodes: string[];
+  /** AUTHORITY governing inter-node admissibility */
+  authority?: string;
+  /** PACKET types that may route across this mesh */
+  packets: string[];
   span: SourceSpan;
 }
 
@@ -1366,6 +1389,7 @@ export type Declaration =
   | CognitionRoleDecl
   | EscalationChainDecl
   | QcMeshDecl
+  | MeshDecl
   | TargetDecl
   | AuthDecl
   | TenantDecl;
@@ -1425,6 +1449,7 @@ export interface AgiFile {
   cognitionRoles: CognitionRoleDecl[];
   escalationChains: EscalationChainDecl[];
   qcMeshes: QcMeshDecl[];
+  meshes: MeshDecl[];
   target?: TargetDecl;
   auth?: AuthDecl;
   tenant?: TenantDecl;

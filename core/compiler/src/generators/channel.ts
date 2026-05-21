@@ -21,6 +21,7 @@ function buildChannelRs(channels: ChannelDecl[]): string {
     const direction = ch.direction ?? 'bidirectional';
     const retry = ch.retry ?? 3;
     const timeout = ch.timeout ?? 30000;
+    const overflowTo = ch.overflowTo ? `Some("${ch.overflowTo}")` : 'None';
     return `    ChannelDef {
         name: "${ch.name}",
         description: "${ch.description.replace(/"/g, '\\"')}",
@@ -29,6 +30,7 @@ function buildChannelRs(channels: ChannelDecl[]): string {
         packet: "${ch.packet}",
         retry: ${retry},
         timeout_ms: ${timeout},
+        overflow_to: ${overflowTo},
     },`;
   }).join('\n');
 
@@ -49,6 +51,7 @@ struct ChannelDef {
     packet: &'static str,
     retry: u32,
     timeout_ms: u64,
+    overflow_to: Option<&'static str>,
 }
 
 const CHANNELS: &[ChannelDef] = &[

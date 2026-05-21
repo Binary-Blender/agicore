@@ -4865,6 +4865,180 @@ section('Wiring omit: no extra mod entries when Phase 7.2 declarations absent');
   console.log('  Wiring omit: clean main.rs and mod.rs when Phase 7.2 declarations absent');
 }
 
+// ─── Phase 8.1: MESH codegen ──────────────────────────────────────────────────
+
+section('MESH: generates SQL topology tables and TypeScript mesh config');
+{
+  const meshSrc = `
+APP mesh_demo { TITLE "Mesh Demo" WINDOW 1024x768 DB mesh.db THEME dark }
+
+AUTHORITY CoreAuthority {
+  DESCRIPTION "Root authority for mesh"
+}
+
+NODE EdgeNode1 {
+  DESCRIPTION "Edge compute node 1"
+  HARDWARE "rpi-4b"
+  AI_TIER edge
+  OFFLINE true
+  SAFETY critical
+  ENDPOINT "http://edge1.local:8080"
+  CAPABILITY SensorReading
+  TRUST_LEVEL 0.9
+}
+
+NODE EdgeNode2 {
+  DESCRIPTION "Edge compute node 2"
+  HARDWARE "rpi-4b"
+  AI_TIER edge
+  OFFLINE true
+  SAFETY critical
+  ENDPOINT "http://edge2.local:8080"
+  CAPABILITY InferenceResult
+  TRUST_LEVEL 0.8
+}
+
+MESH EdgeMesh {
+  DESCRIPTION "Primary edge compute mesh"
+  AUTHORITY CoreAuthority
+  NODES [EdgeNode1, EdgeNode2]
+  PACKET [SensorReading, InferenceResult]
+}
+`;
+  const { files } = compile(meshSrc);
+
+  // SQL topology tables
+  const meshSql = files.get('migrations/mesh.sql')!;
+  assert(meshSql !== undefined, 'MESH: migrations/mesh.sql generated');
+  assert(meshSql.includes('CREATE TABLE IF NOT EXISTS mesh_topology'), 'MESH SQL: mesh_topology table created');
+  assert(meshSql.includes('mesh_name TEXT NOT NULL'), 'MESH SQL: mesh_name column');
+  assert(meshSql.includes('node_name TEXT NOT NULL'), 'MESH SQL: node_name column');
+  assert(meshSql.includes('endpoint TEXT'), 'MESH SQL: endpoint column');
+  assert(meshSql.includes('capabilities TEXT NOT NULL'), 'MESH SQL: capabilities column');
+  assert(meshSql.includes('trust_level REAL NOT NULL'), 'MESH SQL: trust_level column');
+  assert(meshSql.includes('CREATE TABLE IF NOT EXISTS mesh_routing_log'), 'MESH SQL: mesh_routing_log table');
+  assert(meshSql.includes('idx_mesh_name'), 'MESH SQL: idx_mesh_name index');
+
+  // TypeScript mesh config
+  const meshTs = files.get('src/lib/mesh.ts')!;
+  assert(meshTs !== undefined, 'MESH: src/lib/mesh.ts generated');
+  assert(meshTs.includes('export const EdgeMeshConfig'), 'MESH TS: EdgeMeshConfig exported');
+  assert(meshTs.includes("name: 'EdgeMesh'"), 'MESH TS: mesh name in config');
+  assert(meshTs.includes("authority: 'CoreAuthority'"), 'MESH TS: authority in config');
+  assert(meshTs.includes("name: 'EdgeNode1'"), 'MESH TS: EdgeNode1 in nodes array');
+  assert(meshTs.includes("name: 'EdgeNode2'"), 'MESH TS: EdgeNode2 in nodes array');
+  assert(meshTs.includes("endpoint: 'http://edge1.local:8080'"), 'MESH TS: EdgeNode1 endpoint');
+  assert(meshTs.includes("trustLevel: 0.9"), 'MESH TS: EdgeNode1 trustLevel');
+  assert(meshTs.includes("trustLevel: 0.8"), 'MESH TS: EdgeNode2 trustLevel');
+  assert(meshTs.includes("export type EdgeMeshPacketType"), 'MESH TS: EdgeMeshPacketType union type');
+  assert(meshTs.includes("'SensorReading' | 'InferenceResult'"), 'MESH TS: packet union members');
+  assert(meshTs.includes("export type EdgeMeshNodeName"), 'MESH TS: EdgeMeshNodeName union type');
+  assert(meshTs.includes("'EdgeNode1' | 'EdgeNode2'"), 'MESH TS: node name union members');
+  assert(meshTs.includes('export function edgeMeshRoute('), 'MESH TS: edgeMeshRoute function exported');
+  assert(meshTs.includes('b.trustLevel - a.trustLevel'), 'MESH TS: route helper sorts by trustLevel desc');
+
+  console.log('  MESH: SQL topology tables and TypeScript mesh config generated correctly');
+}
+
+section('MESH omit: no mesh files when no MESH declaration');
+{
+  const noMeshSrc = `APP bare { TITLE "Bare" WINDOW 800x600 DB bare.db THEME dark }`;
+  const { files } = compile(noMeshSrc);
+  assert(!files.has('migrations/mesh.sql'), 'MESH omit: no mesh.sql without MESH declaration');
+  assert(!files.has('src/lib/mesh.ts'), 'MESH omit: no mesh.ts without MESH declaration');
+  console.log('  MESH omit: no mesh files generated when MESH absent');
+}
+
+// ─── Phase 8.1: CHANNEL OVERFLOW_TO ──────────────────────────────────────────
+
+section('CHANNEL OVERFLOW_TO: overflow target embedded in ChannelDef');
+{
+  const overflowSrc = `
+APP overflow_demo { TITLE "Overflow" WINDOW 800x600 DB overflow.db THEME dark }
+
+PACKET DataPacket {
+  DESCRIPTION "Data payload"
+  PAYLOAD { value: string }
+}
+
+CHANNEL PrimaryChannel {
+  DESCRIPTION "Primary data channel"
+  PROTOCOL local
+  DIRECTION bidirectional
+  PACKET DataPacket
+  RETRY 5
+  OVERFLOW_TO FallbackChannel
+}
+
+CHANNEL FallbackChannel {
+  DESCRIPTION "Fallback channel"
+  PROTOCOL local
+  DIRECTION inbound
+  PACKET DataPacket
+}
+`;
+  const { files } = compile(overflowSrc);
+  const channelRs = files.get('src-tauri/src/commands/channel.rs')!;
+  assert(channelRs !== undefined, 'CHANNEL OVERFLOW_TO: channel.rs generated');
+  assert(channelRs.includes('overflow_to: Some("FallbackChannel")'), 'CHANNEL OVERFLOW_TO: overflow_to Some with target name');
+  assert(channelRs.includes('overflow_to: None'), 'CHANNEL OVERFLOW_TO: fallback channel has None overflow_to');
+  assert(channelRs.includes('overflow_to: Option<&\'static str>'), 'CHANNEL OVERFLOW_TO: ChannelDef struct has overflow_to field');
+
+  console.log('  CHANNEL OVERFLOW_TO: overflow target correctly embedded in ChannelDef');
+}
+
+// ─── Phase 8.1: NODE network participation fields ─────────────────────────────
+
+section('NODE Phase 8 fields: endpoint, capabilities, trustLevel in generated types');
+{
+  const nodeSrc = `
+APP node_demo { TITLE "Node Demo" WINDOW 800x600 DB node.db THEME dark }
+
+PACKET WorkPacket {
+  DESCRIPTION "Work item"
+  PAYLOAD { task_id: string }
+}
+
+NODE WorkerNode {
+  DESCRIPTION "Distributed worker"
+  HARDWARE "x86-server"
+  AI_TIER cloud
+  OFFLINE false
+  SAFETY standard
+  ENDPOINT "http://worker.internal:9000"
+  CAPABILITY WorkPacket
+  TRUST_LEVEL 0.75
+}
+
+NODE BasicNode {
+  DESCRIPTION "Plain node with defaults"
+  HARDWARE "generic"
+  AI_TIER edge
+  OFFLINE false
+  SAFETY low
+}
+`;
+  const { files } = compile(nodeSrc);
+
+  // TypeScript hardware types
+  const hwTs = files.get('src/types/hardware.ts')!;
+  assert(hwTs !== undefined, 'NODE Phase 8: hardware.ts generated');
+  assert(hwTs.includes("endpoint: 'http://worker.internal:9000'"), 'NODE Phase 8: endpoint in WorkerNode TS interface');
+  assert(hwTs.includes('trustLevel: 0.75'), 'NODE Phase 8: trustLevel 0.75 in WorkerNode TS interface');
+  assert(hwTs.includes('capabilities: ['), 'NODE Phase 8: capabilities array in WorkerNode TS interface');
+  assert(hwTs.includes('endpoint: undefined'), 'NODE Phase 8: BasicNode endpoint is undefined');
+  assert(hwTs.includes('trustLevel: 1'), 'NODE Phase 8: BasicNode default trustLevel is 1');
+
+  // Rust types
+  const nodeRs = files.get('src-tauri/src/embedded/node_types.rs')!;
+  assert(nodeRs !== undefined, 'NODE Phase 8: node_types.rs generated');
+  assert(nodeRs.includes('pub endpoint: Option<String>'), 'NODE Phase 8: endpoint Option<String> in Rust struct');
+  assert(nodeRs.includes('pub capabilities: Vec<String>'), 'NODE Phase 8: capabilities Vec<String> in Rust struct');
+  assert(nodeRs.includes('pub trust_level: f64'), 'NODE Phase 8: trust_level f64 in Rust struct');
+
+  console.log('  NODE Phase 8: endpoint, capabilities, trustLevel present in TS and Rust types');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

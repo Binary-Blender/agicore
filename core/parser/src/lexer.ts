@@ -392,6 +392,11 @@ export enum TokenType {
   CHAIN_KW = 'CHAIN_KW',
   ROLES_KW = 'ROLES_KW',
 
+  // Phase 8 — distributed orchestration
+  OVERFLOW_TO = 'OVERFLOW_TO',
+  TRUST_LEVEL = 'TRUST_LEVEL',
+  MESH_KW = 'MESH_KW',
+
   // QC_MESH keywords
   QC_MESH_KW = 'QC_MESH_KW',
   EVALUATORS_KW = 'EVALUATORS_KW',
@@ -796,6 +801,9 @@ const KEYWORDS: Record<string, TokenType> = {
   EXPLICIT: TokenType.EXPLICIT_KW,
   CHAIN: TokenType.CHAIN_KW,
   ROLES: TokenType.ROLES_KW,
+  OVERFLOW_TO: TokenType.OVERFLOW_TO,
+  TRUST_LEVEL: TokenType.TRUST_LEVEL,
+  MESH: TokenType.MESH_KW,
   QC_MESH: TokenType.QC_MESH_KW,
   EVALUATORS: TokenType.EVALUATORS_KW,
   CRITERIA: TokenType.CRITERIA_KW,
