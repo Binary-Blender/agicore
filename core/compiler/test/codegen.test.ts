@@ -4236,6 +4236,174 @@ ENTITY Product {
   console.log('  PostgreSQL dialect: migration uses appropriate PG types');
 }
 
+// --- EVENT codegen ---
+section('EVENT declaration — Rust event bus + TypeScript helpers');
+{
+  const eventSrc = `
+APP event_app { TITLE "Event App" WINDOW 1024x768 DB event.db THEME dark }
+
+EVENT ImageBatchRejected {
+  DESCRIPTION "Fired when a batch QC fails and images are rejected"
+  PAYLOAD {
+    batch_id:   string
+    reason:     string
+    count:      int
+  }
+  IDEMPOTENT true
+  TTL        3600
+  SUBSCRIBERS [QcDashboard, AlertService]
+}
+
+EVENT OrderPlaced {
+  DESCRIPTION "Fired when a new order is placed"
+  PAYLOAD {
+    order_id:   string
+    total:      float
+  }
+  IDEMPOTENT false
+  TTL        86400
+}
+`;
+
+  const { files } = compile(eventSrc);
+
+  // event_bus.rs assertions
+  const rsFile = files.get('src-tauri/src/commands/event_bus.rs');
+  assert(rsFile !== undefined, 'EVENT: should generate event_bus.rs');
+  assert(rsFile!.includes('pub struct EventInfo'), 'EVENT: EventInfo struct defined');
+  assert(rsFile!.includes('const EVENT_REGISTRY'), 'EVENT: static event registry emitted');
+  assert(rsFile!.includes('"ImageBatchRejected"'), 'EVENT: ImageBatchRejected entry in registry');
+  assert(rsFile!.includes('"OrderPlaced"'), 'EVENT: OrderPlaced entry in registry');
+  assert(rsFile!.includes('idempotent: true'), 'EVENT: idempotent true set for ImageBatchRejected');
+  assert(rsFile!.includes('idempotent: false'), 'EVENT: idempotent false set for OrderPlaced');
+  assert(rsFile!.includes('ttl: 3600'), 'EVENT: ttl 3600 set for ImageBatchRejected');
+  assert(rsFile!.includes('ttl: 86400'), 'EVENT: ttl 86400 set for OrderPlaced');
+  assert(rsFile!.includes('pub fn emit_event('), 'EVENT: emit_event helper function defined');
+  assert(rsFile!.includes('pub fn get_event_registry()'), 'EVENT: get_event_registry Tauri command defined');
+  assert(rsFile!.includes('#[tauri::command]'), 'EVENT: get_event_registry is a Tauri command');
+  assert(rsFile!.includes('app.emit(event_name, payload)'), 'EVENT: emit_event calls app.emit');
+
+  // eventBus.ts assertions
+  const tsFile = files.get('src/lib/eventBus.ts');
+  assert(tsFile !== undefined, 'EVENT: should generate eventBus.ts');
+  assert(tsFile!.includes("from '@tauri-apps/api/event'"), 'EVENT: imports from tauri event API');
+  assert(tsFile!.includes('export interface ImageBatchRejectedPayload'), 'EVENT: ImageBatchRejectedPayload interface');
+  assert(tsFile!.includes('export interface OrderPlacedPayload'), 'EVENT: OrderPlacedPayload interface');
+  assert(tsFile!.includes('batch_id: string'), 'EVENT: batch_id payload field typed as string');
+  assert(tsFile!.includes('count: int') || tsFile!.includes('count: number'), 'EVENT: count payload field');
+  assert(tsFile!.includes('export function listenImageBatchRejected('), 'EVENT: listen helper for ImageBatchRejected');
+  assert(tsFile!.includes('export function emitImageBatchRejected('), 'EVENT: emit helper for ImageBatchRejected');
+  assert(tsFile!.includes('export function listenOrderPlaced('), 'EVENT: listen helper for OrderPlaced');
+  assert(tsFile!.includes('export function emitOrderPlaced('), 'EVENT: emit helper for OrderPlaced');
+  assert(tsFile!.includes("listen<ImageBatchRejectedPayload>('ImageBatchRejected'"), 'EVENT: typed listen call');
+
+  console.log('  EVENT: event_bus.rs registry + emit helper + Tauri command; eventBus.ts typed listeners verified');
+}
+
+section('EVENT omitted: no event files when no EVENT declared');
+{
+  const noEventSrc = `APP no_event { TITLE "No Events" WINDOW 800x600 DB app.db THEME dark }`;
+  const { files } = compile(noEventSrc);
+  assert(!files.has('src-tauri/src/commands/event_bus.rs'), 'EVENT omitted: event_bus.rs should not be generated');
+  assert(!files.has('src/lib/eventBus.ts'), 'EVENT omitted: eventBus.ts should not be generated');
+  console.log('  EVENT: no event files emitted when no EVENT declarations');
+}
+
+// --- CONTRACT codegen ---
+section('CONTRACT declaration — SQL schema + Rust CRUD + TypeScript interfaces');
+{
+  const contractSrc = `
+APP contract_app { TITLE "Contract App" WINDOW 800x600 DB contract.db THEME dark }
+
+CONTRACT MusicCommission {
+  DESCRIPTION "Custom synthwave intro commission"
+  PARTIES {
+    client: Identity
+    provider: Identity
+  }
+  TERMS {
+    delivery_deadline: "14d"
+    revisions: 2
+  }
+  DELIVERABLES {
+    audio_file: REQUIRED
+    commercial_license: REQUIRED
+  }
+  PAYMENT {
+    METHOD ach
+    AMOUNT 50
+    CURRENCY "USD"
+    RELEASE on_acceptance
+    RECURRING false
+  }
+  GOVERNANCE {
+    SIGNED_BY both
+    DISPUTE optional
+  }
+  TIMESTAMPS
+}
+`;
+
+  const { files } = compile(contractSrc);
+
+  // SQL migration assertions
+  const sql = files.get('migrations/contracts.sql');
+  assert(sql !== undefined, 'CONTRACT: should generate migrations/contracts.sql');
+  assert(sql!.includes('CREATE TABLE IF NOT EXISTS contracts'), 'CONTRACT: SQL creates contracts table');
+  assert(sql!.includes('client_id TEXT'), 'CONTRACT: contracts table has client_id column');
+  assert(sql!.includes('provider_id TEXT'), 'CONTRACT: contracts table has provider_id column');
+  assert(sql!.includes("status TEXT NOT NULL DEFAULT 'draft'"), 'CONTRACT: status defaults to draft');
+  assert(sql!.includes('idx_contracts_status'), 'CONTRACT: index on status column');
+  assert(sql!.includes('idx_contracts_client'), 'CONTRACT: index on client_id column');
+
+  // Rust commands assertions
+  const rs = files.get('src-tauri/src/commands/contracts.rs');
+  assert(rs !== undefined, 'CONTRACT: should generate contracts.rs');
+  assert(rs!.includes('"MusicCommission"'), 'CONTRACT: MusicCommission referenced in contracts.rs');
+  assert(rs!.includes('pub struct ContractRecord'), 'CONTRACT: ContractRecord struct defined');
+  assert(rs!.includes('pub struct CreateContractInput'), 'CONTRACT: CreateContractInput struct defined');
+  assert(rs!.includes('pub fn create_contract('), 'CONTRACT: create_contract Tauri command');
+  assert(rs!.includes('pub fn get_contract('), 'CONTRACT: get_contract Tauri command');
+  assert(rs!.includes('pub fn list_contracts('), 'CONTRACT: list_contracts Tauri command');
+  assert(rs!.includes('pub fn update_contract_status('), 'CONTRACT: update_contract_status Tauri command');
+  assert(rs!.includes('#[tauri::command]'), 'CONTRACT: commands use tauri attribute');
+  assert(rs!.includes('use crate::db::DbPool'), 'CONTRACT: uses DbPool for SQLite access');
+  assert(rs!.includes("INSERT INTO contracts"), 'CONTRACT: create command inserts into contracts');
+  assert(rs!.includes("UPDATE contracts SET status"), 'CONTRACT: status update command');
+
+  // TypeScript interfaces assertions
+  const ts = files.get('src/lib/contracts.ts');
+  assert(ts !== undefined, 'CONTRACT: should generate contracts.ts');
+  assert(ts!.includes("from '@tauri-apps/api/core'"), 'CONTRACT: imports from tauri core');
+  assert(ts!.includes("export type ContractStatus ="), 'CONTRACT: ContractStatus union type');
+  assert(ts!.includes("'draft'"), 'CONTRACT: draft is a ContractStatus');
+  assert(ts!.includes('export interface ContractRecord'), 'CONTRACT: ContractRecord interface');
+  assert(ts!.includes('export interface MusicCommissionParties'), 'CONTRACT: MusicCommissionParties interface');
+  assert(ts!.includes('export interface MusicCommissionTerms'), 'CONTRACT: MusicCommissionTerms interface');
+  assert(ts!.includes('export interface MusicCommissionDeliverables'), 'CONTRACT: MusicCommissionDeliverables interface');
+  assert(ts!.includes('export interface MusicCommissionPayment'), 'CONTRACT: MusicCommissionPayment interface');
+  assert(ts!.includes("method: 'ach'"), 'CONTRACT: payment method typed as literal ach');
+  assert(ts!.includes("release: 'on_acceptance'"), 'CONTRACT: payment release typed as literal on_acceptance');
+  assert(ts!.includes('export interface MusicCommissionGovernance'), 'CONTRACT: MusicCommissionGovernance interface');
+  assert(ts!.includes("signedBy: 'both'"), 'CONTRACT: governance signedBy typed as literal both');
+  assert(ts!.includes('export function createContract('), 'CONTRACT: createContract invoke wrapper');
+  assert(ts!.includes('export function getContract('), 'CONTRACT: getContract invoke wrapper');
+  assert(ts!.includes('export function listContracts('), 'CONTRACT: listContracts invoke wrapper');
+  assert(ts!.includes('export function updateContractStatus('), 'CONTRACT: updateContractStatus invoke wrapper');
+
+  console.log('  CONTRACT: SQL migration, Rust CRUD commands, TypeScript interfaces + invoke wrappers verified');
+}
+
+section('CONTRACT omitted: no contract files when no CONTRACT declared');
+{
+  const noContractSrc = `APP no_contract { TITLE "No Contracts" WINDOW 800x600 DB app.db THEME dark }`;
+  const { files } = compile(noContractSrc);
+  assert(!files.has('migrations/contracts.sql'), 'CONTRACT omitted: contracts.sql should not be generated');
+  assert(!files.has('src-tauri/src/commands/contracts.rs'), 'CONTRACT omitted: contracts.rs should not be generated');
+  assert(!files.has('src/lib/contracts.ts'), 'CONTRACT omitted: contracts.ts should not be generated');
+  console.log('  CONTRACT: no contract files emitted when no CONTRACT declarations');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);
