@@ -157,12 +157,19 @@ See [`apps/novasyn-chat/README.md`](apps/novasyn-chat/README.md) for setup and a
 
 ---
 
-### The Accelerando Stack — Three `.agi` Files, One Enterprise Platform
+### The Accelerando Stack — Ten `.agi` Files, One Enterprise Platform
 
 ```
-accelerando_erp.agi   →  ERP/CRM web service   (Axum + React + PostgreSQL)
-accelerando_oie.agi   →  Intelligence layer     (Tauri desktop, AI reasoning)
-accelerando_es.agi    →  Governance layer       (Tauri desktop, deterministic rules)
+accelerando_erp.agi          →  ERP/CRM web service         (Axum + React + PostgreSQL)
+accelerando_billing.agi      →  Medical billing engine       (Axum + React, self-updating rules)
+accelerando_legal.agi        →  eDiscovery + legal hygiene   (Axum + React, 6 connectors)
+accelerando_lms.agi          →  Compliance training LMS      (Axum + React, daily micro-assessment)
+accelerando_oie.agi          →  Intelligence layer           (Tauri desktop, AI reasoning)
+accelerando_es.agi           →  Governance layer             (Tauri desktop, deterministic rules)
+accelerando_chatbot.agi      →  Customer service chatbot     (Axum + React, web)
+accelerando_eliza.agi        →  Operator interface           (Tauri desktop, macro executor)
+accelerando_config.agi       →  Self-configuration advisor   (Tauri desktop, configuration ES)
+accelerando_interchange.agi  →  Standard interchange layer   (Axum web service)
 ```
 
 **`apps/accelerando-erp/`** — Full-spec ERP/CRM (web target):
@@ -183,9 +190,66 @@ accelerando_es.agi    →  Governance layer       (Tauri desktop, deterministic 
 - ES asks: *"What should happen right now?"* — deterministic, instantaneous, auditable
 - ES decisions feed back as telemetry — OIE reasons over rule-firing patterns as meta-intelligence
 
-The three apps are coherent: ERP generates activity → ES enforces policy → OIE surfaces intelligence. Every seed row traces across all three layers.
+**`apps/accelerando-chatbot/`** — Super Eliza Customer Service (chatbot layer):
+- 5 MODULE governance domains: ConversationEngine, BillingSupport, OrderManagement, TechnicalSupport, AccountManagement, SafetyNet
+- 28 PATTERNs (demo) → 200–2,000+ in production via `GenerateChatbot` AI build-time action
+- 20 RULEs encode safety policies — including `never_promise_refund_without_verification` and `escalate_high_frustration`
+- AI runs **once at build time** to generate PATTERNs from docs; zero LLM at runtime
+- Chatbot escalations emit signed `EscalationPacket` telemetry to OIE
+- *"Our chatbot will never call your customer a racial slur."* Verified. Deterministic. Auditable.
 
-See [`apps/accelerando-erp/README.md`](apps/accelerando-erp/README.md), [`apps/accelerando-oie/README.md`](apps/accelerando-oie/README.md), and [`apps/accelerando-es/README.md`](apps/accelerando-es/README.md).
+**`apps/accelerando-eliza/`** — Super Eliza Operator Interface (macro executor):
+- 6 MODULEs: MacroEngine, AccessControl, CRMEliza, SalesEliza, ServiceEliza, FinanceEliza
+- 20 WORKFLOWs, 66 workflow steps — every ERP SOP compiled to a deterministic recipe
+- Natural language triggers compiled from SOPs via `GenerateEliza` AI build-time action
+- Role-based permission gates at PRIORITY 100 — no operator can be talked past them
+- *"Are you AI?" "No." "Are you human?" "No." "What are you?" "A very articulate button."*
+
+**`apps/accelerando-config/`** — Configuration Intelligence (self-customizing ERP):
+- 6 advisory MODULEs: ConfigurationEngine, IndustryAdvisor, GrowthAdvisor, ComplianceAdvisor, WorkflowAdvisor, IntegrationAdvisor
+- 13 pre-compiled configuration templates in the SEED library (1,247 companies use `growth_small_to_medium`)
+- Phase 1: AI-guided intake → match known template → apply deterministically
+- Phase 2: ES monitors ConfigurationProfile FACT → fires RULEs when business state changes → recommends known configurations
+- Compliance gap detection: SOX, HIPAA, government contracting, GDPR — every gap has a name and a deterministic fix
+- *"What SAP charges $500k and 6 months to configure, Accelerando Config does in a conversation."*
+
+**`apps/accelerando-interchange/`** — Standard Interchange Layer (every industry's wire formats):
+- 5 interchange standards: HL7 v2.x, HL7 FHIR R4, ANSI X12 EDI, UN/EDIFACT, RosettaNet PIPs
+- 13 typed PACKET declarations, 17 bidirectional CHANNELs, 9 processing WORKFLOWs, 28 ACTIONs
+- Every spec validation rule encoded as a named Agicore RULE — `hl7_missing_pid_segment`, `x12_850_missing_beg_segment`, `edifact_missing_bgm_segment`
+- Deduplication by interchange control number — the bug that costs companies millions encoded as one RULE
+- *"The manufacturing interfaces you built in the 90s? EDI X12. The HL7 interfaces from healthcare? Same envelope. One module."*
+
+**`apps/accelerando-billing/`** — Medical Billing Engine (the hardest rules-based domain, solved):
+- 8 governance MODULEs: EligibilityEngine, ClaimAdjudicationEngine, FeeScheduleEngine, AuthorizationEngine, DenialsEngine, RemittanceEngine, ContractEngine, PatternIntelligence
+- 11 WORKFLOWs covering full claim lifecycle: eligibility → scrub → submit → remittance → denial → appeal → close
+- Self-updating rule library: 835 denials → `AnalyzeDenialPatterns` AI → `GeneratePayerRule` AI → human confirms → ES executes forever
+- Pre-seeded with real denial knowledge: BCBS modifier 25 rule (847 denials, 96% confidence), Medicare CCI bundling (312 denials, 94% confidence)
+- CO/OA/PR/PI denial routing — every group code maps to a deterministic action, no biller judgment required
+- *"The insurance companies have had claims editing software for decades. Now the providers do too."*
+
+**`apps/accelerando-legal/`** — eDiscovery and Legal Hygiene (stop creating the documents that lose cases):
+- Two layers: reactive eDiscovery (holds, collection, privilege review, production) + proactive legal hygiene (pattern scanning before documents proliferate)
+- 6 connectors: Exchange, Gmail, Slack, OneDrive, Google Drive, ERP — every source an organization has
+- 5 hygiene PATTERNs — including the two that account for 80% of preventable litigation loss: documented non-compliance language and litigation anticipation in unprotected channels
+- `legal_risk_score` SCORE with no decay — risk doesn't expire without action; at 50 counsel is notified, at 25 immediate action required
+- `legal_risk_reasoner` REASONER — weekly plain-English advisory memo: "this is what you're doing that ends badly in court"
+- Deletion suspension enforced during legal holds at PRIORITY 100 — spoliation is not an accident this system allows
+- *"The organizations that lose cases they should have won almost never lose on the facts. They lose on the paper trail they created."*
+
+**`apps/accelerando-lms/`** — Compliance Training LMS (daily micro-assessment, real-time knowledge scoring):
+- Daily 3-question micro-assessments using spaced repetition: weakest domains, missed subtopics, and miss-weighted questions — each learner's questions are different
+- Exponential moving average scoring: consistent failure reliably drives the score below threshold, one bad day does not
+- Wrong answer → 5-minute targeted refresher on that exact subtopic, not a 2-hour general review
+- Gamification: streaks (with 2 freeze credits), points, badges, department leaderboards — the Duolingo model applied to OSHA
+- 10 pre-seeded compliance domains: HIPAA Privacy, HIPAA Security, OSHA, Sexual Harassment, Cybersecurity, GDPR/CCPA, FCPA, SOX, Insider Trading, Code of Conduct
+- `GenerateQuestions` + `GenerateTrainingModule` — AI at build time, deterministic at runtime; question bank and refresher content generated from regulatory requirements, not written manually
+- Audit export: per-employee, per-domain, per-question assessment history — proves knowledge retention, not attendance
+- *"Annual compliance training proves attendance. This system proves knowledge. There is a difference, and in some industries that difference is a body count."*
+
+The ten apps are coherent: Interchange receives external messages → Billing processes claims → Legal governs all data under hold and scans all communications for liability patterns → LMS ensures every employee's knowledge is current and provable → Config advisor configures the ERP → ERP stores data → ES enforces internal policy → Chatbot serves customers → Eliza executes operator workflows → OIE surfaces intelligence across all telemetry streams. Every action in every layer is auditable. Nothing trusts an LLM at runtime.
+
+See [`apps/accelerando-erp/README.md`](apps/accelerando-erp/README.md), [`apps/accelerando-billing/README.md`](apps/accelerando-billing/README.md), [`apps/accelerando-legal/README.md`](apps/accelerando-legal/README.md), [`apps/accelerando-lms/README.md`](apps/accelerando-lms/README.md), [`apps/accelerando-oie/README.md`](apps/accelerando-oie/README.md), [`apps/accelerando-es/README.md`](apps/accelerando-es/README.md), [`apps/accelerando-chatbot/README.md`](apps/accelerando-chatbot/README.md), [`apps/accelerando-eliza/README.md`](apps/accelerando-eliza/README.md), [`apps/accelerando-config/README.md`](apps/accelerando-config/README.md), and [`apps/accelerando-interchange/README.md`](apps/accelerando-interchange/README.md).
 
 ---
 
