@@ -4404,6 +4404,146 @@ section('CONTRACT omitted: no contract files when no CONTRACT declared');
   console.log('  CONTRACT: no contract files emitted when no CONTRACT declarations');
 }
 
+// --- NBVE codegen ---
+section('NBVE declaration — ShadowRunner class + SPC config + promotion logic');
+{
+  const nbveSrc = `
+APP nbve_app { TITLE "NBVE App" WINDOW 800x600 DB nbve.db THEME dark }
+
+NBVE LinkedInCommentOptimizer {
+  DESCRIPTION "Shadow-tests Qwen3-72B against Claude Sonnet for LinkedIn comments"
+  PRODUCTION "claude-sonnet-4-20250514"
+  SHADOW "Qwen/Qwen3-72B"
+  SPC {
+    WINDOW 50
+    CONFIDENCE 0.95
+    ACCURACY_THRESHOLD 0.90
+    STABILITY_THRESHOLD 0.92
+    DEFECT_RATE_MAX 0.05
+  }
+  METRICS [semantic_accuracy, workflow_stability, human_acceptance_rate, token_cost]
+  PROMOTION auto
+  FALLBACK production
+}
+`;
+
+  const { files } = compile(nbveSrc);
+
+  const ts = files.get('src/lib/nbve.ts');
+  assert(ts !== undefined, 'NBVE: should generate src/lib/nbve.ts');
+  assert(ts!.includes('export interface ShadowMetrics'), 'NBVE: ShadowMetrics interface defined');
+  assert(ts!.includes('semanticAccuracy: number'), 'NBVE: ShadowMetrics has semanticAccuracy field');
+  assert(ts!.includes('latencyMs: number'), 'NBVE: ShadowMetrics has latencyMs field');
+  assert(ts!.includes('export const LinkedInCommentOptimizerConfig'), 'NBVE: config const generated');
+  assert(ts!.includes("production: 'claude-sonnet-4-20250514'"), 'NBVE: production model in config');
+  assert(ts!.includes("shadow: 'Qwen/Qwen3-72B'"), 'NBVE: shadow model in config');
+  assert(ts!.includes('window: 50'), 'NBVE: SPC window value emitted');
+  assert(ts!.includes('confidence: 0.95'), 'NBVE: SPC confidence value emitted');
+  assert(ts!.includes('accuracyThreshold: 0.9'), 'NBVE: SPC accuracyThreshold emitted');
+  assert(ts!.includes('stabilityThreshold: 0.92'), 'NBVE: SPC stabilityThreshold emitted');
+  assert(ts!.includes('defectRateMax: 0.05'), 'NBVE: SPC defectRateMax emitted');
+  assert(ts!.includes("'semantic_accuracy'"), 'NBVE: metrics array has semantic_accuracy');
+  assert(ts!.includes("promotion: 'auto'"), 'NBVE: promotion mode in config');
+  assert(ts!.includes('export class LinkedInCommentOptimizerShadowRunner'), 'NBVE: ShadowRunner class generated');
+  assert(ts!.includes('async run(messages: any[])'), 'NBVE: run method with parallel invocations');
+  assert(ts!.includes('Promise.all(['), 'NBVE: production and shadow called in parallel');
+  assert(ts!.includes('recordResult(metrics: ShadowMetrics)'), 'NBVE: recordResult method');
+  assert(ts!.includes('isReadyForPromotion()'), 'NBVE: isReadyForPromotion method');
+  assert(ts!.includes('avgAccuracy >='), 'NBVE: accuracy threshold check');
+  assert(ts!.includes('defectRate <='), 'NBVE: defect rate guard');
+  assert(ts!.includes("if ('auto' === 'auto') this.promoted = true"), 'NBVE: auto-promotion logic');
+  assert(ts!.includes('getActiveModel()'), 'NBVE: getActiveModel method');
+  assert(ts!.includes('? LinkedInCommentOptimizerConfig.shadow'), 'NBVE: promoted returns shadow model');
+  assert(ts!.includes(': LinkedInCommentOptimizerConfig.production'), 'NBVE: fallback returns production model');
+
+  console.log('  NBVE: ShadowMetrics interface, config const, ShadowRunner class with SPC promotion logic verified');
+}
+
+section('NBVE omitted: no nbve.ts when no NBVE declared');
+{
+  const noNbveSrc = `APP no_nbve { TITLE "No NBVE" WINDOW 800x600 DB app.db THEME dark }`;
+  const { files } = compile(noNbveSrc);
+  assert(!files.has('src/lib/nbve.ts'), 'NBVE omitted: nbve.ts should not be generated');
+  console.log('  NBVE: nbve.ts not emitted when no NBVE declarations');
+}
+
+// --- VAULT codegen ---
+section('VAULT declaration — vault.rs CRUD commands + vault_schema.sql');
+{
+  const vaultSrc = `
+APP vault_app { TITLE "Vault App" WINDOW 800x600 DB vault.db THEME dark }
+
+VAULT {
+  PATH         "%APPDATA%/NovaSyn/vault.db"
+  ASSET_TYPES  text, image, json, markdown
+  PROVENANCE   true
+  TAGS         true
+}
+`;
+
+  const { files } = compile(vaultSrc);
+
+  // SQL schema assertions
+  const sql = files.get('src-tauri/vault_schema.sql');
+  assert(sql !== undefined, 'VAULT: should generate src-tauri/vault_schema.sql');
+  assert(sql!.includes('CREATE TABLE IF NOT EXISTS vault_assets'), 'VAULT: vault_assets table defined');
+  assert(sql!.includes("asset_type IN ('text', 'image', 'json', 'markdown')"), 'VAULT: asset_type CHECK constraint with declared types');
+  assert(sql!.includes('PRAGMA journal_mode = WAL'), 'VAULT: WAL mode pragma');
+  assert(sql!.includes('CREATE TABLE IF NOT EXISTS vault_tags'), 'VAULT: vault_tags table (TAGS=true)');
+  assert(sql!.includes('CREATE TABLE IF NOT EXISTS vault_asset_tags'), 'VAULT: vault_asset_tags join table (TAGS=true)');
+  assert(sql!.includes('CREATE TABLE IF NOT EXISTS vault_provenance'), 'VAULT: vault_provenance table (PROVENANCE=true)');
+  assert(sql!.includes('REFERENCES vault_assets(id) ON DELETE CASCADE'), 'VAULT: FK with cascade delete');
+
+  // vault.rs assertions
+  const rs = files.get('src-tauri/src/vault.rs');
+  assert(rs !== undefined, 'VAULT: should generate src-tauri/src/vault.rs');
+  assert(rs!.includes('pub type VaultPool = Mutex<Connection>'), 'VAULT: VaultPool type alias defined');
+  assert(rs!.includes('pub fn init_vault('), 'VAULT: init_vault function');
+  assert(rs!.includes('pub fn resolve_vault_path('), 'VAULT: resolve_vault_path for %APPDATA% expansion');
+  assert(rs!.includes('pub struct VaultAsset'), 'VAULT: VaultAsset struct defined');
+  assert(rs!.includes('pub struct SaveVaultAssetInput'), 'VAULT: SaveVaultAssetInput struct defined');
+  assert(rs!.includes('pub fn vault_list_assets('), 'VAULT: vault_list_assets command');
+  assert(rs!.includes('pub fn vault_get_asset('), 'VAULT: vault_get_asset command');
+  assert(rs!.includes('pub fn vault_save_asset('), 'VAULT: vault_save_asset command');
+  assert(rs!.includes('pub fn vault_update_asset('), 'VAULT: vault_update_asset command');
+  assert(rs!.includes('pub fn vault_delete_asset('), 'VAULT: vault_delete_asset command');
+  assert(rs!.includes('pub fn vault_search_assets('), 'VAULT: vault_search_assets command');
+  assert(rs!.includes('pub fn vault_list_tags('), 'VAULT: vault_list_tags command (TAGS=true)');
+  assert(rs!.includes('pub fn vault_tag_asset('), 'VAULT: vault_tag_asset command (TAGS=true)');
+  assert(rs!.includes('pub fn vault_record_provenance('), 'VAULT: vault_record_provenance command (PROVENANCE=true)');
+  assert(rs!.includes('pub fn vault_get_provenance('), 'VAULT: vault_get_provenance command (PROVENANCE=true)');
+  assert(rs!.includes("NovaSyn/vault.db"), 'VAULT: path comment references configured path');
+  assert(rs!.includes('#[tauri::command]'), 'VAULT: commands use tauri attribute');
+
+  console.log('  VAULT: vault_schema.sql tables + constraints, vault.rs full CRUD + tags + provenance commands verified');
+}
+
+section('VAULT without tags/provenance: only core commands');
+{
+  const minimalVaultSrc = `
+APP min_vault { TITLE "Min Vault" WINDOW 800x600 DB min.db THEME dark }
+
+VAULT {
+  PATH         "%APPDATA%/Min/vault.db"
+  ASSET_TYPES  text, markdown
+  PROVENANCE   false
+  TAGS         false
+}
+`;
+
+  const { files } = compile(minimalVaultSrc);
+  const sql = files.get('src-tauri/vault_schema.sql')!;
+  const rs = files.get('src-tauri/src/vault.rs')!;
+
+  assert(!sql.includes('vault_tags'), 'VAULT minimal: no vault_tags table when TAGS=false');
+  assert(!sql.includes('vault_provenance'), 'VAULT minimal: no vault_provenance table when PROVENANCE=false');
+  assert(!rs.includes('vault_list_tags'), 'VAULT minimal: no tag commands when TAGS=false');
+  assert(!rs.includes('vault_record_provenance'), 'VAULT minimal: no provenance commands when PROVENANCE=false');
+  assert(rs.includes('vault_search_assets'), 'VAULT minimal: core search command still present');
+
+  console.log('  VAULT minimal: no tags/provenance tables or commands when both disabled');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);
