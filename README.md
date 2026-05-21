@@ -157,21 +157,30 @@ See [`apps/novasyn-chat/README.md`](apps/novasyn-chat/README.md) for setup and a
 
 ---
 
-### The Accelerando Stack — Twelve `.agi` Files, One Enterprise Platform
+### The Accelerando Stack — Eighteen `.agi` Files, One Enterprise Platform
 
 ```
-accelerando_erp.agi          →  ERP/CRM web service         (Axum + React + PostgreSQL)
-accelerando_billing.agi      →  Medical billing engine       (Axum + React, self-updating rules)
-accelerando_legal.agi        →  eDiscovery + legal hygiene   (Axum + React, 6 connectors)
-accelerando_lms.agi          →  Compliance training LMS      (Axum + React, daily micro-assessment)
-accelerando_pi_coe.agi       →  Process improvement CoE      (Axum + React, TPS/Six Sigma/anti-backslide)
-accelerando_qms.agi          →  Quality management system    (Axum + React, ISO 9001:2015)
-accelerando_oie.agi          →  Intelligence layer           (Tauri desktop, AI reasoning)
-accelerando_es.agi           →  Governance layer             (Tauri desktop, deterministic rules)
-accelerando_chatbot.agi      →  Customer service chatbot     (Axum + React, web)
-accelerando_eliza.agi        →  Operator interface           (Tauri desktop, macro executor)
-accelerando_config.agi       →  Self-configuration advisor   (Tauri desktop, configuration ES)
-accelerando_interchange.agi  →  Standard interchange layer   (Axum web service)
+// ── Enterprise Core ───────────────────────────────────────────────────────
+accelerando_erp.agi              →  ERP/CRM web service              (Axum + React + PostgreSQL)
+accelerando_billing.agi          →  Medical billing engine            (Axum + React, self-updating rules)
+accelerando_legal.agi            →  eDiscovery + legal hygiene        (Axum + React, 6 connectors)
+accelerando_lms.agi              →  Compliance training LMS           (Axum + React, daily micro-assessment)
+accelerando_pi_coe.agi           →  Process improvement CoE           (Axum + React, TPS/Six Sigma/anti-backslide)
+accelerando_qms.agi              →  Quality management system         (Axum + React, ISO 9001:2015)
+accelerando_oie.agi              →  Intelligence layer                (Tauri desktop, AI reasoning)
+accelerando_es.agi               →  Governance layer                  (Tauri desktop, deterministic rules)
+accelerando_chatbot.agi          →  Customer service chatbot          (Axum + React, web)
+accelerando_eliza.agi            →  Operator interface                (Tauri desktop, macro executor)
+accelerando_config.agi           →  Self-configuration advisor        (Tauri desktop, configuration ES)
+accelerando_interchange.agi      →  Standard interchange layer        (Axum web service)
+
+// ── EMR / Healthcare Stack ────────────────────────────────────────────────
+accelerando_scheduling.agi       →  Patient scheduling engine         (Axum + React, PORT 3008)
+accelerando_clinical.agi         →  Clinical documentation + CDS      (Axum + React, PORT 3009)
+accelerando_radiology.agi        →  RIS + DICOM + peer review         (Axum + React, PORT 3010)
+accelerando_pharmacy.agi         →  E-prescribing + PDMP + formulary  (Axum + React, PORT 3011)
+accelerando_population_health.agi →  Care gaps + risk + HEDIS/MIPS   (Axum + React, PORT 3012)
+accelerando_patient_portal.agi   →  Patient self-service portal       (Axum + React, PORT 3013)
 ```
 
 **`apps/accelerando-erp/`** — Full-spec ERP/CRM (web target):
@@ -268,9 +277,75 @@ accelerando_interchange.agi  →  Standard interchange layer   (Axum web service
 - 13 core ISO 9001 required documents pre-seeded: Quality Manual, 8 procedures, 4 forms — all with correct clause references
 - *"A CAPA with no effectiveness check is theater. This system enforces the loop."*
 
-The twelve apps are coherent: Interchange receives external messages → Billing processes claims → Legal governs all data under hold → LMS ensures every employee's knowledge is current → QMS captures every nonconformance and drives it to root cause → PI CoE eliminates systemic problems permanently and enforces improvement sustainability → Config advisor configures the ERP → ERP stores data → ES enforces internal policy → Chatbot serves customers → Eliza executes operator workflows → OIE surfaces intelligence across all telemetry streams. Every action in every layer is auditable. Nothing trusts an LLM at runtime.
+**`apps/accelerando-scheduling/`** — Patient Scheduling Engine (PORT 3008):
+- Double booking prevention at PRIORITY 100 — `ValidateSlot` runs before write, cannot be skipped
+- Provider template enforcement, buffer time validation, daily capacity tracking
+- Waitlist management: cancellation slots sorted by priority, 60-minute holds, automated notification
+- Recall pipeline: due date tracking → personalized AI outreach → three-attempt escalation → provider review
+- No-show tracking: `patient_reliability_score` score, chronic detection, process gap flag for no-reminder events
+- `OptimizeScheduleTemplate` (AI): historical utilization and no-show patterns → template adjustment recommendations
+- *"The most common scheduling failure is not the double booking the system catches. It's the recall that went unsent."*
 
-See [`apps/accelerando-erp/README.md`](apps/accelerando-erp/README.md), [`apps/accelerando-billing/README.md`](apps/accelerando-billing/README.md), [`apps/accelerando-legal/README.md`](apps/accelerando-legal/README.md), [`apps/accelerando-lms/README.md`](apps/accelerando-lms/README.md), [`apps/accelerando-pi-coe/README.md`](apps/accelerando-pi-coe/README.md), [`apps/accelerando-qms/README.md`](apps/accelerando-qms/README.md), [`apps/accelerando-oie/README.md`](apps/accelerando-oie/README.md), [`apps/accelerando-es/README.md`](apps/accelerando-es/README.md), [`apps/accelerando-chatbot/README.md`](apps/accelerando-chatbot/README.md), [`apps/accelerando-eliza/README.md`](apps/accelerando-eliza/README.md), [`apps/accelerando-config/README.md`](apps/accelerando-config/README.md), and [`apps/accelerando-interchange/README.md`](apps/accelerando-interchange/README.md).
+**`apps/accelerando-clinical/`** — Clinical Documentation and Decision Support (PORT 3009):
+- Allergy conflict blocks medication order — RxNorm cross-sensitivity, not just name match — PRIORITY 100
+- Controlled substance orders blocked without current PDMP query — PRIORITY 100 — 3-day validity window
+- Critical results: never auto-release to portal; provider must acknowledge within 1 hour or escalation fires
+- Drug-drug interaction check at order entry (Clinical) + at dispense (Pharmacy) — two safety nets
+- Screening engine runs at encounter open (not in a weekly report): mammogram, colorectal, lung, depression, A1C
+- STAT order unfulfilled at 60 minutes: PRIORITY 95 escalation
+- Hypertensive emergency (SBP ≥ 180): PRIORITY 100 — oxygen saturation below 90%: PRIORITY 100
+- AI actions: `GenerateClinicalNote` (SOAP draft), `SuggestDifferential`, `GenerateReferralLetter`, `GenerateCCDDocument`
+- *"Safety is: the controlled substance cannot proceed without a current PDMP query."*
+
+**`apps/accelerando-radiology/`** — RIS, DICOM Worklist, and Reporting (PORT 3010):
+- Critical finding communication: PRIORITY 100 if not communicated to ordering provider within 60 minutes (ACR guideline)
+- `IdentifyCriticalFindings` (AI) scans findings and impression — flags for radiologist confirmation, not auto-escalation
+- Contrast allergy block (PRIORITY 100) + creatinine not checked (PRIORITY 98) — both at scheduling, before the table
+- DICOM Modality Worklist: patient demographics and accession numbers push to scanner — no manual entry
+- Peer review: auditor independence enforced (PRIORITY 100), RADPEER scoring, concordance tracking
+- Dose tracking from DICOM RDSR: CTDIvol, DLP, DAP; 3× DRL exceedance → immediate physics review (PRIORITY 97)
+- Cumulative patient dose tracked across all studies — long-term imaging strategy flag
+- AI actions: `GenerateRadiologyReport` (structured draft), `SelectImagingProtocol`, `GeneratePeerReviewReport`
+- *"Most RIS implementations track the report. This one tracks the communication."*
+
+**`apps/accelerando-pharmacy/`** — E-Prescribing, PDMP, and Dispensing Safety (PORT 3011):
+- PDMP query mandatory before any controlled substance dispense — PRIORITY 100, blocks without exception
+- Opioid + benzodiazepine combination: PRIORITY 99 — > 90 MME/day: PRIORITY 96 (CDC 2022 guideline)
+- Doctor shopping pattern (multiple prescribers): PRIORITY 97 — multiple pharmacy detection
+- Controlled substance paper prescriptions blocked — EPCS required, credentials tracked, expiry flagged
+- Contraindicated drug combination at dispense: PRIORITY 100 — pharmacist must contact prescriber
+- Real-time formulary checking: tier, PA required, step therapy, quantity limit, specialty routing
+- `GeneratePARequest` (AI): payer-specific clinical criteria narrative for prior authorization
+- Two-point interaction check: at order entry (Clinical) and again at dispense — catches medications added between
+- *"No controlled substance — Schedule II through V — is dispensed without a current PDMP query."*
+
+**`apps/accelerando-population-health/`** — Care Gaps, Risk Stratification, and HEDIS (PORT 3012):
+- HEDIS care gap logic runs on the panel and recalculates on every encounter — live performance, not month-end
+- 6 pre-seeded quality measures: HbA1c Control, Colorectal Screening, Breast Screening, Blood Pressure Control, FUH, Influenza
+- Risk stratification: RAF score, Charlson Index, ED utilization risk, avoidable admit risk — four models per patient
+- High-risk patient without care manager: PRIORITY 93 — post-discharge without 7-day follow-up: PRIORITY 95
+- 6 pre-seeded disease registries: Diabetes, Hypertension, CHF, COPD, CKD, High Risk Panel
+- CKD eGFR declining trend → nephrology referral flag — before the patient reaches Stage 4
+- HCC recapture: finds codes documented in prior years not yet recaptured in current plan year → alerts at next encounter
+- AI actions: `GenerateOutreachMessages` (personalized per patient/channel), `GeneratePopulationReport` (executive summary)
+- *"Population health is finding them before the ER does."*
+
+**`apps/accelerando-patient-portal/`** — Patient Self-Service (PORT 3013):
+- Critical results: PRIORITY 100 hard block — never auto-release to patient, ever
+- Abnormal results: PRIORITY 100 hard block — held until provider review is on record
+- Controlled substance refill requests: PRIORITY 100 block — patient must call or visit
+- NIST 800-63 IAL2 identity verification — full clinical access gated on verified identity
+- Proxy access: documented relationship, consent on file, annual expiration, minor patient law flag
+- Secure messaging: 4-hour SLA on urgent messages (escalates to on-call), 2-business-day SLA standard
+- `GeneratePatientHealthSummary` (AI): plain language, 8th-grade reading level, preferred language — same data as CCD, readable by a patient
+- Portal integrates the entire clinical stack: appointment confirmations, result delivery, care gap alerts, refill routing, self-scheduling
+- *"The most common patient complaint about portals is not a technical failure. It's finding their own cancer diagnosis before the doctor called."*
+
+---
+
+The eighteen apps are coherent: **Interchange** receives external messages and translates industry wire formats → **Billing** processes claims against payer rules that self-update from denial patterns → **Legal** governs all data under hold and scans for liability-creating language → **LMS** ensures every employee's knowledge is current and proven → **QMS** captures every nonconformance and drives it to root cause → **PI CoE** eliminates systemic problems permanently and enforces improvement sustainability → **Config** advisor configures the ERP for each organization → **ERP** stores business data across the full enterprise → **ES** enforces internal governance policy → **Chatbot** serves customers deterministically → **Eliza** executes operator workflows → **OIE** surfaces intelligence across all telemetry streams → **Scheduling** manages the full patient access lifecycle → **Clinical** documents care and enforces drug and allergy safety at order entry → **Radiology** tracks every critical finding communication and every dose → **Pharmacy** enforces PDMP compliance and formulary rules at dispense → **Population Health** finds the patients who haven't called and surfaces them before the ER does → **Patient Portal** gives patients access to their own health on terms the care team controls. Every action in every layer is auditable. Nothing trusts an LLM at runtime.
+
+See the README in each app directory for architecture details, rule rationale, and integration topology.
 
 ---
 
