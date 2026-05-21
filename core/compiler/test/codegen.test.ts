@@ -1229,6 +1229,51 @@ assert(aiActionServiceRs.includes('data["content"][0]["text"]'), 'call_action: e
 assert(aiActionServiceRs.includes('data["choices"][0]["message"]["content"]'), 'call_action: extracts OpenAI text from response');
 console.log(`  AI action codegen: ${aiActionsRs!.split('\n').length} lines in actions.rs`);
 
+// --- Test: ACTION MODEL per-action model override ---
+section('ACTION MODEL per-action model override');
+
+const modelOverrideSrc = `
+APP model_test {
+  TITLE "Model Override Test"
+  DB    model_test.db
+  THEME dark
+}
+AI_SERVICE {
+  PROVIDERS   anthropic
+  KEYS_FILE   "%APPDATA%/test/keys.json"
+  DEFAULT     anthropic
+  STREAMING   true
+  MODELS {
+    anthropic "claude-sonnet-4-20250514" DEFAULT
+  }
+}
+ACTION do_cheap {
+  DESCRIPTION "Runs on haiku"
+  MODEL "claude-haiku-4-5-20251001"
+  INPUT  content: string
+  OUTPUT summary: string
+  AI "Summarize briefly: {{content}}"
+  STREAM false
+}
+ACTION do_deep {
+  INPUT  content: string
+  OUTPUT analysis: string
+  AI "Analyze deeply: {{content}}"
+  STREAM false
+}
+ENTITY Note { title: string REQUIRED TIMESTAMPS }
+`;
+const { files: moFiles } = compile(modelOverrideSrc);
+const moRs = moFiles.get('src-tauri/src/commands/actions.rs')!;
+
+// do_cheap uses the overriding model, not the default
+assert(moRs.includes('call_action("claude-haiku-4-5-20251001"'), 'MODEL override: do_cheap uses haiku model');
+// do_deep uses the default (from AI_SERVICE)
+assert(moRs.includes('call_action("claude-sonnet-4-20250514"'), 'MODEL override: do_deep uses default sonnet model');
+// Both should not be same calls (verify two distinct call_action strings exist)
+assert(moRs.includes('claude-haiku') && moRs.includes('claude-sonnet'), 'MODEL override: both models appear in actions.rs');
+console.log('  ACTION MODEL override: haiku + sonnet both emitted correctly');
+
 // No AI_SERVICE → no actions.rs when all actions are send_chat only
 const noAiSrc = `
 APP no_ai {

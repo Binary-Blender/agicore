@@ -462,6 +462,59 @@ assert(dupErrorMsg.length > 0, 'Two DEFAULTs for same provider should throw');
 assert(dupErrorMsg.includes('multiple DEFAULT') || dupErrorMsg.includes('DEFAULT'), 'Error message mentions DEFAULT');
 assert(dupErrorMsg.includes('anthropic'), 'Error message names the provider');
 
+// --- Test: ACTION MODEL field ---
+
+section('ACTION MODEL field parsing');
+
+const actionModelTest = `
+APP test { TITLE "Test" DB test.db }
+AI_SERVICE {
+  PROVIDERS  anthropic, openai
+  KEYS_FILE  "k.json"
+  DEFAULT    anthropic
+  MODELS {
+    anthropic "claude-sonnet-4-20250514" DEFAULT
+    openai    "gpt-4o"                   DEFAULT
+  }
+}
+ACTION summarize_fast {
+  DESCRIPTION "Fast summarization using haiku"
+  MODEL "claude-haiku-4-5-20251001"
+  INPUT  content: string
+  OUTPUT summary: string
+  AI "Summarize: {{content}}"
+  STREAM false
+}
+ACTION summarize_deep {
+  INPUT  content: string
+  OUTPUT summary: string
+  AI "Deep analyze: {{content}}"
+  STREAM false
+}
+`;
+const amResult = parse(actionModelTest);
+const fastAction = amResult.actions.find(a => a.name === 'summarize_fast');
+const deepAction = amResult.actions.find(a => a.name === 'summarize_deep');
+assert(fastAction !== undefined, 'ACTION MODEL: summarize_fast should parse');
+assert(fastAction!.model === 'claude-haiku-4-5-20251001', 'ACTION MODEL: model field should be stored');
+assert(fastAction!.ai === 'Summarize: {{content}}', 'ACTION MODEL: AI prompt still parsed');
+assert(deepAction !== undefined, 'ACTION MODEL: summarize_deep should parse');
+assert(deepAction!.model === undefined, 'ACTION MODEL: no MODEL field → model is undefined');
+
+// DESCRIPTION keyword in ACTION should be silently consumed (no parse error)
+const descTest = `
+APP test { TITLE "T" DB t.db }
+ACTION do_work {
+  DESCRIPTION "Does the work"
+  INPUT  x: string
+  OUTPUT y: string
+  AI "Do {{x}}"
+}
+`;
+let descErr = '';
+try { parse(descTest); } catch (e) { descErr = String((e as Error).message); }
+assert(descErr === '', 'ACTION DESCRIPTION: should not throw — consumed silently');
+
 // --- Test: AI_SERVICE KEYS_ENTITY ---
 
 section('AI_SERVICE KEYS_ENTITY parsing');

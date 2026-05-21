@@ -175,6 +175,8 @@ export interface ActionDecl {
   input: ActionParam[];
   output: ActionOutput[];
   ai?: string;
+  /** Overrides AI_SERVICE default — specific model to use for this AI action. */
+  model?: string;
   stream: boolean;
   impl?: string;
   pattern?: string;

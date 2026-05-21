@@ -714,6 +714,7 @@ export class Parser {
     let input: ActionParam[] = [];
     let output: ActionOutput[] = [];
     let ai: string | undefined;
+    let model: string | undefined;
     let stream = false;
     let impl: string | undefined;
     let pattern: string | undefined;
@@ -762,6 +763,15 @@ export class Parser {
           this.advance();
           pattern = this.advance().value; // identifier: file_handler, shell_open, etc.
           break;
+        case TokenType.MODEL:
+          this.advance();
+          model = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
+        case TokenType.DESCRIPTION:
+          // Informational — consume the string and move on
+          this.advance();
+          this.expectToken(TokenType.STRING_LITERAL);
+          break;
         case TokenType.ROLE_KW:
           this.advance();
           role = this.expectIdentifier();
@@ -790,6 +800,7 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     const decl: ActionDecl = { kind: 'action', name, input, output, ai, stream, span: { start, end } };
+    if (model !== undefined) decl.model = model;
     if (impl !== undefined) decl.impl = impl;
     if (pattern !== undefined) decl.pattern = pattern;
     if (emit !== undefined) decl.emit = emit;

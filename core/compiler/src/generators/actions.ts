@@ -147,7 +147,7 @@ function buildPromptReplace(param: { name: string; type: string; defaultValue?: 
  */
 function generateAiActionBody(action: ActionDecl, ast: AgiFile): string[] {
   const prompt = action.ai!;
-  const defaultModel = getDefaultModel(ast);
+  const defaultModel = action.model ?? getDefaultModel(ast);
   const keysEntity = ast.aiService?.keysEntity;
   const lines: string[] = [];
 
