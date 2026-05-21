@@ -3555,6 +3555,7 @@ export class Parser {
     const levels: AuthorityLevel[] = [];
     let signing: AuthoritySigning = { required: false, algorithm: 'sha256', verifyChain: false };
     const admissibilityRules: PacketValidationRule[] = [];
+    const governs: string[] = [];
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -3593,11 +3594,16 @@ export class Parser {
         }
         this.expectToken(TokenType.RBRACE); continue;
       }
+      if (token.type === TokenType.GOVERNS) {
+        this.advance();
+        governs.push(...(this.check(TokenType.LBRACKET) ? this.parseBracketedIdentifierList() : [this.expectIdentifier()]));
+        continue;
+      }
       this.error(`Unexpected token in AUTHORITY: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'authority', name, description, levels, signing, admissibility: admissibilityRules, span: { start, end } };
+    return { kind: 'authority', name, description, levels, signing, admissibility: admissibilityRules, governs, span: { start, end } };
   }
 
   // --- CHANNEL ---
@@ -3618,6 +3624,8 @@ export class Parser {
     let ordering: ChannelOrdering | undefined;
     let deadLetter: string | undefined;
     let overflowTo: string | undefined;
+    let fromNode: string | undefined;
+    let toNode: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -3655,11 +3663,17 @@ export class Parser {
       if (token.type === TokenType.OVERFLOW_TO) {
         this.advance(); overflowTo = this.expectIdentifier(); continue;
       }
+      if (token.type === TokenType.FROM_NODE) {
+        this.advance(); fromNode = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.TO_NODE) {
+        this.advance(); toNode = this.expectIdentifier(); continue;
+      }
       this.error(`Unexpected token in CHANNEL: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, ordering, deadLetter, overflowTo, span: { start, end } };
+    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, ordering, deadLetter, overflowTo, fromNode, toNode, span: { start, end } };
   }
 
   // --- SESSION ---

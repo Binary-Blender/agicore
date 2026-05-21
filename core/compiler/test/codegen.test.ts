@@ -5039,6 +5039,115 @@ NODE BasicNode {
   console.log('  NODE Phase 8: endpoint, capabilities, trustLevel present in TS and Rust types');
 }
 
+// ─── Phase 8.2: EVENT remote SUBSCRIBERS ──────────────────────────────────────
+
+section('EVENT Phase 8.2: remote_subscribers emitted in Rust registry and TS const');
+{
+  const eventSubSrc = `
+APP sub_demo { TITLE "Sub Demo" WINDOW 800x600 DB sub.db THEME dark }
+EVENT PacketRouted {
+  DESCRIPTION "Fired when a packet is routed across a mesh"
+  PAYLOAD {
+    mesh_name: string
+    packet_type: string
+  }
+  SUBSCRIBERS [EdgeNode1, EdgeNode2, CloudNode]
+  IDEMPOTENT true
+  TTL        3600
+}
+EVENT LocalOnly {
+  DESCRIPTION "Local event with no remote subscribers"
+  PAYLOAD { status: string }
+  IDEMPOTENT false
+}
+`;
+  const { files } = compile(eventSubSrc);
+
+  // Rust event bus
+  const eventRs = files.get('src-tauri/src/commands/event_bus.rs')!;
+  assert(eventRs !== undefined, 'EVENT SUBSCRIBERS: event_bus.rs generated');
+  assert(eventRs.includes('pub remote_subscribers: &\'static [&\'static str]'), 'EVENT SUBSCRIBERS: remote_subscribers field in EventInfo struct');
+  assert(eventRs.includes('"EdgeNode1", "EdgeNode2", "CloudNode"'), 'EVENT SUBSCRIBERS: subscriber names in registry entry');
+  assert(eventRs.includes('remote_subscribers: &[]'), 'EVENT SUBSCRIBERS: empty slice for LocalOnly');
+  assert(eventRs.includes('pub fn remote_subscribers_for('), 'EVENT SUBSCRIBERS: remote_subscribers_for helper function');
+  assert(eventRs.includes('.find(|e| e.name == event_name)'), 'EVENT SUBSCRIBERS: helper looks up by event name');
+
+  // TypeScript event bus
+  const eventTs = files.get('src/lib/eventBus.ts')!;
+  assert(eventTs !== undefined, 'EVENT SUBSCRIBERS: eventBus.ts generated');
+  assert(eventTs.includes("export const PacketRoutedSubscribers = ['EdgeNode1', 'EdgeNode2', 'CloudNode'] as const"), 'EVENT SUBSCRIBERS: TS subscribers const with node names');
+  assert(eventTs.includes('export const LocalOnlySubscribers = [] as const'), 'EVENT SUBSCRIBERS: TS empty subscribers const for LocalOnly');
+
+  console.log('  EVENT Phase 8.2: remote_subscribers in Rust and TypeScript');
+}
+
+// ─── Phase 8.2: CHANNEL FROM_NODE / TO_NODE ───────────────────────────────────
+
+section('CHANNEL Phase 8.2: from_node and to_node in ChannelDef struct');
+{
+  const chanNodeSrc = `
+APP chan_demo { TITLE "Chan Demo" WINDOW 800x600 DB chan.db THEME dark }
+PACKET DataPacket {
+  DESCRIPTION "Data payload"
+  PAYLOAD { value: string }
+}
+CHANNEL EdgeToCloud {
+  DESCRIPTION "Cross-node channel from edge to cloud"
+  PROTOCOL http
+  DIRECTION outbound
+  PACKET DataPacket
+  FROM_NODE EdgeNode1
+  TO_NODE   CloudNode
+  RETRY     3
+}
+CHANNEL LocalLoop {
+  DESCRIPTION "Local channel without node routing"
+  PROTOCOL local
+  DIRECTION bidirectional
+  PACKET DataPacket
+}
+`;
+  const { files } = compile(chanNodeSrc);
+
+  const channelRs = files.get('src-tauri/src/commands/channel.rs')!;
+  assert(channelRs !== undefined, 'CHANNEL FROM/TO: channel.rs generated');
+  assert(channelRs.includes('from_node: Option<&\'static str>'), 'CHANNEL FROM/TO: from_node field in ChannelDef struct');
+  assert(channelRs.includes('to_node: Option<&\'static str>'), 'CHANNEL FROM/TO: to_node field in ChannelDef struct');
+  assert(channelRs.includes('from_node: Some("EdgeNode1")'), 'CHANNEL FROM/TO: EdgeToCloud from_node is EdgeNode1');
+  assert(channelRs.includes('to_node: Some("CloudNode")'), 'CHANNEL FROM/TO: EdgeToCloud to_node is CloudNode');
+  assert(channelRs.includes('from_node: None'), 'CHANNEL FROM/TO: LocalLoop has None from_node');
+  assert(channelRs.includes('to_node: None'), 'CHANNEL FROM/TO: LocalLoop has None to_node');
+
+  console.log('  CHANNEL Phase 8.2: from_node / to_node in ChannelDef');
+}
+
+// ─── Phase 8.2: AUTHORITY GOVERNS ────────────────────────────────────────────
+
+section('AUTHORITY Phase 8.2: governs field in AuthorityDef + get_mesh_authority helper');
+{
+  const authGovSrc = `
+APP auth_demo { TITLE "Auth Demo" WINDOW 800x600 DB auth.db THEME dark }
+AUTHORITY MeshGuardian {
+  DESCRIPTION "Governs cross-node packet admissibility for edge meshes"
+  GOVERNS [EdgeMesh, BackupMesh]
+}
+AUTHORITY GlobalAuthority {
+  DESCRIPTION "Global authority with no mesh governance"
+}
+`;
+  const { files } = compile(authGovSrc);
+
+  const authorityRs = files.get('src-tauri/src/commands/authority.rs')!;
+  assert(authorityRs !== undefined, 'AUTHORITY GOVERNS: authority.rs generated');
+  assert(authorityRs.includes('governs: &\'static [&\'static str]'), 'AUTHORITY GOVERNS: governs field in AuthorityDef struct');
+  assert(authorityRs.includes('governs: &["EdgeMesh", "BackupMesh"]'), 'AUTHORITY GOVERNS: MeshGuardian governs two meshes');
+  assert(authorityRs.includes('governs: &[]'), 'AUTHORITY GOVERNS: GlobalAuthority has empty governs slice');
+  assert(authorityRs.includes('pub fn get_mesh_authority('), 'AUTHORITY GOVERNS: get_mesh_authority helper function');
+  assert(authorityRs.includes('.find(|a| a.governs.contains(&mesh_name))'), 'AUTHORITY GOVERNS: helper searches by mesh name');
+
+  console.log('  AUTHORITY Phase 8.2: governs and get_mesh_authority generated');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

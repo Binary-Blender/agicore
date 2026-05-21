@@ -15,13 +15,16 @@ export function generateAuthority(ast: AgiFile): Map<string, string> {
 // ─── Rust runtime ─────────────────────────────────────────────────────────────
 
 function buildAuthorityRs(authorities: AuthorityDecl[]): string {
-  const authorityDefs = authorities.map(a => {
+  const authorityDefs = authorities.map((a: AuthorityDecl) => {
     const levels = a.levels.map(l =>
       `        AuthorityLevel { name: "${l.name}", description: "${l.description.replace(/"/g, '\\"')}" },`
     ).join('\n');
     const admissibility = a.admissibility.map(r =>
       `        AuthorityAdmissibility { rule: "${r.name}", condition: "${r.condition.replace(/"/g, '\\"')}" },`
     ).join('\n');
+    const governsList = a.governs.length
+      ? `&[${a.governs.map((g: string) => `"${g}"`).join(', ')}]`
+      : '&[]';
     return `    AuthorityDef {
         name: "${a.name}",
         description: "${a.description.replace(/"/g, '\\"')}",
@@ -34,6 +37,7 @@ ${levels}
         admissibility: &[
 ${admissibility}
         ],
+        governs: ${governsList},
     },`;
   }).join('\n');
 
@@ -64,11 +68,19 @@ struct AuthorityDef {
     signing_algorithm: &'static str,
     verify_chain: bool,
     admissibility: &'static [AuthorityAdmissibility],
+    governs: &'static [&'static str],
 }
 
 const AUTHORITIES: &[AuthorityDef] = &[
 ${authorityDefs}
 ];
+
+// ─── Mesh governance lookup ───────────────────────────────────────────────────
+
+/// Returns the authority governing the given mesh, if any.
+pub fn get_mesh_authority(mesh_name: &str) -> Option<&'static AuthorityDef> {
+    AUTHORITIES.iter().find(|a| a.governs.contains(&mesh_name))
+}
 
 // ─── Admissibility evaluator ──────────────────────────────────────────────────
 

@@ -3059,6 +3059,104 @@ MESH CreatorNetwork {
   console.error(`  FAIL: MESH parse error: ${err}`);
 }
 
+// --- Phase 8.2: EVENT SUBSCRIBERS (remote node) ---
+
+console.log('\n--- Phase 8.2: EVENT SUBSCRIBERS (remote node) ---');
+try {
+  const eventSubSrc = `
+APP sub_demo { TITLE "Sub Demo" WINDOW 800x600 DB sub.db THEME dark }
+EVENT PacketRouted {
+  DESCRIPTION "Fired when a packet is routed across a mesh node"
+  PAYLOAD {
+    mesh_name: string
+    packet_type: string
+    source_node: string
+  }
+  SUBSCRIBERS [EdgeNode1, EdgeNode2, CloudNode]
+  IDEMPOTENT true
+  TTL 3600
+}
+`;
+  const subResult = parse(eventSubSrc);
+  assert(subResult.events.length === 1, 'EVENT SUBSCRIBERS: 1 event');
+  const evSub = subResult.events[0]!;
+  assert(evSub.subscribers.length === 3, 'EVENT SUBSCRIBERS: 3 remote node subscribers');
+  assert(evSub.subscribers[0] === 'EdgeNode1', 'EVENT SUBSCRIBERS: first is EdgeNode1');
+  assert(evSub.subscribers[1] === 'EdgeNode2', 'EVENT SUBSCRIBERS: second is EdgeNode2');
+  assert(evSub.subscribers[2] === 'CloudNode', 'EVENT SUBSCRIBERS: third is CloudNode');
+  assert(evSub.idempotent === true, 'EVENT SUBSCRIBERS: idempotent true');
+  assert(evSub.ttl === 3600, 'EVENT SUBSCRIBERS: TTL 3600');
+  console.log('  EVENT SUBSCRIBERS: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: EVENT SUBSCRIBERS parse error: ${err}`);
+}
+
+// --- Phase 8.2: CHANNEL FROM_NODE / TO_NODE ---
+
+console.log('\n--- Phase 8.2: CHANNEL FROM_NODE / TO_NODE ---');
+try {
+  const channelNodeSrc = `
+APP chan_demo { TITLE "Chan Demo" WINDOW 800x600 DB chan.db THEME dark }
+CHANNEL EdgeToCloud {
+  DESCRIPTION "Cross-node channel from edge to cloud"
+  PROTOCOL http
+  DIRECTION outbound
+  PACKET InferenceResult
+  FROM_NODE EdgeNode1
+  TO_NODE CloudNode
+  RETRY 3
+}
+CHANNEL LocalChannel {
+  DESCRIPTION "Local channel without node routing"
+  PROTOCOL local
+  DIRECTION bidirectional
+  PACKET DataPacket
+}
+`;
+  const chanNodeResult = parse(channelNodeSrc);
+  assert(chanNodeResult.channels.length === 2, 'CHANNEL FROM/TO: 2 channels');
+  const edgeToCloud = chanNodeResult.channels[0]!;
+  assert(edgeToCloud.fromNode === 'EdgeNode1', 'CHANNEL FROM_NODE: fromNode is EdgeNode1');
+  assert(edgeToCloud.toNode === 'CloudNode', 'CHANNEL TO_NODE: toNode is CloudNode');
+  assert(edgeToCloud.direction === 'outbound', 'CHANNEL FROM/TO: direction outbound');
+  const localChan = chanNodeResult.channels[1]!;
+  assert(localChan.fromNode === undefined, 'CHANNEL FROM/TO: local channel has no fromNode');
+  assert(localChan.toNode === undefined, 'CHANNEL FROM/TO: local channel has no toNode');
+  console.log('  CHANNEL FROM_NODE / TO_NODE: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: CHANNEL FROM_NODE / TO_NODE parse error: ${err}`);
+}
+
+// --- Phase 8.2: AUTHORITY GOVERNS ---
+
+console.log('\n--- Phase 8.2: AUTHORITY GOVERNS ---');
+try {
+  const authGoverSrc = `
+APP auth_demo { TITLE "Auth Demo" WINDOW 800x600 DB auth.db THEME dark }
+AUTHORITY MeshGuardian {
+  DESCRIPTION "Governs cross-node packet admissibility for edge meshes"
+  GOVERNS [EdgeMesh, BackupMesh]
+}
+AUTHORITY GlobalAuthority {
+  DESCRIPTION "No mesh governance"
+}
+`;
+  const authResult = parse(authGoverSrc);
+  assert(authResult.authorities.length === 2, 'AUTHORITY GOVERNS: 2 authorities');
+  const meshGuard = authResult.authorities[0]!;
+  assert(meshGuard.governs.length === 2, 'AUTHORITY GOVERNS: 2 governed meshes');
+  assert(meshGuard.governs[0] === 'EdgeMesh', 'AUTHORITY GOVERNS: first is EdgeMesh');
+  assert(meshGuard.governs[1] === 'BackupMesh', 'AUTHORITY GOVERNS: second is BackupMesh');
+  const globalAuth = authResult.authorities[1]!;
+  assert(globalAuth.governs.length === 0, 'AUTHORITY GOVERNS: no governs defaults to empty array');
+  console.log('  AUTHORITY GOVERNS: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: AUTHORITY GOVERNS parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

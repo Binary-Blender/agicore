@@ -893,6 +893,8 @@ export interface AuthorityDecl {
   levels: AuthorityLevel[];
   signing: AuthoritySigning;
   admissibility: PacketValidationRule[];
+  /** Phase 8.2: mesh names this authority governs for cross-node admissibility */
+  governs: string[];
   span: SourceSpan;
 }
 
@@ -917,6 +919,10 @@ export interface ChannelDecl {
   deadLetter?: string;
   /** Phase 8: target channel or node name for overflow routing */
   overflowTo?: string;
+  /** Phase 8.2: source node for cross-node channel routing */
+  fromNode?: string;
+  /** Phase 8.2: target node for cross-node channel routing */
+  toNode?: string;
   span: SourceSpan;
 }
 

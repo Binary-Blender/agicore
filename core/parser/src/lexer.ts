@@ -396,6 +396,9 @@ export enum TokenType {
   OVERFLOW_TO = 'OVERFLOW_TO',
   TRUST_LEVEL = 'TRUST_LEVEL',
   MESH_KW = 'MESH_KW',
+  FROM_NODE = 'FROM_NODE',
+  TO_NODE = 'TO_NODE',
+  GOVERNS = 'GOVERNS',
 
   // QC_MESH keywords
   QC_MESH_KW = 'QC_MESH_KW',
@@ -804,6 +807,9 @@ const KEYWORDS: Record<string, TokenType> = {
   OVERFLOW_TO: TokenType.OVERFLOW_TO,
   TRUST_LEVEL: TokenType.TRUST_LEVEL,
   MESH: TokenType.MESH_KW,
+  FROM_NODE: TokenType.FROM_NODE,
+  TO_NODE: TokenType.TO_NODE,
+  GOVERNS: TokenType.GOVERNS,
   QC_MESH: TokenType.QC_MESH_KW,
   EVALUATORS: TokenType.EVALUATORS_KW,
   CRITERIA: TokenType.CRITERIA_KW,

@@ -22,6 +22,8 @@ function buildChannelRs(channels: ChannelDecl[]): string {
     const retry = ch.retry ?? 3;
     const timeout = ch.timeout ?? 30000;
     const overflowTo = ch.overflowTo ? `Some("${ch.overflowTo}")` : 'None';
+    const fromNode = ch.fromNode ? `Some("${ch.fromNode}")` : 'None';
+    const toNode = ch.toNode ? `Some("${ch.toNode}")` : 'None';
     return `    ChannelDef {
         name: "${ch.name}",
         description: "${ch.description.replace(/"/g, '\\"')}",
@@ -31,6 +33,8 @@ function buildChannelRs(channels: ChannelDecl[]): string {
         retry: ${retry},
         timeout_ms: ${timeout},
         overflow_to: ${overflowTo},
+        from_node: ${fromNode},
+        to_node: ${toNode},
     },`;
   }).join('\n');
 
@@ -52,6 +56,8 @@ struct ChannelDef {
     retry: u32,
     timeout_ms: u64,
     overflow_to: Option<&'static str>,
+    from_node: Option<&'static str>,
+    to_node: Option<&'static str>,
 }
 
 const CHANNELS: &[ChannelDef] = &[

@@ -15,11 +15,17 @@ export function generateEvent(ast: AgiFile): Map<string, string> {
 // ─── Rust event bus ───────────────────────────────────────────────────────────
 
 function buildEventBusRs(events: EventDecl[]): string {
-  const registryEntries = events.map(e => `    EventInfo {
+  const registryEntries = events.map((e: EventDecl) => {
+    const subs = e.subscribers.length
+      ? `&[${e.subscribers.map((s: string) => `"${s}"`).join(', ')}]`
+      : '&[]';
+    return `    EventInfo {
         name: "${e.name}",
         idempotent: ${e.idempotent},
         ttl: ${e.ttl},
-    },`).join('\n');
+        remote_subscribers: ${subs},
+    },`;
+  }).join('\n');
 
   return `// EVENT BUS — static event registry with typed emit
 // @agicore-generated — DO NOT EDIT (regenerate via: agicore compile)
@@ -35,6 +41,7 @@ pub struct EventInfo {
     pub name: &'static str,
     pub idempotent: bool,
     pub ttl: u64,
+    pub remote_subscribers: &'static [&'static str],
 }
 
 const EVENT_REGISTRY: &[EventInfo] = &[
@@ -49,6 +56,17 @@ pub fn emit_event(app: &AppHandle, event_name: &str, payload: serde_json::Value)
     }
 }
 
+// ─── Remote delivery ─────────────────────────────────────────────────────────
+
+/// Returns the list of remote node names subscribed to the given event.
+pub fn remote_subscribers_for(event_name: &str) -> &'static [&'static str] {
+    EVENT_REGISTRY
+        .iter()
+        .find(|e| e.name == event_name)
+        .map(|e| e.remote_subscribers)
+        .unwrap_or(&[])
+}
+
 // ─── Tauri commands ───────────────────────────────────────────────────────────
 
 #[tauri::command]
@@ -61,10 +79,13 @@ pub fn get_event_registry() -> Vec<EventInfo> {
 // ─── TypeScript event helpers ─────────────────────────────────────────────────
 
 function buildEventBusTs(events: EventDecl[]): string {
-  const sections = events.map(e => {
+  const sections = events.map((e: EventDecl) => {
     const payloadFields = e.payload
       .map(f => `  ${f.name}: ${f.type};`)
       .join('\n');
+    const subscriberList = e.subscribers.length
+      ? `[${e.subscribers.map((s: string) => `'${s}'`).join(', ')}] as const`
+      : '[] as const';
 
     return `// ─── ${e.name} ─────────────────────────────────────────────────────────────
 // ${e.description}
@@ -72,6 +93,9 @@ function buildEventBusTs(events: EventDecl[]): string {
 export interface ${e.name}Payload {
 ${payloadFields}
 }
+
+/** Remote nodes subscribed to ${e.name} */
+export const ${e.name}Subscribers = ${subscriberList};
 
 export function listen${e.name}(cb: (payload: ${e.name}Payload) => void) {
   return listen<${e.name}Payload>('${e.name}', (event) => cb(event.payload));
