@@ -157,13 +157,15 @@ See [`apps/novasyn-chat/README.md`](apps/novasyn-chat/README.md) for setup and a
 
 ---
 
-### The Accelerando Stack — Ten `.agi` Files, One Enterprise Platform
+### The Accelerando Stack — Twelve `.agi` Files, One Enterprise Platform
 
 ```
 accelerando_erp.agi          →  ERP/CRM web service         (Axum + React + PostgreSQL)
 accelerando_billing.agi      →  Medical billing engine       (Axum + React, self-updating rules)
 accelerando_legal.agi        →  eDiscovery + legal hygiene   (Axum + React, 6 connectors)
 accelerando_lms.agi          →  Compliance training LMS      (Axum + React, daily micro-assessment)
+accelerando_pi_coe.agi       →  Process improvement CoE      (Axum + React, TPS/Six Sigma/anti-backslide)
+accelerando_qms.agi          →  Quality management system    (Axum + React, ISO 9001:2015)
 accelerando_oie.agi          →  Intelligence layer           (Tauri desktop, AI reasoning)
 accelerando_es.agi           →  Governance layer             (Tauri desktop, deterministic rules)
 accelerando_chatbot.agi      →  Customer service chatbot     (Axum + React, web)
@@ -247,9 +249,28 @@ accelerando_interchange.agi  →  Standard interchange layer   (Axum web service
 - Audit export: per-employee, per-domain, per-question assessment history — proves knowledge retention, not attendance
 - *"Annual compliance training proves attendance. This system proves knowledge. There is a difference, and in some industries that difference is a body count."*
 
-The ten apps are coherent: Interchange receives external messages → Billing processes claims → Legal governs all data under hold and scans all communications for liability patterns → LMS ensures every employee's knowledge is current and provable → Config advisor configures the ERP → ERP stores data → ES enforces internal policy → Chatbot serves customers → Eliza executes operator workflows → OIE surfaces intelligence across all telemetry streams. Every action in every layer is auditable. Nothing trusts an LLM at runtime.
+**`apps/accelerando-pi-coe/`** — Process Improvement Center of Excellence (TPS, Six Sigma, anti-backslide):
+- Full TPS knowledge encoded as expert system rules: Jidoka (stop-the-line), Kanban/overproduction detection, Takt time monitoring, SMED, TPM, Heijunka — not a document library, a governance system
+- `improvement_sustainability` SCORE with 1-point/week decay — at 15 weeks of no sustaining activity the system flags drift (exactly when real-world backsliding begins)
+- 5 backslide failure modes tracked: missed checks, metric regression, control audit overdue, champion reassigned, standard work drifted
+- Automatic 30/60/90 day + 6-month + annual sustainability checks scheduled on every Kaizen close — the system will not let you move on
+- `five_s_score` SCORE with 3-point/week decay — reflects the real rate at which 5S degrades without the 5th S
+- DMAIC tollgate enforcement: control plan required before project closure, no exceptions
+- `AnalyzeDriftPattern` AI classifies regression (minor/major/critical), identifies pattern (habit drift vs. step-change vs. seasonal), recommends intervention
+- *"The purpose of a Kaizen is not to have a Kaizen. The purpose is to have a permanently better process."*
 
-See [`apps/accelerando-erp/README.md`](apps/accelerando-erp/README.md), [`apps/accelerando-billing/README.md`](apps/accelerando-billing/README.md), [`apps/accelerando-legal/README.md`](apps/accelerando-legal/README.md), [`apps/accelerando-lms/README.md`](apps/accelerando-lms/README.md), [`apps/accelerando-oie/README.md`](apps/accelerando-oie/README.md), [`apps/accelerando-es/README.md`](apps/accelerando-es/README.md), [`apps/accelerando-chatbot/README.md`](apps/accelerando-chatbot/README.md), [`apps/accelerando-eliza/README.md`](apps/accelerando-eliza/README.md), [`apps/accelerando-config/README.md`](apps/accelerando-config/README.md), and [`apps/accelerando-interchange/README.md`](apps/accelerando-interchange/README.md).
+**`apps/accelerando-qms/`** — ISO 9001:2015 Quality Management System (every clause enforced, no theater):
+- 8 modules mapped to ISO 9001:2015 clauses: document control (7.5), nonconformance (8.7), CAPA with effectiveness verification (10.2), internal audit with independence enforcement (9.2), management review with required inputs/outputs (9.3), supplier quality (8.4), calibration with retroactive review (7.1.5), customer feedback (8.2.1)
+- CAPA effectiveness check mandatory at 90 days — ineffective CAPAs trigger new root cause analysis + PI CoE referral
+- Recurring root cause detection: same problem twice → `systemic_issue_detected` → `ReferToPICoE` — because if the corrective action didn't prevent recurrence it wasn't corrective
+- Auditor independence enforced at PRIORITY 100 — auditors cannot audit their own work
+- Calibration retroactive review: when equipment is found out-of-tolerance, all measurements taken since last known-good calibration are flagged for review (Clause 7.1.5.2(d))
+- 13 core ISO 9001 required documents pre-seeded: Quality Manual, 8 procedures, 4 forms — all with correct clause references
+- *"A CAPA with no effectiveness check is theater. This system enforces the loop."*
+
+The twelve apps are coherent: Interchange receives external messages → Billing processes claims → Legal governs all data under hold → LMS ensures every employee's knowledge is current → QMS captures every nonconformance and drives it to root cause → PI CoE eliminates systemic problems permanently and enforces improvement sustainability → Config advisor configures the ERP → ERP stores data → ES enforces internal policy → Chatbot serves customers → Eliza executes operator workflows → OIE surfaces intelligence across all telemetry streams. Every action in every layer is auditable. Nothing trusts an LLM at runtime.
+
+See [`apps/accelerando-erp/README.md`](apps/accelerando-erp/README.md), [`apps/accelerando-billing/README.md`](apps/accelerando-billing/README.md), [`apps/accelerando-legal/README.md`](apps/accelerando-legal/README.md), [`apps/accelerando-lms/README.md`](apps/accelerando-lms/README.md), [`apps/accelerando-pi-coe/README.md`](apps/accelerando-pi-coe/README.md), [`apps/accelerando-qms/README.md`](apps/accelerando-qms/README.md), [`apps/accelerando-oie/README.md`](apps/accelerando-oie/README.md), [`apps/accelerando-es/README.md`](apps/accelerando-es/README.md), [`apps/accelerando-chatbot/README.md`](apps/accelerando-chatbot/README.md), [`apps/accelerando-eliza/README.md`](apps/accelerando-eliza/README.md), [`apps/accelerando-config/README.md`](apps/accelerando-config/README.md), and [`apps/accelerando-interchange/README.md`](apps/accelerando-interchange/README.md).
 
 ---
 
