@@ -12,7 +12,8 @@
 | Reference App (NovaSyn Chat 2.0) | End-to-end verified | **MVP Complete** |
 | Phase 7 — Adaptive Intelligence Layer | 40 declaration types | Complete (7.1 + 7.2 + 7.3) |
 | Phase 8.1 — Distributed Orchestration | 41 declaration types | Complete (MESH, NODE network fields, CHANNEL OVERFLOW_TO) |
-| **Total** | **2,345 passing, 0 failures** | |
+| Phase 8.2 — EVENT-Driven Distributed Workflows | 41 declaration types | Complete (EVENT SUBSCRIBERS, CHANNEL FROM/TO_NODE, AUTHORITY GOVERNS) |
+| **Total** | **2,385 passing, 0 failures** | |
 
 ---
 

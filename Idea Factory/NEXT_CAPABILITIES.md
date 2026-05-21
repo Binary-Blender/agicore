@@ -220,10 +220,13 @@ Several declarations are fully parsed but have limited codegen output. These nee
 
 **Total after Phase 8.1: 41 declaration types, 800 parser + 1511 compiler + 34 validator = 2345 tests passing.**
 
-### Phase 8.2 — EVENT-Driven Distributed Workflows (next)
-- EVENT subscribers living on remote nodes
-- PACKET as the transport across CHANNEL between nodes
-- AUTHORITY governing cross-node packet admissibility
+### Phase 8.2 — EVENT-Driven Distributed Workflows (complete — commit `bda76ea`)
+
+- [x] EVENT gains `SUBSCRIBERS [NodeA, NodeB]` — remote nodes subscribed to the event; emits `remote_subscribers_for()` helper in Rust and a typed `${Event}Subscribers` const in TS
+- [x] CHANNEL gains `FROM_NODE NodeA` / `TO_NODE NodeB` — explicit cross-node routing endpoints in the ChannelDef struct
+- [x] AUTHORITY gains `GOVERNS [MeshA, MeshB]` — declares mesh governance; emits `get_mesh_authority(mesh_name)` lookup in Rust
+
+**Total after Phase 8.2: 41 declaration types, 818 parser + 1533 compiler + 34 validator = 2385 tests passing.**
 
 **Source:** `Agicore & Distributed Semantic Systems.md`
 
