@@ -13,9 +13,11 @@ const ROUTER_OWNED = new Set(['broadcast_chat', 'council_chat']);
 
 // ─── Action categories ────────────────────────────────────────────────────────
 
-type ActionCategory = 'search' | 'export_md' | 'web_search' | 'stub';
+type ActionCategory = 'ai' | 'search' | 'export_md' | 'web_search' | 'stub';
 
 function categorize(action: ActionDecl): ActionCategory {
+  // AI actions take priority — any action with a prompt template is AI-dispatched.
+  if (action.ai !== undefined) return 'ai';
   const inputNames = new Set(action.input.map((p) => p.name));
   const outType = action.output[0]?.type ?? '';
   if (inputNames.has('query') && inputNames.has('num_results')) return 'web_search';
@@ -101,6 +103,94 @@ function defaultOkValue(action: ActionDecl): string {
   if (ret === 'i64') return '0';
   if (ret === 'f64') return '0.0';
   return 'todo!()';
+}
+
+// ─── AI action helpers ────────────────────────────────────────────────────────
+
+/** Returns the default model id from AI_SERVICE for use in AI actions. */
+function getDefaultModel(ast: AgiFile): string {
+  const ai = ast.aiService;
+  if (!ai) return 'claude-sonnet-4-20250514';
+  const defaultProv = ai.defaultProvider ?? ai.providers[0] ?? 'anthropic';
+  const entry = ai.models.find((m) => m.provider === defaultProv && m.isDefault);
+  return entry?.id ?? 'claude-sonnet-4-20250514';
+}
+
+/**
+ * Emits a `.replace("{{param}}", ...)` chain for interpolating action inputs
+ * into the prompt template. Handles required/optional and all types.
+ */
+function buildPromptReplace(param: { name: string; type: string; defaultValue?: unknown }): string {
+  const rustName = toSnakeCase(param.name);
+  const isOptional = param.defaultValue !== undefined;
+  // All types stringify the same way; Option wraps require unwrap_or_default().
+  if (isOptional) {
+    if (param.type === 'string') {
+      return `        .replace("{{${param.name}}}", input.${rustName}.as_deref().unwrap_or(""))`;
+    }
+    return `        .replace("{{${param.name}}}", &input.${rustName}.map(|v| v.to_string()).unwrap_or_default())`;
+  }
+  if (param.type === 'string') {
+    return `        .replace("{{${param.name}}}", &input.${rustName})`;
+  }
+  return `        .replace("{{${param.name}}}", &input.${rustName}.to_string())`;
+}
+
+/**
+ * Generates the body of an AI action command. Interpolates the prompt template,
+ * acquires API keys, calls `crate::ai_service::call_action`, and parses the
+ * response according to the declared output type(s).
+ *
+ * Key mode is determined by `ast.aiService?.keysEntity`:
+ *   - KEYS_FILE mode → lock ApiKeyStore state
+ *   - KEYS_ENTITY mode → lock DbPool, call load_api_keys(&conn)
+ */
+function generateAiActionBody(action: ActionDecl, ast: AgiFile): string[] {
+  const prompt = action.ai!;
+  const defaultModel = getDefaultModel(ast);
+  const keysEntity = ast.aiService?.keysEntity;
+  const lines: string[] = [];
+
+  // Build prompt with {{param}} interpolation — chain of .replace() calls
+  lines.push(`    let prompt = ${JSON.stringify(prompt)}`);
+  for (const param of action.input) {
+    lines.push(buildPromptReplace(param));
+  }
+  lines.push('        ;');
+  lines.push('');
+
+  // Acquire keys depending on mode
+  if (keysEntity) {
+    lines.push('    let keys = {');
+    lines.push('        let conn = db.lock().map_err(|e| e.to_string())?;');
+    lines.push('        crate::ai_service::load_api_keys(&conn)');
+    lines.push('    };');
+  } else {
+    lines.push('    let keys = {');
+    lines.push('        let g = store.lock().map_err(|e| e.to_string())?;');
+    lines.push('        g.clone()');
+    lines.push('    };');
+  }
+  lines.push('');
+
+  // Call the AI
+  lines.push(`    let text = crate::ai_service::call_action(${JSON.stringify(defaultModel)}, &prompt, &keys).await?;`);
+
+  // Parse response
+  const outputs = action.output;
+  if (outputs.length === 0) {
+    lines.push('    let _ = text;');
+    lines.push('    Ok(())');
+  } else if (outputs.length === 1 && outputs[0]!.type === 'string') {
+    lines.push('    Ok(text)');
+  } else {
+    // json output or multiple outputs — try to parse as JSON object
+    lines.push('    let result: serde_json::Value = serde_json::from_str(&text)');
+    lines.push('        .unwrap_or_else(|_| serde_json::json!({"content": text}));');
+    lines.push('    Ok(result)');
+  }
+
+  return lines;
 }
 
 // ─── Input struct ─────────────────────────────────────────────────────────────
@@ -272,9 +362,18 @@ function generateCommand(action: ActionDecl, ast: AgiFile): string[] {
   lines.push(`pub async fn ${fnName}(`);
   lines.push(`    input: ${inputStruct},`);
   lines.push(`    db: tauri::State<'_, DbPool>,`);
+
+  // AI actions need access to API keys — inject the right state depending on key mode.
+  if (cat === 'ai' && !ast.aiService?.keysEntity) {
+    lines.push(`    store: tauri::State<'_, crate::ai_service::ApiKeyStore>,`);
+  }
+
   lines.push(`) -> Result<${returnType}, String> {`);
 
   switch (cat) {
+    case 'ai':
+      lines.push(...generateAiActionBody(action, ast));
+      break;
     case 'search':
       lines.push(...generateSearchBody(action, ast));
       break;

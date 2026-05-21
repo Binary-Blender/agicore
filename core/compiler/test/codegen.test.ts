@@ -360,9 +360,9 @@ assert(aiRs.includes('anthropic-version'), 'Anthropic call should include anthro
 assert(aiRs.includes('"https://api.anthropic.com/v1/messages"'), 'Anthropic should hit /v1/messages');
 assert(aiRs.includes('content_block_delta'), 'Anthropic stream should handle content_block_delta');
 
-// Google must use TRUE SSE
-assert(aiRs.includes(':streamGenerateContent?alt=sse'), 'Google must use streamGenerateContent?alt=sse for true SSE');
-assert(!aiRs.includes(':generateContent?key='), 'Google must NOT use the non-streaming :generateContent endpoint');
+// Google send_chat must use TRUE SSE; call_action may use :generateContent (non-streaming, correct for actions)
+assert(aiRs.includes(':streamGenerateContent?alt=sse'), 'Google must use streamGenerateContent?alt=sse for true SSE in send_chat');
+assert(aiRs.includes('async fn call_google') && aiRs.includes(':streamGenerateContent?alt=sse'), 'call_google must use SSE streaming endpoint');
 
 // OpenAI reasoning-model parameter switch
 assert(aiRs.includes('is_openai_reasoning_model'), 'Should include reasoning-model detector');
@@ -1153,6 +1153,81 @@ assert(!actionMainRs!.includes('commands::actions::send_chat'), 'main.rs should 
 assert(!actionsRs!.includes('not yet implemented'), 'actions.rs should emit real bodies, not stubs');
 assert(actionsRs!.includes('duckduckgo.com'), 'web_search should emit DuckDuckGo reqwest call');
 assert(actionsRs!.includes('push_str'), 'export_session_md should build a markdown string');
+
+// --- Test: AI action codegen ---
+section('AI action codegen');
+
+const aiActionSrc = `
+APP ai_actions_test {
+  TITLE "AI Actions Test"
+  DB    ai_actions.db
+  THEME dark
+}
+AI_SERVICE {
+  PROVIDERS   anthropic, openai
+  KEYS_FILE   "%APPDATA%/test/keys.json"
+  DEFAULT     anthropic
+  STREAMING   true
+  MODELS {
+    anthropic "claude-sonnet-4-20250514" DEFAULT
+    openai    "gpt-4o"                   DEFAULT
+  }
+}
+ACTION summarize_text {
+  INPUT  content: string, style: string = "concise"
+  OUTPUT summary: string
+  AI     "Summarize the following in {{style}} style:\\n\\n{{content}}"
+  STREAM false
+}
+ACTION analyze_data {
+  INPUT  data: json, question: string
+  OUTPUT answer: string, confidence: number
+  AI     "Analyze this data: {{data}}\\n\\nQuestion: {{question}}\\n\\nReturn JSON with answer and confidence fields."
+  STREAM false
+}
+ENTITY Article {
+  title: string REQUIRED
+  body:  string REQUIRED
+  TIMESTAMPS
+}
+`;
+const { files: aiActionFiles } = compile(aiActionSrc);
+const aiActionsRs = aiActionFiles.get('src-tauri/src/commands/actions.rs');
+assert(aiActionsRs !== undefined, 'AI actions: should emit actions.rs');
+
+// Prompt interpolation
+assert(aiActionsRs!.includes('.replace("{{content}}", &input.content)'), 'AI action: required string replaced without to_string()');
+assert(aiActionsRs!.includes('.replace("{{style}}", input.style.as_deref().unwrap_or(""))'), 'AI action: optional string uses as_deref().unwrap_or()');
+assert(aiActionsRs!.includes('.replace("{{data}}", &input.data.to_string())'), 'AI action: json param uses .to_string()');
+assert(aiActionsRs!.includes('.replace("{{question}}", &input.question)'), 'AI action: question param interpolated');
+
+// Key acquisition — KEYS_FILE mode uses ApiKeyStore
+assert(aiActionsRs!.includes("store: tauri::State<'_, crate::ai_service::ApiKeyStore>"), 'AI action: injects ApiKeyStore state in KEYS_FILE mode');
+assert(aiActionsRs!.includes('store.lock().map_err(|e| e.to_string())'), 'AI action: locks the ApiKeyStore');
+
+// AI dispatch
+assert(aiActionsRs!.includes('crate::ai_service::call_action("claude-sonnet-4-20250514"'), 'AI action: calls call_action with default model');
+assert(aiActionsRs!.includes('&prompt, &keys'), 'AI action: passes prompt and keys to call_action');
+
+// Single string output → returns String directly
+assert(aiActionsRs!.includes('pub async fn summarize_text('), 'AI action: summarize_text emitted');
+assert(aiActionsRs!.includes('Ok(text)'), 'AI action: single string output returns text directly');
+
+// Multi-output → parse as JSON Value
+assert(aiActionsRs!.includes('pub async fn analyze_data('), 'AI action: analyze_data emitted');
+assert(aiActionsRs!.includes('serde_json::from_str(&text)'), 'AI action: multi-output parses response as JSON');
+assert(aiActionsRs!.includes('serde_json::json!({"content": text})'), 'AI action: falls back to content key on parse failure');
+
+// ai_service.rs must contain call_action
+const aiActionServiceRs = aiActionFiles.get('src-tauri/src/ai_service.rs')!;
+assert(aiActionServiceRs.includes('pub async fn call_action('), 'ai_service.rs: must emit call_action');
+assert(aiActionServiceRs.includes('keys: &HashMap<String, String>'), 'call_action: takes keys map');
+assert(aiActionServiceRs.includes('provider_from_model(model)'), 'call_action: routes via provider_from_model');
+assert(aiActionServiceRs.includes('"anthropic" =>'), 'call_action: has anthropic arm');
+assert(aiActionServiceRs.includes('"openai" =>'), 'call_action: has openai arm');
+assert(aiActionServiceRs.includes('data["content"][0]["text"]'), 'call_action: extracts Anthropic text from response');
+assert(aiActionServiceRs.includes('data["choices"][0]["message"]["content"]'), 'call_action: extracts OpenAI text from response');
+console.log(`  AI action codegen: ${aiActionsRs!.split('\n').length} lines in actions.rs`);
 
 // No AI_SERVICE → no actions.rs when all actions are send_chat only
 const noAiSrc = `

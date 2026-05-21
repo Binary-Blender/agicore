@@ -193,6 +193,131 @@ pub fn set_api_key(provider: String, key: String, store: tauri::State<'_, ApiKey
 }
 `;
 
+// ─── Non-streaming action call ───────────────────────────────────────────────
+
+/**
+ * Emits `call_action` — a non-streaming single-prompt completion used by
+ * generated AI action commands. Routes by model prefix, then makes one
+ * synchronous HTTP round-trip and returns the raw text content.
+ * Must be emitted AFTER `emitProviderFromModel` so `provider_from_model` is in scope.
+ */
+function emitCallAction(providers: string[]): string {
+  const lines: string[] = [];
+  lines.push('pub async fn call_action(');
+  lines.push('    model: &str,');
+  lines.push('    prompt: &str,');
+  lines.push('    keys: &HashMap<String, String>,');
+  lines.push(') -> Result<String, String> {');
+  lines.push('    let provider = provider_from_model(model);');
+  lines.push('    let api_key = keys.get(provider).cloned()');
+  lines.push('        .ok_or_else(|| format!("No API key configured for \'{}\' — set it in settings", provider))?;');
+  lines.push('    let client = reqwest::Client::new();');
+  lines.push('    match provider {');
+
+  if (providers.includes('anthropic')) {
+    lines.push('        "anthropic" => {');
+    lines.push('            let body = serde_json::json!({');
+    lines.push('                "model": model,');
+    lines.push('                "max_tokens": 8192,');
+    lines.push('                "messages": [{"role": "user", "content": prompt}],');
+    lines.push('            });');
+    lines.push('            let resp = client.post("https://api.anthropic.com/v1/messages")');
+    lines.push('                .header("x-api-key", &api_key)');
+    lines.push('                .header("anthropic-version", "2023-06-01")');
+    lines.push('                .header("content-type", "application/json")');
+    lines.push('                .json(&body).send().await.map_err(|e| e.to_string())?;');
+    lines.push('            if !resp.status().is_success() {');
+    lines.push('                return Err(format!("Anthropic: {}", resp.text().await.unwrap_or_default()));');
+    lines.push('            }');
+    lines.push('            let data: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;');
+    lines.push('            Ok(data["content"][0]["text"].as_str().unwrap_or("").to_string())');
+    lines.push('        }');
+  }
+
+  if (providers.includes('openai')) {
+    lines.push('        "openai" => {');
+    lines.push('            let body = serde_json::json!({');
+    lines.push('                "model": model,');
+    lines.push('                "messages": [{"role": "user", "content": prompt}],');
+    lines.push('                "max_tokens": 8192,');
+    lines.push('            });');
+    lines.push('            let resp = client.post("https://api.openai.com/v1/chat/completions")');
+    lines.push('                .header("Authorization", format!("Bearer {}", api_key))');
+    lines.push('                .header("Content-Type", "application/json")');
+    lines.push('                .json(&body).send().await.map_err(|e| e.to_string())?;');
+    lines.push('            if !resp.status().is_success() {');
+    lines.push('                return Err(format!("OpenAI: {}", resp.text().await.unwrap_or_default()));');
+    lines.push('            }');
+    lines.push('            let data: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;');
+    lines.push('            Ok(data["choices"][0]["message"]["content"].as_str().unwrap_or("").to_string())');
+    lines.push('        }');
+  }
+
+  if (providers.includes('google')) {
+    lines.push('        "google" => {');
+    lines.push('            let body = serde_json::json!({');
+    lines.push('                "contents": [{"role": "user", "parts": [{"text": prompt}]}],');
+    lines.push('            });');
+    lines.push('            let url = format!(');
+    lines.push('                "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",');
+    lines.push('                model, api_key');
+    lines.push('            );');
+    lines.push('            let resp = client.post(&url)');
+    lines.push('                .header("Content-Type", "application/json")');
+    lines.push('                .json(&body).send().await.map_err(|e| e.to_string())?;');
+    lines.push('            if !resp.status().is_success() {');
+    lines.push('                return Err(format!("Google: {}", resp.text().await.unwrap_or_default()));');
+    lines.push('            }');
+    lines.push('            let data: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;');
+    lines.push('            Ok(data["candidates"][0]["content"]["parts"][0]["text"].as_str().unwrap_or("").to_string())');
+    lines.push('        }');
+  }
+
+  if (providers.includes('xai')) {
+    lines.push('        "xai" => {');
+    lines.push('            let body = serde_json::json!({');
+    lines.push('                "model": model,');
+    lines.push('                "messages": [{"role": "user", "content": prompt}],');
+    lines.push('                "max_tokens": 8192,');
+    lines.push('            });');
+    lines.push('            let resp = client.post("https://api.x.ai/v1/chat/completions")');
+    lines.push('                .header("Authorization", format!("Bearer {}", api_key))');
+    lines.push('                .header("Content-Type", "application/json")');
+    lines.push('                .json(&body).send().await.map_err(|e| e.to_string())?;');
+    lines.push('            if !resp.status().is_success() {');
+    lines.push('                return Err(format!("xAI: {}", resp.text().await.unwrap_or_default()));');
+    lines.push('            }');
+    lines.push('            let data: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;');
+    lines.push('            Ok(data["choices"][0]["message"]["content"].as_str().unwrap_or("").to_string())');
+    lines.push('        }');
+  }
+
+  if (providers.includes('huggingface')) {
+    lines.push('        "huggingface" => {');
+    lines.push('            let model_id = model.strip_prefix("hf_").unwrap_or(model);');
+    lines.push('            let body = serde_json::json!({');
+    lines.push('                "model": model_id,');
+    lines.push('                "messages": [{"role": "user", "content": prompt}],');
+    lines.push('                "max_tokens": 4096,');
+    lines.push('            });');
+    lines.push('            let resp = client.post("https://router.huggingface.co/v1/chat/completions")');
+    lines.push('                .header("Authorization", format!("Bearer {}", api_key))');
+    lines.push('                .header("Content-Type", "application/json")');
+    lines.push('                .json(&body).send().await.map_err(|e| e.to_string())?;');
+    lines.push('            if !resp.status().is_success() {');
+    lines.push('                return Err(format!("HuggingFace: {}", resp.text().await.unwrap_or_default()));');
+    lines.push('            }');
+    lines.push('            let data: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;');
+    lines.push('            Ok(data["choices"][0]["message"]["content"].as_str().unwrap_or("").to_string())');
+    lines.push('        }');
+  }
+
+  lines.push('        p => Err(format!("call_action: unsupported provider \'{}\'", p)),');
+  lines.push('    }');
+  lines.push('}');
+  return lines.join('\n');
+}
+
 // ─── Provider routing ────────────────────────────────────────────────────────
 
 function emitProviderFromModel(providers: string[]): string {
@@ -1595,6 +1720,8 @@ export function generateAiService(ast: AgiFile): Map<string, string> {
     sections.push('');
     sections.push(emitProviderFromModel(providers));
     sections.push('');
+    sections.push(emitCallAction(providers));
+    sections.push('');
     sections.push(emitSendChatEntityMode(providers, skipped));
     sections.push('');
     for (const p of providers) {
@@ -1609,6 +1736,8 @@ export function generateAiService(ast: AgiFile): Map<string, string> {
     sections.push('');
     sections.push(KEYS_HELPERS);
     sections.push(emitProviderFromModel(providers));
+    sections.push('');
+    sections.push(emitCallAction(providers));
     sections.push('');
     sections.push(emitSendChat(providers, skipped));
     sections.push('');
