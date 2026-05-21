@@ -14,7 +14,8 @@
 | Phase 8.1 — Distributed Orchestration | 41 declaration types | Complete (MESH, NODE network fields, CHANNEL OVERFLOW_TO) |
 | Phase 8.2 — EVENT-Driven Distributed Workflows | 41 declaration types | Complete (EVENT SUBSCRIBERS, CHANNEL FROM/TO_NODE, AUTHORITY GOVERNS) |
 | Phase 8.3 — Cooperative Compute Accounting | 41 declaration types | Complete (NODE CONTRIBUTES, MESH ACCOUNTING, SQL balance view, TS helpers) |
-| **Total** | **2,422 passing, 0 failures** | |
+| Phase 9 — Cognitive Tier Hierarchy | 41 declaration types | Complete (COGNITION_ROLE TIER + SPC_FLOOR, cheapestViableRole, SQL metrics) |
+| **Total** | **2,453 passing, 0 failures** | |
 
 ---
 

@@ -247,17 +247,22 @@ Philosophy: contribution = access, not speculation. BitTorrent ratios, not crypt
 
 ---
 
-## Phase 9 — Cognitive Hierarchy
+## Phase 9 — Cognitive Hierarchy (complete — commit `68850d7`)
 
-The NBVE + SPC system enables this long-horizon direction:
+- [x] `COGNITION_ROLE` gains `TIER 1|2|3` (default 2) — explicit tier classification
+- [x] `COGNITION_ROLE` gains `SPC_FLOOR { DEFECT_RATE RETRY_RATE ESCALATION_RATE }` — minimum quality thresholds
+- [x] `CognitionSpcFloor` interface + `CognitionTier` type exported from parser
+- [x] Registry gains `COGNITION_TIERS` groupings by tier, `cheapestViableRole(responsibility)`, `resolveByTier(tier)`
+- [x] `cheapestViableRole` prefers tier 3 → 2 → 1 (cheapest viable wins)
+- [x] SQL: `cognition_metrics` table + `cognition_tier_allocation` VIEW for SPC tracking
 
-**Tier 1 — Frontier Cognition:** Ambiguity collapse, novel reasoning, architecture synthesis  
-**Tier 2 — Operational Cognition:** Workflow continuation, implementation, semantic elaboration  
-**Tier 3 — Specialized Cognition:** Constrained workflows, style continuation, deterministic semantic tasks
+**Tier 1 = Frontier** (ambiguity collapse, novel reasoning, architecture synthesis)  
+**Tier 2 = Operational** (workflow continuation, implementation, semantic elaboration)  
+**Tier 3 = Specialized** (deterministic tasks, style continuation, constrained workflows)
 
-NBVE is the mechanism by which Agicore progressively discovers which workflows can run at Tier 3 vs Tier 1, governed by SPC quality metrics. Over time this creates **self-optimizing cognition allocation** — the system learns where expensive models are necessary and where specialized local models are sufficient.
+**Total after Phase 9: 41 declaration types, 843 parser + 1576 compiler + 34 validator = 2453 tests passing.**
 
-**Source:** `Agicore NBVE + SPC Cognitive Optimization System.md`
+**Source:** `Agicore NBVE + SPC Cognitive Optimization System.md`, `agicore_cognition_org_chart_architecture_spec.md`
 
 ---
 
