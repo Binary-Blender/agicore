@@ -3296,6 +3296,7 @@ export class Parser {
     let nodes: string[] = [];
     let authority: string | undefined;
     let packets: string[] = [];
+    let accounting = false;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -3315,11 +3316,14 @@ export class Parser {
         packets = this.check(TokenType.LBRACKET) ? this.parseBracketedIdentifierList() : this.parseIdentifierList();
         continue;
       }
+      if (token.type === TokenType.ACCOUNTING) {
+        this.advance(); accounting = this.parseBoolValue(); continue;
+      }
       this.error(`Unexpected token in MESH: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'mesh', name, description, nodes, authority, packets, span: { start, end } };
+    return { kind: 'mesh', name, description, nodes, authority, packets, accounting, span: { start, end } };
   }
 
   private parseLifecycle(): LifecycleDecl {
@@ -4108,6 +4112,7 @@ export class Parser {
     let comms: string[] = [], sensorRefs: string[] = [], zone: string | undefined;
     let offline = true, safety: SafetyLevel = 'low';
     let endpoint: string | undefined, capabilities: string[] = [], trustLevel = 1.0;
+    let contributes: { cpu?: number; gpu?: number; storageGb?: number; bandwidthMbps?: number } | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -4123,11 +4128,25 @@ export class Parser {
       if (token.type === TokenType.ENDPOINT) { this.advance(); endpoint = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
       if (token.type === TokenType.CAPABILITY) { this.advance(); capabilities = this.parseIdentifierList(); continue; }
       if (token.type === TokenType.TRUST_LEVEL) { this.advance(); trustLevel = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); continue; }
+      if (token.type === TokenType.CONTRIBUTES) {
+        this.advance(); this.expectToken(TokenType.LBRACE);
+        contributes = {};
+        while (!this.check(TokenType.RBRACE)) {
+          const key = this.expectIdentifier();
+          this.expectToken(TokenType.COLON);
+          const val = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+          if (key === 'cpu') contributes.cpu = val;
+          else if (key === 'gpu') contributes.gpu = val;
+          else if (key === 'storage_gb') contributes.storageGb = val;
+          else if (key === 'bandwidth_mbps') contributes.bandwidthMbps = val;
+        }
+        this.expectToken(TokenType.RBRACE); continue;
+      }
       this.error(`Unexpected token in NODE: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'node', name, description, type, hardware, aiTier, comms, sensors: sensorRefs, zone, offline, safety, endpoint, capabilities, trustLevel, span: { start, end } };
+    return { kind: 'node', name, description, type, hardware, aiTier, comms, sensors: sensorRefs, zone, offline, safety, endpoint, capabilities, trustLevel, contributes, span: { start, end } };
   }
 
   // --- SENSOR ---

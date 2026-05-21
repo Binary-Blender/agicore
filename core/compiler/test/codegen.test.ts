@@ -5148,6 +5148,148 @@ AUTHORITY GlobalAuthority {
   console.log('  AUTHORITY Phase 8.2: governs and get_mesh_authority generated');
 }
 
+// ─── Phase 8.3: NODE CONTRIBUTES + MESH ACCOUNTING ───────────────────────────
+
+section('MESH Phase 8.3: accounting SQL tables and TypeScript helpers');
+{
+  const acctSrc = `
+APP acct_demo { TITLE "Acct" WINDOW 800x600 DB acct.db THEME dark }
+
+AUTHORITY CoopAuthority {
+  DESCRIPTION "Cooperative mesh authority"
+}
+
+NODE WorkerA {
+  DESCRIPTION "Worker node A with GPU contribution"
+  HARDWARE "x86-server"
+  AI_TIER cloud
+  OFFLINE false
+  SAFETY standard
+  ENDPOINT "http://worker-a.local:9000"
+  CAPABILITY InferenceTask
+  TRUST_LEVEL 0.9
+  CONTRIBUTES {
+    cpu: 8
+    gpu: 2
+    storage_gb: 500
+    bandwidth_mbps: 1000
+  }
+}
+
+NODE WorkerB {
+  DESCRIPTION "Worker node B with CPU-only contribution"
+  HARDWARE "x86-server"
+  AI_TIER cloud
+  OFFLINE false
+  SAFETY standard
+  ENDPOINT "http://worker-b.local:9000"
+  CAPABILITY CompressionTask
+  TRUST_LEVEL 0.85
+  CONTRIBUTES {
+    cpu: 4
+    storage_gb: 250
+  }
+}
+
+MESH CoopMesh {
+  DESCRIPTION "Cooperative compute mesh with accounting"
+  AUTHORITY CoopAuthority
+  NODES [WorkerA, WorkerB]
+  PACKET [InferenceTask, CompressionTask]
+  ACCOUNTING true
+}
+`;
+  const { files } = compile(acctSrc);
+
+  // SQL accounting tables
+  const meshSql = files.get('migrations/mesh.sql')!;
+  assert(meshSql !== undefined, 'MESH ACCOUNTING: mesh.sql generated');
+  assert(meshSql.includes('CREATE TABLE IF NOT EXISTS mesh_contributions'), 'MESH ACCOUNTING SQL: mesh_contributions table');
+  assert(meshSql.includes('resource_type TEXT NOT NULL'), 'MESH ACCOUNTING SQL: resource_type column');
+  assert(meshSql.includes("direction TEXT NOT NULL DEFAULT 'credit'"), 'MESH ACCOUNTING SQL: direction column with default');
+  assert(meshSql.includes('CREATE VIEW IF NOT EXISTS mesh_contribution_balance'), 'MESH ACCOUNTING SQL: balance view');
+  assert(meshSql.includes('net_balance'), 'MESH ACCOUNTING SQL: net_balance in balance view');
+  assert(meshSql.includes('idx_contrib_mesh_node'), 'MESH ACCOUNTING SQL: contrib index');
+
+  // TypeScript mesh config
+  const meshTs = files.get('src/lib/mesh.ts')!;
+  assert(meshTs !== undefined, 'MESH ACCOUNTING: mesh.ts generated');
+  assert(meshTs.includes('accounting: true'), 'MESH ACCOUNTING TS: accounting true in CoopMeshConfig');
+  assert(meshTs.includes('export async function coopMeshRecordContribution('), 'MESH ACCOUNTING TS: recordContribution helper');
+  assert(meshTs.includes('export async function coopMeshGetBalance('), 'MESH ACCOUNTING TS: getBalance helper');
+  assert(meshTs.includes("invoke('record_mesh_contribution'"), 'MESH ACCOUNTING TS: recordContribution invokes record_mesh_contribution');
+  assert(meshTs.includes("invoke('get_mesh_contribution_balance'"), 'MESH ACCOUNTING TS: getBalance invokes get_mesh_contribution_balance');
+  assert(meshTs.includes("direction: 'credit' | 'debit'"), 'MESH ACCOUNTING TS: direction type in recordContribution');
+
+  // Node contributes in mesh config nodes
+  assert(meshTs.includes('contributes: { cpu: 8, gpu: 2, storageGb: 500, bandwidthMbps: 1000 }'), 'MESH ACCOUNTING TS: WorkerA contributes in node config');
+  assert(meshTs.includes('contributes: { cpu: 4, gpu: 0, storageGb: 250, bandwidthMbps: 0 }'), 'MESH ACCOUNTING TS: WorkerB contributes with zeros for missing fields');
+
+  console.log('  MESH Phase 8.3: accounting SQL tables and TypeScript helpers generated');
+}
+
+section('MESH ACCOUNTING omit: no accounting tables when ACCOUNTING false');
+{
+  const noAcctSrc = `
+APP bare_mesh { TITLE "Bare Mesh" WINDOW 800x600 DB bare.db THEME dark }
+NODE SimpleNode {
+  DESCRIPTION "Plain node"
+  HARDWARE "generic"
+  AI_TIER edge
+  OFFLINE false
+  SAFETY low
+}
+MESH PlainMesh {
+  DESCRIPTION "Mesh without accounting"
+  NODES [SimpleNode]
+  PACKET [DataPacket]
+}
+`;
+  const { files } = compile(noAcctSrc);
+  const meshSql = files.get('migrations/mesh.sql')!;
+  assert(!meshSql.includes('mesh_contributions'), 'MESH ACCOUNTING omit: no mesh_contributions without ACCOUNTING true');
+  assert(!meshSql.includes('mesh_contribution_balance'), 'MESH ACCOUNTING omit: no balance view without ACCOUNTING true');
+  const meshTs = files.get('src/lib/mesh.ts')!;
+  assert(meshTs.includes('accounting: false'), 'MESH ACCOUNTING omit: accounting false in PlainMeshConfig');
+  assert(!meshTs.includes('RecordContribution'), 'MESH ACCOUNTING omit: no accounting helpers without ACCOUNTING true');
+
+  console.log('  MESH ACCOUNTING omit: clean SQL and no helpers when accounting disabled');
+}
+
+section('NODE CONTRIBUTES: contributes in hardware.ts TypeScript interface');
+{
+  const nodeContribSrc = `
+APP node_contrib { TITLE "Node Contrib" WINDOW 800x600 DB node.db THEME dark }
+NODE ContribNode {
+  DESCRIPTION "Node with full contributes declaration"
+  HARDWARE "x86-server"
+  AI_TIER cloud
+  OFFLINE false
+  SAFETY standard
+  CONTRIBUTES {
+    cpu: 16
+    gpu: 4
+    storage_gb: 2000
+    bandwidth_mbps: 10000
+  }
+}
+NODE NoContribNode {
+  DESCRIPTION "Node without contributes"
+  HARDWARE "rpi-4b"
+  AI_TIER edge
+  OFFLINE true
+  SAFETY low
+}
+`;
+  const { files } = compile(nodeContribSrc);
+  const hwTs = files.get('src/types/hardware.ts')!;
+  assert(hwTs !== undefined, 'NODE CONTRIBUTES codegen: hardware.ts generated');
+  assert(hwTs.includes('contributes: { cpu: 16; gpu: 4; storageGb: 2000; bandwidthMbps: 10000 }'), 'NODE CONTRIBUTES codegen: ContribNode contributes fields in interface');
+  assert(hwTs.includes('contributes: undefined'), 'NODE CONTRIBUTES codegen: NoContribNode contributes is undefined');
+
+  console.log('  NODE CONTRIBUTES: contributes field in hardware.ts TypeScript interface');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

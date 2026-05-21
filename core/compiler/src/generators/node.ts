@@ -19,7 +19,12 @@ export interface ${pascalCase(s.name)}Reading {
   timestamp: string;
 }`).join('\n');
 
-  const nodeInterfaces = nodes.map(n => `
+  const nodeInterfaces = nodes.map(n => {
+    const c = n.contributes;
+    const contributesType = c
+      ? `{ cpu: ${c.cpu ?? 0}; gpu: ${c.gpu ?? 0}; storageGb: ${c.storageGb ?? 0}; bandwidthMbps: ${c.bandwidthMbps ?? 0} }`
+      : 'undefined';
+    return `
 export interface ${pascalCase(n.name)}State {
   nodeId: string;      // matches NODE name '${n.name}'
   hardware: string;    // '${n.hardware}'
@@ -33,7 +38,10 @@ export interface ${pascalCase(n.name)}State {
   endpoint: ${n.endpoint ? `'${n.endpoint}'` : 'undefined'};
   capabilities: ${n.capabilities.length ? `[${n.capabilities.map(c => `'${c}'`).join(', ')}]` : '[]'};
   trustLevel: ${n.trustLevel};
-}`).join('\n');
+  // Phase 8.3: cooperative contributions
+  contributes: ${contributesType};
+}`;
+  }).join('\n');
 
   const zoneInterfaces = zones.map(z => `
 export interface ${pascalCase(z.name)}Zone {

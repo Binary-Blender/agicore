@@ -24,7 +24,7 @@ export type {
   ChannelDecl, ChannelProtocol, ChannelDirection, ChannelOrdering,
   IdentityDecl, IdentityProfileField,
   FeedDecl, FeedSubscribeMode,
-  NodeDecl, NodeType, AiTier, SafetyLevel,
+  NodeDecl, NodeType, AiTier, SafetyLevel, NodeContributes,
   SensorDecl, SensorType,
   ZoneDecl,
   SessionDecl, CompilerDecl, EnrichOp,

@@ -3157,6 +3157,95 @@ AUTHORITY GlobalAuthority {
   console.error(`  FAIL: AUTHORITY GOVERNS parse error: ${err}`);
 }
 
+// --- Phase 8.3: NODE CONTRIBUTES ---
+
+console.log('\n--- Phase 8.3: NODE CONTRIBUTES ---');
+try {
+  const nodeContribSrc = `
+APP contrib_demo { TITLE "Contrib" WINDOW 800x600 DB contrib.db THEME dark }
+NODE WorkerNode {
+  DESCRIPTION "Node with full resource contribution"
+  HARDWARE "x86-server"
+  AI_TIER cloud
+  OFFLINE false
+  SAFETY standard
+  CONTRIBUTES {
+    cpu: 8
+    gpu: 2
+    storage_gb: 500
+    bandwidth_mbps: 1000
+  }
+}
+NODE LightNode {
+  DESCRIPTION "Node with partial contribution"
+  HARDWARE "rpi-4b"
+  AI_TIER edge
+  OFFLINE true
+  SAFETY low
+  CONTRIBUTES {
+    cpu: 2
+    storage_gb: 64
+  }
+}
+NODE PlainNode {
+  DESCRIPTION "Node with no contribution declared"
+  HARDWARE "generic"
+  AI_TIER edge
+  OFFLINE false
+  SAFETY low
+}
+`;
+  const contribResult = parse(nodeContribSrc);
+  assert(contribResult.nodes.length === 3, 'NODE CONTRIBUTES: 3 nodes');
+  const worker = contribResult.nodes[0]!;
+  assert(worker.contributes !== undefined, 'NODE CONTRIBUTES: WorkerNode has contributes');
+  assert(worker.contributes!.cpu === 8, 'NODE CONTRIBUTES: WorkerNode cpu 8');
+  assert(worker.contributes!.gpu === 2, 'NODE CONTRIBUTES: WorkerNode gpu 2');
+  assert(worker.contributes!.storageGb === 500, 'NODE CONTRIBUTES: WorkerNode storage_gb 500');
+  assert(worker.contributes!.bandwidthMbps === 1000, 'NODE CONTRIBUTES: WorkerNode bandwidth_mbps 1000');
+  const light = contribResult.nodes[1]!;
+  assert(light.contributes !== undefined, 'NODE CONTRIBUTES: LightNode has contributes');
+  assert(light.contributes!.cpu === 2, 'NODE CONTRIBUTES: LightNode cpu 2');
+  assert(light.contributes!.gpu === undefined, 'NODE CONTRIBUTES: LightNode gpu undefined');
+  assert(light.contributes!.storageGb === 64, 'NODE CONTRIBUTES: LightNode storage_gb 64');
+  const plain = contribResult.nodes[2]!;
+  assert(plain.contributes === undefined, 'NODE CONTRIBUTES: PlainNode contributes is undefined');
+  console.log('  NODE CONTRIBUTES: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: NODE CONTRIBUTES parse error: ${err}`);
+}
+
+// --- Phase 8.3: MESH ACCOUNTING ---
+
+console.log('\n--- Phase 8.3: MESH ACCOUNTING ---');
+try {
+  const meshAcctSrc = `
+APP acct_demo { TITLE "Acct" WINDOW 800x600 DB acct.db THEME dark }
+MESH AccountedMesh {
+  DESCRIPTION "Mesh with contribution accounting enabled"
+  NODES [NodeA, NodeB]
+  PACKET [WorkPacket]
+  ACCOUNTING true
+}
+MESH PlainMesh {
+  DESCRIPTION "Mesh without accounting"
+  NODES [NodeC]
+  PACKET [DataPacket]
+}
+`;
+  const acctResult = parse(meshAcctSrc);
+  assert(acctResult.meshes.length === 2, 'MESH ACCOUNTING: 2 meshes');
+  const accounted = acctResult.meshes[0]!;
+  assert(accounted.accounting === true, 'MESH ACCOUNTING: AccountedMesh accounting is true');
+  const plain = acctResult.meshes[1]!;
+  assert(plain.accounting === false, 'MESH ACCOUNTING: PlainMesh accounting defaults to false');
+  console.log('  MESH ACCOUNTING: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: MESH ACCOUNTING parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

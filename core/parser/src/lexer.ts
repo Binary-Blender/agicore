@@ -399,6 +399,8 @@ export enum TokenType {
   FROM_NODE = 'FROM_NODE',
   TO_NODE = 'TO_NODE',
   GOVERNS = 'GOVERNS',
+  CONTRIBUTES = 'CONTRIBUTES',
+  ACCOUNTING = 'ACCOUNTING',
 
   // QC_MESH keywords
   QC_MESH_KW = 'QC_MESH_KW',
@@ -810,6 +812,8 @@ const KEYWORDS: Record<string, TokenType> = {
   FROM_NODE: TokenType.FROM_NODE,
   TO_NODE: TokenType.TO_NODE,
   GOVERNS: TokenType.GOVERNS,
+  CONTRIBUTES: TokenType.CONTRIBUTES,
+  ACCOUNTING: TokenType.ACCOUNTING,
   QC_MESH: TokenType.QC_MESH_KW,
   EVALUATORS: TokenType.EVALUATORS_KW,
   CRITERIA: TokenType.CRITERIA_KW,

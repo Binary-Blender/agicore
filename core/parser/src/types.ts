@@ -970,6 +970,14 @@ export type NodeType = 'personal' | 'environment' | 'business' | 'actor';
 export type AiTier = 'edge' | 'cloud' | 'hybrid';
 export type SafetyLevel = 'low' | 'medium' | 'high' | 'critical';
 
+/** Phase 8.3: resources a node contributes to cooperative meshes */
+export interface NodeContributes {
+  cpu?: number;
+  gpu?: number;
+  storageGb?: number;
+  bandwidthMbps?: number;
+}
+
 export interface NodeDecl {
   kind: 'node';
   name: string;
@@ -988,6 +996,8 @@ export interface NodeDecl {
   capabilities: string[];
   /** Phase 8: 0.0–1.0 trust score for inter-node routing (default 1.0) */
   trustLevel: number;
+  /** Phase 8.3: cooperative resource contributions */
+  contributes?: NodeContributes;
   span: SourceSpan;
 }
 
@@ -1003,6 +1013,8 @@ export interface MeshDecl {
   authority?: string;
   /** PACKET types that may route across this mesh */
   packets: string[];
+  /** Phase 8.3: enable cooperative contribution accounting for this mesh */
+  accounting: boolean;
   span: SourceSpan;
 }
 
