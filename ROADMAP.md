@@ -6,12 +6,13 @@
 
 | Milestone | Tests | Status |
 |---|---|---|
-| DSL Parser | 629 passing | Complete |
-| Tauri Codegen | 874 passing | Complete |
+| DSL Parser | 800 passing | Complete |
+| Tauri Codegen | 1511 passing | Complete |
 | Static Validator | 34 passing | Complete |
 | Reference App (NovaSyn Chat 2.0) | End-to-end verified | **MVP Complete** |
 | Phase 7 — Adaptive Intelligence Layer | 40 declaration types | Complete (7.1 + 7.2 + 7.3) |
-| **Total** | **1,537 passing, 0 failures** | |
+| Phase 8.1 — Distributed Orchestration | 41 declaration types | Complete (MESH, NODE network fields, CHANNEL OVERFLOW_TO) |
+| **Total** | **2,345 passing, 0 failures** | |
 
 ---
 

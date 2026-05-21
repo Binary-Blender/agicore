@@ -210,22 +210,28 @@ Several declarations are fully parsed but have limited codegen output. These nee
 
 ## Phase 8 — Distributed Orchestration
 
-These ideas are in the idea factory as vision docs. Not ready to implement, but architecturally sound:
+### Phase 8.1 — Distributed Semantic Compute (complete — commit `8e63fb8`)
 
-### Distributed Semantic Compute
-- NODE as network participant, not just local environment description
-- PACKET routing across trusted node meshes
-- CHANNEL gaining `OVERFLOW_TO` routing semantics
-- Cooperative compute accounting (contribution = access, not speculation)
+- [x] NODE gains `ENDPOINT`, `CAPABILITY` (multi), `TRUST_LEVEL` — becomes a network participant
+- [x] CHANNEL gains `OVERFLOW_TO` — overflow routing to named fallback channel/node
+- [x] New `MESH` declaration — ties nodes into trusted compute meshes with authority, packet types, and a trustLevel-sorted route() helper
+- [x] Generated: `migrations/mesh.sql` (mesh_topology + mesh_routing_log), `src/lib/mesh.ts` (config const + routing fn)
+- [x] Emits endpoint/capabilities/trust_level in both TypeScript interfaces and Rust structs
 
-**Source:** `Agicore Distributed Semantic Compute Infrastructure.md`, `Agicore Cooperative Distributed Infrastructure.md`
+**Total after Phase 8.1: 41 declaration types, 800 parser + 1511 compiler + 34 validator = 2345 tests passing.**
 
-### EVENT-Driven Distributed Workflows
+### Phase 8.2 — EVENT-Driven Distributed Workflows (next)
 - EVENT subscribers living on remote nodes
 - PACKET as the transport across CHANNEL between nodes
 - AUTHORITY governing cross-node packet admissibility
 
 **Source:** `Agicore & Distributed Semantic Systems.md`
+
+### Phase 8.3 — Cooperative Compute Accounting (future)
+- Contribution = access, not speculation
+- Compute contribution tracked in mesh_topology / routing_log
+
+**Source:** `Agicore Cooperative Distributed Infrastructure.md`
 
 ---
 
