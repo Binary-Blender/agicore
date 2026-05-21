@@ -4782,6 +4782,89 @@ section('DISPUTE omitted: no dispute files when no DISPUTE declared');
   console.log('  DISPUTE: no files emitted when no DISPUTE declarations');
 }
 
+// --- Phase 7.2 / EVENT wiring in main.rs ---
+section('EVENT + CONTRACT + SUBSCRIPTION + DISPUTE wired into main.rs + mod.rs');
+{
+  const wiringSrc = `
+APP wiring_app { TITLE "Wiring App" WINDOW 800x600 DB wiring.db THEME dark }
+
+EVENT OrderPlaced {
+  DESCRIPTION "Fired when order placed"
+  PAYLOAD { order_id: string amount: float }
+  IDEMPOTENT false
+  TTL 86400
+}
+
+CONTRACT MusicCommission {
+  DESCRIPTION "A commission"
+  PARTIES { client: Identity provider: Identity }
+  TERMS { delivery_deadline: "14d" }
+  DELIVERABLES { audio_file: REQUIRED }
+  PAYMENT { METHOD ach AMOUNT 50 CURRENCY "USD" RELEASE on_acceptance RECURRING false }
+  GOVERNANCE { SIGNED_BY both DISPUTE optional }
+}
+
+SUBSCRIPTION CreatorSupport {
+  DESCRIPTION "Monthly support"
+  PROVIDER CreatorProfile
+  SUBSCRIBER FanProfile
+  TERMS { AMOUNT 5 INTERVAL monthly PERKS ["premium_feed"] }
+  PAYMENT { METHOD stripe AUTO_RENEW true }
+}
+
+DISPUTE ContractReview {
+  DESCRIPTION "Dispute resolution"
+  CONTRACT MusicCommission
+  STATES { opened under_review resolved }
+  RESOLUTION { refund revision }
+}
+`;
+
+  const { files } = compile(wiringSrc);
+  const modRs = files.get('src-tauri/src/commands/mod.rs')!;
+  const mainRs = files.get('src-tauri/src/main.rs')!;
+
+  // mod.rs declarations
+  assert(modRs.includes('pub mod event_bus;'), 'wiring: mod.rs declares event_bus when EVENT present');
+  assert(modRs.includes('pub mod contracts;'), 'wiring: mod.rs declares contracts when CONTRACT present');
+  assert(modRs.includes('pub mod subscriptions;'), 'wiring: mod.rs declares subscriptions when SUBSCRIPTION present');
+  assert(modRs.includes('pub mod disputes;'), 'wiring: mod.rs declares disputes when DISPUTE present');
+
+  // main.rs invoke_handler registrations
+  assert(mainRs.includes('commands::event_bus::get_event_registry'), 'wiring: main.rs registers get_event_registry');
+  assert(mainRs.includes('commands::contracts::create_contract'), 'wiring: main.rs registers create_contract');
+  assert(mainRs.includes('commands::contracts::get_contract'), 'wiring: main.rs registers get_contract');
+  assert(mainRs.includes('commands::contracts::list_contracts'), 'wiring: main.rs registers list_contracts');
+  assert(mainRs.includes('commands::contracts::update_contract_status'), 'wiring: main.rs registers update_contract_status');
+  assert(mainRs.includes('commands::subscriptions::create_subscription'), 'wiring: main.rs registers create_subscription');
+  assert(mainRs.includes('commands::subscriptions::list_subscriptions'), 'wiring: main.rs registers list_subscriptions');
+  assert(mainRs.includes('commands::subscriptions::cancel_subscription'), 'wiring: main.rs registers cancel_subscription');
+  assert(mainRs.includes('commands::disputes::open_dispute'), 'wiring: main.rs registers open_dispute');
+  assert(mainRs.includes('commands::disputes::get_dispute'), 'wiring: main.rs registers get_dispute');
+  assert(mainRs.includes('commands::disputes::list_disputes'), 'wiring: main.rs registers list_disputes');
+  assert(mainRs.includes('commands::disputes::resolve_dispute'), 'wiring: main.rs registers resolve_dispute');
+  assert(mainRs.includes('commands::disputes::transition_dispute'), 'wiring: main.rs registers transition_dispute');
+
+  console.log('  Wiring: EVENT/CONTRACT/SUBSCRIPTION/DISPUTE all declared in mod.rs and registered in main.rs invoke_handler');
+}
+
+section('Wiring omit: no extra mod entries when Phase 7.2 declarations absent');
+{
+  const noWiringSrc = `APP bare { TITLE "Bare" WINDOW 800x600 DB bare.db THEME dark }`;
+  const { files } = compile(noWiringSrc);
+  const modRs = files.get('src-tauri/src/commands/mod.rs')!;
+  const mainRs = files.get('src-tauri/src/main.rs')!;
+
+  assert(!modRs.includes('pub mod event_bus;'), 'wiring omit: no event_bus mod when no EVENT');
+  assert(!modRs.includes('pub mod contracts;'), 'wiring omit: no contracts mod when no CONTRACT');
+  assert(!modRs.includes('pub mod subscriptions;'), 'wiring omit: no subscriptions mod when no SUBSCRIPTION');
+  assert(!modRs.includes('pub mod disputes;'), 'wiring omit: no disputes mod when no DISPUTE');
+  assert(!mainRs.includes('get_event_registry'), 'wiring omit: no get_event_registry in main.rs');
+  assert(!mainRs.includes('create_contract'), 'wiring omit: no create_contract in main.rs');
+
+  console.log('  Wiring omit: clean main.rs and mod.rs when Phase 7.2 declarations absent');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

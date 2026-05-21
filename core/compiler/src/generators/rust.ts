@@ -467,6 +467,14 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasAuthorities) modLines.push('pub mod authority;');
   const needsSemanticMemory = ast.reasoners.length > 0 || ast.sessions.length > 0 || ast.modules.length > 0;
   if (needsSemanticMemory) modLines.push('pub mod semantic_memory;');
+  const hasEvents = ast.events.length > 0;
+  if (hasEvents) modLines.push('pub mod event_bus;');
+  const hasContracts = ast.contracts.length > 0;
+  if (hasContracts) modLines.push('pub mod contracts;');
+  const hasSubscriptions = ast.subscriptions.length > 0;
+  if (hasSubscriptions) modLines.push('pub mod subscriptions;');
+  const hasDisputes = ast.disputes.length > 0;
+  if (hasDisputes) modLines.push('pub mod disputes;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -596,7 +604,19 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const semanticMemoryCmds = needsSemanticMemory
     ? ['commands::semantic_memory::mem_store', 'commands::semantic_memory::mem_recall', 'commands::semantic_memory::mem_search', 'commands::semantic_memory::mem_list', 'commands::semantic_memory::mem_forget', 'commands::semantic_memory::mem_prune', 'commands::semantic_memory::mem_stats', 'commands::semantic_memory::mem_namespaces']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds];
+  const eventCmds = hasEvents
+    ? ['commands::event_bus::get_event_registry']
+    : [];
+  const contractCmds = hasContracts
+    ? ['commands::contracts::create_contract', 'commands::contracts::get_contract', 'commands::contracts::list_contracts', 'commands::contracts::update_contract_status']
+    : [];
+  const subscriptionCmds = hasSubscriptions
+    ? ['commands::subscriptions::create_subscription', 'commands::subscriptions::list_subscriptions', 'commands::subscriptions::cancel_subscription']
+    : [];
+  const disputeCmds = hasDisputes
+    ? ['commands::disputes::open_dispute', 'commands::disputes::get_dispute', 'commands::disputes::list_disputes', 'commands::disputes::resolve_dispute', 'commands::disputes::transition_dispute']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
