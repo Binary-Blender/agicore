@@ -4544,6 +4544,244 @@ VAULT {
   console.log('  VAULT minimal: no tags/provenance tables or commands when both disabled');
 }
 
+// --- REPUTATION codegen ---
+section('REPUTATION declaration — SQL schema + TypeScript tracker class');
+{
+  const repSrc = `
+APP rep_app { TITLE "Rep App" WINDOW 800x600 DB rep.db THEME dark }
+
+REPUTATION CreatorReliability {
+  DESCRIPTION "SPC-driven trust scoring for creators"
+  METRICS {
+    on_time_delivery: float
+    acceptance_rate: float
+    dispute_rate: float
+  }
+  SPC {
+    MATURING_THRESHOLD 50
+    MATURE_THRESHOLD 100
+    CONFIDENCE 0.95
+  }
+  DECAY {
+    enabled true
+    HALF_LIFE "180d"
+  }
+}
+`;
+
+  const { files } = compile(repSrc);
+
+  // SQL migration
+  const sql = files.get('migrations/reputation.sql');
+  assert(sql !== undefined, 'REPUTATION: should generate migrations/reputation.sql');
+  assert(sql!.includes('CREATE TABLE IF NOT EXISTS reputation_scores'), 'REPUTATION: reputation_scores table defined');
+  assert(sql!.includes('reputation_name TEXT NOT NULL'), 'REPUTATION: reputation_name column');
+  assert(sql!.includes('identity_id TEXT NOT NULL'), 'REPUTATION: identity_id column');
+  assert(sql!.includes("state TEXT NOT NULL DEFAULT 'new'"), 'REPUTATION: state defaults to new');
+  assert(sql!.includes('UNIQUE(reputation_name, identity_id)'), 'REPUTATION: unique constraint per identity per reputation');
+  assert(sql!.includes('idx_reputation_name'), 'REPUTATION: index on reputation_name');
+  assert(sql!.includes('idx_reputation_identity'), 'REPUTATION: index on identity_id');
+  assert(sql!.includes('idx_reputation_state'), 'REPUTATION: index on state');
+
+  // TypeScript tracker
+  const ts = files.get('src/lib/reputation.ts');
+  assert(ts !== undefined, 'REPUTATION: should generate src/lib/reputation.ts');
+  assert(ts!.includes('function parseHalfLife('), 'REPUTATION: parseHalfLife helper emitted');
+  assert(ts!.includes('export interface CreatorReliabilityMetrics'), 'REPUTATION: metrics interface generated');
+  assert(ts!.includes('on_time_delivery: number'), 'REPUTATION: on_time_delivery metric field');
+  assert(ts!.includes('acceptance_rate: number'), 'REPUTATION: acceptance_rate metric field');
+  assert(ts!.includes('export const CreatorReliabilitySpc'), 'REPUTATION: SPC config const generated');
+  assert(ts!.includes('maturingThreshold: 50'), 'REPUTATION: maturingThreshold value');
+  assert(ts!.includes('matureThreshold: 100'), 'REPUTATION: matureThreshold value');
+  assert(ts!.includes('requiredConfidence: 0.95'), 'REPUTATION: requiredConfidence value');
+  assert(ts!.includes('export const CreatorReliabilityDecay'), 'REPUTATION: decay config const generated');
+  assert(ts!.includes('enabled: true'), 'REPUTATION: decay enabled');
+  assert(ts!.includes("halfLife: '180d'"), 'REPUTATION: halfLife value');
+  assert(ts!.includes("export type CreatorReliabilityState = 'new' | 'maturing' | 'mature'"), 'REPUTATION: state union type');
+  assert(ts!.includes('export class CreatorReliabilityTracker'), 'REPUTATION: Tracker class generated');
+  assert(ts!.includes('addSample(metrics: CreatorReliabilityMetrics)'), 'REPUTATION: addSample method');
+  assert(ts!.includes('getState(): CreatorReliabilityState'), 'REPUTATION: getState method');
+  assert(ts!.includes("if (n >= 100) return 'mature'"), 'REPUTATION: mature threshold check');
+  assert(ts!.includes("if (n >= 50) return 'maturing'"), 'REPUTATION: maturing threshold check');
+  assert(ts!.includes('isEligibleForDecay(lastUpdated: string)'), 'REPUTATION: isEligibleForDecay method');
+
+  console.log('  REPUTATION: SQL schema with indexes, TypeScript tracker class with SPC/decay verified');
+}
+
+section('REPUTATION omitted: no reputation files when no REPUTATION declared');
+{
+  const noRepSrc = `APP no_rep { TITLE "No Rep" WINDOW 800x600 DB app.db THEME dark }`;
+  const { files } = compile(noRepSrc);
+  assert(!files.has('migrations/reputation.sql'), 'REPUTATION omitted: reputation.sql not generated');
+  assert(!files.has('src/lib/reputation.ts'), 'REPUTATION omitted: reputation.ts not generated');
+  console.log('  REPUTATION: no files emitted when no REPUTATION declarations');
+}
+
+// --- SUBSCRIPTION codegen ---
+section('SUBSCRIPTION declaration — SQL schema + Rust CRUD + TypeScript interfaces');
+{
+  const subSrc = `
+APP sub_app { TITLE "Sub App" WINDOW 800x600 DB sub.db THEME dark }
+
+SUBSCRIPTION CreatorSupport {
+  DESCRIPTION "Monthly creator support subscription"
+  PROVIDER CreatorProfile
+  SUBSCRIBER FanProfile
+  TERMS {
+    AMOUNT 5
+    INTERVAL monthly
+    PERKS ["premium_feed", "private_chat"]
+  }
+  PAYMENT {
+    METHOD stripe
+    AUTO_RENEW true
+  }
+}
+`;
+
+  const { files } = compile(subSrc);
+
+  // SQL migration
+  const sql = files.get('migrations/subscriptions.sql');
+  assert(sql !== undefined, 'SUBSCRIPTION: should generate migrations/subscriptions.sql');
+  assert(sql!.includes('CREATE TABLE IF NOT EXISTS subscriptions'), 'SUBSCRIPTION: subscriptions table defined');
+  assert(sql!.includes('provider_id TEXT NOT NULL'), 'SUBSCRIPTION: provider_id column');
+  assert(sql!.includes('subscriber_id TEXT NOT NULL'), 'SUBSCRIPTION: subscriber_id column');
+  assert(sql!.includes("status TEXT NOT NULL DEFAULT 'active'"), 'SUBSCRIPTION: status defaults to active');
+  assert(sql!.includes('interval TEXT NOT NULL'), 'SUBSCRIPTION: interval column');
+  assert(sql!.includes('idx_subscriptions_status'), 'SUBSCRIPTION: index on status');
+  assert(sql!.includes('idx_subscriptions_provider'), 'SUBSCRIPTION: index on provider_id');
+  assert(sql!.includes('idx_subscriptions_subscriber'), 'SUBSCRIPTION: index on subscriber_id');
+
+  // Rust commands
+  const rs = files.get('src-tauri/src/commands/subscriptions.rs');
+  assert(rs !== undefined, 'SUBSCRIPTION: should generate subscriptions.rs');
+  assert(rs!.includes('"CreatorSupport"'), 'SUBSCRIPTION: CreatorSupport referenced in rs');
+  assert(rs!.includes('pub struct SubscriptionRecord'), 'SUBSCRIPTION: SubscriptionRecord struct defined');
+  assert(rs!.includes('pub struct CreateSubscriptionInput'), 'SUBSCRIPTION: CreateSubscriptionInput struct');
+  assert(rs!.includes('pub fn create_subscription('), 'SUBSCRIPTION: create_subscription command');
+  assert(rs!.includes('pub fn list_subscriptions('), 'SUBSCRIPTION: list_subscriptions command');
+  assert(rs!.includes('pub fn cancel_subscription('), 'SUBSCRIPTION: cancel_subscription command');
+  assert(rs!.includes("status = 'cancelled'"), 'SUBSCRIPTION: cancel sets status to cancelled');
+  assert(rs!.includes('use crate::db::DbPool'), 'SUBSCRIPTION: uses DbPool');
+  assert(rs!.includes('#[tauri::command]'), 'SUBSCRIPTION: tauri command attributes');
+
+  // TypeScript
+  const ts = files.get('src/lib/subscriptions.ts');
+  assert(ts !== undefined, 'SUBSCRIPTION: should generate subscriptions.ts');
+  assert(ts!.includes("from '@tauri-apps/api/core'"), 'SUBSCRIPTION: imports from tauri core');
+  assert(ts!.includes('export interface SubscriptionRecord'), 'SUBSCRIPTION: shared SubscriptionRecord interface');
+  assert(ts!.includes('export interface CreatorSupportRecord'), 'SUBSCRIPTION: per-decl CreatorSupportRecord interface');
+  assert(ts!.includes("interval: 'monthly'"), 'SUBSCRIPTION: interval typed as literal monthly');
+  assert(ts!.includes("'premium_feed' | 'private_chat'"), 'SUBSCRIPTION: perks typed as literal union');
+  assert(ts!.includes('export const CreatorSupportConfig'), 'SUBSCRIPTION: config const generated');
+  assert(ts!.includes("provider: 'CreatorProfile'"), 'SUBSCRIPTION: provider in config');
+  assert(ts!.includes("method: 'stripe'"), 'SUBSCRIPTION: payment method in config');
+  assert(ts!.includes('export function createSubscription('), 'SUBSCRIPTION: createSubscription invoke wrapper');
+  assert(ts!.includes('export function listSubscriptions('), 'SUBSCRIPTION: listSubscriptions invoke wrapper');
+  assert(ts!.includes('export function cancelSubscription('), 'SUBSCRIPTION: cancelSubscription invoke wrapper');
+
+  console.log('  SUBSCRIPTION: SQL schema, Rust CRUD, TypeScript interfaces + invoke wrappers verified');
+}
+
+section('SUBSCRIPTION omitted: no subscription files when no SUBSCRIPTION declared');
+{
+  const noSubSrc = `APP no_sub { TITLE "No Sub" WINDOW 800x600 DB app.db THEME dark }`;
+  const { files } = compile(noSubSrc);
+  assert(!files.has('migrations/subscriptions.sql'), 'SUBSCRIPTION omitted: subscriptions.sql not generated');
+  assert(!files.has('src-tauri/src/commands/subscriptions.rs'), 'SUBSCRIPTION omitted: subscriptions.rs not generated');
+  assert(!files.has('src/lib/subscriptions.ts'), 'SUBSCRIPTION omitted: subscriptions.ts not generated');
+  console.log('  SUBSCRIPTION: no files emitted when no SUBSCRIPTION declarations');
+}
+
+// --- DISPUTE codegen ---
+section('DISPUTE declaration — SQL schema + Rust lifecycle commands + TypeScript state machine');
+{
+  const disputeSrc = `
+APP dispute_app { TITLE "Dispute App" WINDOW 800x600 DB dispute.db THEME dark }
+
+CONTRACT MusicCommission {
+  DESCRIPTION "A commission"
+  PARTIES { client: Identity provider: Identity }
+  TERMS { delivery_deadline: "14d" }
+  DELIVERABLES { audio_file: REQUIRED }
+  PAYMENT { METHOD ach AMOUNT 50 CURRENCY "USD" RELEASE on_acceptance RECURRING false }
+  GOVERNANCE { SIGNED_BY both DISPUTE optional }
+}
+
+DISPUTE ContractReview {
+  DESCRIPTION "Structured dispute resolution for commission contracts"
+  CONTRACT MusicCommission
+  STATES {
+    opened
+    under_review
+    resolved
+    escalated
+  }
+  RESOLUTION {
+    refund
+    revision
+    partial_acceptance
+    cancellation
+  }
+}
+`;
+
+  const { files } = compile(disputeSrc);
+
+  // SQL migration
+  const sql = files.get('migrations/disputes.sql');
+  assert(sql !== undefined, 'DISPUTE: should generate migrations/disputes.sql');
+  assert(sql!.includes('CREATE TABLE IF NOT EXISTS disputes'), 'DISPUTE: disputes table defined');
+  assert(sql!.includes('contract_id TEXT NOT NULL'), 'DISPUTE: contract_id column');
+  assert(sql!.includes("state TEXT NOT NULL DEFAULT 'opened'"), 'DISPUTE: state defaults to opened');
+  assert(sql!.includes('resolution TEXT'), 'DISPUTE: nullable resolution column');
+  assert(sql!.includes('idx_disputes_contract'), 'DISPUTE: index on contract_id');
+  assert(sql!.includes('idx_disputes_state'), 'DISPUTE: index on state');
+
+  // Rust commands
+  const rs = files.get('src-tauri/src/commands/disputes.rs');
+  assert(rs !== undefined, 'DISPUTE: should generate disputes.rs');
+  assert(rs!.includes('"ContractReview"'), 'DISPUTE: ContractReview referenced in rs');
+  assert(rs!.includes('pub struct DisputeRecord'), 'DISPUTE: DisputeRecord struct defined');
+  assert(rs!.includes('pub struct OpenDisputeInput'), 'DISPUTE: OpenDisputeInput struct defined');
+  assert(rs!.includes('pub fn open_dispute('), 'DISPUTE: open_dispute command');
+  assert(rs!.includes('pub fn get_dispute('), 'DISPUTE: get_dispute command');
+  assert(rs!.includes('pub fn list_disputes('), 'DISPUTE: list_disputes command');
+  assert(rs!.includes('pub fn resolve_dispute('), 'DISPUTE: resolve_dispute command');
+  assert(rs!.includes('pub fn transition_dispute(', ), 'DISPUTE: transition_dispute command');
+  assert(rs!.includes("state = 'resolved'"), 'DISPUTE: resolve sets state to resolved');
+  assert(rs!.includes('fn fetch_dispute('), 'DISPUTE: DB helper fn fetch_dispute defined');
+  assert(rs!.includes('use crate::db::DbPool'), 'DISPUTE: uses DbPool');
+
+  // TypeScript state machine
+  const ts = files.get('src/lib/disputes.ts');
+  assert(ts !== undefined, 'DISPUTE: should generate disputes.ts');
+  assert(ts!.includes("from '@tauri-apps/api/core'"), 'DISPUTE: imports from tauri core');
+  assert(ts!.includes("export type ContractReviewState = 'opened' | 'under_review' | 'resolved' | 'escalated'"), 'DISPUTE: state union type with all declared states');
+  assert(ts!.includes("export type ContractReviewResolution = 'refund' | 'revision' | 'partial_acceptance' | 'cancellation'"), 'DISPUTE: resolution union type');
+  assert(ts!.includes('export interface ContractReviewRecord'), 'DISPUTE: per-decl record interface');
+  assert(ts!.includes('state: ContractReviewState'), 'DISPUTE: record uses typed state');
+  assert(ts!.includes('resolution: ContractReviewResolution | null'), 'DISPUTE: record uses typed resolution');
+  assert(ts!.includes('export const ContractReviewTransitions'), 'DISPUTE: state transition table');
+  assert(ts!.includes("ContractReviewContractRef = 'MusicCommission'"), 'DISPUTE: contract reference const');
+  assert(ts!.includes('export function openDispute('), 'DISPUTE: openDispute invoke wrapper');
+  assert(ts!.includes('export function resolveDispute('), 'DISPUTE: resolveDispute invoke wrapper');
+  assert(ts!.includes('export function transitionDispute('), 'DISPUTE: transitionDispute invoke wrapper');
+
+  console.log('  DISPUTE: SQL schema, Rust lifecycle commands, TypeScript state machine + transitions verified');
+}
+
+section('DISPUTE omitted: no dispute files when no DISPUTE declared');
+{
+  const noDispSrc = `APP no_disp { TITLE "No Dispute" WINDOW 800x600 DB app.db THEME dark }`;
+  const { files } = compile(noDispSrc);
+  assert(!files.has('migrations/disputes.sql'), 'DISPUTE omitted: disputes.sql not generated');
+  assert(!files.has('src-tauri/src/commands/disputes.rs'), 'DISPUTE omitted: disputes.rs not generated');
+  assert(!files.has('src/lib/disputes.ts'), 'DISPUTE omitted: disputes.ts not generated');
+  console.log('  DISPUTE: no files emitted when no DISPUTE declarations');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);
