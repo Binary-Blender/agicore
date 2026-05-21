@@ -3246,6 +3246,72 @@ MESH PlainMesh {
   console.error(`  FAIL: MESH ACCOUNTING parse error: ${err}`);
 }
 
+// --- Phase 9: COGNITION_ROLE TIER + SPC_FLOOR ---
+
+console.log('\n--- Phase 9: COGNITION_ROLE TIER + SPC_FLOOR ---');
+try {
+  const cogRoleSrc = `
+APP cog_demo { TITLE "Cog Demo" WINDOW 800x600 DB cog.db THEME dark }
+COGNITION_ROLE FrontierArchitect {
+  RESPONSIBILITIES ambiguity_collapse, novel_reasoning, architecture_synthesis
+  MODEL_HIERARCHY opus, sonnet
+  ESCALATE_TO HumanReview
+  PROMOTION_POLICY MANUAL
+  FALLBACK_POLICY ESCALATE
+  TIER 1
+  SPC_FLOOR {
+    DEFECT_RATE 0.02
+    RETRY_RATE 0.05
+    ESCALATION_RATE 0.08
+  }
+}
+COGNITION_ROLE OperationalWorker {
+  RESPONSIBILITIES implementation, refactoring, workflow_continuation
+  MODEL_HIERARCHY sonnet, haiku
+  ESCALATE_TO FrontierArchitect
+  PROMOTION_POLICY SPC_AUTOMATIC
+  FALLBACK_POLICY ESCALATE
+  TIER 2
+  SPC_FLOOR {
+    DEFECT_RATE 0.05
+    RETRY_RATE 0.10
+    ESCALATION_RATE 0.15
+  }
+}
+COGNITION_ROLE DeterministicWorker {
+  RESPONSIBILITIES deterministic_code_generation, style_continuation
+  MODEL_HIERARCHY haiku, codellama_7b
+  ESCALATE_TO OperationalWorker
+  PROMOTION_POLICY SPC_AUTOMATIC
+  FALLBACK_POLICY ESCALATE
+  TIER 3
+}
+`;
+  const cogResult = parse(cogRoleSrc);
+  assert(cogResult.cognitionRoles.length === 3, 'COGNITION_ROLE TIER: 3 roles parsed');
+
+  const frontier = cogResult.cognitionRoles[0]!;
+  assert(frontier.name === 'FrontierArchitect', 'COGNITION_ROLE TIER: first is FrontierArchitect');
+  assert(frontier.tier === 1, 'COGNITION_ROLE TIER: FrontierArchitect is tier 1');
+  assert(frontier.spcFloor !== undefined, 'COGNITION_ROLE SPC_FLOOR: FrontierArchitect has spcFloor');
+  assert(frontier.spcFloor!.defectRate === 0.02, 'COGNITION_ROLE SPC_FLOOR: defectRate 0.02');
+  assert(frontier.spcFloor!.retryRate === 0.05, 'COGNITION_ROLE SPC_FLOOR: retryRate 0.05');
+  assert(frontier.spcFloor!.escalationRate === 0.08, 'COGNITION_ROLE SPC_FLOOR: escalationRate 0.08');
+
+  const operational = cogResult.cognitionRoles[1]!;
+  assert(operational.tier === 2, 'COGNITION_ROLE TIER: OperationalWorker is tier 2');
+  assert(operational.spcFloor!.defectRate === 0.05, 'COGNITION_ROLE SPC_FLOOR: operational defectRate 0.05');
+
+  const deterministic = cogResult.cognitionRoles[2]!;
+  assert(deterministic.tier === 3, 'COGNITION_ROLE TIER: DeterministicWorker is tier 3');
+  assert(deterministic.spcFloor === undefined, 'COGNITION_ROLE SPC_FLOOR: DeterministicWorker has no spcFloor (optional)');
+
+  console.log('  COGNITION_ROLE TIER + SPC_FLOOR: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: COGNITION_ROLE TIER + SPC_FLOOR parse error: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

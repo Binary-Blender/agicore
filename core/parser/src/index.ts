@@ -44,7 +44,7 @@ export type {
   PreferenceDecl,
   ThemeDecl, ThemePalette, ThemeBackground, ThemeDensity, ThemeMotif, ThemeRadius,
   StagesDecl, StagesTransition, StagesCondition, StagesConditionOp, StagesMatchMode,
-  CognitionRoleDecl, PromotionPolicy, FallbackPolicy,
+  CognitionRoleDecl, CognitionSpcFloor, PromotionPolicy, FallbackPolicy,
   EscalationChainDecl, EscalationOnConditions, DeescalationOnConditions,
   QcMeshDecl, QcMeshConsensus, QcMeshOnFail, QcMeshSpc, MeshDecl,
   TargetDecl, TargetRuntime, TargetFrontend, TargetDeploy,

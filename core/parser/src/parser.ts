@@ -3121,6 +3121,8 @@ export class Parser {
     let modelHierarchy: string[] = [];
     let promotionPolicy: PromotionPolicy = 'SPC_AUTOMATIC';
     let fallbackPolicy: FallbackPolicy = 'ESCALATE';
+    let tier: 1 | 2 | 3 = 2;
+    let spcFloor: { defectRate: number; retryRate: number; escalationRate: number } | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -3149,13 +3151,29 @@ export class Parser {
           this.advance();
           fallbackPolicy = this.expectIdentifier() as FallbackPolicy;
           break;
+        case TokenType.TIER:
+          this.advance();
+          tier = Number(this.expectToken(TokenType.NUMBER_LITERAL).value) as 1 | 2 | 3;
+          break;
+        case TokenType.SPC_FLOOR:
+          this.advance(); this.expectToken(TokenType.LBRACE);
+          spcFloor = { defectRate: 0.05, retryRate: 0.10, escalationRate: 0.10 };
+          while (!this.check(TokenType.RBRACE)) {
+            const sf = this.current();
+            if (sf.type === TokenType.DEFECT_RATE) { this.advance(); spcFloor.defectRate = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); }
+            else if (sf.type === TokenType.RETRY_RATE) { this.advance(); spcFloor.retryRate = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); }
+            else if (sf.type === TokenType.ESCALATION_RATE) { this.advance(); spcFloor.escalationRate = Number(this.expectToken(TokenType.NUMBER_LITERAL).value); }
+            else this.error(`Unexpected field in SPC_FLOOR: ${sf.value}`);
+          }
+          this.expectToken(TokenType.RBRACE);
+          break;
         default:
           this.error(`Unexpected field in COGNITION_ROLE: ${token.value}`);
       }
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'cognition_role', name, responsibilities, qcProfile, escalateTo, modelHierarchy, promotionPolicy, fallbackPolicy, span: { start, end } };
+    return { kind: 'cognition_role', name, responsibilities, qcProfile, escalateTo, modelHierarchy, promotionPolicy, fallbackPolicy, tier, spcFloor, span: { start, end } };
   }
 
   private parseEscalationChain(): EscalationChainDecl {

@@ -5290,6 +5290,85 @@ NODE NoContribNode {
   console.log('  NODE CONTRIBUTES: contributes field in hardware.ts TypeScript interface');
 }
 
+// ─── Phase 9: Cognitive Tier Hierarchy ────────────────────────────────────────
+
+section('Phase 9: COGNITION_ROLE TIER + SPC_FLOOR in registry and SQL metrics');
+{
+  const cogSrc = `
+APP cog_app { TITLE "Cog App" WINDOW 1024x768 DB cog.db THEME dark }
+COGNITION_ROLE FrontierArchitect {
+  RESPONSIBILITIES ambiguity_collapse, novel_reasoning, architecture_synthesis
+  MODEL_HIERARCHY opus, sonnet
+  ESCALATE_TO HumanReview
+  PROMOTION_POLICY MANUAL
+  FALLBACK_POLICY ESCALATE
+  TIER 1
+  SPC_FLOOR {
+    DEFECT_RATE 0.02
+    RETRY_RATE 0.05
+    ESCALATION_RATE 0.08
+  }
+}
+COGNITION_ROLE OperationalWorker {
+  RESPONSIBILITIES implementation, refactoring, workflow_continuation
+  MODEL_HIERARCHY sonnet, haiku
+  ESCALATE_TO FrontierArchitect
+  PROMOTION_POLICY SPC_AUTOMATIC
+  FALLBACK_POLICY ESCALATE
+  TIER 2
+  SPC_FLOOR {
+    DEFECT_RATE 0.05
+    RETRY_RATE 0.10
+    ESCALATION_RATE 0.15
+  }
+}
+COGNITION_ROLE DeterministicWorker {
+  RESPONSIBILITIES deterministic_code_generation, style_continuation
+  MODEL_HIERARCHY haiku, codellama_7b
+  ESCALATE_TO OperationalWorker
+  PROMOTION_POLICY SPC_AUTOMATIC
+  FALLBACK_POLICY ESCALATE
+  TIER 3
+}
+`;
+  const { files } = compile(cogSrc);
+
+  // TypeScript registry
+  const cogTs = files.get('src/lib/cognition-roles.ts')!;
+  assert(cogTs !== undefined, 'Phase 9 COGNITION_ROLE: cognition-roles.ts generated');
+  assert(cogTs.includes('export type CognitionTier'), 'Phase 9: CognitionTier type exported');
+  assert(cogTs.includes('tier: 1'), 'Phase 9: FrontierArchitect tier 1 in registry');
+  assert(cogTs.includes('tier: 2'), 'Phase 9: OperationalWorker tier 2 in registry');
+  assert(cogTs.includes('tier: 3'), 'Phase 9: DeterministicWorker tier 3 in registry');
+  assert(cogTs.includes('spcFloor: { defectRate: 0.02, retryRate: 0.05, escalationRate: 0.08 }'), 'Phase 9: FrontierArchitect SPC floor in registry');
+  assert(cogTs.includes('spcFloor: { defectRate: 0.05, retryRate: 0.1, escalationRate: 0.15 }'), 'Phase 9: OperationalWorker SPC floor in registry');
+  assert(cogTs.includes('export const COGNITION_TIERS'), 'Phase 9: COGNITION_TIERS tier groupings exported');
+  assert(cogTs.includes('export function cheapestViableRole('), 'Phase 9: cheapestViableRole() exported');
+  assert(cogTs.includes('for (const tier of [3, 2, 1]'), 'Phase 9: cheapestViableRole prefers tier 3 first');
+  assert(cogTs.includes('export function resolveByTier('), 'Phase 9: resolveByTier() exported');
+
+  // SQL metrics migration
+  const metricsSql = files.get('migrations/cognition_metrics.sql')!;
+  assert(metricsSql !== undefined, 'Phase 9: cognition_metrics.sql generated');
+  assert(metricsSql.includes('CREATE TABLE IF NOT EXISTS cognition_metrics'), 'Phase 9 SQL: cognition_metrics table');
+  assert(metricsSql.includes('metric_type TEXT NOT NULL'), 'Phase 9 SQL: metric_type column');
+  assert(metricsSql.includes("'defect_rate' | 'retry_rate' | 'escalation_rate'"), 'Phase 9 SQL: metric type comment');
+  assert(metricsSql.includes('CREATE VIEW IF NOT EXISTS cognition_tier_allocation'), 'Phase 9 SQL: tier_allocation view');
+  assert(metricsSql.includes('AVG(value) AS avg_value'), 'Phase 9 SQL: avg_value in allocation view');
+  assert(metricsSql.includes('idx_cognition_metrics_role'), 'Phase 9 SQL: role index on metrics table');
+
+  console.log('  Phase 9: tier classification, SPC floors, tier routing helpers, SQL metrics generated');
+}
+
+section('Phase 9 omit: no cognition_metrics.sql without COGNITION_ROLE declarations');
+{
+  const bareSrc = `APP bare { TITLE "Bare" WINDOW 800x600 DB bare.db THEME dark }`;
+  const { files } = compile(bareSrc);
+  assert(!files.has('migrations/cognition_metrics.sql'), 'Phase 9 omit: no cognition_metrics.sql without COGNITION_ROLE');
+  assert(!files.has('src/lib/cognition-roles.ts'), 'Phase 9 omit: no cognition-roles.ts without COGNITION_ROLE');
+  console.log('  Phase 9 omit: no cognitive hierarchy files when no COGNITION_ROLE declared');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

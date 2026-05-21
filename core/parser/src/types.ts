@@ -754,6 +754,13 @@ export interface TriggerDecl {
 export type PromotionPolicy = 'SPC_AUTOMATIC' | 'MANUAL' | 'DISABLED';
 export type FallbackPolicy  = 'ESCALATE' | 'DEGRADE' | 'FAIL';
 
+/** Phase 9: minimum SPC quality thresholds before auto-demotion to a lower tier */
+export interface CognitionSpcFloor {
+  defectRate: number;
+  retryRate: number;
+  escalationRate: number;
+}
+
 export interface CognitionRoleDecl {
   kind: 'cognition_role';
   name: string;
@@ -763,6 +770,10 @@ export interface CognitionRoleDecl {
   modelHierarchy: string[];
   promotionPolicy: PromotionPolicy;
   fallbackPolicy: FallbackPolicy;
+  /** Phase 9: 1 = Frontier, 2 = Operational, 3 = Specialized */
+  tier: 1 | 2 | 3;
+  /** Phase 9: SPC quality floor — violations trigger demotion or escalation */
+  spcFloor?: CognitionSpcFloor;
   span: SourceSpan;
 }
 
