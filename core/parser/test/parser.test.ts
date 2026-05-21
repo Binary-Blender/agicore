@@ -462,6 +462,35 @@ assert(dupErrorMsg.length > 0, 'Two DEFAULTs for same provider should throw');
 assert(dupErrorMsg.includes('multiple DEFAULT') || dupErrorMsg.includes('DEFAULT'), 'Error message mentions DEFAULT');
 assert(dupErrorMsg.includes('anthropic'), 'Error message names the provider');
 
+// --- Test: AI_SERVICE KEYS_ENTITY ---
+
+section('AI_SERVICE KEYS_ENTITY parsing');
+
+const keysEntityTest = `
+APP test { TITLE "Test" DB test.db }
+AI_SERVICE {
+  PROVIDERS  anthropic, openai
+  KEYS_ENTITY AIConfig
+  DEFAULT    anthropic
+  STREAMING  true
+  MODELS {
+    anthropic "claude-sonnet-4-20250514" DEFAULT
+    openai    "gpt-4o"                   DEFAULT
+  }
+}
+ENTITY AIConfig SINGLETON {
+  anthropic_api_key: string SENSITIVE
+  openai_api_key:    string SENSITIVE
+}
+`;
+const keResult = parse(keysEntityTest);
+assert(keResult.aiService !== undefined, 'KEYS_ENTITY: should have AI_SERVICE');
+assert(keResult.aiService!.keysEntity === 'AIConfig', 'KEYS_ENTITY: keysEntity should be AIConfig');
+assert(keResult.aiService!.keysFile === '', 'KEYS_ENTITY: keysFile should be empty string');
+assert(keResult.aiService!.providers.length === 2, 'KEYS_ENTITY: should have 2 providers');
+assert(keResult.aiService!.defaultProvider === 'anthropic', 'KEYS_ENTITY: default should be anthropic');
+assert(keResult.aiService!.streaming === true, 'KEYS_ENTITY: streaming should be true');
+
 // --- Test: TEST ---
 
 section('TEST parsing');

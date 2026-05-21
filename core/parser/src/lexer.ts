@@ -56,6 +56,7 @@ export enum TokenType {
   // AI_SERVICE keywords
   PROVIDERS = 'PROVIDERS',
   KEYS_FILE = 'KEYS_FILE',
+  KEYS_ENTITY = 'KEYS_ENTITY',
   DEFAULT = 'DEFAULT',
   STREAMING = 'STREAMING',
   MODELS = 'MODELS',
@@ -494,6 +495,7 @@ const KEYWORDS: Record<string, TokenType> = {
   FIELDS: TokenType.FIELDS,
   PROVIDERS: TokenType.PROVIDERS,
   KEYS_FILE: TokenType.KEYS_FILE,
+  KEYS_ENTITY: TokenType.KEYS_ENTITY,
   DEFAULT: TokenType.DEFAULT,
   STREAMING: TokenType.STREAMING,
   MODELS: TokenType.MODELS,

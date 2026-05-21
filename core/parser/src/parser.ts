@@ -1123,6 +1123,7 @@ export class Parser {
 
     let providers: string[] = [];
     let keysFile = '';
+    let keysEntity: string | undefined;
     let defaultProvider: string | undefined;
     let streaming = true;
     let models: ModelEntry[] = [];
@@ -1137,6 +1138,10 @@ export class Parser {
         case TokenType.KEYS_FILE:
           this.advance();
           keysFile = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
+        case TokenType.KEYS_ENTITY:
+          this.advance();
+          keysEntity = this.expectIdentifier();
           break;
         case TokenType.DEFAULT:
           this.advance();
@@ -1156,7 +1161,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'ai_service', providers, keysFile, defaultProvider, streaming, models, span: { start, end } };
+    return { kind: 'ai_service', providers, keysFile, keysEntity, defaultProvider, streaming, models, span: { start, end } };
   }
 
   /**

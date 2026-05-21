@@ -233,7 +233,10 @@ export interface ModelEntry {
 export interface AiServiceDecl {
   kind: 'ai_service';
   providers: string[];
+  /** Path to JSON key file on disk — mutually exclusive with keysEntity. */
   keysFile: string;
+  /** Name of a SINGLETON ENTITY whose fields supply API keys (e.g. "AIConfig"). */
+  keysEntity?: string;
   defaultProvider?: string;
   streaming: boolean;
   /** Ordered list of provider+model entries as declared in the source. */

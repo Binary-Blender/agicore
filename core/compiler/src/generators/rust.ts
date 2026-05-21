@@ -538,9 +538,11 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     return cmds;
   });
 
-  // AI_SERVICE commands (send_chat + key management)
+  // AI_SERVICE commands — KEYS_ENTITY mode omits key-management commands (managed via normal ENTITY CRUD)
   const aiServiceCmds = hasAiService
-    ? ['ai_service::send_chat', 'ai_service::get_api_keys', 'ai_service::set_api_key']
+    ? ast.aiService!.keysEntity
+      ? ['ai_service::send_chat', 'ai_service::discover_models']
+      : ['ai_service::send_chat', 'ai_service::get_api_keys', 'ai_service::set_api_key', 'ai_service::discover_models']
     : [];
 
   // ACTION commands (all non-send_chat, non-router, non-IMPL, non-stub actions bundled in actions.rs)
@@ -640,7 +642,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       '            app.manage(pool);',
     ]),
   );
-  if (hasAiService) {
+  if (hasAiService && !ast.aiService!.keysEntity) {
+    // KEYS_FILE mode — pre-load keys from disk into managed state
     mainRsLines.push(
       '            let api_keys = Mutex::new(ai_service::load_api_keys());',
       '            app.manage(api_keys);',
@@ -709,12 +712,17 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     );
   }
   if (hasReasoners || hasTriggers) {
+    const keysArcLine = hasAiService && ast.aiService!.keysEntity
+      // KEYS_ENTITY mode — lock the DbPool to read keys from the singleton table
+      ? '                let keys_arc = { let conn = app.state::<db::DbPool>().lock().unwrap(); Arc::new(std::sync::Mutex::new(ai_service::load_api_keys(&conn))) };'
+      // KEYS_FILE mode (default) — load from disk
+      : '                let keys_arc = Arc::new(std::sync::Mutex::new(ai_service::load_api_keys()));';
     mainRsLines.push(
       '            // Start background runtimes',
       '            {',
       '                use std::sync::Arc;',
       '                let pool_ref = app.state::<db::DbPool>().inner().clone();',
-      '                let keys_arc = Arc::new(std::sync::Mutex::new(ai_service::load_api_keys()));',
+      keysArcLine,
       '                let default_model = "claude-sonnet-4-6".to_string();',
     );
     if (hasReasoners) {
