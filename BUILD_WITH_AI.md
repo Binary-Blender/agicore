@@ -10,8 +10,8 @@ This is the builder's guide. It tells you what to read, what to run, and what to
 2. `TECH_STACK.md` — exact pinned versions, architecture choices, 3G→4G changes
 3. `CODING_STANDARDS.md` — naming conventions, generated structure, anti-patterns
 4. `core/parser/src/types.ts` — every DSL declaration type and field (the authoritative spec)
-5. `apps/novasyn-chat/novasyn_chat.agi` — production app, idiom guide (AI, ENTITY, COMPILER layers)
-6. `apps/novasyn-mba/novasyn_mba.agi` — production app, expert system layers (RULE, SKILL, WORKFLOW, EVENT)
+5. `apps/novasyn-chat/novasyn_chat.agi` — production app, idiom guide (AI, ENTITY, COMPILER layers). The canonical reference; lives in this repo.
+6. `novasyn-mba` — second production app, expert system layers (RULE, SKILL, WORKFLOW, EVENT). Lives in the [agicore-examples](https://github.com/Binary-Blender/agicore-examples) repo under `showcase/novasyn-mba/`.
 7. This file (`BUILD_WITH_AI.md`) — DSL reference, extension process, common pitfalls
 8. Feature-specific docs as needed: `TESTING.md`, `VAULT.md`, `CHANNEL.md`, `LOGGING.md`, `MACROS.md`, `EMBEDDED.md`, `NULLCLAW.md`
 
@@ -37,9 +37,9 @@ novasyn_chat.agi is a complete real application — use it as the idiom guide.
 
 The examples are clean and minimal — good for isolated feature reference. NovaSyn Chat is a production application that uses 31 declaration types across 7 layers. It shows how things actually fit together at scale: how ENTITY relationships compose, how ACTION and AI_SERVICE interact, how COMPILER transitions chain semantic state. If you're building something serious, this is the model.
 
-**Second reference app — `apps/novasyn-mba/novasyn_mba.agi`**
+**Second reference app — `novasyn-mba` (in [agicore-examples](https://github.com/Binary-Blender/agicore-examples/tree/main/showcase/novasyn-mba))**
 
-NovaSyn MBA is the second production application (1,227 lines, 41 declaration types). It shows the full surface of the expert system and orchestration layers: RULE with IF/FLAG/SEVERITY, SKILL with CONTENT and APPLIES_TO, WORKFLOW chaining, and EVENT with SCHEDULE. If you're using those layers, read this file alongside NovaSyn Chat.
+NovaSyn MBA is the second production application (1,227 lines, 41 declaration types). It shows the full surface of the expert system and orchestration layers: RULE with IF/FLAG/SEVERITY, SKILL with CONTENT and APPLIES_TO, WORKFLOW chaining, and EVENT with SCHEDULE. If you're using those layers, read this file alongside NovaSyn Chat. The source moved to the agicore-examples repo so platform releases stay focused on the canary (novasyn-chat); novasyn-mba evolves on its own cadence.
 
 ---
 
@@ -452,9 +452,9 @@ If you find yourself writing hand-rolled Rust that should be generated, or copy-
 | `core/parser/src/parser.ts` | Parse functions — the ground truth for what each declaration currently accepts |
 | `core/parser/src/lexer.ts` | Token enum and keyword map — check here before adding a new token |
 | `apps/novasyn-chat/novasyn_chat.agi` | Production app — 595 lines, 31 declaration types (AI, ENTITY, ACTION, COMPILER) |
-| `apps/novasyn-mba/novasyn_mba.agi` | Production app — 1,227 lines, 41 declaration types (RULE, SKILL, WORKFLOW, EVENT) |
-| `examples/home-academy/home_academy.agi` | Minimal example — entity/action/view patterns |
-| `examples/invoice-approval/` | Workflow and expert system patterns |
+| [agicore-examples/showcase/novasyn-mba/](https://github.com/Binary-Blender/agicore-examples/tree/main/showcase/novasyn-mba) | Production app — 1,227 lines, 41 declaration types (RULE, SKILL, WORKFLOW, EVENT) |
+| [agicore-examples/reference/home-academy/](https://github.com/Binary-Blender/agicore-examples/tree/main/reference/home-academy) | Minimal example — entity/action/view patterns |
+| [agicore-examples/reference/invoice-approval/](https://github.com/Binary-Blender/agicore-examples/tree/main/reference/invoice-approval) | Workflow and expert system patterns |
 | `dsl/grammar.md` | Grammar narrative (types.ts and parser.ts are more current) |
 | `EVOLVING.md` | Methodology for extending the framework when it's missing something |
 | `TECH_STACK.md` | Exact pinned versions for all dependencies (Node, Rust, frontend) + 3G→4G comparison |

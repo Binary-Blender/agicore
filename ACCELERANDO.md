@@ -2,6 +2,8 @@
 
 **Eighteen `.agi` files. One enterprise platform.**
 
+> **Sources moved.** The `.agi` source files for every app described below now live in the [agicore-examples](https://github.com/Binary-Blender/agicore-examples) repo under `accelerando/`. This document remains in the main Agicore repo as the architectural narrative — the *why* of the suite. Path references throughout the doc point at the new location.
+
 This document is the canonical reference for the Accelerando application suite — a complete AI-native enterprise platform built on the Agicore DSL. Each app is a single `.agi` source file that compiles to a running web service or desktop application. Every AI invocation happens at build time or in scheduled batch. Nothing trusts an LLM at runtime.
 
 ---
@@ -94,7 +96,7 @@ Patient Portal ←── Population Health (care gap outreach, care plan access)
 
 ## App 1 — ERP/CRM
 
-**File:** `apps/accelerando-erp/accelerando_erp.agi`  
+**File:** `agicore-examples/accelerando/erp/accelerando_erp.agi`  
 **Port:** 3000  
 **Target:** Axum + React + PostgreSQL + Docker  
 **Auth:** JWT, 8h expiry, row-level tenant isolation
@@ -128,7 +130,7 @@ Lead pipeline, Opportunity funnel, Invoice approval, PO lifecycle, ServiceTicket
 
 ## App 2 — Medical Billing
 
-**File:** `apps/accelerando-billing/accelerando_billing.agi`  
+**File:** `agicore-examples/accelerando/billing/accelerando_billing.agi`  
 **Port:** 3003  
 **Target:** Axum + React + Docker  
 **Auth:** JWT, 8h expiry, row-level tenant isolation
@@ -178,7 +180,7 @@ BCBS (180-day filing), Medicare (365-day filing), Medicaid (90-day filing)
 
 ## App 3 — Super Eliza Customer Service Chatbot
 
-**File:** `apps/accelerando-chatbot/accelerando_chatbot.agi`  
+**File:** `agicore-examples/accelerando/chatbot/accelerando_chatbot.agi`  
 **Port:** 3001  
 **Target:** Axum + React + Docker  
 **Auth:** JWT, row-level tenant isolation
@@ -217,7 +219,7 @@ never_engage_abusive_language  (PRIORITY 100)
 
 ## App 4 — Super Eliza Operator Interface
 
-**File:** `apps/accelerando-eliza/accelerando_eliza.agi`  
+**File:** `agicore-examples/accelerando/eliza/accelerando_eliza.agi`  
 **Target:** Tauri desktop, 1400×900, frameless  
 **Auth:** JWT, role-based
 
@@ -264,7 +266,7 @@ No operator can be talked past a role gate. No workflow requiring confirmation e
 
 ## App 5 — Configuration Intelligence
 
-**File:** `apps/accelerando-config/accelerando_config.agi`  
+**File:** `agicore-examples/accelerando/config/accelerando_config.agi`  
 **Target:** Tauri desktop  
 **Auth:** JWT
 
@@ -316,7 +318,7 @@ If you're in healthcare and HIPAA isn't configured, this fires before you touch 
 
 ## App 6 — Standard Interchange Layer
 
-**File:** `apps/accelerando-interchange/accelerando_interchange.agi`  
+**File:** `agicore-examples/accelerando/interchange/accelerando_interchange.agi`  
 **Port:** 3002  
 **Target:** Axum web service + Docker  
 **Auth:** JWT, row-level tenant isolation
@@ -377,7 +379,7 @@ Every inbound X12 transaction set requires a 997. No exceptions.
 
 ## App 7 — eDiscovery and Legal Hygiene
 
-**File:** `apps/accelerando-legal/accelerando_legal.agi`  
+**File:** `agicore-examples/accelerando/legal/accelerando_legal.agi`  
 **Port:** 3004  
 **Target:** Axum + React + Docker  
 **Auth:** JWT, `ADMISSIBILITY legal_only` on HygieneAlertPackets, row-level tenant isolation
@@ -460,7 +462,7 @@ Email (7yr), Contracts (10yr), Financial (7yr/IRS), HR (7yr/EEOC), Compliance (1
 
 ## App 8 — Compliance Training LMS
 
-**File:** `apps/accelerando-lms/accelerando_lms.agi`  
+**File:** `agicore-examples/accelerando/lms/accelerando_lms.agi`  
 **Port:** 3005  
 **Target:** Axum + React + Docker  
 **Auth:** JWT, row-level tenant isolation
@@ -524,7 +526,7 @@ Per-employee, per-domain, per-question assessment history. Proves knowledge rete
 
 ## App 9 — Process Improvement Center of Excellence
 
-**File:** `apps/accelerando-pi-coe/accelerando_pi_coe.agi`  
+**File:** `agicore-examples/accelerando/pi-coe/accelerando_pi_coe.agi`  
 **Port:** 3006  
 **Target:** Axum + React + Docker  
 **Auth:** JWT, row-level tenant isolation
@@ -612,7 +614,7 @@ All 8 wastes as observation templates including: *"Rework station exists — rew
 
 ## App 10 — Quality Management System
 
-**File:** `apps/accelerando-qms/accelerando_qms.agi`  
+**File:** `agicore-examples/accelerando/qms/accelerando_qms.agi`  
 **Port:** 3007  
 **Target:** Axum + React + Docker  
 **Auth:** JWT, row-level tenant isolation
@@ -685,7 +687,7 @@ Clause 7.1.5.2(d): when equipment is found out-of-tolerance, every measurement t
 
 ## App 11 — Expert System (Governance Layer)
 
-**File:** `apps/accelerando-es/accelerando_es.agi`  
+**File:** `agicore-examples/accelerando/es/accelerando_es.agi`  
 **Target:** Tauri desktop  
 **Auth:** JWT
 
@@ -712,7 +714,7 @@ Every ES decision emits telemetry → OIE reasons over rule-firing patterns as m
 
 ## App 12 — Organizational Intelligence Engine
 
-**File:** `apps/accelerando-oie/accelerando_oie.agi`  
+**File:** `agicore-examples/accelerando/oie/accelerando_oie.agi`  
 **Target:** Tauri desktop  
 **Auth:** JWT
 
@@ -801,7 +803,7 @@ CAPA effectiveness checks. Kaizen sustainability checks. LMS knowledge scores. L
 
 ## App 13 — Patient Scheduling
 
-**File:** `apps/accelerando-scheduling/accelerando_scheduling.agi`
+**File:** `agicore-examples/accelerando/scheduling/accelerando_scheduling.agi`
 **Port:** 3008
 **Target:** Axum + React
 
@@ -838,7 +840,7 @@ AppointmentConfirmedPacket → clinical, billing, portal | AppointmentCancelledP
 
 ## App 14 — Clinical Documentation and CDS
 
-**File:** `apps/accelerando-clinical/accelerando_clinical.agi`
+**File:** `agicore-examples/accelerando/clinical/accelerando_clinical.agi`
 **Port:** 3009
 **Target:** Axum + React
 
@@ -881,7 +883,7 @@ NewEncounterPacket → billing, population health | PrescriptionPacket → pharm
 
 ## App 15 — Radiology Information System
 
-**File:** `apps/accelerando-radiology/accelerando_radiology.agi`
+**File:** `agicore-examples/accelerando/radiology/accelerando_radiology.agi`
 **Port:** 3010
 **Target:** Axum + React
 
@@ -922,7 +924,7 @@ ModalityWorklistPacket → DICOM gateway | CriticalFindingAlertPacket → clinic
 
 ## App 16 — Pharmacy and E-Prescribing
 
-**File:** `apps/accelerando-pharmacy/accelerando_pharmacy.agi`
+**File:** `agicore-examples/accelerando/pharmacy/accelerando_pharmacy.agi`
 **Port:** 3011
 **Target:** Axum + React
 
@@ -964,7 +966,7 @@ Prescription, DispensedMedication, FormularyEntry, PriorAuthorization, PDMPQuery
 
 ## App 17 — Population Health Management
 
-**File:** `apps/accelerando-population-health/accelerando_population_health.agi`
+**File:** `agicore-examples/accelerando/population-health/accelerando_population_health.agi`
 **Port:** 3012
 **Target:** Axum + React
 
@@ -1005,7 +1007,7 @@ PopulationCohort, CareGap, DiseaseRegistry, QualityMeasure, RiskScore, OutreachC
 
 ## App 18 — Patient Portal
 
-**File:** `apps/accelerando-patient-portal/accelerando_patient_portal.agi`
+**File:** `agicore-examples/accelerando/patient-portal/accelerando_patient_portal.agi`
 **Port:** 3013
 **Target:** Axum + React
 
