@@ -156,6 +156,15 @@ export interface EntityDecl {
   seeds?: SeedRecord[];
   /** When true, only one row exists (id = 'singleton'); no create/list/delete. */
   singleton?: boolean;
+  /**
+   * Inline state list — the compact form of STAGES declared as a field
+   * on the entity itself: `STAGES [state1, state2, state3, ...]`. The
+   * stages apply to the entity's `status` field by convention and
+   * declare implicit sequential transitions. A separate top-level
+   * `STAGES Entity.status { ... }` declaration may still be used for
+   * the verbose / conditional form; the two are not mutually exclusive.
+   */
+  inlineStages?: string[];
   span: SourceSpan;
 }
 
@@ -243,6 +252,13 @@ export interface ModelEntry {
   /** Optional human-friendly display label; derived from the id if omitted. */
   label?: string;
   isDefault: boolean;
+  /**
+   * Maximum context window in tokens for this model. Optional; declared
+   * via `CONTEXT <number>` on the model line. Surfaced to the shell so
+   * the UI can show "X / Y tokens used" and truncate history when a
+   * conversation approaches the limit.
+   */
+  contextWindow?: number;
 }
 
 export interface AiServiceDecl {
@@ -889,6 +905,10 @@ export interface PacketField {
   name: string;
   type: AgiType;
   required: boolean;
+  /** Optional default value for the field, declared via `= value` or
+   *  `DEFAULT value` after the type. Used by codegen to populate
+   *  outbound packets that omit this field. */
+  defaultValue?: LiteralValue;
 }
 
 export interface PacketValidationRule {
@@ -907,6 +927,15 @@ export interface PacketDecl {
   admissibility: boolean;
   ttl: number;
   validation: PacketValidationRule[];
+  /**
+   * Optional signing identity for outbound packets, declared via
+   * `SIGNATURE "identity-name"`. When set, the codegen attaches an
+   * Ed25519 signature using the key bound to that identity in the
+   * generated app's identity store. Distinct from the `signatures`
+   * boolean (which is METADATA: just whether to track signatures
+   * coming in).
+   */
+  signature?: string;
   span: SourceSpan;
 }
 
@@ -960,6 +989,16 @@ export interface ChannelDecl {
   fromNode?: string;
   /** Phase 8.2: target node for cross-node channel routing */
   toNode?: string;
+  /** Apps allowed to read from this channel. Listed as
+   *  `CONSUMERS ["app_a", "app_b"]`. Treated as a soft contract by the
+   *  codegen — informational for now, enforced by the routing layer
+   *  in a later sprint. */
+  consumers?: string[];
+  /** Apps allowed to write to this channel. Same shape as `consumers`. */
+  producers?: string[];
+  /** Delivery semantics. One of: at_least_once, exactly_once, at_most_once.
+   *  Default behavior is at_least_once when omitted. */
+  delivery?: string;
   span: SourceSpan;
 }
 
@@ -1097,6 +1136,14 @@ export interface SessionDecl {
   memory: string;
   output: string[];
   persist: boolean;
+  /** Optional terminal emulator identity (xterm, vt100, ...). Stored
+   *  in the AST; codegen for terminal-bound sessions lands in a later
+   *  sprint. */
+  terminal?: string;
+  /** Optional list of shell profiles available to this session
+   *  (cmd, powershell, wsl, etc.). Same codegen-pending status as
+   *  `terminal`. */
+  profiles?: string[];
   span: SourceSpan;
 }
 

@@ -442,6 +442,7 @@ export class Parser {
     const relationships: Relationship[] = [];
     let order: EntityOrder | undefined;
     const seeds: SeedRecord[] = [];
+    let inlineStages: string[] | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -452,16 +453,49 @@ export class Parser {
         continue;
       }
 
+      // Inline STAGES form: STAGES [state1, state2, state3, ...]
+      // Sugar for top-level STAGES Entity.status { state1 -> state2 -> ... }
+      // applied to the entity's `status` field with implicit sequential
+      // transitions in declaration order.
+      if (token.type === TokenType.STAGES_KW && this.peek(1)?.type === TokenType.LBRACKET) {
+        this.advance(); // STAGES
+        this.advance(); // [
+        const states: string[] = [];
+        if (!this.check(TokenType.RBRACKET)) {
+          states.push(this.expectStateName());
+          while (this.check(TokenType.COMMA)) {
+            this.advance();
+            states.push(this.expectStateName());
+          }
+        }
+        this.expectToken(TokenType.RBRACKET);
+        inlineStages = states;
+        continue;
+      }
+
       if (token.type === TokenType.CRUD) {
         this.advance();
         if (this.check(TokenType.FULL)) {
           crud = 'full';
           this.advance();
+        } else if (this.check(TokenType.LBRACKET)) {
+          // Bracket form: CRUD [create, read, list, edit]
+          this.advance();
+          const ops: string[] = [];
+          if (!this.check(TokenType.RBRACKET)) {
+            ops.push(this.expectIdentifier());
+            while (this.check(TokenType.COMMA)) {
+              this.advance();
+              ops.push(this.expectIdentifier());
+            }
+          }
+          this.expectToken(TokenType.RBRACKET);
+          crud = ops as CrudOp[];
         } else if (this.check(TokenType.IDENTIFIER)) {
-          // named ops: create, read, update, delete, list
+          // Named ops: create, read, update, delete, list
           crud = this.parseIdentifierList() as CrudOp[];
         } else {
-          // bare CRUD with no arguments defaults to 'full'
+          // Bare CRUD with no arguments defaults to 'full'
           crud = 'full';
         }
         continue;
@@ -552,6 +586,7 @@ export class Parser {
     if (order !== undefined) decl.order = order;
     if (seeds.length > 0) decl.seeds = seeds;
     if (singleton) decl.singleton = true;
+    if (inlineStages !== undefined) decl.inlineStages = inlineStages;
     return decl;
   }
 
@@ -572,9 +607,25 @@ export class Parser {
         this.advance();
         defaultValue = this.parseLiteral();
       }
+      // Accept REQUIRED/UNIQUE/INDEX/SENSITIVE modifiers and the
+      // DEFAULT-keyword form as an alternative to `= value`.
       const modifiers: FieldModifier[] = [];
-      while (this.check(TokenType.REQUIRED) || this.check(TokenType.UNIQUE) || this.check(TokenType.INDEX) || this.check(TokenType.SENSITIVE)) {
-        modifiers.push(this.advance().value as FieldModifier);
+      while (
+        this.check(TokenType.REQUIRED) ||
+        this.check(TokenType.UNIQUE) ||
+        this.check(TokenType.INDEX) ||
+        this.check(TokenType.SENSITIVE) ||
+        this.check(TokenType.DEFAULT)
+      ) {
+        if (this.check(TokenType.DEFAULT)) {
+          if (defaultValue !== undefined) {
+            this.error(`Field '${name}' has multiple DEFAULT values`);
+          }
+          this.advance();
+          defaultValue = this.parseLiteral();
+        } else {
+          modifiers.push(this.advance().value as FieldModifier);
+        }
       }
       return { name, type, defaultValue, modifiers, span: this.spanFrom(start) };
     }
@@ -625,14 +676,27 @@ export class Parser {
       defaultValue = this.parseLiteral();
     }
 
+    // Accept REQUIRED / UNIQUE / INDEX / SENSITIVE modifiers and the
+    // DEFAULT-keyword form for default values (alternative to `=`) in
+    // any order. The DEFAULT keyword consumes a literal; the boolean
+    // modifiers are presence-only.
     const modifiers: FieldModifier[] = [];
     while (
       this.check(TokenType.REQUIRED) ||
       this.check(TokenType.UNIQUE) ||
       this.check(TokenType.INDEX) ||
-      this.check(TokenType.SENSITIVE)
+      this.check(TokenType.SENSITIVE) ||
+      this.check(TokenType.DEFAULT)
     ) {
-      modifiers.push(this.advance().value as FieldModifier);
+      if (this.check(TokenType.DEFAULT)) {
+        if (defaultValue !== undefined) {
+          this.error(`Field '${name}' has multiple DEFAULT values`);
+        }
+        this.advance();
+        defaultValue = this.parseLiteral();
+      } else {
+        modifiers.push(this.advance().value as FieldModifier);
+      }
     }
 
     return { name, type, customType, defaultValue, modifiers, span: this.spanFrom(start) };
@@ -1209,17 +1273,29 @@ export class Parser {
 
       let label: string | undefined;
       let isDefault = false;
+      let contextWindow: number | undefined;
 
-      // LABEL and DEFAULT can appear in any order, each at most once on the
-      // line. Stop reading modifiers when we see anything that isn't one of
-      // them — the next provider identifier or the closing brace.
-      while (this.check(TokenType.LABEL) || this.check(TokenType.DEFAULT)) {
+      // LABEL, DEFAULT, and CONTEXT can appear in any order, each at most
+      // once on the line. Stop reading modifiers when we see anything
+      // that isn't one of them — the next provider identifier or the
+      // closing brace.
+      while (
+        this.check(TokenType.LABEL) ||
+        this.check(TokenType.DEFAULT) ||
+        this.check(TokenType.CONTEXT)
+      ) {
         if (this.check(TokenType.LABEL)) {
           if (label !== undefined) {
             this.error(`Duplicate LABEL for model '${id}'`);
           }
           this.advance();
           label = this.expectToken(TokenType.STRING_LITERAL).value;
+        } else if (this.check(TokenType.CONTEXT)) {
+          if (contextWindow !== undefined) {
+            this.error(`Duplicate CONTEXT marker on model '${id}'`);
+          }
+          this.advance();
+          contextWindow = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
         } else {
           // DEFAULT modifier
           if (isDefault) {
@@ -1230,7 +1306,7 @@ export class Parser {
         }
       }
 
-      models.push({ provider, id, label, isDefault });
+      models.push({ provider, id, label, isDefault, contextWindow });
       // Validate: at most one DEFAULT per provider
       if (isDefault) {
         const existingDefault = models.find(
@@ -3040,9 +3116,45 @@ export class Parser {
 
     const transitions: StagesTransition[] = [];
 
+    // Two body forms:
+    //   1. Verbose:   TRANSITION "from" -> "to" { MATCH ... REQUIRE ... }
+    //   2. Chain:     state1 -> state2 -> state3 -> state4
+    // The chain form is sugar for n-1 unconditional transitions and is
+    // the common case for state machines whose progression is purely
+    // sequential and lifecycle-shaped (the Accelerando QMS / LMS /
+    // PI-CoE apps use this form throughout).
     while (!this.check(TokenType.RBRACE)) {
       if (this.check(TokenType.TRANSITION)) {
         transitions.push(this.parseStagesTransition());
+      } else if (this.isStageNameToken(this.current())) {
+        // Chain form. Read identifiers separated by ARROW until we hit
+        // RBRACE. Each `state -> state` becomes one transition.
+        //
+        // Branching: a `/` after a state introduces an alternative
+        // terminal/next state from the SAME source as the most-recent
+        // transition. Multiple slashes chain: `a -> b / c / d` produces
+        // a→b, a→c, a→d. This supports the PI-CoE pattern:
+        //   scheduled -> complete / missed / escalated
+        let prev = this.advance().value;
+        while (this.check(TokenType.ARROW) || this.check(TokenType.SLASH)) {
+          if (this.check(TokenType.ARROW)) {
+            this.advance();
+            const next = this.expectStateName();
+            transitions.push({ from: prev, to: next, match: 'all', conditions: [] });
+            prev = next;
+          } else {
+            // SLASH branch: same source as the most recent transition,
+            // different destination.
+            this.advance();
+            const branch = this.expectStateName();
+            if (transitions.length > 0) {
+              const last = transitions[transitions.length - 1]!;
+              transitions.push({ from: last.from, to: branch, match: 'all', conditions: [] });
+            }
+            // `prev` doesn't change — the next `->` or `/` still refers
+            // to the original chain's tail.
+          }
+        }
       } else {
         this.error(`Unexpected token in STAGES: ${this.current().value}`);
       }
@@ -3050,6 +3162,28 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'stages', entity: entityName, field: fieldName, transitions, span: { start, end } };
+  }
+
+  /**
+   * State names in a STAGES chain may be any identifier-shaped token,
+   * including keywords like `open`, `pending`, `define`, `closed` that
+   * the lexer assigns to other token types. The state machine domain
+   * doesn't share the reserved namespace.
+   */
+  private isStageNameToken(token: Token): boolean {
+    if (token.type === TokenType.IDENTIFIER) return true;
+    // Soft-keyword: anything whose textual value looks like an
+    // identifier (alphanumeric + underscore, starting with a letter
+    // or underscore) is acceptable as a state name.
+    return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(token.value);
+  }
+
+  private expectStateName(): string {
+    const token = this.current();
+    if (!this.isStageNameToken(token)) {
+      this.error(`Expected state name, got: ${token.value}`);
+    }
+    return this.advance().value;
   }
 
   private parseStagesTransition(): StagesTransition {
@@ -3545,12 +3679,55 @@ export class Parser {
     let provenance = false, lineage = false, signatures = false, admissibility = false;
     let ttl = 0;
     const validation: PacketValidationRule[] = [];
+    let signature: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
 
       if (token.type === TokenType.DESCRIPTION) {
         this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
+      }
+      if (token.type === TokenType.SIGNATURE) {
+        this.advance();
+        signature = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.SIGNATURES) {
+        // Bare `SIGNATURES` (boolean flag form, as used by qms).
+        // Forms accepted:
+        //   SIGNATURES                  → signatures = true
+        //   SIGNATURES required         → signatures = true (qms style)
+        //   SIGNATURES "identity-name"  → equivalent to SIGNATURE "..."
+        this.advance();
+        if (this.check(TokenType.STRING_LITERAL)) {
+          signature = this.expectToken(TokenType.STRING_LITERAL).value;
+        } else {
+          signatures = true;
+          // Consume any identifier that follows (e.g. "required") as
+          // a noise word — the boolean flag is the actual semantics.
+          if (this.check(TokenType.IDENTIFIER) || this.check(TokenType.REQUIRED)) {
+            this.advance();
+          }
+        }
+        continue;
+      }
+      // Top-level TTL field on PACKET (alternative to METADATA.TTL).
+      // Forms: `TTL 3600` (seconds) or `TTL 90d` (with unit suffix).
+      if (token.type === TokenType.TTL) {
+        this.advance();
+        const num = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        let multiplier = 1;
+        if (this.check(TokenType.IDENTIFIER)) {
+          const unit = this.advance().value.toLowerCase();
+          if (unit === 's' || unit === 'sec') multiplier = 1;
+          else if (unit === 'm' || unit === 'min') multiplier = 60;
+          else if (unit === 'h' || unit === 'hr') multiplier = 3600;
+          else if (unit === 'd' || unit === 'day' || unit === 'days') multiplier = 86400;
+          else if (unit === 'w' || unit === 'wk' || unit === 'weeks') multiplier = 604800;
+          // Unknown unit silently treated as seconds (don't reject for ergonomic input).
+        }
+        ttl = num * multiplier;
+        continue;
       }
       if (token.type === TokenType.PAYLOAD) {
         this.advance(); this.expectToken(TokenType.LBRACE);
@@ -3587,11 +3764,44 @@ export class Parser {
         }
         this.expectToken(TokenType.RBRACE); continue;
       }
+      // Bare field declaration form: `name: type [REQUIRED] [= default]`
+      // Sugar for putting all fields inside a single PAYLOAD block, which
+      // is what most PACKET declarations want. Co-exists with PAYLOAD —
+      // bare fields get merged with whatever came from PAYLOAD blocks.
+      if (
+        (token.type === TokenType.IDENTIFIER) &&
+        this.peek(1)?.type === TokenType.COLON
+      ) {
+        const fieldName = this.expectIdentifier();
+        this.expectToken(TokenType.COLON);
+        const fieldType = this.parseType();
+        let required = false;
+        let defaultValue: LiteralValue | undefined;
+        // Allow REQUIRED and `= value` / DEFAULT value in any order.
+        while (
+          this.check(TokenType.REQUIRED) ||
+          this.check(TokenType.EQUALS) ||
+          this.check(TokenType.DEFAULT)
+        ) {
+          if (this.check(TokenType.REQUIRED)) {
+            this.advance();
+            required = true;
+          } else if (this.check(TokenType.EQUALS)) {
+            this.advance();
+            defaultValue = this.parseLiteral();
+          } else {
+            this.advance();
+            defaultValue = this.parseLiteral();
+          }
+        }
+        payload.push({ name: fieldName, type: fieldType, required, defaultValue });
+        continue;
+      }
       this.error(`Unexpected token in PACKET: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'packet', name, description, payload, provenance, lineage, signatures, admissibility, ttl, validation, span: { start, end } };
+    return { kind: 'packet', name, description, payload, provenance, lineage, signatures, admissibility, ttl, validation, signature, span: { start, end } };
   }
 
   // --- AUTHORITY ---
@@ -3676,10 +3886,35 @@ export class Parser {
     let overflowTo: string | undefined;
     let fromNode: string | undefined;
     let toNode: string | undefined;
+    let consumers: string[] | undefined;
+    let producers: string[] | undefined;
+    let delivery: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
 
+      if (token.type === TokenType.CONSUMERS || token.type === TokenType.PRODUCERS) {
+        const which = token.type;
+        this.advance();
+        this.expectToken(TokenType.LBRACKET);
+        const list: string[] = [];
+        if (!this.check(TokenType.RBRACKET)) {
+          list.push(this.expectToken(TokenType.STRING_LITERAL).value);
+          while (this.check(TokenType.COMMA)) {
+            this.advance();
+            list.push(this.expectToken(TokenType.STRING_LITERAL).value);
+          }
+        }
+        this.expectToken(TokenType.RBRACKET);
+        if (which === TokenType.CONSUMERS) consumers = list;
+        else producers = list;
+        continue;
+      }
+      if (token.type === TokenType.DELIVERY) {
+        this.advance();
+        delivery = this.expectIdentifier();
+        continue;
+      }
       if (token.type === TokenType.DESCRIPTION) {
         this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue;
       }
@@ -3723,7 +3958,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, ordering, deadLetter, overflowTo, fromNode, toNode, span: { start, end } };
+    return { kind: 'channel', name, description, protocol, direction, packet, authority, endpoint, retry, timeout, ordering, deadLetter, overflowTo, fromNode, toNode, consumers, producers, delivery, span: { start, end } };
   }
 
   // --- SESSION ---
@@ -3735,6 +3970,8 @@ export class Parser {
 
     let description = '', tools: string[] = [], context = 'conversation';
     let memory = 'session', output: string[] = [], persist = false;
+    let terminal: string | undefined;
+    let profiles: string[] | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -3744,11 +3981,20 @@ export class Parser {
       if (token.type === TokenType.MEMORY) { this.advance(); memory = this.expectIdentifier(); continue; }
       if (token.type === TokenType.OUTPUT) { this.advance(); output = this.parseIdentifierList(); continue; }
       if (token.type === TokenType.PERSIST) { this.advance(); persist = this.parseBoolValue(); continue; }
+      // Sprint X.2: TERMINAL + PROFILES on SESSION. Codegen pending —
+      // the parser stores these so the AST round-trips, but the
+      // compiler doesn't emit anything for them yet.
+      if (token.type === TokenType.TERMINAL) {
+        this.advance(); terminal = this.expectIdentifier(); continue;
+      }
+      if (token.type === TokenType.PROFILES) {
+        this.advance(); profiles = this.parseIdentifierList(); continue;
+      }
       this.error(`Unexpected token in SESSION: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'session', name, description, tools, context, memory, output, persist, span: { start, end } };
+    return { kind: 'session', name, description, tools, context, memory, output, persist, terminal, profiles, span: { start, end } };
   }
 
   // --- COMPILER ---
@@ -4420,6 +4666,12 @@ export class Parser {
 
   private check(type: TokenType): boolean {
     return this.current().type === type;
+  }
+
+  /** Look ahead `n` tokens (1 = next, 2 = one after, etc.). Returns null
+   *  at EOF rather than throwing — callers branch on the optional. */
+  private peek(n: number): Token | null {
+    return this.tokens[this.pos + n] ?? null;
   }
 
   private consumeIf(type: TokenType): boolean {
