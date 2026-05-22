@@ -405,9 +405,14 @@ WORKFLOW OnboardUser {
   }
 }
 `;
+  // Sprint X.8: undeclared action refs are warnings by default
+  // (Accelerando-style cross-app references). Set AGICORE_STRICT_ACTIONS=1
+  // to restore error severity.
+  process.env.AGICORE_STRICT_ACTIONS = '1';
   const ast = parse(src);
   const results = validate(ast);
-  assert(hasError(results, "step 'welcome' references undeclared action 'ghost_action'"), 'Should error when workflow step references undeclared action');
+  delete process.env.AGICORE_STRICT_ACTIONS;
+  assert(hasError(results, "step 'welcome' references undeclared action 'ghost_action'"), 'Should error when workflow step references undeclared action (strict mode)');
 }
 
 section('WORKFLOW step referencing declared action is OK');

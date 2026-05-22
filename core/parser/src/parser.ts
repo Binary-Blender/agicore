@@ -2421,16 +2421,28 @@ export class Parser {
       if (token.type === TokenType.ASSERT) {
         this.advance();
         const factName = this.expectIdentifier();
-        this.expectToken(TokenType.LBRACE);
-        const fields: Record<string, LiteralValue> = {};
-        while (!this.check(TokenType.RBRACE)) {
+        // Two forms:
+        //   ASSERT FactName { field: value, ... }   (existing block form)
+        //   ASSERT FactName.field = value           (dot-access form,
+        //                                            single field set)
+        if (this.check(TokenType.DOT)) {
+          this.advance();
           const fieldName = this.expectIdentifier();
-          this.expectToken(TokenType.COLON);
-          fields[fieldName] = this.parseLiteral();
-          if (this.check(TokenType.COMMA)) this.advance();
+          this.expectToken(TokenType.EQUALS);
+          const value = this.parseLiteral();
+          assertFact = { name: factName, fields: { [fieldName]: value } };
+        } else {
+          this.expectToken(TokenType.LBRACE);
+          const fields: Record<string, LiteralValue> = {};
+          while (!this.check(TokenType.RBRACE)) {
+            const fieldName = this.expectIdentifier();
+            this.expectToken(TokenType.COLON);
+            fields[fieldName] = this.parseLiteral();
+            if (this.check(TokenType.COMMA)) this.advance();
+          }
+          this.expectToken(TokenType.RBRACE);
+          assertFact = { name: factName, fields };
         }
-        this.expectToken(TokenType.RBRACE);
-        assertFact = { name: factName, fields };
         continue;
       }
 
@@ -5200,6 +5212,34 @@ export class Parser {
   private parseTopLevelSeed(): TopLevelSeedDecl {
     const start = this.expectToken(TokenType.SEED).location;
     const entity = this.expectIdentifier();
+
+    // Direct-array form: `SEED <Entity> [ { ... }, { ... }, ... ]`.
+    // Same semantics as the `RECORDS [...]` inner form but without
+    // the wrapping braces. Brace-balanced skip of each record.
+    if (this.check(TokenType.LBRACKET)) {
+      this.advance();
+      while (!this.check(TokenType.RBRACKET) && !this.isAtEnd()) {
+        if (this.check(TokenType.LBRACE)) {
+          let bd = 1;
+          this.advance();
+          while (bd > 0 && !this.isAtEnd()) {
+            const tt = this.current();
+            if (tt.type === TokenType.LBRACE) bd++;
+            else if (tt.type === TokenType.RBRACE) bd--;
+            if (bd > 0) this.advance();
+          }
+          this.advance();
+        } else if (this.check(TokenType.COMMA)) {
+          this.advance();
+        } else {
+          this.advance();
+        }
+      }
+      const endLoc = this.expectToken(TokenType.RBRACKET).location;
+      const fields = new Map<string, LiteralValue>([['__records__', '[]']]);
+      return { kind: 'seed', entity, fields, span: { start, end: endLoc } };
+    }
+
     this.expectToken(TokenType.LBRACE);
     const fields = new Map<string, LiteralValue>();
     // Three field-syntax forms accepted:
@@ -5211,33 +5251,34 @@ export class Parser {
       const tok = this.current();
       // Bulk RECORDS form. We accept and currently store as a single
       // 'records' literal-array field — full ingest is downstream.
+      // Each object inside the [...] is `{ key: value, ... }`; we
+      // brace-balanced-skip them. The outer [...] is bracket-balanced.
       if (tok.type === TokenType.IDENTIFIER && tok.value === 'RECORDS') {
         this.advance();
         this.expectToken(TokenType.LBRACKET);
-        // Skip over inline object literals until the matching RBRACKET.
-        // Each object is `{ key: value, key: value, ... }`. We don't
-        // need to fully parse them yet — accepting the syntax lets the
-        // file compile.
-        let depth = 1;
-        while (depth > 0 && !this.isAtEnd()) {
-          const t = this.current();
-          if (t.type === TokenType.LBRACKET) depth++;
-          else if (t.type === TokenType.RBRACKET) depth--;
-          else if (t.type === TokenType.LBRACE) {
-            // Skip a brace-balanced record body.
+        while (!this.check(TokenType.RBRACKET) && !this.isAtEnd()) {
+          if (this.check(TokenType.LBRACE)) {
+            // Skip a brace-balanced record body in one go.
             let bd = 1;
-            this.advance();
+            this.advance(); // consume opening {
             while (bd > 0 && !this.isAtEnd()) {
               const tt = this.current();
               if (tt.type === TokenType.LBRACE) bd++;
               else if (tt.type === TokenType.RBRACE) bd--;
               if (bd > 0) this.advance();
             }
-            this.advance(); // consume matching RBRACE
-            continue;
+            this.advance(); // consume matching }
+          } else if (this.check(TokenType.COMMA)) {
+            this.advance();
+          } else {
+            // Defensive: advance one to avoid infinite loops on
+            // unexpected tokens. Real-world records are always
+            // brace-objects; anything else is a parse oddity we
+            // tolerate at this layer.
+            this.advance();
           }
-          if (depth > 0) this.advance();
         }
+        this.expectToken(TokenType.RBRACKET);
         if (this.check(TokenType.COMMA)) this.advance();
         // Store a sentinel so codegen knows to ingest these later.
         fields.set('__records__', '[]');

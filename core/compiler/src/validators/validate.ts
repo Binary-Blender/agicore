@@ -144,14 +144,23 @@ export function validate(ast: AgiFile): ValidationResult[] {
     }
   }
 
-  // 14. WORKFLOW step.action must reference a declared ACTION
+  // 14. WORKFLOW step.action must reference a declared ACTION.
+  //
+  // Severity: warning by default, error when AGICORE_STRICT_ACTIONS=1.
+  // The Accelerando suite uses cross-app workflow references heavily
+  // (e.g. accelerando_eliza calls into ERPAssignSalesRep which lives
+  // in accelerando_erp). A single-file validator can't resolve those;
+  // a stricter mesh-aware validator runs at deploy time. For
+  // single-file compile, warn so the file still generates while
+  // surfacing the unresolved reference.
   const actionNames = new Set(ast.actions.map((a) => a.name));
+  const strictActions = process.env.AGICORE_STRICT_ACTIONS === '1';
   for (const workflow of ast.workflows) {
     for (const step of workflow.steps) {
       if (step.action && !actionNames.has(step.action)) {
         results.push({
-          severity: 'error',
-          message: `Workflow '${workflow.name}': step '${step.name}' references undeclared action '${step.action}'`,
+          severity: strictActions ? 'error' : 'warning',
+          message: `Workflow '${workflow.name}': step '${step.name}' references undeclared action '${step.action}'${strictActions ? '' : ' (may be a cross-app reference; set AGICORE_STRICT_ACTIONS=1 to make this an error)'}`,
           node: `workflow:${workflow.name}`,
           span: step.span,
         });
