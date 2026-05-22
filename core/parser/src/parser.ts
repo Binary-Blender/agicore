@@ -2343,7 +2343,20 @@ export class Parser {
       if (token.type === TokenType.SCORE) {
         this.advance();
         const scoreName = this.expectIdentifier();
-        const delta = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        // Accept three syntaxes for the delta:
+        //   SCORE <name> 5         → delta = +5
+        //   SCORE <name> +5        → delta = +5 (explicit positive)
+        //   SCORE <name> -5        → delta = -5
+        //   SCORE <name> += 5      → delta = +5
+        //   SCORE <name> -= 5      → delta = -5
+        let sign = 1;
+        if (this.check(TokenType.PLUS_EQ)) {
+          this.advance();
+        } else if (this.check(TokenType.MINUS_EQ)) {
+          this.advance();
+          sign = -1;
+        }
+        const delta = sign * Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
         score = { name: scoreName, delta };
         continue;
       }

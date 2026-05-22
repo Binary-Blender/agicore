@@ -367,6 +367,8 @@ export enum TokenType {
   LTE = 'LTE',
   NEQ = 'NEQ',
   EQ_EQ = 'EQ_EQ',
+  PLUS_EQ = 'PLUS_EQ',
+  MINUS_EQ = 'MINUS_EQ',
   PIPE = 'PIPE',
 
   // THEME declaration keywords
@@ -942,6 +944,17 @@ export class Lexer {
         this.advance(); this.advance();
         continue;
       }
+      // Compound assignment operators for SCORE adjustments
+      if (ch === '-' && this.peekNext() === '=') {
+        this.addToken(TokenType.MINUS_EQ, '-=');
+        this.advance(); this.advance();
+        continue;
+      }
+      if (ch === '+' && this.peekNext() === '=') {
+        this.addToken(TokenType.PLUS_EQ, '+=');
+        this.advance(); this.advance();
+        continue;
+      }
       if (ch === '=' && this.peekNext() === '=') {
         this.addToken(TokenType.EQ_EQ, '==');
         this.advance(); this.advance();
@@ -976,8 +989,14 @@ export class Lexer {
         continue;
       }
 
-      // Numbers (including negative)
-      if (this.isDigit(ch) || (ch === '-' && this.isDigit(this.peekNext()))) {
+      // Numbers (including signed). Accepts `123`, `-5`, and `+5`.
+      // The signed forms are useful for SCORE adjustments like
+      // `SCORE eliza_confidence +5` where the explicit sign makes
+      // the intent clear at the call site.
+      if (
+        this.isDigit(ch) ||
+        ((ch === '-' || ch === '+') && this.isDigit(this.peekNext()))
+      ) {
         this.readNumber();
         continue;
       }
@@ -1093,8 +1112,12 @@ export class Lexer {
   private readNumber(): void {
     const loc = this.location();
     let value = '';
-    if (this.peek() === '-') {
-      value += this.advance();
+    if (this.peek() === '-' || this.peek() === '+') {
+      // Drop the explicit `+` from the stored value — `+5` and `5`
+      // produce identical NUMBER_LITERAL tokens. Negative signs are
+      // preserved.
+      const sign = this.advance();
+      if (sign === '-') value += sign;
     }
     while (this.pos < this.source.length && this.isDigit(this.peek())) {
       value += this.advance();
