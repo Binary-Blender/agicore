@@ -99,6 +99,19 @@ export interface AppDecl {
   workspaces?: boolean;
   tray?: boolean;
   hotkey?: string;
+  /**
+   * Semantic version string for this app, e.g. "1.0.0". Optional;
+   * surfaced in generated `tauri.conf.json` and `Cargo.toml`. Authors
+   * use this as the human-meaningful version coordinate; it's not the
+   * same as the `AGICORE_VERSION` declaration that gates migrations.
+   */
+  version?: string;
+  /**
+   * One-line description of the app. Optional; written into generated
+   * `Cargo.toml` and `tauri.conf.json` metadata fields, and into the
+   * generated README as the app's tagline.
+   */
+  description?: string;
   span: SourceSpan;
 }
 
@@ -373,6 +386,9 @@ export interface PipelineDecl {
 export interface QCDecl {
   kind: 'qc';
   name: string;
+  /** Optional inline documentation; included as a `// ` comment above
+   *  the generated QC config. Same role as DESCRIPTION on ENTITY. */
+  description?: string;
   youngThreshold: number;
   maturingThreshold: number;
   youngPassRate: number;
@@ -585,6 +601,9 @@ export interface ScoreThreshold {
 export interface ScoreDecl {
   kind: 'score';
   name: string;
+  /** Optional inline documentation; included as a `// ` comment above
+   *  the generated score state. Same role as DESCRIPTION on ENTITY. */
+  description?: string;
   initial: number;
   min?: number;
   max?: number;
@@ -718,6 +737,13 @@ export interface ReasonerDecl {
   schedule: ReasonerSchedule;
   idempotent?: boolean;
   governance?: SkillDocGovernance;
+  /**
+   * Optional inline prompt template. May be a single-line STRING_LITERAL
+   * or a triple-quoted multi-line string with `{{var}}` placeholders.
+   * When both `uses` (a SKILLDOC reference) and `prompt` are present,
+   * the inline prompt overrides the skilldoc's PROMPT body at codegen.
+   */
+  prompt?: string;
   span: SourceSpan;
 }
 

@@ -335,6 +335,8 @@ export class Parser {
     let workspaces: boolean | undefined;
     let tray: boolean | undefined;
     let hotkey: string | undefined;
+    let version: string | undefined;
+    let description: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const field = this.current();
@@ -401,6 +403,14 @@ export class Parser {
           this.advance();
           hotkey = this.expectToken(TokenType.STRING_LITERAL).value;
           break;
+        case TokenType.VERSION:
+          this.advance();
+          version = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
+        case TokenType.DESCRIPTION:
+          this.advance();
+          description = this.expectToken(TokenType.STRING_LITERAL).value;
+          break;
         default:
           this.error(`Unexpected field in APP: ${field.value}`);
       }
@@ -411,7 +421,7 @@ export class Parser {
     if (!title) this.error('APP requires a TITLE field');
     if (!db) this.error('APP requires a DB field');
 
-    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, current, workspaces, tray, hotkey, span: { start, end } };
+    return { kind: 'app', name, title, window, db, port, theme, icon, telemetry, current, workspaces, tray, hotkey, version, description, span: { start, end } };
   }
 
   // --- ENTITY ---
@@ -1729,10 +1739,16 @@ export class Parser {
     let maturePassRate = 0.95;
     let maturingSample = 0.50;
     let matureSample = 0.05;
+    let description: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
 
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance();
+        description = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
       if (token.type === TokenType.YOUNG_THRESHOLD) {
         this.advance();
         youngThreshold = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
@@ -1768,7 +1784,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'qc', name, youngThreshold, maturingThreshold, youngPassRate, maturePassRate, maturingSample, matureSample, span: { start, end } };
+    return { kind: 'qc', name, description, youngThreshold, maturingThreshold, youngPassRate, maturePassRate, maturingSample, matureSample, span: { start, end } };
   }
 
   // --- VAULT ---
@@ -2303,10 +2319,16 @@ export class Parser {
     let max: number | undefined;
     let decay: ScoreDecl['decay'];
     const thresholds: ScoreThreshold[] = [];
+    let description: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
 
+      if (token.type === TokenType.DESCRIPTION) {
+        this.advance();
+        description = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
       if (token.type === TokenType.INITIAL) {
         this.advance();
         initial = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
@@ -2352,7 +2374,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'score', name, initial, min, max, decay, thresholds, span: { start, end } };
+    return { kind: 'score', name, description, initial, min, max, decay, thresholds, span: { start, end } };
   }
 
   // --- MODULE ---
@@ -2770,6 +2792,7 @@ export class Parser {
     let schedule: ReasonerSchedule = 'on_demand';
     let idempotent: boolean | undefined;
     let governance: SkillDocGovernance | undefined;
+    let prompt: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -2777,6 +2800,11 @@ export class Parser {
       if (token.type === TokenType.DESCRIPTION) {
         this.advance();
         description = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      if (token.type === TokenType.PROMPT) {
+        this.advance();
+        prompt = this.expectToken(TokenType.STRING_LITERAL).value;
         continue;
       }
       if (token.type === TokenType.INPUT) {
@@ -2823,7 +2851,7 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'reasoner', name, description, input, uses, tier, output, schedule, idempotent, governance, span: { start, end } };
+    return { kind: 'reasoner', name, description, input, uses, tier, output, schedule, idempotent, governance, prompt, span: { start, end } };
   }
 
   private parseReasonerInput(): ReasonerInput {
