@@ -25,7 +25,7 @@ APP novasyn_chat {
 // ===================================================================
 
 AI_SERVICE {
-  PROVIDERS   anthropic, openai, google, xai, babyai
+  PROVIDERS   anthropic, openai, google, xai, babyai, huggingface
   KEYS_FILE   "%APPDATA%/NovaSyn/api-keys.json"
   DEFAULT     anthropic
   STREAMING   true

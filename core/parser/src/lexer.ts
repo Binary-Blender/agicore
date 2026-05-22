@@ -185,6 +185,8 @@ export enum TokenType {
   DELIVERY = 'DELIVERY',
   TERMINAL = 'TERMINAL',
   PROFILES = 'PROFILES',
+  SOURCE = 'SOURCE',
+  DEST = 'DEST',
   REQUIRE_KW = 'REQUIRE_KW',
   EXECUTE_ONLY = 'EXECUTE_ONLY',
   DISALLOW = 'DISALLOW',
@@ -465,6 +467,7 @@ export enum TokenType {
   FAIL_SKIP = 'FAIL_SKIP',
   FAIL_RETRY = 'FAIL_RETRY',
   FAIL_FALLBACK = 'FAIL_FALLBACK',
+  FAIL_ABORT = 'FAIL_ABORT',
 
   // Symbols (additional)
   SLASH = 'SLASH',
@@ -601,6 +604,8 @@ const KEYWORDS: Record<string, TokenType> = {
   DELIVERY: TokenType.DELIVERY,
   TERMINAL: TokenType.TERMINAL,
   PROFILES: TokenType.PROFILES,
+  SOURCE: TokenType.SOURCE,
+  DEST: TokenType.DEST,
   REQUIRE: TokenType.REQUIRE_KW,
   EXECUTE_ONLY: TokenType.EXECUTE_ONLY,
   DISALLOW: TokenType.DISALLOW,
@@ -858,6 +863,7 @@ const KEYWORDS: Record<string, TokenType> = {
   skip: TokenType.FAIL_SKIP,
   retry: TokenType.FAIL_RETRY,
   fallback: TokenType.FAIL_FALLBACK,
+  abort: TokenType.FAIL_ABORT,
   frameless: TokenType.IDENTIFIER,
   dark: TokenType.IDENTIFIER,
   light: TokenType.IDENTIFIER,

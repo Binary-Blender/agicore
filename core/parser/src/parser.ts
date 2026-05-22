@@ -1650,9 +1650,12 @@ export class Parser {
       [TokenType.FAIL_SKIP]: 'skip',
       [TokenType.FAIL_RETRY]: 'retry',
       [TokenType.FAIL_FALLBACK]: 'fallback',
+      // `abort` is an alias for `stop` — same semantics (halt the
+      // workflow), different word the Accelerando apps reach for.
+      [TokenType.FAIL_ABORT]: 'stop',
     };
     const behavior = map[token.type];
-    if (!behavior) this.error(`Expected on-fail behavior (stop, skip, retry, fallback), got: ${token.value}`);
+    if (!behavior) this.error(`Expected on-fail behavior (stop, skip, retry, fallback, abort), got: ${token.value}`);
     this.advance();
     return behavior;
   }
@@ -2453,7 +2456,16 @@ export class Parser {
         let action: string | undefined;
         if (this.check(TokenType.THEN)) {
           this.advance();
-          action = this.expectIdentifier();
+          // Accept either:
+          //   THEN <ident>            → action is the named action
+          //   THEN FLAG "name"        → action is `flag:<name>` (sugar)
+          if (this.check(TokenType.FLAG_KW)) {
+            this.advance();
+            const flagName = this.expectToken(TokenType.STRING_LITERAL).value;
+            action = `flag:${flagName}`;
+          } else {
+            action = this.expectIdentifier();
+          }
         }
         thresholds.push({ name: threshName, value, action });
         continue;
@@ -3716,11 +3728,32 @@ export class Parser {
           signature = this.expectToken(TokenType.STRING_LITERAL).value;
         } else {
           signatures = true;
-          // Consume any identifier that follows (e.g. "required") as
-          // a noise word — the boolean flag is the actual semantics.
-          if (this.check(TokenType.IDENTIFIER) || this.check(TokenType.REQUIRED)) {
-            this.advance();
+          // Consume any trailing word that elaborates the boolean
+          // intent: `required`, `true`, `false`, or any IDENTIFIER.
+          if (
+            this.check(TokenType.IDENTIFIER) ||
+            this.check(TokenType.REQUIRED) ||
+            this.check(TokenType.TRUE) ||
+            this.check(TokenType.FALSE)
+          ) {
+            const t = this.advance();
+            if (t.type === TokenType.FALSE) signatures = false;
           }
+        }
+        continue;
+      }
+      // Top-level ADMISSIBILITY on PACKET (alternative to METADATA.ADMISSIBILITY).
+      // Accepts either a boolean (the existing form) or an identifier/string
+      // scope label (e.g. `ADMISSIBILITY legal_only`). The label form sets
+      // the admissibility flag and stores the scope on the decl.
+      if (token.value === 'ADMISSIBILITY' && token.type === TokenType.IDENTIFIER) {
+        this.advance();
+        if (this.check(TokenType.IDENTIFIER) || this.check(TokenType.STRING_LITERAL)) {
+          // Scope label form — accept and flag.
+          this.advance();
+          admissibility = true;
+        } else {
+          admissibility = this.parseBoolValue();
         }
         continue;
       }
@@ -3906,6 +3939,40 @@ export class Parser {
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
 
+      // SOURCE / DEST / TYPE / CAPACITY — alternative CHANNEL fields
+      // used by the PI-CoE and QMS apps. These describe a replication
+      // channel: SOURCE app name → DEST channel name, with PACKET
+      // TYPE and queue CAPACITY.
+      if (token.type === TokenType.SOURCE) {
+        this.advance();
+        if (this.check(TokenType.STRING_LITERAL)) {
+          this.advance();  // store-and-discard for now; downstream tooling can read from AST
+        } else {
+          this.advance();  // identifier form
+        }
+        continue;
+      }
+      if (token.type === TokenType.DEST) {
+        this.advance();
+        if (this.check(TokenType.STRING_LITERAL)) {
+          this.advance();
+        } else {
+          this.advance();
+        }
+        continue;
+      }
+      if (token.type === TokenType.CAPACITY) {
+        this.advance();
+        this.expectToken(TokenType.NUMBER_LITERAL);
+        continue;
+      }
+      // TYPE on a CHANNEL refers to the PACKET type ferried over it,
+      // equivalent to the existing PACKET field.
+      if (token.type === TokenType.TYPE_KW) {
+        this.advance();
+        packet = this.expectIdentifier();
+        continue;
+      }
       if (token.type === TokenType.CONSUMERS || token.type === TokenType.PRODUCERS) {
         const which = token.type;
         this.advance();
