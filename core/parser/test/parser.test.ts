@@ -670,7 +670,7 @@ section('Full home_academy.agi parsing');
 try {
   const examplePath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/home-academy/home_academy.agi'
+    '../../../../agicore-examples/reference/home-academy/home_academy.agi'
   );
   const source = readFileSync(examplePath, 'utf-8');
   const result = parse(source);
@@ -707,7 +707,7 @@ section('Full invoice_approval.agi parsing');
 try {
   const examplePath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/invoice-approval/invoice_approval.agi'
+    '../../../../agicore-examples/reference/invoice-approval/invoice_approval.agi'
   );
   const source = readFileSync(examplePath, 'utf-8');
   const result = parse(source);
@@ -855,7 +855,7 @@ section('Full content_pipeline.agi parsing');
 try {
   const pipelinePath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/content-pipeline/content_pipeline.agi'
+    '../../../../agicore-examples/reference/content-pipeline/content_pipeline.agi'
   );
   const source = readFileSync(pipelinePath, 'utf-8');
   const result = parse(source);
@@ -897,7 +897,7 @@ section('Full babyai_router.agi parsing');
 try {
   const babyaiPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/babyai-router/babyai_router.agi'
+    '../../../../agicore-examples/reference/babyai-router/babyai_router.agi'
   );
   const source = readFileSync(babyaiPath, 'utf-8');
   const result = parse(source);
@@ -972,7 +972,7 @@ section('Full distributed_orchestration.agi parsing');
 try {
   const distPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/distributed-orchestration/distributed_orchestration.agi'
+    '../../../../agicore-examples/reference/distributed-orchestration/distributed_orchestration.agi'
   );
   const source = readFileSync(distPath, 'utf-8');
   const result = parse(source);
@@ -1102,7 +1102,7 @@ section('Full cognitive_infrastructure.agi parsing');
 try {
   const cogPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/cognitive-infrastructure/cognitive_infrastructure.agi'
+    '../../../../agicore-examples/reference/cognitive-infrastructure/cognitive_infrastructure.agi'
   );
   const source = readFileSync(cogPath, 'utf-8');
   const result = parse(source);
@@ -1241,7 +1241,7 @@ section('Full organizational_intelligence.agi parsing');
 try {
   const oiePath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/organizational-intelligence/organizational_intelligence.agi'
+    '../../../../agicore-examples/reference/organizational-intelligence/organizational_intelligence.agi'
   );
   const source = readFileSync(oiePath, 'utf-8');
   const result = parse(source);
@@ -1453,7 +1453,7 @@ section('Full distributed_cognition.agi parsing');
 try {
   const dcPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/distributed-cognition/distributed_cognition.agi'
+    '../../../../agicore-examples/reference/distributed-cognition/distributed_cognition.agi'
   );
   const source = readFileSync(dcPath, 'utf-8');
   const result = parse(source);
@@ -1496,7 +1496,7 @@ section('Full creator_network.agi parsing');
 try {
   const creatorPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/creator-network/creator_network.agi'
+    '../../../../agicore-examples/reference/creator-network/creator_network.agi'
   );
   const source = readFileSync(creatorPath, 'utf-8');
   const result = parse(source);
@@ -1553,7 +1553,7 @@ section('Full basketball_mmo.agi parsing');
 try {
   const bballPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/basketball-mmo/basketball_mmo.agi'
+    '../../../../agicore-examples/reference/basketball-mmo/basketball_mmo.agi'
   );
   const source = readFileSync(bballPath, 'utf-8');
   const result = parse(source);
@@ -1620,7 +1620,7 @@ section('Full semantic_workflow.agi parsing');
 try {
   const swPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/semantic-workflow/semantic_workflow.agi'
+    '../../../../agicore-examples/reference/semantic-workflow/semantic_workflow.agi'
   );
   const source = readFileSync(swPath, 'utf-8');
   const result = parse(source);
@@ -1883,7 +1883,7 @@ section('Full conversation_engine.agi parsing');
 try {
   const convoPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
-    '../../../examples/conversation-engine/conversation_engine.agi'
+    '../../../../agicore-examples/reference/conversation-engine/conversation_engine.agi'
   );
   const source = readFileSync(convoPath, 'utf-8');
   const result = parse(source);

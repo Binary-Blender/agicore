@@ -27,7 +27,7 @@ section('Compile home_academy.agi');
 
 const examplePath = resolve(
   dirname(fileURLToPath(import.meta.url)),
-  '../../../examples/home-academy/home_academy.agi'
+  '../../../../agicore-examples/reference/home-academy/home_academy.agi'
 );
 const source = readFileSync(examplePath, 'utf-8');
 const { files, ast } = compile(source);
@@ -231,7 +231,7 @@ section('Compile invoice_approval.agi');
 
 const invoicePath = resolve(
   dirname(fileURLToPath(import.meta.url)),
-  '../../../examples/invoice-approval/invoice_approval.agi'
+  '../../../../agicore-examples/reference/invoice-approval/invoice_approval.agi'
 );
 const invoiceSource = readFileSync(invoicePath, 'utf-8');
 const invoiceResult = compile(invoiceSource);
@@ -258,7 +258,7 @@ section('Compile conversation_engine.agi');
 
 const convoPath = resolve(
   dirname(fileURLToPath(import.meta.url)),
-  '../../../examples/conversation-engine/conversation_engine.agi'
+  '../../../../agicore-examples/reference/conversation-engine/conversation_engine.agi'
 );
 const convoSource = readFileSync(convoPath, 'utf-8');
 const convoResult = compile(convoSource);
@@ -1037,7 +1037,7 @@ section('Compile content_pipeline.agi');
 
 const pipelinePath = resolve(
   dirname(fileURLToPath(import.meta.url)),
-  '../../../examples/content-pipeline/content_pipeline.agi'
+  '../../../../agicore-examples/reference/content-pipeline/content_pipeline.agi'
 );
 const pipelineSource = readFileSync(pipelinePath, 'utf-8');
 const pipelineResult = compile(pipelineSource);
