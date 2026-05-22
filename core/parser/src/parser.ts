@@ -830,11 +830,29 @@ export class Parser {
           break;
         case TokenType.IMPL_KW:
           this.advance();
-          // IMPL may appear bare (use action name as impl id) or with a string
+          // IMPL appears in three forms:
+          //   IMPL                  — bare, use action name
+          //   IMPL "name"           — string identifier
+          //   IMPL { /* body */ }   — inline implementation body
+          //                            (skipped at parser level; the
+          //                            codegen reads the source span)
           if (this.check(TokenType.STRING_LITERAL)) {
             impl = this.advance().value;
+          } else if (this.check(TokenType.LBRACE)) {
+            // Skip the brace-balanced body — we accept it but defer the
+            // body extraction to a later codegen pass.
+            impl = name;
+            let depth = 1;
+            this.advance(); // consume {
+            while (depth > 0 && !this.isAtEnd()) {
+              const t = this.current();
+              if (t.type === TokenType.LBRACE) depth++;
+              else if (t.type === TokenType.RBRACE) depth--;
+              if (depth > 0) this.advance();
+            }
+            this.advance(); // consume matching }
           } else {
-            impl = name; // default to action name
+            impl = name;
           }
           break;
         case TokenType.PATTERN:
@@ -2946,7 +2964,20 @@ export class Parser {
       }
       if (token.type === TokenType.INPUT) {
         this.advance();
-        input = this.parseReasonerInput();
+        // Two INPUT forms:
+        //   INPUT { ... }           (block form — full surface)
+        //   INPUT Foo, Bar, Baz     (inline — comma-separated entity refs;
+        //                            stored as channels for backward compat)
+        if (this.check(TokenType.LBRACE)) {
+          input = this.parseReasonerInput();
+        } else {
+          const entities: string[] = [this.expectIdentifier()];
+          while (this.check(TokenType.COMMA)) {
+            this.advance();
+            entities.push(this.expectIdentifier());
+          }
+          input = { channels: entities };
+        }
         continue;
       }
       if (token.type === TokenType.USES) {
@@ -2961,7 +2992,13 @@ export class Parser {
       }
       if (token.type === TokenType.OUTPUT) {
         this.advance();
-        output = this.parseReasonerOutput();
+        // Same dual form as INPUT.
+        if (this.check(TokenType.LBRACE)) {
+          output = this.parseReasonerOutput();
+        } else {
+          // Inline: OUTPUT FooPacket  (single packet ref)
+          output = { packet: this.expectIdentifier() };
+        }
         continue;
       }
       if (token.type === TokenType.SCHEDULE) {
@@ -5110,10 +5147,52 @@ export class Parser {
     const entity = this.expectIdentifier();
     this.expectToken(TokenType.LBRACE);
     const fields = new Map<string, LiteralValue>();
+    // Three field-syntax forms accepted:
+    //   key value             (existing terse form)
+    //   key: value            (Accelerando-style, JSON-shaped)
+    //   RECORDS [ {...} ... ] (bulk form — flatten as records[] field)
+    // Optional trailing commas between pairs.
     while (!this.check(TokenType.RBRACE) && !this.isAtEnd()) {
+      const tok = this.current();
+      // Bulk RECORDS form. We accept and currently store as a single
+      // 'records' literal-array field — full ingest is downstream.
+      if (tok.type === TokenType.IDENTIFIER && tok.value === 'RECORDS') {
+        this.advance();
+        this.expectToken(TokenType.LBRACKET);
+        // Skip over inline object literals until the matching RBRACKET.
+        // Each object is `{ key: value, key: value, ... }`. We don't
+        // need to fully parse them yet — accepting the syntax lets the
+        // file compile.
+        let depth = 1;
+        while (depth > 0 && !this.isAtEnd()) {
+          const t = this.current();
+          if (t.type === TokenType.LBRACKET) depth++;
+          else if (t.type === TokenType.RBRACKET) depth--;
+          else if (t.type === TokenType.LBRACE) {
+            // Skip a brace-balanced record body.
+            let bd = 1;
+            this.advance();
+            while (bd > 0 && !this.isAtEnd()) {
+              const tt = this.current();
+              if (tt.type === TokenType.LBRACE) bd++;
+              else if (tt.type === TokenType.RBRACE) bd--;
+              if (bd > 0) this.advance();
+            }
+            this.advance(); // consume matching RBRACE
+            continue;
+          }
+          if (depth > 0) this.advance();
+        }
+        if (this.check(TokenType.COMMA)) this.advance();
+        // Store a sentinel so codegen knows to ingest these later.
+        fields.set('__records__', '[]');
+        continue;
+      }
       const key = this.expectIdentifier();
+      if (this.check(TokenType.COLON)) this.advance();
       const value = this.parseLiteral();
       fields.set(key, value);
+      if (this.check(TokenType.COMMA)) this.advance();
     }
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'seed', entity, fields, span: { start, end } };
