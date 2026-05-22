@@ -3176,7 +3176,18 @@ export class Parser {
       const token = this.current();
       if (token.type === TokenType.CHANNEL) {
         this.advance();
-        channels = this.parseIdentifierList();
+        // Accept either `CHANNEL a, b, c` or `CHANNEL [a, b, c]`.
+        if (this.check(TokenType.LBRACKET)) {
+          this.advance();
+          channels = [this.expectIdentifier()];
+          while (this.check(TokenType.COMMA)) {
+            this.advance();
+            channels.push(this.expectIdentifier());
+          }
+          this.expectToken(TokenType.RBRACKET);
+        } else {
+          channels = this.parseIdentifierList();
+        }
         continue;
       }
       if (token.type === TokenType.PACKET) {
@@ -3187,6 +3198,14 @@ export class Parser {
       if (token.type === TokenType.FILTER) {
         this.advance();
         filter = this.expectToken(TokenType.STRING_LITERAL).value;
+        continue;
+      }
+      // EVENT <name> — event-bound trigger condition. Stored alongside
+      // channels for downstream codegen (treated as a single-name
+      // event source).
+      if (token.type === TokenType.EVENT_KW) {
+        this.advance();
+        packet = this.expectIdentifier();
         continue;
       }
       this.error(`Unexpected token in TRIGGER WHEN: ${token.value}`);
@@ -4161,7 +4180,30 @@ export class Parser {
       if (token.type === TokenType.DESCRIPTION) { this.advance(); description = this.expectToken(TokenType.STRING_LITERAL).value; continue; }
       if (token.type === TokenType.TOOLS) { this.advance(); tools = this.parseIdentifierList(); continue; }
       if (token.type === TokenType.CONTEXT) { this.advance(); context = this.expectIdentifier(); continue; }
-      if (token.type === TokenType.MEMORY) { this.advance(); memory = this.expectIdentifier(); continue; }
+      if (token.type === TokenType.MEMORY) {
+        this.advance();
+        // Two forms:
+        //   MEMORY session            (identifier scope name — existing)
+        //   MEMORY { name: type ... } (typed memory shape, used by
+        //                              retrieval-style sessions)
+        if (this.check(TokenType.LBRACE)) {
+          // Brace-balanced skip — accept and store as a sentinel
+          // 'block' marker. Codegen can rehydrate later from source.
+          memory = 'block';
+          let depth = 1;
+          this.advance();
+          while (depth > 0 && !this.isAtEnd()) {
+            const t = this.current();
+            if (t.type === TokenType.LBRACE) depth++;
+            else if (t.type === TokenType.RBRACE) depth--;
+            if (depth > 0) this.advance();
+          }
+          this.advance();
+        } else {
+          memory = this.expectIdentifier();
+        }
+        continue;
+      }
       if (token.type === TokenType.OUTPUT) { this.advance(); output = this.parseIdentifierList(); continue; }
       if (token.type === TokenType.PERSIST) { this.advance(); persist = this.parseBoolValue(); continue; }
       // Sprint X.2: TERMINAL + PROFILES on SESSION. Codegen pending —
@@ -4318,7 +4360,20 @@ export class Parser {
         continue;
       }
       if (token.type === TokenType.METRICS) {
-        this.advance(); metrics.push(...this.parseBracketedIdentifierList()); continue;
+        this.advance();
+        // Accept either `METRICS [a, b, c]` (bracketed) or `METRICS a, b, c`
+        // (comma-separated, no brackets). Both forms appear in the
+        // showcase apps.
+        if (this.check(TokenType.LBRACKET)) {
+          metrics.push(...this.parseBracketedIdentifierList());
+        } else {
+          metrics.push(this.expectIdentifier());
+          while (this.check(TokenType.COMMA)) {
+            this.advance();
+            metrics.push(this.expectIdentifier());
+          }
+        }
+        continue;
       }
       if (token.type === TokenType.PROMOTION_KW) {
         this.advance(); promotion = this.expectIdentifier() as 'auto' | 'manual'; continue;
