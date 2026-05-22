@@ -735,11 +735,22 @@ export interface ReasonerInput {
   channels: string[];
   window?: string;
   filter?: string;
+  /** Typed input fields declared inside the INPUT block.
+   *  Form: `<name>: <type>`. Carried into the generated reasoner
+   *  context so the template can address each field by name. The
+   *  channels list and the typed-fields list are complementary,
+   *  not exclusive — both can appear in a single INPUT block. */
+  fields?: { name: string; type: AgiType }[];
 }
 
 export interface ReasonerOutput {
   packet?: string;
   channel?: string;
+  /** Typed output fields declared inside the OUTPUT block.
+   *  Form: `<name>: <type>`. The generated reasoner returns a struct
+   *  with these field names; the codegen wires the fields into the
+   *  output packet. */
+  fields?: { name: string; type: AgiType }[];
 }
 
 export interface ReasonerDecl {
@@ -1418,6 +1429,10 @@ export interface PreferenceDecl {
   type: string;        // 'string' | 'number' | 'bool'
   defaultValue: LiteralValue;
   key: string;         // localStorage key
+  /** Optional human-friendly label shown in the generated settings UI. */
+  label?: string;
+  /** Optional explanatory text shown beneath the label in the settings UI. */
+  description?: string;
   span: SourceSpan;
 }
 

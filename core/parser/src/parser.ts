@@ -887,13 +887,18 @@ export class Parser {
   }
 
   private parseActionParams(): ActionParam[] {
-    // Block format: INPUT { fieldname TYPE [REQUIRED] [DEFAULT value] ... }
+    // Block format: INPUT { fieldname [:] TYPE [REQUIRED] [DEFAULT value] ... }
+    // The colon between name and type is optional — `name: type` and
+    // `name type` both parse identically. The Accelerando apps use the
+    // colon form; the existing inline form omits it.
     if (this.check(TokenType.LBRACE)) {
       this.advance(); // consume {
       const params: ActionParam[] = [];
       while (!this.check(TokenType.RBRACE) && !this.isAtEnd()) {
         if (this.isTopLevelKeyword(this.current().type)) break;
         const name = this.expectIdentifier();
+        // Optional colon: accept both `name: type` and `name type` forms.
+        if (this.check(TokenType.COLON)) this.advance();
         const type = this.parseType();
         let defaultValue: LiteralValue | undefined;
         // optional REQUIRED modifier
@@ -929,13 +934,15 @@ export class Parser {
   }
 
   private parseActionOutputs(): ActionOutput[] {
-    // Block format: OUTPUT { fieldname TYPE [REQUIRED] [DEFAULT value] ... }
+    // Block format: OUTPUT { fieldname [:] TYPE [REQUIRED] [DEFAULT value] ... }
+    // Colon is optional — both `name: type` and `name type` parse.
     if (this.check(TokenType.LBRACE)) {
       this.advance(); // consume {
       const outputs: ActionOutput[] = [];
       while (!this.check(TokenType.RBRACE) && !this.isAtEnd()) {
         if (this.isTopLevelKeyword(this.current().type)) break;
         const name = this.expectIdentifier();
+        if (this.check(TokenType.COLON)) this.advance();
         // Output type: accept AgiType or SQL alias
         const type = this.parseOutputType();
         // absorb optional REQUIRED / DEFAULT modifiers silently
@@ -1584,6 +1591,23 @@ export class Parser {
 
       if (token.type === TokenType.STEP) {
         steps.push(this.parseWorkflowStep());
+        continue;
+      }
+
+      // STEPS { STEP ... STEP ... } wrapper block — sugar for bare
+      // STEP declarations at the WORKFLOW level. The scheduling app
+      // uses this; both forms parse to the same flat step list.
+      if (token.type === TokenType.STEPS) {
+        this.advance();
+        this.expectToken(TokenType.LBRACE);
+        while (!this.check(TokenType.RBRACE)) {
+          if (this.check(TokenType.STEP)) {
+            steps.push(this.parseWorkflowStep());
+          } else {
+            this.error(`Expected STEP inside STEPS block, got: ${this.current().value}`);
+          }
+        }
+        this.expectToken(TokenType.RBRACE);
         continue;
       }
 
@@ -2293,9 +2317,21 @@ export class Parser {
 
       if (token.type === TokenType.TRANSITION) {
         this.advance();
-        const target = this.expectIdentifier();
-        this.expectToken(TokenType.WHEN);
-        const condition = this.parseInlineExpression();
+        // Two word-orders supported:
+        //   TRANSITION <target> WHEN <condition>          (existing)
+        //   TRANSITION WHEN <condition> -> <target>       (Accelerando style)
+        let target: string;
+        let condition: string;
+        if (this.check(TokenType.WHEN)) {
+          this.advance();
+          condition = this.parseInlineExpression();
+          this.expectToken(TokenType.ARROW);
+          target = this.expectIdentifier();
+        } else {
+          target = this.expectIdentifier();
+          this.expectToken(TokenType.WHEN);
+          condition = this.parseInlineExpression();
+        }
         transitions.push({ target, condition, span: this.spanFrom(token.location) });
         continue;
       }
@@ -2961,6 +2997,7 @@ export class Parser {
     let channels: string[] = [];
     let window: string | undefined;
     let filter: string | undefined;
+    const fields: { name: string; type: AgiType }[] = [];
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -2979,11 +3016,21 @@ export class Parser {
         filter = this.expectToken(TokenType.STRING_LITERAL).value;
         continue;
       }
+      // Typed input field form: `name: type`. The Accelerando apps
+      // declare their reasoner inputs as struct-style fields rather
+      // than as channel references — both forms now work.
+      if (token.type === TokenType.IDENTIFIER && this.peek(1)?.type === TokenType.COLON) {
+        const fieldName = this.expectIdentifier();
+        this.expectToken(TokenType.COLON);
+        const fieldType = this.parseType();
+        fields.push({ name: fieldName, type: fieldType });
+        continue;
+      }
       this.error(`Unexpected token in REASONER INPUT: ${token.value}`);
     }
 
     this.expectToken(TokenType.RBRACE);
-    return { channels, window, filter };
+    return { channels, window, filter, fields: fields.length > 0 ? fields : undefined };
   }
 
   private parseReasonerOutput(): ReasonerOutput {
@@ -2991,6 +3038,7 @@ export class Parser {
 
     let packet: string | undefined;
     let channel: string | undefined;
+    const fields: { name: string; type: AgiType }[] = [];
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -3004,11 +3052,19 @@ export class Parser {
         channel = this.expectIdentifier();
         continue;
       }
+      // Typed output field form: `name: type`. Same shape as INPUT.
+      if (token.type === TokenType.IDENTIFIER && this.peek(1)?.type === TokenType.COLON) {
+        const fieldName = this.expectIdentifier();
+        this.expectToken(TokenType.COLON);
+        const fieldType = this.parseType();
+        fields.push({ name: fieldName, type: fieldType });
+        continue;
+      }
       this.error(`Unexpected token in REASONER OUTPUT: ${token.value}`);
     }
 
     this.expectToken(TokenType.RBRACE);
-    return { packet, channel };
+    return { packet, channel, fields: fields.length > 0 ? fields : undefined };
   }
 
   // --- TRIGGER ---
@@ -3952,11 +4008,21 @@ export class Parser {
         }
         continue;
       }
-      if (token.type === TokenType.DEST) {
+      if (token.type === TokenType.DEST || token.type === TokenType.DESTINATION) {
         this.advance();
         if (this.check(TokenType.STRING_LITERAL)) {
           this.advance();
         } else {
+          this.advance();
+        }
+        continue;
+      }
+      if (token.type === TokenType.PERSISTENT) {
+        // Forms: `PERSISTENT` (bare = true), `PERSISTENT true|false`.
+        // Stored on the decl is informational; the routing layer
+        // honors it for durable queue semantics in a later sprint.
+        this.advance();
+        if (this.check(TokenType.TRUE) || this.check(TokenType.FALSE)) {
           this.advance();
         }
         continue;
@@ -4704,6 +4770,7 @@ export class Parser {
       !this.check(TokenType.AND) &&
       !this.check(TokenType.UNLESS) &&
       !this.check(TokenType.THEN) &&
+      !this.check(TokenType.ARROW) &&
       !this.check(TokenType.EOF)
     ) {
       // Lookahead: if current is identifier-like and next is COLON, we're at a new key:value pair — stop
@@ -4918,6 +4985,8 @@ export class Parser {
     let type = 'string';
     let defaultValue: LiteralValue = '';
     let key = '';
+    let label: string | undefined;
+    let description: string | undefined;
     while (!this.check(TokenType.RBRACE)) {
       const tok = this.current();
       if (tok.type === TokenType.TYPE_KW) {
@@ -4930,12 +4999,18 @@ export class Parser {
       } else if (tok.type === TokenType.KEY_KW) {
         this.advance();
         key = this.expectToken(TokenType.STRING_LITERAL).value;
+      } else if (tok.type === TokenType.LABEL) {
+        this.advance();
+        label = this.expectToken(TokenType.STRING_LITERAL).value;
+      } else if (tok.type === TokenType.DESCRIPTION) {
+        this.advance();
+        description = this.expectToken(TokenType.STRING_LITERAL).value;
       } else {
         this.error(`Unexpected token in PREFERENCE: ${tok.value}`);
       }
     }
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'preference', name, type, defaultValue, key, span: { start, end } };
+    return { kind: 'preference', name, type, defaultValue, key, label, description, span: { start, end } };
   }
 
   // --- TARGET ---
