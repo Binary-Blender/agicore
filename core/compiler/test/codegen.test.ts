@@ -6748,6 +6748,56 @@ ENTITY E { name: string  TIMESTAMPS }`;
   assert(!main2.includes('improver::start_improvement_scheduler'),  'no scheduler call without MUTATION_POLICY');
 }
 
+section('Phase 11.8b — pull_module_andon Tauri command emitted with workflow runtime');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  assert(rs.includes('pub fn pull_module_andon'),                         'pull_module_andon command emitted');
+  assert(rs.includes('"no_rule_match"'),                                  'trigger_category="no_rule_match"');
+  assert(rs.includes('No rule matched in module'),                        'default failure_message');
+  assert(rs.includes('module_name'),                                      'module_name parameter');
+  assert(rs.includes('event_payload'),                                    'event_payload parameter');
+  assert(rs.includes('failure_reason'),                                   'failure_reason parameter (optional)');
+  // Module name reuses the workflow_name slot in andon_events
+  const fnIdx = rs.indexOf('pub fn pull_module_andon');
+  const fnEndIdx = rs.indexOf('\n}', fnIdx);
+  const body = rs.substring(fnIdx, fnEndIdx);
+  assert(body.includes('&module_name'),                                   'module name passed to emit_andon_event');
+  assert(body.includes('None,                          // no workflow_run_id'), 'no run id for module andons');
+  // Main.rs registers it
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::workflow::pull_module_andon'),        'pull_module_andon in invoke_handler');
+}
+
+section('Phase 11.8b — no workflow runtime → no pull_module_andon emitted');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/workflow.rs'),                'no workflow.rs without runtime');
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(!mainRs.includes('pull_module_andon'),                           'no command registration');
+}
+
+section('Phase 11.8b — TS bindings expose pullModuleAndon helper');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/workflow.ts') ?? '';
+  assert(ts.includes('export async function pullModuleAndon'),            'pullModuleAndon helper exported');
+  assert(ts.includes("invoke<string>('pull_module_andon'"),               'invokes pull_module_andon');
+  assert(ts.includes('moduleName: string'),                               'moduleName parameter typed');
+  assert(ts.includes('eventPayload: unknown'),                            'eventPayload parameter typed');
+  assert(ts.includes('failureReason?: string'),                           'failureReason optional');
+}
+
 section('Phase 11.6b — multi-signer: bracketed APPROVAL_AUTHORITY round-trips into tier JSON');
 {
   const src = `APP a { TITLE "A" DB a.db }

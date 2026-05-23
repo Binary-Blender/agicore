@@ -195,6 +195,25 @@ export function validate(ast: AgiFile): ValidationResult[] {
     }
   }
 
+  // Phase 11.8b — MODULE.expectsMatch=true requires the workflow runtime
+  // (telemetry on + at least one WORKFLOW declared) so the andon_events
+  // table exists for pull_module_andon to write to. Warn at compile time
+  // rather than failing silently at runtime.
+  const hasWorkflowRuntime =
+    !!ast.app.telemetry && ast.app.telemetry !== 'off' && ast.workflows.length > 0;
+  if (!hasWorkflowRuntime) {
+    for (const m of ast.modules) {
+      if (m.expectsMatch === true) {
+        results.push({
+          severity: 'warning',
+          message: `Module '${m.name}': EXPECTS_MATCH=true requires the workflow runtime (telemetry + at least one WORKFLOW) so pull_module_andon has somewhere to write; current source has none — runtime no-match emission will be unavailable`,
+          node: `module:${m.name}`,
+          span: m.span,
+        });
+      }
+    }
+  }
+
   // Phase 11.8 — MODULE.mutationPolicy must reference a declared policy
   // and MODULE.ruleRefs must each reference a declared rule. Warn (not
   // error) because cross-app references may resolve at link time.

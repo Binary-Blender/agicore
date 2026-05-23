@@ -585,6 +585,43 @@ pub fn list_andon_events(
     Ok(out)
 }
 
+// Phase 11.8b — Runtime andon emission for MODULE EXPECTS_MATCH=true.
+// The expert-system runtime calls this when no rule matches an incoming
+// event and the module is declared with EXPECTS_MATCH true. Surfaces as
+// a standard andon_event with trigger_category='no_rule_match', so the
+// Phase 4c responder pipeline picks it up the same way it handles
+// workflow-originated andons.
+//
+// Semantics:
+//   workflow_name field stores the module name (the andon-events table
+//   is shared across both kinds of producers).
+//   workflow_run_id is null (modules don't have run ids).
+//   step_name/step_index are null.
+//   failure_message defaults to "No rule matched in module 'X'" when
+//   not supplied; rollback_boundary is always None (no-match has no
+//   side-effects to roll back).
+#[tauri::command]
+pub fn pull_module_andon(
+    db: State<'_, DbPool>,
+    module_name: String,
+    event_payload: serde_json::Value,
+    failure_reason: Option<String>,
+) -> Result<String, String> {
+    let msg_owned = failure_reason
+        .unwrap_or_else(|| format!("No rule matched in module '{}'", module_name));
+    let id = emit_andon_event(
+        db.inner(),
+        None,                          // no workflow_run_id
+        &module_name,                  // module name in the workflow_name slot
+        None, None,                    // no step
+        "no_rule_match",               // trigger category
+        Some(&msg_owned),
+        &event_payload,
+        None,                          // no rollback boundary for no-match
+    );
+    Ok(id)
+}
+
 #[tauri::command]
 pub fn get_andon_event(
     db: State<'_, DbPool>,
@@ -1191,6 +1228,30 @@ export async function listAndonEvents(
 export async function getAndonEvent(eventId: string): Promise<AndonEvent | null> {
   return invoke<AndonEvent | null>('get_andon_event', { eventId });
 }
+
+/**
+ * Phase 11.8b — Pull the andon cord from the expert-system runtime when a
+ * MODULE declared with EXPECTS_MATCH=true processes an event that no rule
+ * matched. Returns the new andon_event id. The Phase 4c responder pipeline
+ * picks the event up on its next poll / scheduled tick.
+ *
+ * Use this from your TS rule-evaluation loop:
+ *   const fired = evaluateRules(event);
+ *   if (!fired.length && moduleExpectsMatch) {
+ *     await pullModuleAndon('alert_classification', event);
+ *   }
+ */
+export async function pullModuleAndon(
+  moduleName: string,
+  eventPayload: unknown,
+  failureReason?: string,
+): Promise<string> {
+  return invoke<string>('pull_module_andon', {
+    moduleName,
+    eventPayload,
+    failureReason: failureReason ?? null,
+  });
+}
 `;
 }
 
@@ -1211,5 +1272,6 @@ export function workflowCommandNames(ast: AgiFile): string[] {
     'commands::workflow::get_workflow_checkpoints',
     'commands::workflow::list_andon_events',
     'commands::workflow::get_andon_event',
+    'commands::workflow::pull_module_andon',
   ];
 }

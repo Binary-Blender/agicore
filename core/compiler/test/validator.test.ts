@@ -719,6 +719,39 @@ MODULE alerts { MUTATION_POLICY ops  RULES [r_t1, r_t99] }
     'Valid in-policy tier should not warn');
 }
 
+section('Phase 11.8b — EXPECTS_MATCH true without workflow runtime warns');
+{
+  const src = `
+APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY ops { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }
+MODULE alerts { EXPECTS_MATCH true  MUTATION_POLICY ops }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  // No TELEMETRY → workflow runtime off → pull_module_andon unavailable
+  assert(hasWarning(results, "EXPECTS_MATCH=true requires the workflow runtime"),
+    'EXPECTS_MATCH without workflow runtime should warn');
+}
+
+section('Phase 11.8b — EXPECTS_MATCH true with workflow runtime is OK');
+{
+  const src = `
+APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY ops { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }
+MODULE alerts { EXPECTS_MATCH true  MUTATION_POLICY ops }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasWarning(results, "EXPECTS_MATCH=true requires"),
+    'workflow runtime present → no warning');
+}
+
 section('Phase 11.8 — RULE.MUTATION_TIER in policy scope is OK');
 {
   const src = `

@@ -639,6 +639,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
     : [];
   // Phase 1b — Workflow runtime: one run_<name> per workflow + query commands.
   // Phase 11.2 — adds list_andon_events + get_andon_event for the andon audit log.
+  // Phase 11.8b — adds pull_module_andon for expert-system EXPECTS_MATCH=true.
   const workflowCmds = hasWorkflowRuntime
     ? [
         ...ast.workflows.map((wf) => `commands::workflow::run_${toSnakeCase(wf.name)}`),
@@ -646,6 +647,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
         'commands::workflow::get_workflow_checkpoints',
         'commands::workflow::list_andon_events',
         'commands::workflow::get_andon_event',
+        'commands::workflow::pull_module_andon',
       ]
     : [];
   // Phase 11.4a — Mutation proposal lifecycle commands.
