@@ -22,6 +22,12 @@ First public release. The full pipeline is proven end-to-end: a single `.agi` fi
 - [`docs/getting-started.md`](docs/getting-started.md), [`docs/tutorial.md`](docs/tutorial.md) — onboarding paths
 - Per-layer guides: [`CHANNEL.md`](CHANNEL.md), [`VAULT.md`](VAULT.md), [`MACROS.md`](MACROS.md), [`EMBEDDED.md`](EMBEDDED.md), [`NULLCLAW.md`](NULLCLAW.md), [`SKILLDOCS.md`](SKILLDOCS.md), [`LOGGING.md`](LOGGING.md), [`TESTING.md`](TESTING.md), [`WEB_TARGET.md`](WEB_TARGET.md)
 
+### Skill docs (teach-an-AI artifacts)
+
+- New [`skills/SKILL_FORMAT.md`](skills/SKILL_FORMAT.md) — packaging convention for "teach an AI to use this domain" Markdown files. Defines two tiers (Baby Step, Super Skill Doc), required L0–L6 body sections, and validation criteria. Reusable beyond Agicore.
+- New [`skills/agicore.baby.skill.md`](skills/agicore.baby.skill.md) — ~7.5k token Baby Step for small-context models. 5 worked examples, all parse and compile.
+- New [`skills/agicore.super.skill.md`](skills/agicore.super.skill.md) — ~18k token Super Skill Doc for frontier models. 14 worked recipes, all parse and compile; 30 anti-patterns with rationale; comprehensive error→fix table; 12 self-check prompts.
+
 ### Packaging
 
 - npm packages `@agicore/parser@1.0.0` and `@agicore/compiler@1.0.0` with proper `files`, `exports`, `keywords`, `repository`, `engines` fields

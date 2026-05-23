@@ -128,6 +128,7 @@ agicore/
 |-- apps/                      # Reference applications living in-repo
 |   +-- novasyn-chat/          # Canary: multi-provider AI chat client
 |-- docs/                      # Tutorial, getting-started, DSL reference, cookbook, case studies
+|-- skills/                    # Skill docs for AI assistants (Baby Step + Super Skill Doc)
 |-- Idea Factory/              # In-flight feature proposals + sprint aftermath notes
 +-- LICENSE                    # MIT
 ```
@@ -239,6 +240,19 @@ The workflow:
 Phase 8 was triggered entirely by writing `benders_killer_app.agi`. Six gaps surfaced, were documented in a single feature request file, and were implemented in one session: `ACTION IMPL`, `ACTION PATTERN`, `PREFERENCE`, union output types, `ACTION EMIT`, and `ENTITY SINGLETON`. Parser gained 22 tests, compiler gained 35. One conversation.
 
 See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request template, and why this approach wasn't practical before AI.
+
+---
+
+## Skill Docs — Teach an AI to use Agicore in one file
+
+The [`skills/`](skills/) directory ships two packaged skill documents that turn any AI assistant into a competent Agicore author:
+
+- [**`agicore.baby.skill.md`**](skills/agicore.baby.skill.md) — the **Baby Step**. ~7.5k tokens. Fits in any small open-source model's context window. Maximum semantic density: anti-patterns, error→fix table, and 5 worked examples that every parse and compile. Designed for the moment when you want a 7B-class model to produce valid `.agi`.
+- [**`agicore.super.skill.md`**](skills/agicore.super.skill.md) — the **Super Skill Doc**. ~18k tokens. For frontier models (Claude Code, Cursor). All 58 declarations with full syntax, 14 verified recipes, comprehensive anti-pattern catalog, edge cases from real incidents, and 12 self-check prompts.
+
+Both follow the [Skill Doc format spec](skills/SKILL_FORMAT.md) — a portable convention for packaging "teach an AI to do this domain well" as a single Markdown file with YAML frontmatter. The format isn't Agicore-specific; any domain (Tauri, Rust ownership, k8s, SQL injection prevention) can ship its own Baby Step and Super Skill Doc using the same shape.
+
+**To use a skill doc**: attach it as a system prompt or a file in your AI coding session. The doc tells the model what to author, what anti-patterns to avoid, and how to self-verify with the parser.
 
 ---
 
