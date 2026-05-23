@@ -2758,6 +2758,432 @@ COMPILER chat_to_post {
 
 ---
 
+## PREFERENCE Declaration (User-Facing Settings)
+
+```
+PREFERENCE IDENT {
+  TYPE        ("string" | "number" | "bool" | "enum" "(" literal ("," literal)* ")")
+  DEFAULT     literal
+  LABEL       STRING                                // optional
+  DESCRIPTION STRING                                // optional
+  SCOPE       ("user" | "workspace" | "session")    // optional, default "user"
+}
+```
+
+Generates a typed TS constant + `usePreference()` hook + row in the generated SettingsView.
+See [`docs/dsl-reference.md#preference`](../docs/dsl-reference.md#preference) for examples.
+
+---
+
+## STAGES Declaration (Finite State Machines)
+
+```
+stages_decl     = "STAGES" IDENT "{" stages_body "}"
+stages_body     = (chain | branch | edge)+
+chain           = IDENT ("->" IDENT)+                          // a -> b -> c
+branch          = IDENT "->" IDENT ("/" IDENT)+                // a -> b / c / d
+edge            = IDENT "->" IDENT
+
+// Inline on ENTITY:
+"STAGES" "[" IDENT ("," IDENT)* "]"
+```
+
+Generates `${Name}State` enum, `${Name}Transitions` map, `try_transition(from, to)` guard.
+See [`docs/dsl-reference.md#stages`](../docs/dsl-reference.md#stages).
+
+---
+
+## COGNITION_ROLE Declaration (Org-Chart of Cognition)
+
+```
+COGNITION_ROLE IDENT {
+  TIER        ("1" | "2" | "3")
+  MODELS      "[" STRING ("," STRING)* "]"
+  SPC_FLOOR   NUMBER                            // 0.0–1.0
+  HANDLES     "[" IDENT ("," IDENT)* "]"
+  ESCALATE_TO IDENT                              // optional
+}
+```
+
+Generates `cheapestViableRole()` helper, `cognition_metrics.sql` SQL view, per-role config.
+See [`docs/dsl-reference.md#cognition_role`](../docs/dsl-reference.md#cognition_role).
+
+---
+
+## ESCALATION_CHAIN Declaration (Dynamic Model Escalation)
+
+```
+ESCALATION_CHAIN IDENT {
+  ROLES             "[" IDENT ("," IDENT)* "]"
+  ESCALATE_ON       ("spc_drop" | "error" | "timeout")
+  DE_ESCALATE_AFTER IDENT | NUMBER UNIT
+  COOLDOWN          DURATION                    // optional
+}
+```
+
+Generates stateful `ChainEngine` consulted before each task dispatch.
+See [`docs/dsl-reference.md#escalation_chain`](../docs/dsl-reference.md#escalation_chain).
+
+---
+
+## QC_MESH Declaration (Distributed Quality Control)
+
+```
+QC_MESH IDENT {
+  NODES        "[" IDENT ("," IDENT)* "]"
+  AGGREGATE    ("avg" | "min" | "weighted")
+  WEIGHTS      "{" (IDENT ":" NUMBER)+ "}"      // when AGGREGATE = weighted
+  ALERT_BELOW  NUMBER                            // 0.0–1.0
+}
+```
+
+Generates SQL view `qc_mesh_state` and per-mesh alert wiring.
+See [`docs/dsl-reference.md#qc_mesh`](../docs/dsl-reference.md#qc_mesh).
+
+---
+
+## EVENT Declaration (Async Pub/Sub)
+
+```
+EVENT IDENT {
+  PAYLOAD     "{" field_def+ "}"
+  SUBSCRIBERS "[" IDENT ("," IDENT)* "]"        // optional
+  RETAIN      DURATION                           // optional
+}
+```
+
+Generates Tauri event bus commands (`emit_event`) + per-event TS wrappers (`emit${Name}`, `listen${Name}`).
+See [`docs/dsl-reference.md#event`](../docs/dsl-reference.md#event).
+
+---
+
+## NBVE Declaration (Non-Blocking Variant Evaluation)
+
+```
+NBVE IDENT {
+  PRODUCTION       STRING                       // model_id
+  CANDIDATE        STRING                       // model_id
+  METRICS          "[" IDENT ("," IDENT)* "]"
+  SPC_FLOOR        NUMBER
+  PROMOTION_WINDOW NUMBER                       // n_runs
+  CHAIN            IDENT                        // optional ESCALATION_CHAIN ref
+}
+```
+
+Generates shadow-runner class with `isReadyForPromotion()` + `getActiveModel()`.
+See [`docs/dsl-reference.md#nbve`](../docs/dsl-reference.md#nbve).
+
+---
+
+## CONTRACT Declaration (Machine-Readable Service Agreements)
+
+```
+CONTRACT IDENT {
+  PARTIES      "{" (IDENT ":" IDENT)+ "}"       // role: IdentityName
+  TERMS        "{" (IDENT ":" type ("=" literal)?)+ "}"
+  DELIVERABLES "[" STRING ("," STRING)* "]"
+  PAYMENT      "{" "amount" ":" NUMBER ","
+                   "currency" ":" STRING ","
+                   "provider" ":" IDENT "}"
+  GOVERNANCE   IDENT                            // AUTHORITY ref
+}
+```
+
+Generates SQLite lifecycle table (draft → pending_signature → signed → active → completed |
+cancelled | disputed), Rust CRUD, TS state-machine guard.
+See [`docs/dsl-reference.md#contract`](../docs/dsl-reference.md#contract).
+
+---
+
+## REPUTATION Declaration (SPC-Driven Trust Scoring)
+
+```
+REPUTATION IDENT {
+  SUBJECT IDENT
+  METRICS "{" (IDENT ":" type)+ "}"
+  SPC     "{" "sample_size" ":" NUMBER ","
+              "control_limits" ":" ("tight" | "normal" | "loose") "}"
+  DECAY   DURATION
+}
+```
+
+Generates `reputation_scores` table + TS `Tracker` class.
+See [`docs/dsl-reference.md#reputation`](../docs/dsl-reference.md#reputation).
+
+---
+
+## SUBSCRIPTION Declaration (Recurring Creator Support)
+
+```
+SUBSCRIPTION IDENT {
+  PROVIDER   IDENT
+  SUBSCRIBER IDENT
+  TERMS      "{" "tier" ":" STRING ","
+                 "billing" ":" ("monthly" | "annual") ","
+                 "perks" ":" "[" STRING ("," STRING)* "]" "}"
+  PAYMENT    "{" "amount" ":" NUMBER "," "currency" ":" STRING "," "provider" ":" IDENT "}"
+}
+```
+
+Generates `subscriptions` table + Rust CRUD + typed `as const` config.
+See [`docs/dsl-reference.md#subscription`](../docs/dsl-reference.md#subscription).
+
+---
+
+## DISPUTE Declaration (Structured Conflict Resolution)
+
+```
+DISPUTE IDENT {
+  CONTRACT   IDENT
+  STATES     "[" IDENT ("," IDENT)* "]"
+  RESOLUTION "{" "mediator" ":" IDENT ","
+                 "outcome"  ":" IDENT ("|" IDENT)* "}"
+  EVIDENCE   "{" "allowed_types" ":" "[" STRING ("," STRING)* "]" "}"
+}
+```
+
+Generates state + resolution union types, record interface, transition map state machine.
+See [`docs/dsl-reference.md#dispute`](../docs/dsl-reference.md#dispute).
+
+---
+
+## MESH Declaration (Distributed Compute Fabric)
+
+```
+MESH IDENT {
+  NODES      "[" IDENT ("," IDENT)* "]"
+  TOPOLOGY   ("mesh" | "star" | "ring")
+  GOVERNS    IDENT                              // AUTHORITY ref
+  ACCOUNTING "{" "credits_per_hour" ":" NUMBER ","
+                 "reconcile" ":" ("hourly" | "daily") "}"
+}
+```
+
+Generates `mesh_accounting` table, `getNodeBalance(nodeName)` TS helper, per-node CONTRIBUTES rows.
+See [`docs/dsl-reference.md#mesh`](../docs/dsl-reference.md#mesh).
+
+---
+
+## ACTUATOR Declaration (Physical Output Device)
+
+```
+ACTUATOR IDENT {
+  TYPE       ("motor" | "servo" | "relay" | "led" | "speaker" | "display")
+  MODEL      STRING
+  SAFE_STATE (IDENT | NUMBER | STRING)
+  RANGE      "{" "min" ":" NUMBER "," "max" ":" NUMBER "}"   // optional
+  ZONE       IDENT                              // optional
+}
+```
+
+Generates Rust command stubs + watchdog returning device to SAFE_STATE on disconnect.
+See [`docs/dsl-reference.md#actuator`](../docs/dsl-reference.md#actuator).
+
+---
+
+## PLATFORM Declaration (Hardware Platform Target)
+
+```
+PLATFORM IDENT {
+  ARCH ("x86_64" | "aarch64" | "armv7" | "riscv64" | "esp32")
+  OS   ("linux" | "windows" | "macos" | "freertos" | "none")
+  PINS "{" (IDENT ":" IDENT)+ "}"               // peripheral: pin_id
+}
+```
+
+Generates `platform.rs` constants + build-time triple check.
+See [`docs/dsl-reference.md#platform`](../docs/dsl-reference.md#platform).
+
+---
+
+## NULLCLAW Declaration (Bounded Agent Runtime)
+
+```
+NULLCLAW IDENT {
+  PROVIDER  IDENT                                // AI_SERVICE ref
+  TOOLS     "[" IDENT ("," IDENT)* "]"
+  MAX_STEPS NUMBER
+  HALT_ON   "[" IDENT ("," IDENT)* "]"           // low_confidence | budget_exceeded | tool_error
+  AUTHORITY IDENT                                // optional governance
+}
+```
+
+Generates Rust runtime with per-tool invocation limits, MAX_STEPS hard guard, audit logging.
+See [`docs/dsl-reference.md#nullclaw`](../docs/dsl-reference.md#nullclaw).
+
+---
+
+## BRAIN_BODY Declaration (Embodied Cognition)
+
+```
+BRAIN_BODY IDENT {
+  BRAIN    IDENT                                 // NULLCLAW ref
+  BODY     "{" "ACTUATORS" "[" IDENT ("," IDENT)* "]"
+              "SENSORS"   "[" IDENT ("," IDENT)* "]" "}"
+  PLATFORM IDENT
+  TICK     DURATION
+}
+```
+
+Generates the runtime tether between agent brain and physical body devices.
+See [`docs/dsl-reference.md#brain_body`](../docs/dsl-reference.md#brain_body).
+
+---
+
+## TARGET Declaration (Compilation Target)
+
+```
+TARGET IDENT {
+  KIND      ("desktop" | "web" | "cli" | "library")
+  RUNTIME   ("tauri" | "axum" | "rocket")
+  BUNDLE_AS IDENT ("|" IDENT)*                   // msi | dmg | appimage | docker | wasm
+  HOST      STRING                               // optional, web only
+  PORT      NUMBER                               // optional, web only
+}
+```
+
+Switches the codegen backend; multiple TARGETs produce multi-target bundles.
+See [`docs/dsl-reference.md#target`](../docs/dsl-reference.md#target).
+
+---
+
+## AUTH Declaration (Authentication)
+
+```
+AUTH IDENT {
+  PROVIDER ("oauth_google" | "oauth_github" | "magic_link" | "password" | "sso_saml")
+  SESSION  ("cookie" | "jwt" | "bearer")
+  TIMEOUT  DURATION
+  REQUIRE  "[" IDENT ("," IDENT)* "]"            // optional scope list
+}
+```
+
+Generates auth routes, middleware, typed `useAuth()` hook.
+See [`docs/dsl-reference.md#auth`](../docs/dsl-reference.md#auth).
+
+---
+
+## TENANT Declaration (Multi-Tenant Isolation)
+
+```
+TENANT IDENT {
+  KEY          IDENT
+  SCOPE        ("all" | "[" IDENT ("," IDENT)* "]")
+  RESOLVE_FROM ("auth_session" | "header" | "subdomain")
+}
+```
+
+Compiler adds tenant key to every (or listed) entity table and wires per-request tenant extraction.
+See [`docs/dsl-reference.md#tenant`](../docs/dsl-reference.md#tenant).
+
+---
+
+## MACRO Declaration (Compile-Time Helper)
+
+```
+MACRO IDENT "(" macro_params? ")" "{"
+  // body emits one or more declarations with ${param} interpolation
+"}"
+
+macro_params = (IDENT ":" macro_param_type) ("," IDENT ":" macro_param_type)*
+macro_param_type = "identifier" | "block" | "string" | "number"
+
+// Invocation site:
+"@" IDENT "(" macro_arg ("," macro_arg)* ")"
+```
+
+Expanded by the lexer before parsing; resulting AST is identical to the hand-written form.
+See [`docs/dsl-reference.md#macro`](../docs/dsl-reference.md#macro).
+
+---
+
+## MACRO_REGISTRY Declaration (Distributable Macro Package)
+
+```
+MACRO_REGISTRY IDENT {
+  VERSION STRING
+  MACROS  "[" IDENT ("," IDENT)* "]"
+  EXPORTS "[" IDENT ("," IDENT)* "]"             // public surface ⊆ MACROS
+}
+```
+
+Generates a `macros.json` manifest the compiler reads on `@import` directives.
+See [`docs/dsl-reference.md#macro_registry`](../docs/dsl-reference.md#macro_registry).
+
+---
+
+## LOG Declaration (Structured Logging)
+
+```
+LOG IDENT {
+  CHANNEL  IDENT
+  LEVEL    ("trace" | "debug" | "info" | "warn" | "error")
+  SINK     ("file" | "stdout" | "both")
+  PATH     STRING                                // when SINK = file | both
+  ROTATION (NUMBER UNIT | DURATION)              // optional
+}
+```
+
+Generates a zero-dep Rust logger + per-channel TS helpers.
+See [`docs/dsl-reference.md#log`](../docs/dsl-reference.md#log).
+
+---
+
+## THEME Declaration (Visual Theming)
+
+```
+THEME IDENT {
+  COLORS    "{" (IDENT ":" STRING)+ "}"          // token: "#hex"
+  FONTS     "{" "sans" ":" STRING "," "mono" ":" STRING "}"
+  SPACING   "{" (IDENT ":" STRING)+ "}"
+  RADIUS    "{" (IDENT ":" STRING)+ "}"
+  DARK_MODE ("auto" | "always" | "never")
+}
+```
+
+Generates Tailwind config extension, CSS custom props, and typed TS `theme` constant.
+See [`docs/dsl-reference.md#theme`](../docs/dsl-reference.md#theme).
+
+---
+
+## SEED Declaration (Initial Data)
+
+```
+// Top-level form (preferred):
+seed_decl    = "SEED" IDENT (block_form | bracket_form)
+
+block_form   = "{" seed_record* "}"
+                | "{" "RECORDS" "[" seed_record ("," seed_record)* "]" "}"
+bracket_form = "[" seed_record ("," seed_record)* "]"
+
+seed_record  = "{" (IDENT (":")? literal)+ "}"
+
+// Single-record sugar (inside block_form):
+"SEED" IDENT "{" (IDENT (":")? literal)+ "}"
+```
+
+Emitted as idempotent `INSERT OR IGNORE INTO …` in the initial migration.
+See [`docs/dsl-reference.md#seed`](../docs/dsl-reference.md#seed).
+
+---
+
+## TYPE Declaration (Type Alias)
+
+```
+type_decl = "TYPE" IDENT "=" type_expr
+
+type_expr = type
+          | "{" field_def ("," field_def)* "}"     // record literal
+          | STRING ("|" STRING)*                   // string-literal union
+          | type ("|" type)+                       // structural union
+          | "array" "(" type ")"
+```
+
+Inlined at every use site — no runtime cost; just a naming convenience.
+See [`docs/dsl-reference.md#type`](../docs/dsl-reference.md#type).
+
+---
+
 ## Complete Example
 
 A minimal but complete `.agi` file:
@@ -2890,74 +3316,128 @@ TEST enrollment_cascade {
 
 ## Grammar Summary
 
+The Agicore grammar covers **58 top-level declaration types across 10 layers**.
+
 ```
-file            = app_decl (entity_decl | action_decl | view_decl |
-                  ai_service_decl | test_decl |
-                  workflow_decl | pipeline_decl | qc_decl | vault_decl |
-                  rule_decl | fact_decl | state_decl | pattern_decl |
-                  score_decl | module_decl |
-                  router_decl | skill_decl | skilldoc_decl | reasoner_decl | trigger_decl |
-                  lifecycle_decl | breed_decl |
-                  packet_decl | authority_decl | channel_decl |
-                  identity_decl | feed_decl |
-                  node_decl | sensor_decl | zone_decl |
-                  session_decl | compiler_decl)*
+file                = app_decl decl*
 
-// --- Application Layer ---
-app_decl        = "APP" IDENT "{" app_field* "}"
-entity_decl     = "ENTITY" IDENT "{" entity_body "}"
-action_decl     = "ACTION" IDENT "{" action_body "}"
-view_decl       = "VIEW" IDENT "{" view_body "}"
-ai_service_decl = "AI_SERVICE" "{" ai_service_body "}"
-test_decl       = "TEST" IDENT "{" test_body "}"
+decl                = entity_decl | action_decl | view_decl | ai_service_decl
+                    | test_decl | preference_decl
+                    | workflow_decl | pipeline_decl | qc_decl | vault_decl | stages_decl
+                    | rule_decl | fact_decl | state_decl | pattern_decl | score_decl
+                    | module_decl
+                    | router_decl | skill_decl | skilldoc_decl | reasoner_decl
+                    | trigger_decl | lifecycle_decl | breed_decl
+                    | cognition_role_decl | escalation_chain_decl | qc_mesh_decl
+                    | packet_decl | authority_decl | channel_decl
+                    | identity_decl | feed_decl
+                    | event_decl | nbve_decl | contract_decl | reputation_decl
+                    | subscription_decl | dispute_decl
+                    | node_decl | sensor_decl | zone_decl | mesh_decl
+                    | actuator_decl | platform_decl | nullclaw_decl | brain_body_decl
+                    | session_decl | compiler_decl
+                    | target_decl | auth_decl | tenant_decl
+                    | macro_decl | macro_registry_decl | log_decl | theme_decl
+                    | seed_decl | type_decl
 
-// --- Orchestration Layer ---
-workflow_decl   = "WORKFLOW" IDENT "{" workflow_body "}"
-pipeline_decl   = "PIPELINE" IDENT "{" pipeline_body "}"
-qc_decl         = "QC" IDENT "{" qc_body "}"
-vault_decl      = "VAULT" "{" vault_body "}"
+// --- Application Layer (7) ---
+app_decl             = "APP" IDENT "{" app_field* "}"
+entity_decl          = "ENTITY" IDENT "{" entity_body "}"
+action_decl          = "ACTION" IDENT "{" action_body "}"
+view_decl            = "VIEW" IDENT "{" view_body "}"
+ai_service_decl      = "AI_SERVICE" "{" ai_service_body "}"
+test_decl            = "TEST" IDENT "{" test_body "}"
+preference_decl      = "PREFERENCE" IDENT "{" preference_body "}"
 
-// --- Expert System Layer ---
-rule_decl       = "RULE" IDENT "{" rule_body "}"
-fact_decl       = "FACT" IDENT "{" fact_body "}"
-state_decl      = "STATE" IDENT "{" state_body "}"
-pattern_decl    = "PATTERN" IDENT "{" pattern_body "}"
-score_decl      = "SCORE" IDENT "{" score_body "}"
-module_decl     = "MODULE" IDENT "{" module_body "}"
+// --- Orchestration Layer (5) ---
+workflow_decl        = "WORKFLOW" IDENT "{" workflow_body "}"
+pipeline_decl        = "PIPELINE" IDENT "{" pipeline_body "}"
+qc_decl              = "QC" IDENT "{" qc_body "}"
+vault_decl           = "VAULT" "{" vault_body "}"
+stages_decl          = "STAGES" IDENT "{" stages_body "}"
 
-// --- Cooperative Intelligence Layer ---
-router_decl     = "ROUTER" IDENT "{" router_body "}"
-skill_decl      = "SKILL" IDENT "{" skill_body "}"
-skilldoc_decl   = "SKILLDOC" IDENT "{" skilldoc_body "}"
-reasoner_decl   = "REASONER" IDENT "{" reasoner_body "}"
-trigger_decl    = "TRIGGER" IDENT "{" trigger_body "}"
-lifecycle_decl  = "LIFECYCLE" IDENT "{" lifecycle_body "}"
-breed_decl      = "BREED" IDENT "{" breed_body "}"
+// --- Expert System Layer (6) ---
+rule_decl            = "RULE"    IDENT "{" rule_body "}"
+fact_decl            = "FACT"    IDENT "{" fact_body "}"
+state_decl           = "STATE"   IDENT "{" state_body "}"
+pattern_decl         = "PATTERN" IDENT "{" pattern_body "}"
+score_decl           = "SCORE"   IDENT "{" score_body "}"
+module_decl          = "MODULE"  IDENT "{" module_body "}"
 
-// --- Semantic Infrastructure Layer ---
-packet_decl     = "PACKET" IDENT "{" packet_body "}"
-authority_decl  = "AUTHORITY" IDENT "{" authority_body "}"
-channel_decl    = "CHANNEL" IDENT "{" channel_body "}"
-identity_decl   = "IDENTITY" IDENT "{" identity_body "}"
-feed_decl       = "FEED" IDENT "{" feed_body "}"
+// --- Cooperative Intelligence Layer (10) ---
+router_decl           = "ROUTER"           IDENT "{" router_body "}"
+skill_decl            = "SKILL"            IDENT "{" skill_body "}"
+skilldoc_decl         = "SKILLDOC"         IDENT "{" skilldoc_body "}"
+reasoner_decl         = "REASONER"         IDENT "{" reasoner_body "}"
+trigger_decl          = "TRIGGER"          IDENT "{" trigger_body "}"
+lifecycle_decl        = "LIFECYCLE"        IDENT "{" lifecycle_body "}"
+breed_decl            = "BREED"            IDENT "{" breed_body "}"
+cognition_role_decl   = "COGNITION_ROLE"   IDENT "{" cognition_role_body "}"
+escalation_chain_decl = "ESCALATION_CHAIN" IDENT "{" escalation_chain_body "}"
+qc_mesh_decl          = "QC_MESH"          IDENT "{" qc_mesh_body "}"
 
-// --- Ambient Intelligence Layer ---
-node_decl       = "NODE" IDENT "{" node_body "}"
-sensor_decl     = "SENSOR" IDENT "{" sensor_body "}"
-zone_decl       = "ZONE" IDENT "{" zone_body "}"
+// --- Semantic Infrastructure Layer (5) ---
+packet_decl          = "PACKET"    IDENT "{" packet_body "}"
+authority_decl       = "AUTHORITY" IDENT "{" authority_body "}"
+channel_decl         = "CHANNEL"   IDENT "{" channel_body "}"
+identity_decl        = "IDENTITY"  IDENT "{" identity_body "}"
+feed_decl            = "FEED"      IDENT "{" feed_body "}"
 
-// --- Semantic Operating Environment ---
-session_decl    = "SESSION" IDENT "{" session_body "}"
-compiler_decl   = "COMPILER" IDENT "{" compiler_body "}"
+// --- Adaptive Intelligence Layer (6) ---
+event_decl           = "EVENT"        IDENT "{" event_body "}"
+nbve_decl            = "NBVE"         IDENT "{" nbve_body "}"
+contract_decl        = "CONTRACT"     IDENT "{" contract_body "}"
+reputation_decl      = "REPUTATION"   IDENT "{" reputation_body "}"
+subscription_decl    = "SUBSCRIPTION" IDENT "{" subscription_body "}"
+dispute_decl         = "DISPUTE"      IDENT "{" dispute_body "}"
 
-type            = "string" | "number" | "float" | "bool" |
-                  "date" | "datetime" | "json" | "id"
+// --- Semantic Operating Environment (2) ---
+session_decl         = "SESSION"  IDENT "{" session_body "}"
+compiler_decl        = "COMPILER" IDENT "{" compiler_body "}"
 
-field_def       = IDENT ":" type [default] [modifier]*
-default         = "=" literal
-modifier        = "REQUIRED" | "UNIQUE" | "INDEX"
-literal         = STRING | NUMBER | BOOL
+// --- Ambient + Embedded Layer (8) ---
+node_decl            = "NODE"       IDENT "{" node_body "}"
+sensor_decl          = "SENSOR"     IDENT "{" sensor_body "}"
+zone_decl            = "ZONE"       IDENT "{" zone_body "}"
+mesh_decl            = "MESH"       IDENT "{" mesh_body "}"
+actuator_decl        = "ACTUATOR"   IDENT "{" actuator_body "}"
+platform_decl        = "PLATFORM"   IDENT "{" platform_body "}"
+nullclaw_decl        = "NULLCLAW"   IDENT "{" nullclaw_body "}"
+brain_body_decl      = "BRAIN_BODY" IDENT "{" brain_body_body "}"
+
+// --- Deployment Layer (3) ---
+target_decl          = "TARGET" IDENT "{" target_body "}"
+auth_decl            = "AUTH"   IDENT "{" auth_body "}"
+tenant_decl          = "TENANT" IDENT "{" tenant_body "}"
+
+// --- Primitives (6) ---
+macro_decl           = "MACRO" IDENT "(" macro_params? ")" "{" macro_body "}"
+macro_registry_decl  = "MACRO_REGISTRY" IDENT "{" macro_registry_body "}"
+log_decl             = "LOG"   IDENT "{" log_body "}"
+theme_decl           = "THEME" IDENT "{" theme_body "}"
+seed_decl            = "SEED"  IDENT ("{" seed_body "}" | "[" seed_records "]")
+type_decl            = "TYPE"  IDENT "=" type_expr
+
+// --- Common ---
+type                 = "string" | "number" | "int" | "float" | "bool"
+                     | "date" | "datetime" | "json" | "id" | "text"
+                     | IDENT                                       // type alias or entity reference
+                     | "array" "(" type ")"
+                     | type ("|" type)+                            // union
+
+field_def            = IDENT ":" type [default] [modifier]*
+default              = ("=" | "DEFAULT") literal
+modifier             = "REQUIRED" | "UNIQUE" | "INDEX" | "INDEXED" | "TIMESTAMPS"
+literal              = STRING | NUMBER | SIGNED_NUMBER | BOOL | array_literal
+
+// --- Soft keywords (X.2) ---
+// State machine states (`STAGES`, `STATE`) may use these identifiers as state
+// names even though they are DSL keywords elsewhere:
+//   open, closed, pending, draft, in_review, published, archived, define,
+//   active, completed, cancelled, disputed, ...
 ```
+
+For per-declaration body grammars and worked examples, see [`../docs/dsl-reference.md`](../docs/dsl-reference.md).
 
 ---
 

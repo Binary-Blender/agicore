@@ -719,3 +719,157 @@ VIEW ArticleReader {
 ```
 
 The TRIGGER handles new articles immediately. The REASONER catches anything that slips through (network hiccups, app-closed during ingestion). The WORKFLOW provides a manual re-run path. The VAULT keeps the API key out of source control. The protected file adds a CSV import command the DSL doesn't cover. None of these patterns know about each other — they compose by sharing entity types and the Zustand store.
+
+---
+
+## 18. Lifecycle State Machines (STAGES)
+
+A common need: "an entity that can be in one of several states, with legal transitions enforced at the boundary." Use `STAGES` rather than hand-rolling string enums.
+
+```agicore
+STAGES OrderLifecycle {
+  draft -> submitted
+  submitted -> approved / rejected / pending_review
+  approved -> fulfilled -> closed
+  rejected -> closed
+}
+
+ENTITY Order {
+  buyer_id: string REQUIRED
+  total:    number
+  state:    OrderLifecycle = draft
+  TIMESTAMPS
+}
+
+ACTION submit_order {
+  INPUT  order_id: id
+  OUTPUT order: Order
+  IMPL { /* invokes try_transition(Order.state, submitted) */ }
+}
+```
+
+The compiler generates a `${Name}State` enum, a `${Name}Transitions` table, and a `try_transition(from, to)` guard that any `IMPL` block can call. Illegal transitions return `Err` rather than silently corrupting state.
+
+---
+
+## 19. Cost-Optimizing AI via NBVE
+
+You're using Sonnet for summarization. You suspect Haiku would be Good Enough for most prompts, but you don't want to find out via a regression in production. Run the candidate in shadow mode against a quality floor:
+
+```agicore
+AI_SERVICE {
+  PROVIDERS [anthropic]
+  KEYS_FILE VaultKeys
+  MODELS    ["claude-sonnet-4-6", "claude-haiku-4-5"]
+  DEFAULT   "claude-sonnet-4-6"
+}
+
+NBVE SummarizationDowngrade {
+  PRODUCTION       "claude-sonnet-4-6"
+  CANDIDATE        "claude-haiku-4-5"
+  METRICS          [quality, latency, cost]
+  SPC_FLOOR        0.92
+  PROMOTION_WINDOW 200
+}
+```
+
+The runtime calls both models for every summarization request, scores the candidate's output against production, and promotes the candidate when SPC stays above floor for 200 consecutive runs. No human decision required — the data decides.
+
+---
+
+## 20. Recurring Creator Subscriptions
+
+Combine `CONTRACT`, `SUBSCRIPTION`, `REPUTATION`, and `IDENTITY` into a complete monetization layer:
+
+```agicore
+IDENTITY PublisherIdentity {
+  SIGNING_KEY ed25519
+  DOMAINS     [publishing]
+}
+
+CONTRACT MonthlyEditorial {
+  PARTIES {
+    publisher: PublisherIdentity
+    editor:    EditorIdentity
+  }
+  TERMS        { word_count_target: number = 5000, deadline_day: number = 28 }
+  DELIVERABLES ["Edited articles"]
+  PAYMENT      { amount: 2500.00, currency: "USD", provider: StripeConnect }
+  GOVERNANCE   EditorialAuthority
+}
+
+SUBSCRIPTION SupporterTier {
+  PROVIDER   PublisherIdentity
+  SUBSCRIBER ReaderIdentity
+  TERMS      { tier: "supporter", billing: monthly, perks: ["ad_free", "early_access"] }
+  PAYMENT    { amount: 5.00, currency: "USD", provider: StripeConnect }
+}
+
+REPUTATION EditorialReputation {
+  SUBJECT EditorIdentity
+  METRICS { on_time_rate: float, quality_score: float }
+  SPC     { sample_size: 30, control_limits: normal }
+  DECAY   90d
+}
+```
+
+The contract is a state machine (draft → signed → active → completed). The subscription is recurring auth + perks. The reputation tracks the editor's delivery quality. None of this trusts an LLM at runtime — it's all deterministic state plus external payment-provider webhooks.
+
+---
+
+## 21. Multi-Target Deployment
+
+One `.agi` file → both a desktop app and a web service:
+
+```agicore
+TARGET DesktopBundle {
+  KIND      desktop
+  RUNTIME   tauri
+  BUNDLE_AS msi | dmg | appimage
+}
+
+TARGET WebService {
+  KIND      web
+  RUNTIME   axum
+  BUNDLE_AS docker
+  HOST      "0.0.0.0"
+  PORT      3008
+}
+
+ENTITY Article { title: string, body: text }
+ACTION publish { INPUT id: id  OUTPUT article: Article  IMPL { /* ... */ } }
+```
+
+The compiler emits two output trees — `dist-desktop/` (Tauri project) and `dist-web/` (Axum project) — sharing the same ENTITY schemas and ACTION implementations. Codegen branches at the boundary; the business logic stays single-source.
+
+---
+
+## 22. Cognitive Org-Chart (COGNITION_ROLE + ESCALATION_CHAIN)
+
+Most tasks don't need your most expensive model. Declare an org-chart of cognition and let the runtime route to the cheapest viable rung — escalating automatically when SPC drops:
+
+```agicore
+COGNITION_ROLE FrontlineSummarizer {
+  TIER       1
+  MODELS     ["claude-haiku-4-5", "gemini-2.5-flash"]
+  SPC_FLOOR  0.85
+  HANDLES    [summarize]
+  ESCALATE_TO SeniorSummarizer
+}
+
+COGNITION_ROLE SeniorSummarizer {
+  TIER       3
+  MODELS     ["claude-opus-4-7"]
+  SPC_FLOOR  0.95
+  HANDLES    [summarize]
+}
+
+ESCALATION_CHAIN SummarizationChain {
+  ROLES             [FrontlineSummarizer, SeniorSummarizer]
+  ESCALATE_ON       spc_drop
+  DE_ESCALATE_AFTER 50_runs_above_floor
+  COOLDOWN          15m
+}
+```
+
+Every summarize call asks the chain: "which role should I use right now?" — and the chain tracks the SPC state across calls to flip up/down automatically. Pair with `NBVE CHAIN SummarizationChain` to have a shadow runner contribute to the promotion decision.

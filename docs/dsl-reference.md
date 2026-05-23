@@ -6,19 +6,25 @@
 
 ## Table of Contents
 
-**Application Layer:** [APP](#app) · [ENTITY](#entity) · [ACTION](#action) · [VIEW](#view) · [AI_SERVICE](#ai_service) · [TEST](#test)
+**Application Layer:** [APP](#app) · [ENTITY](#entity) · [ACTION](#action) · [VIEW](#view) · [AI_SERVICE](#ai_service) · [TEST](#test) · [PREFERENCE](#preference)
 
-**Orchestration Layer:** [WORKFLOW](#workflow) · [PIPELINE](#pipeline) · [QC](#qc) · [VAULT](#vault)
+**Orchestration Layer:** [WORKFLOW](#workflow) · [PIPELINE](#pipeline) · [QC](#qc) · [VAULT](#vault) · [STAGES](#stages)
 
-**Expert System Layer:** [RULE](#rule) · [FACT](#fact) · [STATE](#state) · [PATTERN](#pattern) · [SCORE](#score)
+**Expert System Layer:** [RULE](#rule) · [FACT](#fact) · [STATE](#state) · [PATTERN](#pattern) · [SCORE](#score) · [MODULE](#module)
 
-**Cooperative Intelligence Layer:** [REASONER](#reasoner) · [TRIGGER](#trigger) · [CHANNEL](#channel) · [PACKET](#packet) · [ROUTER](#router) · [SKILL](#skill) · [SKILLDOC](#skilldoc)
+**Cooperative Intelligence Layer:** [REASONER](#reasoner) · [TRIGGER](#trigger) · [CHANNEL](#channel) · [PACKET](#packet) · [ROUTER](#router) · [SKILL](#skill) · [SKILLDOC](#skilldoc) · [LIFECYCLE](#lifecycle) · [BREED](#breed) · [COGNITION_ROLE](#cognition_role) · [ESCALATION_CHAIN](#escalation_chain) · [QC_MESH](#qc_mesh)
 
-**Semantic Infrastructure Layer:** [IDENTITY](#identity) · [FEED](#feed) · [AUTHORITY](#authority) · [SESSION](#session) · [MODULE](#module) · [SEMANTIC MEMORY](#semantic-memory)
+**Semantic Infrastructure Layer:** [IDENTITY](#identity) · [FEED](#feed) · [AUTHORITY](#authority)
 
-**Ambient Intelligence Layer:** [NODE](#node) · [SENSOR](#sensor) · [ZONE](#zone)
+**Adaptive Intelligence Layer:** [EVENT](#event) · [NBVE](#nbve) · [CONTRACT](#contract) · [REPUTATION](#reputation) · [SUBSCRIPTION](#subscription) · [DISPUTE](#dispute)
 
-**Semantic Operating Environment:** [COMPILER](#compiler)
+**Semantic Operating Environment:** [SESSION](#session) · [COMPILER](#compiler) · [SEMANTIC MEMORY](#semantic-memory)
+
+**Ambient + Embedded Layer:** [NODE](#node) · [SENSOR](#sensor) · [ZONE](#zone) · [MESH](#mesh) · [ACTUATOR](#actuator) · [PLATFORM](#platform) · [NULLCLAW](#nullclaw) · [BRAIN_BODY](#brain_body)
+
+**Deployment Layer:** [TARGET](#target) · [AUTH](#auth) · [TENANT](#tenant)
+
+**Primitives:** [MACRO](#macro) · [MACRO_REGISTRY](#macro_registry) · [LOG](#log) · [THEME](#theme) · [SEED](#seed) · [TYPE](#type)
 
 ---
 
@@ -218,6 +224,39 @@ Generates a Rust `#[cfg(test)]` integration test. `"auto"` resolves to the ID pr
 
 ---
 
+## PREFERENCE
+
+A user-facing setting that the app exposes in a generated preferences UI and persists to local storage. Lighter-weight than an `ENTITY` — no SQL table, no CRUD, just a typed key with a default.
+
+```
+PREFERENCE <name> {
+  TYPE     string | number | bool | enum(<v1>, <v2>, …)
+  DEFAULT  <value>
+  LABEL    "<human-facing label>"
+  DESCRIPTION "<one-line help text>"
+  SCOPE    user | workspace | session   // optional, defaults to user
+}
+```
+
+```agicore
+PREFERENCE default_model {
+  TYPE        enum("claude-sonnet-4-6", "claude-opus-4-7", "gpt-5", "gemini-2.5-pro")
+  DEFAULT     "claude-sonnet-4-6"
+  LABEL       "Default model"
+  DESCRIPTION "Used when no model is explicitly chosen for a chat."
+}
+
+PREFERENCE temperature {
+  TYPE     number
+  DEFAULT  0.7
+  LABEL    "Sampling temperature"
+}
+```
+
+Generates a TypeScript constant, a typed `usePreference()` hook, and a row in the auto-generated `SettingsView`. `SCOPE user` persists to `localStorage`; `workspace` and `session` are reserved for multi-tenant / per-session overrides.
+
+---
+
 ## Orchestration Layer
 
 ---
@@ -337,6 +376,43 @@ VAULT AppSecrets {
 ```
 
 Keys are stored in the OS keychain (Keychain on macOS, Credential Manager on Windows, Secret Service on Linux). Values are never written to disk in plaintext. Reference vault keys in `AI_SERVICE` and `ACTION` declarations by name — the compiler wires the retrieval automatically.
+
+---
+
+## STAGES
+
+A lightweight finite state machine for entities or workflows. Declares the set of legal states and the legal transitions between them, generating an exhaustive Rust enum + a transition-table guard.
+
+```
+STAGES <Name> {
+  <state1> -> <state2>
+  <state1> -> <state2> / <state3> / <state4>        // branching: a → b, a → c, a → d
+  <state1> -> <state2> -> <state3> -> <state4>      // chain: sugar for n-1 transitions
+}
+
+// Inline (on an ENTITY):
+ENTITY <Name> {
+  …fields…
+  STAGES [<state1>, <state2>, <state3>]
+}
+```
+
+```agicore
+STAGES OrderLifecycle {
+  draft -> submitted
+  submitted -> approved / rejected / pending_review
+  approved -> fulfilled -> closed
+  rejected -> closed
+}
+
+ENTITY Article {
+  title: string
+  body:  text
+  STAGES [draft, in_review, published, archived]
+}
+```
+
+Soft-keyword state names are allowed — `open`, `pending`, `closed`, `define` all work as states even though they're DSL keywords elsewhere. The compiler generates a `${Name}State` enum, a `${Name}Transitions` map, and a `try_transition(from, to)` guard that returns `Err` on illegal transitions. Use `STAGES` whenever an entity has a finite, auditable lifecycle.
 
 ---
 
@@ -692,6 +768,147 @@ SKILLDOC ContentSkills {
 
 ---
 
+## LIFECYCLE
+
+A declarative graduation curve for cognition assets. Defines how a primitive (skill, packet schema, reasoner) matures from `experimental` → `stable` → `production` based on observed quality, age, and usage.
+
+```
+LIFECYCLE <Name> {
+  TARGET    <SkillName | PacketName | ReasonerName>
+  STAGES    [experimental, stable, production, deprecated]
+  PROMOTE_WHEN { uses >= <n>, success_rate >= <pct>, age >= <duration> }
+  DEMOTE_WHEN  { success_rate < <pct> }
+}
+```
+
+```agicore
+LIFECYCLE SummarizeSkillLifecycle {
+  TARGET    SummarizeText
+  STAGES    [experimental, stable, production]
+  PROMOTE_WHEN { uses >= 500, success_rate >= 0.95, age >= 30d }
+  DEMOTE_WHEN  { success_rate < 0.90 }
+}
+```
+
+Generates a SQLite `lifecycle_state` row per target and a daily evaluator that promotes / demotes based on the observed metrics. Use `LIFECYCLE` to make graduation explicit rather than implicit — "is this skill ready for production traffic?" becomes a measured, automated decision.
+
+---
+
+## BREED
+
+An evolutionary reproduction declaration — fork a primitive into variants, run them in parallel under `NBVE`, and let the system promote the winner. The DSL analog of A/B testing for AI artifacts.
+
+```
+BREED <Name> {
+  PARENT      <SkillName | PromptName | ReasonerName>
+  VARIANTS    <n>
+  MUTATIONS   [<mutation_strategy>, ...]
+  EVALUATE_BY <MetricName | ScoreName>
+  KEEP        top_<n>
+}
+```
+
+```agicore
+BREED SummarizerEvolution {
+  PARENT      SummarizeText
+  VARIANTS    5
+  MUTATIONS   [temperature_jitter, prompt_rephrase, model_swap]
+  EVALUATE_BY summary_quality_score
+  KEEP        top_2
+}
+```
+
+Generates a per-variant runner under the parent's `NBVE` envelope. The two highest-scoring variants survive into the next generation; the rest are archived. Use `BREED` for primitives that you suspect can be optimized empirically faster than they can be designed.
+
+---
+
+## COGNITION_ROLE
+
+A declared role in the org-chart of cognition: which models are eligible to do which kind of work, with an SPC quality floor and tier-based cost ceiling.
+
+```
+COGNITION_ROLE <Name> {
+  TIER           1 | 2 | 3              // 1=cheapest, 3=premium
+  MODELS         [<model_id>, ...]
+  SPC_FLOOR      <0.0-1.0>              // minimum acceptable quality
+  HANDLES        [<TaskTag>, ...]
+  ESCALATE_TO    <RoleName>             // optional
+}
+```
+
+```agicore
+COGNITION_ROLE FrontlineSummarizer {
+  TIER       1
+  MODELS     ["claude-haiku-4-5", "gemini-2.5-flash"]
+  SPC_FLOOR  0.85
+  HANDLES    [summarize, extract_keywords]
+  ESCALATE_TO SeniorSummarizer
+}
+
+COGNITION_ROLE SeniorSummarizer {
+  TIER       3
+  MODELS     ["claude-opus-4-7"]
+  SPC_FLOOR  0.95
+  HANDLES    [summarize, extract_keywords, hard_edge_case]
+}
+```
+
+Generates a `cheapestViableRole(task, qualityNeeded)` helper plus a SQL metrics view. The runtime starts every task at the cheapest viable tier and lets `ESCALATION_CHAIN` promote when SPC drops below the floor.
+
+---
+
+## ESCALATION_CHAIN
+
+The dynamic-model escalation engine. Walks `COGNITION_ROLE` rungs upward when SPC drops below a role's floor; de-escalates when stability returns.
+
+```
+ESCALATION_CHAIN <Name> {
+  ROLES         [<Role1>, <Role2>, …]    // ordered cheapest → premium
+  ESCALATE_ON   spc_drop | error | timeout
+  DE_ESCALATE_AFTER <stable_window>
+  COOLDOWN      <duration>               // optional, debounces flapping
+}
+```
+
+```agicore
+ESCALATION_CHAIN SummarizationChain {
+  ROLES             [FrontlineSummarizer, MidTierSummarizer, SeniorSummarizer]
+  ESCALATE_ON       spc_drop
+  DE_ESCALATE_AFTER 50_runs_above_floor
+  COOLDOWN          15m
+}
+```
+
+Generates a stateful `ChainEngine` that the runtime asks "which role should I use right now?" before each task. Pair with `NBVE CHAIN <Name>` to make a shadow runner participate in the chain's promotion decisions.
+
+---
+
+## QC_MESH
+
+A distributed quality-control mesh. Aggregates `QC` signals across nodes and surfaces a global stability score plus per-node contribution metrics.
+
+```
+QC_MESH <Name> {
+  NODES        [<NodeName>, ...]
+  AGGREGATE    avg | min | weighted
+  WEIGHTS      { <NodeName>: <0.0-1.0>, ... }   // when AGGREGATE = weighted
+  ALERT_BELOW  <0.0-1.0>
+}
+```
+
+```agicore
+QC_MESH ContentQualityMesh {
+  NODES        [SummarizerNode, ProofreaderNode, FactCheckerNode]
+  AGGREGATE    weighted
+  WEIGHTS      { SummarizerNode: 0.5, ProofreaderNode: 0.3, FactCheckerNode: 0.2 }
+  ALERT_BELOW  0.85
+}
+```
+
+Generates a SQL view (`qc_mesh_state`) that joins per-node QC samples and exposes a single rollup score. The compiler wires alert emission to the channel registered for `ALERT_BELOW` breaches.
+
+---
+
 ## Semantic Infrastructure Layer
 
 ---
@@ -773,6 +990,188 @@ AUTHORITY ArticleChannelAuthority {
 ```
 
 The compiler generates a verification middleware that runs before packet delivery. Unauthorized publishers are rejected and logged. `VERIFY signature` checks cryptographic signatures; `VERIFY did_document` resolves the DID and checks the key list.
+
+---
+
+## Adaptive Intelligence Layer
+
+---
+
+## EVENT
+
+A named async pub/sub event — the loosely-coupled middle ground between `TRIGGER` (direct fire) and `CHANNEL` (point-to-point routed message). Emit on one side; any number of subscribers (local or remote) listen.
+
+```
+EVENT <Name> {
+  PAYLOAD     { <field>: <type>, ... }
+  SUBSCRIBERS [<NodeName>, ...]         // optional: cross-node distribution
+  RETAIN      <duration>                // optional: replay buffer
+}
+```
+
+```agicore
+EVENT ArticleSubmitted {
+  PAYLOAD {
+    article_id: string REQUIRED
+    author_id:  string REQUIRED
+    submitted_at: datetime
+  }
+  SUBSCRIBERS [EditorNode, ModerationNode]
+  RETAIN 24h
+}
+```
+
+Generates a Tauri event bus command (`emit_event`) + per-event TypeScript wrappers (`emitArticleSubmitted({...})`, `listenArticleSubmitted(cb)`). `SUBSCRIBERS` are cross-node listeners auto-wired through the `MESH`. Use `EVENT` for fan-out where the producer doesn't know (or care) who the consumers are.
+
+---
+
+## NBVE
+
+**Non-Blocking Variant Evaluation.** Runs a cheaper/smaller model shadow-mode alongside the production model, gated by SPC thresholds — automatically promoting when quality meets the bar. The mechanism for progressive AI cost optimization without production risk.
+
+```
+NBVE <Name> {
+  PRODUCTION  <model_id>
+  CANDIDATE   <model_id>
+  METRICS     [quality, latency, cost]
+  SPC_FLOOR   <0.0-1.0>
+  PROMOTION_WINDOW <n_runs>
+  CHAIN       <EscalationChainName>     // optional: tie into a chain's promotion logic
+}
+```
+
+```agicore
+NBVE SummarizationDowngrade {
+  PRODUCTION       "claude-sonnet-4-6"
+  CANDIDATE        "claude-haiku-4-5"
+  METRICS          [quality, latency, cost]
+  SPC_FLOOR        0.92
+  PROMOTION_WINDOW 200
+  CHAIN            SummarizationChain
+}
+```
+
+Generates a shadow runner class with `isReadyForPromotion()` and `getActiveModel()` methods. The candidate runs side-by-side, its outputs scored against production; once SPC stays above floor for `PROMOTION_WINDOW` runs, the candidate becomes production. Use to safely downshift cost or test new providers.
+
+---
+
+## CONTRACT
+
+A machine-readable service agreement between parties. Generates a TypeScript schema, a SQLite lifecycle table (`draft → pending_signature → signed → active → completed | cancelled | disputed`), and Rust CRUD commands. Non-custodial — Agicore coordinates state; external providers move money.
+
+```
+CONTRACT <Name> {
+  PARTIES      { <role_name>: <IdentityName>, ... }
+  TERMS        { <term_name>: <type> = <default>, ... }
+  DELIVERABLES [<description>, ...]
+  PAYMENT      { amount: <number>, currency: <code>, provider: <ProviderName> }
+  GOVERNANCE   <AuthorityName>
+}
+```
+
+```agicore
+CONTRACT MonthlyEditorial {
+  PARTIES {
+    publisher: PublisherIdentity
+    editor:    EditorIdentity
+  }
+  TERMS {
+    word_count_target: number = 5000
+    deadline_day:      number = 28
+  }
+  DELIVERABLES ["Edited articles", "Editorial calendar"]
+  PAYMENT { amount: 2500.00, currency: "USD", provider: StripeConnect }
+  GOVERNANCE EditorialAuthority
+}
+```
+
+Generates a SQLite `contracts` table with full lifecycle state, a Rust state-machine guard, and TypeScript invoke wrappers. Contract signing is logged with both parties' signatures via the linked `IDENTITY`s. Use for any structured B2B/B2C agreement that needs an auditable lifecycle.
+
+---
+
+## REPUTATION
+
+SPC-driven trust scoring. Tracks metric samples per identity, applies decay, and emits a state transition (`new → maturing → mature`) once enough samples accumulate.
+
+```
+REPUTATION <Name> {
+  SUBJECT   <IdentityName>
+  METRICS   { <metric_name>: <type>, ... }
+  SPC       { sample_size: <n>, control_limits: tight | normal | loose }
+  DECAY     <half_life_duration>
+}
+```
+
+```agicore
+REPUTATION EditorialReputation {
+  SUBJECT   EditorIdentity
+  METRICS {
+    on_time_rate:   float
+    quality_score:  float
+    revision_count: number
+  }
+  SPC       { sample_size: 30, control_limits: normal }
+  DECAY     90d
+}
+```
+
+Generates a SQLite `reputation_scores` table and a TypeScript `Tracker` class with `addSample()`, `getState()`, and `isEligibleForDecay()`. The `parseHalfLife()` utility turns `90d`, `6mo`, `1y` into seconds. Use to make trust quantitative and decay-aware rather than vibes-based.
+
+---
+
+## SUBSCRIPTION
+
+Recurring creator support. Defines provider, subscriber, term, and payment in DSL; generates a typed config constant + SQLite subscriptions table + Rust CRUD.
+
+```
+SUBSCRIPTION <Name> {
+  PROVIDER   <IdentityName>
+  SUBSCRIBER <IdentityName>
+  TERMS      { tier: <"name">, billing: monthly | annual, perks: [<perk_id>, ...] }
+  PAYMENT    { amount: <number>, currency: <code>, provider: <ProviderName> }
+}
+```
+
+```agicore
+SUBSCRIPTION SupporterTier {
+  PROVIDER   PublisherIdentity
+  SUBSCRIBER ReaderIdentity
+  TERMS {
+    tier:    "supporter"
+    billing: monthly
+    perks:   ["ad_free", "early_access", "comment_replies"]
+  }
+  PAYMENT { amount: 5.00, currency: "USD", provider: StripeConnect }
+}
+```
+
+Generates a SQLite `subscriptions` table and Rust `create_subscription` / `list_subscriptions` / `cancel_subscription` commands. The `perks` array is typed as `readonly string[]`, so TypeScript code that gates a feature against `perks.includes('ad_free')` is autocomplete-safe.
+
+---
+
+## DISPUTE
+
+Structured conflict resolution attached to a `CONTRACT`. Defines the legal state machine and the human-driven resolution path.
+
+```
+DISPUTE <Name> {
+  CONTRACT      <ContractName>
+  STATES        [opened, investigating, resolved, escalated]
+  RESOLUTION    { mediator: <IdentityName>, outcome: refund | partial | dismissed }
+  EVIDENCE      { allowed_types: [<type>, ...] }
+}
+```
+
+```agicore
+DISPUTE MissedDeadlineDispute {
+  CONTRACT      MonthlyEditorial
+  STATES        [opened, investigating, resolved, escalated]
+  RESOLUTION    { mediator: ArbiterIdentity, outcome: refund | partial | dismissed }
+  EVIDENCE      { allowed_types: ["screenshot", "log_export", "third_party_attestation"] }
+}
+```
+
+Generates state + resolution union types, a `DisputeRecord` interface, and a `${Name}Transitions` map state machine. Wire `EVIDENCE.allowed_types` to your `PACKET` validation so the runtime rejects unsupported evidence submissions before they reach the human reviewer.
 
 ---
 
@@ -861,7 +1260,7 @@ Each entity write triggers an embedding update. At query time, `RECALL` returns 
 
 ---
 
-## Ambient Intelligence Layer
+## Ambient + Embedded Layer
 
 ---
 
@@ -941,6 +1340,156 @@ Zones define isolation boundaries — nodes inside a zone share a channel and ca
 
 ---
 
+## MESH
+
+A distributed compute fabric across `NODE`s. Declares the topology, governance, and accounting model for cross-node work — the unit that turns a single Tauri app into a cooperating cluster.
+
+```
+MESH <Name> {
+  NODES        [<NodeName>, ...]
+  TOPOLOGY     mesh | star | ring
+  GOVERNS      <AuthorityName>
+  ACCOUNTING   { credits_per_hour: <n>, reconcile: hourly | daily }
+}
+```
+
+```agicore
+MESH EditorialMesh {
+  NODES      [WriterNode, EditorNode, ReviewerNode]
+  TOPOLOGY   mesh
+  GOVERNS    EditorialAuthority
+  ACCOUNTING { credits_per_hour: 100, reconcile: daily }
+}
+```
+
+Generates a SQLite `mesh_accounting` table, a TypeScript balance view (`getNodeBalance(nodeName)`), and per-node CONTRIBUTES rows that track who paid for whose compute. `CHANNEL OVERFLOW_TO` (a CHANNEL field) auto-routes messages to a sibling node when local pressure spikes. Use `MESH` when a system spans more than one runtime.
+
+---
+
+## ACTUATOR
+
+A physical-world output device — motor, servo, relay, LED strip. Declares the safe state, the control surface, and the safety envelope.
+
+```
+ACTUATOR <Name> {
+  TYPE        motor | servo | relay | led | speaker | display
+  MODEL       "<part_number>"
+  SAFE_STATE  <value>
+  RANGE       { min: <n>, max: <n> }
+  ZONE        <ZoneName>
+}
+```
+
+```agicore
+ACTUATOR DoorLock {
+  TYPE        relay
+  MODEL       "Sonoff-SV"
+  SAFE_STATE  locked
+  ZONE        EntrywayZone
+}
+
+ACTUATOR PanTiltMount {
+  TYPE        servo
+  MODEL       "MG996R"
+  SAFE_STATE  centered
+  RANGE       { min: -90, max: 90 }
+  ZONE        SecurityCameraZone
+}
+```
+
+Generates Rust command stubs (`set_${name}`, `${name}_to_safe()`) and a watchdog that returns the actuator to `SAFE_STATE` on connection loss. Use `ACTUATOR` for any physical output you need the deterministic runtime to govern.
+
+---
+
+## PLATFORM
+
+The hardware platform an app is targeting — Raspberry Pi, ESP32, NVIDIA Jetson, generic Linux. Drives toolchain selection and pin assignments for `ACTUATOR`/`SENSOR`.
+
+```
+PLATFORM <Name> {
+  ARCH        x86_64 | aarch64 | armv7 | riscv64 | esp32
+  OS          linux | windows | macos | freertos | none
+  PINS        { <peripheral>: <pin>, ... }
+}
+```
+
+```agicore
+PLATFORM EdgeNodeRPi5 {
+  ARCH x86_64
+  OS   linux
+  PINS {
+    door_lock_relay: GPIO17
+    pan_servo:       GPIO18
+    tilt_servo:      GPIO19
+    temperature:     I2C_1
+  }
+}
+```
+
+Generates a `platform.rs` constants module and a build-time check that ensures the cargo target triple matches `ARCH`/`OS`. Use `PLATFORM` to make an embedded app's hardware contract explicit and machine-checked.
+
+---
+
+## NULLCLAW
+
+Declares a NullClaw agent runtime — bounded tool bindings, model providers, and safety guards for autonomous-ish tasks where you DO want short loops of agentic behavior but only within a verified envelope.
+
+```
+NULLCLAW <Name> {
+  PROVIDER    <AiServiceName>
+  TOOLS       [<ToolName>, ...]
+  MAX_STEPS   <n>
+  HALT_ON     [low_confidence, budget_exceeded, tool_error]
+  AUTHORITY   <AuthorityName>
+}
+```
+
+```agicore
+NULLCLAW ContentResearcher {
+  PROVIDER  AnthropicService
+  TOOLS     [WebSearch, FetchURL, SummarizeText]
+  MAX_STEPS 8
+  HALT_ON   [low_confidence, budget_exceeded, tool_error]
+  AUTHORITY ResearchAuthority
+}
+```
+
+Generates a Rust runtime with hard per-tool invocation limits, mandatory `MAX_STEPS` enforcement, and per-step audit logging. NullClaw is the deliberately-limited inverse of an open-ended agent loop — bounded, signed, governed.
+
+---
+
+## BRAIN_BODY
+
+A "brain ↔ body" tether: pairs a `NULLCLAW` agent (the brain) with one or more `ACTUATOR`s + `SENSOR`s (the body) under a single `PLATFORM`. The unit of embodied cognition.
+
+```
+BRAIN_BODY <Name> {
+  BRAIN       <NullclawName>
+  BODY {
+    ACTUATORS [<ActuatorName>, ...]
+    SENSORS   [<SensorName>, ...]
+  }
+  PLATFORM    <PlatformName>
+  TICK        <duration>
+}
+```
+
+```agicore
+BRAIN_BODY SecurityCameraRig {
+  BRAIN     IntruderClassifier
+  BODY {
+    ACTUATORS [PanTiltMount, AlertLED]
+    SENSORS   [WideAngleCamera, MotionPIR]
+  }
+  PLATFORM  EdgeNodeRPi5
+  TICK      500ms
+}
+```
+
+Generates the wiring code so the brain's outputs become actuator commands and the sensors' events stream into the brain on every `TICK`. Use `BRAIN_BODY` to compose physical-world systems out of the platform's declarative primitives.
+
+---
+
 ## Semantic Operating Environment
 
 ---
@@ -974,6 +1523,292 @@ COMPILER ChatToArticle {
 ```
 
 `EXTRACT` fields can pull directly from a source field, call an `ACTION` to derive the value, or set a literal. The compiler runs the extractions, validates the output against the target `ENTITY` schema, and writes the result to the database. Use `COMPILER` to make session artifacts (conversations, notes, brainstorms) first-class persistent entities.
+
+---
+
+## Deployment Layer
+
+---
+
+## TARGET
+
+The compilation target an `.agi` file is destined for — desktop (Tauri), web (Axum + React), CLI, or bare-Rust library. Switches the codegen backend.
+
+```
+TARGET <Name> {
+  KIND       desktop | web | cli | library
+  RUNTIME    tauri | axum | rocket
+  BUNDLE_AS  msi | dmg | appimage | docker | wasm
+  HOST       "<bind_addr>"               // web only
+  PORT       <n>                          // web only
+}
+```
+
+```agicore
+TARGET DesktopBundle {
+  KIND      desktop
+  RUNTIME   tauri
+  BUNDLE_AS msi | dmg | appimage
+}
+
+TARGET WebService {
+  KIND      web
+  RUNTIME   axum
+  BUNDLE_AS docker
+  HOST      "0.0.0.0"
+  PORT      3008
+}
+```
+
+The compiler reads `TARGET` early to pick the codegen tree. Multiple `TARGET` declarations in one file produce multi-target bundles — the same `ENTITY`/`ACTION` core compiles to both a desktop app and a web service.
+
+---
+
+## AUTH
+
+Declares how the app authenticates users. Generates middleware, route guards, and a session model.
+
+```
+AUTH <Name> {
+  PROVIDER    oauth_google | oauth_github | magic_link | password | sso_saml
+  SESSION     cookie | jwt | bearer
+  TIMEOUT     <duration>
+  REQUIRE     [<scope>, ...]              // optional, per-route gating
+}
+```
+
+```agicore
+AUTH UserLogin {
+  PROVIDER oauth_google
+  SESSION  jwt
+  TIMEOUT  7d
+  REQUIRE  [profile, email]
+}
+```
+
+Generates auth routes (`/auth/login`, `/auth/callback`, `/auth/logout`), session middleware, and a typed `useAuth()` hook for the frontend. Combine with `TENANT` for multi-tenant isolation.
+
+---
+
+## TENANT
+
+Multi-tenant isolation. Generates per-tenant row scoping on every `ENTITY` and rewrites queries to add the tenant predicate automatically.
+
+```
+TENANT <Name> {
+  KEY          <field_name>            // e.g. organization_id
+  SCOPE        all | [<EntityName>, ...]
+  RESOLVE_FROM auth_session | header | subdomain
+}
+```
+
+```agicore
+TENANT OrgIsolation {
+  KEY          organization_id
+  SCOPE        all
+  RESOLVE_FROM auth_session
+}
+```
+
+The compiler adds `organization_id` to every entity table (or only the listed ones), wires every Tauri command / Axum route to extract the tenant from the request, and rejects cross-tenant access at the query layer. Use `TENANT` whenever an app holds data for more than one customer.
+
+---
+
+## Primitives
+
+---
+
+## MACRO
+
+A compile-time helper that expands into one or more declarations. Lets you express common patterns once and reuse them.
+
+```
+MACRO <name>(<param>: <type>, ...) {
+  <body — emits one or more declarations with ${param} interpolation>
+}
+
+// Invocation site:
+@<name>(<arg>, ...)
+```
+
+```agicore
+MACRO timestamped_entity(name: identifier, fields: block) {
+  ENTITY ${name} {
+    ${fields}
+    created_at: datetime DEFAULT now()
+    updated_at: datetime DEFAULT now()
+  }
+}
+
+@timestamped_entity(Article, {
+  title: string REQUIRED
+  body:  text
+})
+```
+
+Macros are expanded by the lexer before parsing — the resulting AST is identical to hand-writing the expanded form. Use `MACRO` for cross-cutting patterns (timestamps, audit fields, soft-delete columns) that would otherwise be repeated on dozens of entities.
+
+---
+
+## MACRO_REGISTRY
+
+A registry of macros distributable as a package — the `SKILLDOC` of `MACRO`. Generates a versioned import surface so other apps can pull a known-good macro set.
+
+```
+MACRO_REGISTRY <Name> {
+  VERSION "<semver>"
+  MACROS  [<MacroName>, ...]
+  EXPORTS [<MacroName>, ...]      // public surface (subset of MACROS)
+}
+```
+
+```agicore
+MACRO_REGISTRY StandardPatterns {
+  VERSION "1.0.0"
+  MACROS  [timestamped_entity, soft_delete, audit_fields]
+  EXPORTS [timestamped_entity, soft_delete, audit_fields]
+}
+```
+
+Generates a manifest file (`macros.json`) the compiler reads on `@import` directives. Use `MACRO_REGISTRY` to share pattern libraries across the org without copy-paste drift.
+
+---
+
+## LOG
+
+A typed logging surface for the generated runtime. Declares log channels, levels, and where each goes.
+
+```
+LOG <Name> {
+  CHANNEL   <name>
+  LEVEL     trace | debug | info | warn | error
+  SINK      file | stdout | both
+  PATH      "<file_path>"           // when SINK = file | both
+  ROTATION  <size> | <duration>
+}
+```
+
+```agicore
+LOG AppLog {
+  CHANNEL  app
+  LEVEL    info
+  SINK     both
+  PATH     "logs/app.log"
+  ROTATION 50MB
+}
+
+LOG AuditLog {
+  CHANNEL  audit
+  LEVEL    info
+  SINK     file
+  PATH     "logs/audit.jsonl"
+  ROTATION 7d
+}
+```
+
+Generates a Rust logger with zero new dependencies (uses `std::fs` + `chrono`) and a per-channel TS helper for the frontend (`logApp.info(...)`, `logAudit.warn(...)`). Use `LOG` when stdout isn't enough — audit trails, structured logging, rotated files.
+
+---
+
+## THEME
+
+A theming primitive — color tokens, fonts, spacing — that flows into the generated React + Tailwind config.
+
+```
+THEME <Name> {
+  COLORS    { <token>: "<hex>", ... }
+  FONTS     { sans: "<family>", mono: "<family>" }
+  SPACING   { sm: "<size>", md: "<size>", lg: "<size>" }
+  RADIUS    { sm: "<n>px", md: "<n>px", lg: "<n>px" }
+  DARK_MODE auto | always | never
+}
+```
+
+```agicore
+THEME NovaSynDark {
+  COLORS {
+    bg_primary:   "#0f172a"
+    bg_secondary: "#1e293b"
+    text:         "#f1f5f9"
+    accent:       "#3b82f6"
+  }
+  FONTS    { sans: "Inter", mono: "JetBrains Mono" }
+  DARK_MODE always
+}
+```
+
+Generates a `tailwind.config.js` extension, CSS custom properties, and a TypeScript `theme` constant. Components reference tokens via `text-text` / `bg-bg-primary` Tailwind classes — never raw hex codes. Use `THEME` so theme tokens have a single source of truth.
+
+---
+
+## SEED
+
+Initial data inserted into the database at first run — config rows, lookup tables, demo content. Three forms: `key value`, `key: value`, and bulk `RECORDS [...]`.
+
+```
+// Single-record forms:
+SEED <EntityName> { <field> <value> }
+SEED <EntityName> { <field>: <value> }
+
+// Bulk form:
+SEED <EntityName> {
+  RECORDS [
+    { <field>: <value>, ... },
+    { <field>: <value>, ... }
+  ]
+}
+
+// Bracket sugar:
+SEED <EntityName> [
+  { <field>: <value>, ... },
+  { <field>: <value>, ... }
+]
+```
+
+```agicore
+SEED Tag {
+  RECORDS [
+    { id: "tag-1", name: "AI", color: "#3b82f6" },
+    { id: "tag-2", name: "Writing", color: "#10b981" },
+    { id: "tag-3", name: "Engineering", color: "#f59e0b" }
+  ]
+}
+
+SEED AppSetting { key: "theme" value: "dark" }
+```
+
+Emitted as `INSERT OR IGNORE INTO ...` statements in the initial migration — re-runs are idempotent. Use `SEED` for lookup tables, demo data, and first-run configuration that ships with the app.
+
+---
+
+## TYPE
+
+A type alias — names a complex type so it can be referenced by `field_def`s, `INPUT`/`OUTPUT` blocks, and `PACKET` payloads without repeating the structure.
+
+```
+TYPE <Name> = <type_expr>
+
+// Where <type_expr> is:
+//   string | number | bool | json | datetime …       (primitives)
+//   <EntityName>                                      (entity reference)
+//   array(<type>)                                    (array of)
+//   { <field>: <type>, ... }                         (record literal)
+//   <T1> | <T2> | ...                                (union)
+```
+
+```agicore
+TYPE TokenUsage = { prompt: number, completion: number, total: number }
+
+TYPE ChatRole = "system" | "user" | "assistant"
+
+ENTITY Message {
+  role:   ChatRole
+  body:   text
+  tokens: TokenUsage
+}
+```
+
+The compiler inlines the type at every use site — no runtime cost, just a naming convenience that makes complex shapes (especially unions and records) ergonomic to reuse.
 
 ---
 
