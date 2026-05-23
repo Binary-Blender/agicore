@@ -1,4 +1,4 @@
-# Skill Doc Format — Specification v1.0
+# Skill Doc Format — Specification v1.1
 
 A packaging convention for **teaching AI models how to do a specific thing well**.
 
@@ -39,21 +39,21 @@ YAML, between `---` fences, at the top of the file:
 ---
 name:           short-slug
 version:        1.0.0
-tier:           baby                    # or "super"
-context_budget: 16000                   # token budget the author targeted
-domain:         agicore-dsl-authoring   # short human-readable domain tag
-target_models:                          # non-binding hints
+tier:           baby                       # or "super"
+context_budget: 16000                       # token budget the author targeted
+domain:         agicore-dsl-authoring       # short human-readable domain tag
+self_check:     mechanical                  # or "rubric" (v1.1)
+target_models:                              # non-binding hints
   - claude-haiku-4-5
   - llama-3.1-8b-instruct
-  - qwen-2.5-7b
-license:        MIT                     # how this doc may be reused
-checksum:       sha256:abc123…          # optional; for integrity verification
+license:        MIT                         # how this doc may be reused
+checksum:       sha256:abc123…              # optional; for integrity verification
 ---
 ```
 
-**Required fields:** `name`, `version`, `tier`, `context_budget`, `domain`, `license`.
+**Required fields:** `name`, `version`, `tier`, `context_budget`, `domain`, `self_check`, `license`.
 
-**Optional fields:** `target_models`, `checksum`, `depends_on` (a list of other skill docs this one assumes), `extends` (a Baby Step that this Super extends), `homepage`, `repository`.
+**Optional fields:** `target_models`, `checksum`, `depends_on` (a list of other skill docs this one assumes), `extends` (a Baby Step that this Super extends), `target_audience` (more specific than `domain`), `homepage`, `repository`.
 
 ### 2. Body sections
 
@@ -96,9 +96,27 @@ What doesn't work yet. What works but counterintuitively. What looks like a bug 
 #### `## L6 — Self-check prompts`
 3-5 (Baby) or 5-15 (Super) prompts the author of this doc believes a model who has read it should be able to satisfy. Each prompt is followed by an "expected shape" — the structural features the output must have.
 
-When possible, the expected shape is checkable by a parser or schema. For Agicore: every self-check output must be a `.agi` file that the parser accepts.
-
 The self-check section is what turns a doc into a teaching artifact. A skill doc without it has no way to know if it landed.
+
+##### Two self-check modes (v1.1)
+
+The format supports two distinct ways to verify a self-check output:
+
+**Mechanical self-check.** The output is a constrained artifact (source file, JSON document, SQL schema, etc.) and a verifier (parser, validator, schema checker) can mechanically accept or reject it. Used when the domain is *authoring* — the AI produces a single artifact constrained by a grammar.
+
+Declare with `self_check: mechanical` in frontmatter. Example: Agicore. Every L4 example must compile with the domain's compiler; every L6 self-check expects a verifiable artifact.
+
+**Rubric self-check.** The output is a strategic plan, deployment sequence, recommendation, or other open-ended artifact that cannot be mechanically verified. A checklist verifies substantive completeness — "does the plan cover X, Y, Z?" — but a human or second model judges quality. Used when the domain is *composition / consulting* — the AI produces guidance, not an artifact.
+
+Declare with `self_check: rubric` in frontmatter. Example: Accelerando (manufacturing ERP deployment consulting). Every L6 self-check ships with a numbered expected-shape rubric: each item is either present (pass) or absent (fail).
+
+A great rubric tests three dimensions at once:
+
+1. **Domain knowledge** — does the output use correct domain vocabulary, regulatory acronyms, industry standards? (e.g., "Identifies IATF 16949 (not AS9100) as the automotive-tier-2 compliance target.")
+2. **Structural completeness** — does the output address every dimension a competent practitioner would cover? (e.g., "Names master data setup, executive sponsor, phased go-live, training plan, KPIs, risks.")
+3. **Pragmatic sequencing** — does the output order things in a sequence that won't fail? (e.g., "Training rollout via LMS BEFORE ERP go-live, not after.")
+
+If you can't write a good rubric for your L6 prompts, your skill doc isn't ready. The rubric forces the author to make tacit knowledge explicit.
 
 ---
 
@@ -211,15 +229,20 @@ A v2 of this convention could add structured tool-call hooks (e.g., a `self_chec
 
 ---
 
-## Reference implementation
+## Reference implementations
 
-This format is proven by two skill docs in the same directory:
+This format is proven by skill docs in the same directory, covering both self-check modes:
 
-- [`agicore.baby.skill.md`](agicore.baby.skill.md) — Baby Step for the Agicore DSL (~16k tokens; targets small open-source models)
-- [`agicore.super.skill.md`](agicore.super.skill.md) — Super Skill Doc for the Agicore DSL (~80k tokens; targets Claude Code-class models)
+**Mechanical self-check (authoring domain):**
+- [`agicore.baby.skill.md`](agicore.baby.skill.md) — Baby Step for the Agicore DSL (~7.5k tokens; small open-source models). Every L4 example compiles.
+- [`agicore.super.skill.md`](agicore.super.skill.md) — Super Skill Doc for the Agicore DSL (~18k tokens; frontier models). Every L4 recipe compiles.
 
-If you adopt this format for a new domain, those two are the patterns to copy.
+**Rubric self-check (consulting domain):**
+- [`accelerando.manufacturing.baby.skill.md`](accelerando.manufacturing.baby.skill.md) — Baby Step for advising mid-sized discrete manufacturers on Accelerando ERP deployment (~16k tokens).
+- [`accelerando.manufacturing.super.skill.md`](accelerando.manufacturing.super.skill.md) — Super Skill Doc with 4+ industry archetypes, per-app config playbooks, KPI frameworks, failure modes (~60k tokens).
+
+If you adopt this format for a new domain, the matching pair (Agicore for authoring, Accelerando for consulting) is the pattern to copy.
 
 ---
 
-*Format v1.0 · 2026-05-22 · MIT*
+*Format v1.1 · 2026-05-23 · MIT*

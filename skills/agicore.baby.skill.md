@@ -4,6 +4,7 @@ version:        1.0.0
 tier:           baby
 context_budget: 16000
 domain:         agicore-dsl-authoring
+self_check:     mechanical
 target_models:
   - claude-haiku-4-5
   - llama-3.1-8b-instruct

@@ -4,6 +4,7 @@ version:        1.0.0
 tier:           super
 context_budget: 100000
 domain:         agicore-dsl-authoring
+self_check:     mechanical
 target_models:
   - claude-opus-4-7
   - claude-sonnet-4-6

@@ -245,14 +245,21 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 
 ## Skill Docs — Teach an AI to use Agicore in one file
 
-The [`skills/`](skills/) directory ships two packaged skill documents that turn any AI assistant into a competent Agicore author:
+The [`skills/`](skills/) directory ships packaged skill documents that turn any AI assistant into a competent practitioner — for both **authoring** the DSL and for **deploying** the Accelerando enterprise stack.
 
-- [**`agicore.baby.skill.md`**](skills/agicore.baby.skill.md) — the **Baby Step**. ~7.5k tokens. Fits in any small open-source model's context window. Maximum semantic density: anti-patterns, error→fix table, and 5 worked examples that every parse and compile. Designed for the moment when you want a 7B-class model to produce valid `.agi`.
-- [**`agicore.super.skill.md`**](skills/agicore.super.skill.md) — the **Super Skill Doc**. ~18k tokens. For frontier models (Claude Code, Cursor). All 58 declarations with full syntax, 14 verified recipes, comprehensive anti-pattern catalog, edge cases from real incidents, and 12 self-check prompts.
+**For authoring `.agi` files (mechanical self-check — parser verifies output):**
 
-Both follow the [Skill Doc format spec](skills/SKILL_FORMAT.md) — a portable convention for packaging "teach an AI to do this domain well" as a single Markdown file with YAML frontmatter. The format isn't Agicore-specific; any domain (Tauri, Rust ownership, k8s, SQL injection prevention) can ship its own Baby Step and Super Skill Doc using the same shape.
+- [**`agicore.baby.skill.md`**](skills/agicore.baby.skill.md) — ~7.5k tokens. Fits any small open-source model. Maximum semantic density: anti-patterns, error→fix table, 5 worked examples that all parse and compile. Use when you want a 7B-class model to produce valid `.agi`.
+- [**`agicore.super.skill.md`**](skills/agicore.super.skill.md) — ~18k tokens. For frontier models (Claude Code, Cursor). All 58 declarations with full syntax, 14 verified recipes, anti-pattern catalog, edge cases, 12 self-check prompts.
 
-**To use a skill doc**: attach it as a system prompt or a file in your AI coding session. The doc tells the model what to author, what anti-patterns to avoid, and how to self-verify with the parser.
+**For deploying the Accelerando manufacturing stack (rubric self-check — checklist verifies output):**
+
+- [**`accelerando.manufacturing.baby.skill.md`**](skills/accelerando.manufacturing.baby.skill.md) — ~8.3k tokens. Catalog of all 12 Enterprise Core apps in manufacturing context. The "Acme Machining" 18-month deployment walked end-to-end. 10 anti-patterns from real ERP failures (Hershey, FoxMeyer, HP, Lidl) with corrective mitigations. 5 rubric self-checks.
+- [**`accelerando.manufacturing.super.skill.md`**](skills/accelerando.manufacturing.super.skill.md) — ~25k tokens. Full deployment playbook. 5 industry archetypes (greenfield, legacy replacement, multi-plant, M&A, customer-pressure rescue). Per-app deployment guidance with configuration decisions, integration patterns, common configurations per archetype, gotchas. KPI framework. Change-management playbook. 20 anti-patterns. 10 rubric self-checks.
+
+All four follow the [Skill Doc format spec](skills/SKILL_FORMAT.md) (v1.1) — a portable convention for packaging "teach an AI to do this domain well" as a single Markdown file with YAML frontmatter. The format supports two self-check modes: **mechanical** (Agicore-style: parser verifies the output structurally) and **rubric** (Accelerando-style: checklist verifies substantively). Both modes are valid; the format isn't Agicore-specific — any domain (Tauri ACL, Rust ownership, k8s, SQL injection prevention, ERP deployment consulting) can ship its own Baby Step and Super Skill Doc using the same shape.
+
+**To use a skill doc:** attach it as a system prompt or a file in your AI coding/consulting session. The doc tells the model what to do, what anti-patterns to avoid, and how to self-verify — either against a parser (Agicore) or against a structured rubric (Accelerando).
 
 ---
 
