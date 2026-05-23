@@ -54,6 +54,7 @@ import { generateWebClient } from './generators/web-client.js';
 import { generateTelemetry } from './generators/telemetry.js';
 import { generateWorkflow } from './generators/workflow.js';
 import { generateMutations } from './generators/mutations.js';
+import { generateResponder } from './generators/responder.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -128,6 +129,7 @@ export function compile(source: string): CompileResult {
     generateTelemetry(ast),
     generateWorkflow(ast),
     generateMutations(ast),
+    generateResponder(ast),
   ];
 
   for (const gen of generators) {

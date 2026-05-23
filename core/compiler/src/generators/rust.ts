@@ -484,6 +484,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   // Phase 11.4a — Mutation proposal lifecycle (gated only on MUTATION_POLICY).
   const hasMutationRuntime = !!ast.mutationPolicies && ast.mutationPolicies.length > 0;
   if (hasMutationRuntime) modLines.push('pub mod mutations;');
+  // Phase 11.4c — Andon responder (closes the loop end-to-end).
+  if (hasMutationRuntime) modLines.push('pub mod responder;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -654,7 +656,14 @@ export function generateRust(ast: AgiFile): Map<string, string> {
         'commands::mutations::get_proposals_for_andon',
       ]
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds];
+  // Phase 11.4c — Andon responder commands (close the loop end-to-end).
+  const responderCmds = hasMutationRuntime
+    ? [
+        'commands::responder::respond_to_andon',
+        'commands::responder::list_andon_responder_dispositions',
+      ]
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

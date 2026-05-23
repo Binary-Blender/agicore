@@ -6176,6 +6176,93 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY
   assert(ts.includes("'deployed' | 'escalated' | 'rejected'"),            'finalStatus union mirrors Rust discriminants');
 }
 
+section('Phase 11.4c — responder.rs emitted with full pipeline + stub responder');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true REGRESSION_SUITE 24h_recent_workflows }
+  ANDON_RESPONDER andon_handler
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/responder.rs') ?? '';
+  assert(rs.length > 0,                                                   'responder.rs emitted when MUTATION_POLICY present');
+  // Structural types
+  assert(rs.includes('pub struct AndonContext'),                          'AndonContext struct present');
+  assert(rs.includes('pub struct ResponderDraft'),                        'ResponderDraft struct present');
+  assert(rs.includes('pub struct AndonResolution'),                       'AndonResolution struct present');
+  // Pipeline helpers
+  assert(rs.includes('pub fn respond_to_andon_impl'),                     'respond_to_andon_impl present');
+  assert(rs.includes('pub fn generate_stub_response'),                    'stub responder present');
+  assert(rs.includes('fn link_proposal_to_andon'),                        'proposal-to-andon linker present');
+  assert(rs.includes('fn load_all_policies'),                             'policy loader present');
+  assert(rs.includes('fn policy_for_workflow'),                           'workflow→policy matcher present');
+  // Cross-module call into mutations.rs
+  assert(rs.includes('use crate::commands::mutations::'),                 'imports from mutations module');
+  assert(rs.includes('create_proposal_in_db'),                            'calls create_proposal_in_db helper');
+  assert(rs.includes('verify_and_persist'),                               'calls verify_and_persist helper');
+  assert(rs.includes('execute_sandbox'),                                  'calls execute_sandbox helper');
+  // Tauri commands
+  assert(rs.includes('pub fn respond_to_andon'),                          'respond_to_andon Tauri command');
+  assert(rs.includes('pub fn list_andon_responder_dispositions'),         'list_andon_responder_dispositions command');
+  // Disposition discriminants
+  assert(rs.includes('"no_policy"'),                                      'no_policy disposition');
+  assert(rs.includes('"no_responder"'),                                   'no_responder disposition');
+  assert(rs.includes('"no_candidate"'),                                   'no_candidate disposition');
+  assert(rs.includes('"proposed"'),                                       'proposed disposition');
+  // Embedded unit tests
+  assert(rs.includes('stub_proposes_for_no_rule_match'),                  'embedded test: no_rule_match');
+  assert(rs.includes('stub_declines_for_action_error'),                   'embedded test: action_error declined');
+  assert(rs.includes('policy_lookup_finds_matching_workflow'),            'embedded test: policy lookup');
+}
+
+section('Phase 11.4c — no MUTATION_POLICY → no responder.rs (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/responder.rs'),               'no responder.rs without MUTATION_POLICY');
+  assert(!files.has('src/lib/responder.ts'),                              'no responder.ts without MUTATION_POLICY');
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(!modRs.includes('pub mod responder;'),                           'responder module not declared in mod.rs');
+}
+
+section('Phase 11.4c — responder module + commands registered in main.rs');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(modRs.includes('pub mod responder;'),                            'responder module declared');
+  assert(mainRs.includes('commands::responder::respond_to_andon'),        'respond_to_andon registered in invoke_handler');
+  assert(mainRs.includes('commands::responder::list_andon_responder_dispositions'), 'list_dispositions registered');
+}
+
+section('Phase 11.4c — TS bindings expose respondToAndon + AndonResolution');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }  ANDON_RESPONDER h }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/responder.ts') ?? '';
+  assert(ts.length > 0,                                                   'responder.ts emitted');
+  assert(ts.includes('export interface AndonResolution'),                 'AndonResolution type exported');
+  assert(ts.includes('export type AndonResponderDisposition'),            'disposition union exported');
+  assert(ts.includes('respondToAndon'),                                   'respondToAndon wrapper exported');
+  assert(ts.includes("invoke<AndonResolution>('respond_to_andon'"),       'respondToAndon invokes respond_to_andon');
+  // Imports for cross-file type aliases
+  assert(ts.includes("import type { TierVerification, SandboxOutcome } from './mutations'"), 'cross-module TS types imported');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);
