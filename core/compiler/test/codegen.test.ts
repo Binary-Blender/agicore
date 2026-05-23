@@ -6894,6 +6894,89 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes('Phase 11.6b'),                                      'PARTIAL_APPROVAL annotated with phase');
 }
 
+section('Phase 11.5c — record_ai_improvement_cycle Tauri command emitted');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/improver.rs') ?? '';
+  assert(rs.includes('pub fn record_ai_improvement_cycle'),               'record_ai_improvement_cycle command emitted');
+  assert(rs.includes('pub struct AiCycleInput'),                          'AiCycleInput struct emitted');
+  // Reuses insert_cycle_row helper (no duplicate persistence logic)
+  assert(rs.includes('insert_cycle_row('),                                'reuses insert_cycle_row helper');
+  // Main.rs registration
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::improver::record_ai_improvement_cycle'), 'command in invoke_handler');
+}
+
+section('Phase 11.5c — TS bindings expose runImprovementCycleWithAI orchestration');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/improver.ts') ?? '';
+  // Core orchestration
+  assert(ts.includes('export async function runImprovementCycleWithAI'),  'runImprovementCycleWithAI exported');
+  assert(ts.includes('export interface AiImproverParams'),                'AiImproverParams type exported');
+  assert(ts.includes('export interface ImprovementDraftFromAI'),          'ImprovementDraftFromAI type exported');
+  // Helpers
+  assert(ts.includes('export function defaultImproverSystemPrompt'),      'system prompt helper exported');
+  assert(ts.includes('export function defaultImproverUserMessage'),       'user message helper exported');
+  assert(ts.includes('export function parseImprovementDraft'),            'draft parser exported');
+  assert(ts.includes('export async function recordAiImprovementCycle'),   'persistence wrapper exported');
+  // Orchestration sequence
+  assert(ts.includes("invoke<ChatResponseImp>('send_chat'"),              'calls send_chat for AI');
+  assert(ts.includes("invoke<string>('create_mutation_proposal'"),        'creates proposal');
+  assert(ts.includes("invoke<TierVerification>('verify_mutation_proposal'"),'verifies tier');
+  assert(ts.includes("invoke<SandboxOutcome>('execute_proposal_sandbox'"),'runs sandbox when verified');
+  assert(ts.includes("invoke<ImprovementCycle>('record_ai_improvement_cycle'"),'persists cycle outcome');
+  // Improvements are PROACTIVE so andonEventId is null when creating proposal
+  assert(ts.includes("andonEventId:     null,                // proactive, not reactive"), 'no andon linkage for kaizen path');
+  // Reasoner name records the model
+  assert(ts.includes('reasonerName:      \`ai:${'),                       'reasonerName tagged with ai:model');
+}
+
+section('Phase 11.5c — parseImprovementDraft handles same edge cases as responder parser');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/improver.ts') ?? '';
+  // Same robust parsing as parseResponderDraft
+  assert(ts.includes('match(/```'),                                        'parser strips markdown code fences');
+  assert(ts.includes('parsed?.decline === true'),                          'parser handles decline response');
+  assert(ts.includes("typeof parsed?.target !== 'string'"),                'validates target type');
+  assert(ts.includes("typeof parsed?.claimed_tier !== 'number'"),          'validates claimed_tier type');
+  assert(ts.includes('!Array.isArray(parsed?.claimed_scope)'),             'validates claimed_scope is array');
+}
+
+section('Phase 11.5c — failure modes record no_candidate cycle with audit notes');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/improver.ts') ?? '';
+  // Failure modes (AI throws, AI declines) both persist a no_candidate cycle
+  assert(ts.includes('AI call failed:'),                                  'AI-call-failed note recorded');
+  assert(ts.includes("'AI declined or response unparseable'"),            'decline/parse-failure note recorded');
+  // Both failure-mode branches call record_ai_improvement_cycle so the
+  // attempt shows up in the cycles list (not lost silently).
+  const failureCallCount = (ts.match(/record_ai_improvement_cycle/g) ?? []).length;
+  assert(failureCallCount >= 3,                                           'record cycle called from each failure branch + success');
+}
+
 section('Phase 11.4d — link_proposal_to_andon_event Tauri command emitted');
 {
   const src = `APP a { TITLE "A" DB a.db }

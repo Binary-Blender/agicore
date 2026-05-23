@@ -674,10 +674,12 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       ]
     : [];
   // Phase 11.5a — Improvement reasoner commands (kaizen entry).
+  // Phase 11.5c — adds record_ai_improvement_cycle for AI-orchestrated path.
   const improverCmds = hasMutationRuntime
     ? [
         'commands::improver::run_improvement_cycle',
         'commands::improver::list_improvement_cycles',
+        'commands::improver::record_ai_improvement_cycle',
       ]
     : [];
   // Phase 11.6 — Approval chain commands (human-in-the-loop for escalated proposals).

@@ -35,7 +35,11 @@ export function generateImprover(ast: AgiFile): Map<string, string> {
 
 export function improverCommandNames(ast: AgiFile): string[] {
   if (!isEnabled(ast)) return [];
-  return ['run_improvement_cycle', 'list_improvement_cycles'];
+  return [
+    'run_improvement_cycle',
+    'list_improvement_cycles',
+    'record_ai_improvement_cycle',   // Phase 11.5c
+  ];
 }
 
 /**
@@ -465,6 +469,57 @@ pub fn run_improvement_cycle(
     run_improvement_cycle_impl(db.inner(), &policy_name)
 }
 
+/// Phase 11.5c — Record an AI-orchestrated improvement cycle. The TS path
+/// (runImprovementCycleWithAI) runs the proposal lifecycle itself via the
+/// existing commands, then calls this to persist a tracking row in
+/// improvement_cycles. This keeps the persistence model uniform across
+/// the deterministic Rust path and the AI-orchestrated TS path.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AiCycleInput {
+    pub policy_name:           String,
+    pub reasoner_name:         Option<String>,
+    pub disposition:           String,        // 'proposed' | 'no_candidate' | etc
+    pub proposal_id:           Option<String>,
+    pub recent_runs_scanned:   i64,
+    pub notes:                 Option<String>,
+}
+
+#[tauri::command]
+pub fn record_ai_improvement_cycle(
+    db: State<'_, DbPool>,
+    input: AiCycleInput,
+) -> Result<ImprovementCycle, String> {
+    ensure_cycles_table(db.inner())?;
+    let id = Uuid::new_v4().to_string();
+    let now = chrono::Utc::now().to_rfc3339();
+    insert_cycle_row(
+        db.inner(),
+        &id,
+        &input.policy_name,
+        input.reasoner_name.as_deref(),
+        &input.disposition,
+        input.proposal_id.as_deref(),
+        input.recent_runs_scanned,
+        input.notes.as_deref(),
+        &now,
+        &now,
+    )?;
+    Ok(ImprovementCycle {
+        id,
+        policy_name:        input.policy_name,
+        reasoner_name:      input.reasoner_name,
+        disposition:        input.disposition,
+        proposal_id:        input.proposal_id,
+        verification:       None,
+        sandbox:            None,
+        recent_runs_scanned: input.recent_runs_scanned,
+        notes:              input.notes,
+        started_at:         now.clone(),
+        completed_at:       Some(now),
+    })
+}
+
 #[tauri::command]
 pub fn list_improvement_cycles(
     db: State<'_, DbPool>,
@@ -584,6 +639,201 @@ export async function listImprovementCycles(filter?: {
     policyName: filter?.policyName ?? null,
     limit:      filter?.limit ?? null,
   });
+}
+
+// ─── Phase 11.5c — Real AI improver (TS-orchestrated) ─────────────────────
+//
+// runImprovementCycle (above) uses a deterministic stub that proposes a
+// conservative threshold tweak when any recent runs exist. runImprovementCycleWithAI
+// instead calls send_chat with a JSON-output prompt, parses the result,
+// and runs it through the same verify+sandbox pipeline.
+//
+// Usage:
+//   const cycle = await runImprovementCycleWithAI({
+//     policyName:       'ops_mutation_policy',
+//     proposerIdentity: \`improver-ai:claude-sonnet-4-6:\${user.id}\`,
+//     model:            'claude-sonnet-4-6',
+//     contextSummary:   'Last 50 runs averaged 92% accuracy with 3 borderline misses on stripe webhook events.',
+//   });
+
+interface ChatResponseImp { content: string; model: string; provider: string; }
+
+export interface ImprovementDraftFromAI {
+  target: string;
+  claimedTier: number;
+  claimedScope: string[];
+  mutationContent: unknown;
+  reasoning: string;
+}
+
+export interface AiImproverParams {
+  policyName: string;
+  proposerIdentity: string;
+  model: string;
+  /** Optional caller-supplied summary of recent activity to focus the AI's attention.
+   *  When omitted, a generic "improve the system" prompt is used. */
+  contextSummary?: string;
+  /** Override the default system prompt (advanced). */
+  systemPrompt?: string;
+}
+
+export function defaultImproverSystemPrompt(): string {
+  return [
+    'You are an improvement reasoner for an AI-authored expert system. Your job is the kaizen role: surface small, low-risk improvements based on observed system behavior, without breaking anything that currently works.',
+    '',
+    'Respond with EXACTLY one JSON object matching this shape (no prose, no code fences):',
+    '{',
+    '  "target":          "<name of the module/workflow to refine>",',
+    '  "claimed_tier":    <integer 1-5; prefer the LOWEST tier that suffices>,',
+    '  "claimed_scope":   ["RULES_modify" | "WORKFLOW_modify" | ...],',
+    '  "mutation_content": { "kind": "<change kind>", ...details... },',
+    '  "reasoning":       "<one sentence explaining the expected improvement>"',
+    '}',
+    '',
+    'If you do not see a clear improvement to propose, respond instead with:',
+    '{ "decline": true, "reason": "<short reason>" }',
+    '',
+    'Rules:',
+    '- Prefer CONSERVATIVE tweaks (e.g., tightening thresholds, adding catchall rules) over disruptive ones.',
+    '- Prefer the smallest tier that genuinely covers your scope.',
+    '- If recent activity does not warrant a change, decline — the regression suite penalises noise.',
+    '- The proposal will be tier-verified + regression-tested before any deploy.',
+  ].join('\\n');
+}
+
+export function defaultImproverUserMessage(params: { policyName: string; contextSummary?: string }): string {
+  return [
+    \`Improvement cycle for policy: \${params.policyName}\`,
+    '',
+    params.contextSummary
+      ? \`Recent activity summary:\\n\${params.contextSummary}\`
+      : 'No specific activity summary provided. Propose a conservative improvement based on what a typical mature expert system would benefit from refining.',
+    '',
+    'Propose a single mutation that would improve system behavior.',
+  ].join('\\n');
+}
+
+export function parseImprovementDraft(raw: string): ImprovementDraftFromAI | null {
+  const fence = raw.match(/\`\`\`(?:json)?\\s*([\\s\\S]*?)\`\`\`/);
+  const body = fence ? fence[1] : raw;
+  const start = body.indexOf('{');
+  const end = body.lastIndexOf('}');
+  if (start < 0 || end < 0 || end < start) return null;
+  let parsed: any;
+  try { parsed = JSON.parse(body.substring(start, end + 1)); } catch { return null; }
+  if (parsed?.decline === true) return null;
+  if (
+    typeof parsed?.target !== 'string' ||
+    typeof parsed?.claimed_tier !== 'number' ||
+    !Array.isArray(parsed?.claimed_scope) ||
+    !parsed?.claimed_scope.every((s: unknown) => typeof s === 'string') ||
+    parsed?.mutation_content === undefined ||
+    typeof parsed?.reasoning !== 'string'
+  ) {
+    return null;
+  }
+  return {
+    target:          parsed.target,
+    claimedTier:     parsed.claimed_tier,
+    claimedScope:    parsed.claimed_scope,
+    mutationContent: parsed.mutation_content,
+    reasoning:       parsed.reasoning,
+  };
+}
+
+/**
+ * AI-orchestrated improvement cycle. Mirrors runImprovementCycle (the stub
+ * version) but routes proposal generation through send_chat. Records an
+ * improvement_cycles row at the end with disposition='proposed' on success
+ * or 'no_candidate' on AI failure / decline.
+ */
+export async function runImprovementCycleWithAI(params: AiImproverParams): Promise<ImprovementCycle> {
+  const systemPrompt = params.systemPrompt ?? defaultImproverSystemPrompt();
+  const userMessage  = defaultImproverUserMessage({
+    policyName:     params.policyName,
+    contextSummary: params.contextSummary,
+  });
+
+  let aiResp: ChatResponseImp;
+  try {
+    aiResp = await invoke<ChatResponseImp>('send_chat', {
+      request: {
+        messages: [{ role: 'user', content: userMessage }],
+        model: params.model,
+        system_prompt: systemPrompt,
+      },
+      requestId: \`improver-\${params.policyName}-\${Date.now()}\`,
+    });
+  } catch (e) {
+    return invoke<ImprovementCycle>('record_ai_improvement_cycle', {
+      input: {
+        policyName:        params.policyName,
+        reasonerName:      \`ai:\${params.model}\`,
+        disposition:       'no_candidate',
+        proposalId:        null,
+        recentRunsScanned: 0,
+        notes:             \`AI call failed: \${String(e).substring(0, 200)}\`,
+      },
+    });
+  }
+
+  const draft = parseImprovementDraft(aiResp.content);
+  if (!draft) {
+    return invoke<ImprovementCycle>('record_ai_improvement_cycle', {
+      input: {
+        policyName:        params.policyName,
+        reasonerName:      \`ai:\${params.model}\`,
+        disposition:       'no_candidate',
+        proposalId:        null,
+        recentRunsScanned: 0,
+        notes:             'AI declined or response unparseable',
+      },
+    });
+  }
+
+  const proposalId = await invoke<string>('create_mutation_proposal', {
+    input: {
+      andonEventId:     null,                // proactive, not reactive
+      policyName:       params.policyName,
+      proposerIdentity: params.proposerIdentity,
+      target:           draft.target,
+      claimedTier:      draft.claimedTier,
+      claimedScope:     draft.claimedScope,
+      mutationContent:  { reasoning: draft.reasoning, mutation: draft.mutationContent },
+    },
+  });
+  const verification = await invoke<TierVerification>('verify_mutation_proposal', { proposalId });
+  let sandbox: SandboxOutcome | null = null;
+  if (verification.allowed) {
+    sandbox = await invoke<SandboxOutcome>('execute_proposal_sandbox', { proposalId });
+  }
+
+  const cycle = await invoke<ImprovementCycle>('record_ai_improvement_cycle', {
+    input: {
+      policyName:        params.policyName,
+      reasonerName:      \`ai:\${params.model}\`,
+      disposition:       'proposed',
+      proposalId,
+      recentRunsScanned: 0,
+      notes:             null,
+    },
+  });
+  // Stitch the verification + sandbox onto the returned cycle so callers
+  // can read the full outcome without an extra fetch. The persisted row
+  // doesn't carry these fields (they live on the proposal); this is a
+  // convenience join for the caller.
+  return { ...cycle, verification, sandbox };
+}
+
+export async function recordAiImprovementCycle(input: {
+  policyName: string;
+  reasonerName: string | null;
+  disposition: ImprovementDisposition;
+  proposalId: string | null;
+  recentRunsScanned: number;
+  notes: string | null;
+}): Promise<ImprovementCycle> {
+  return invoke<ImprovementCycle>('record_ai_improvement_cycle', { input });
 }
 `;
 }
