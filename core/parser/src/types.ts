@@ -418,7 +418,11 @@ export interface MutationTierDecl {
   regressionSuite?: string;           // e.g. "24h_recent_workflows" | "full_golden_set"
   monitoringWindow?: string;          // duration string
   nbveWindow?: string;                // duration string
-  approvalAuthority?: string;         // identity name or human role
+  /** Identity name or human role. Single string = 1-of-1 signoff.
+   *  string[] (Phase 11.6b) = N-of-N multi-signer consensus required —
+   *  every authority in the list must approve before the proposal is
+   *  deployed. Any single rejection terminates the chain. */
+  approvalAuthority?: string | string[];
   span: SourceSpan;
 }
 

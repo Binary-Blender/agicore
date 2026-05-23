@@ -3572,6 +3572,55 @@ MUTATION_POLICY ops_policy {
   console.error(`  FAIL: MUTATION_POLICY: ${err}`);
 }
 
+section('Phase 11.6b — APPROVAL_AUTHORITY accepts bracketed list for multi-signer');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base       { SCOPE [RULES_modify] AUTO_DEPLOY true }
+  TIER 4 sensitive  { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [ops_lead, security_lead] }
+  TIER 5 governance { SCOPE [MUTATION_POLICY_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [ceo, cto, board_chair] }
+}`;
+  const ast = parse(src);
+  const p = ast.mutationPolicies[0]!;
+  const t4 = p.tiers.find((t) => t.tier === 4)!;
+  const t5 = p.tiers.find((t) => t.tier === 5)!;
+  assert(Array.isArray(t4.approvalAuthority),                  'T4 approvalAuthority is array form');
+  const t4auth = t4.approvalAuthority as string[];
+  assert(t4auth.length === 2 && t4auth[0] === 'ops_lead' && t4auth[1] === 'security_lead',
+                                                                'T4 list elements in order');
+  const t5auth = t5.approvalAuthority as string[];
+  assert(Array.isArray(t5auth) && t5auth.length === 3,         'T5 3-signer chain');
+  assert(t5auth.includes('ceo') && t5auth.includes('cto') && t5auth.includes('board_chair'),
+                                                                'T5 contains all three');
+  console.log('  Bracketed APPROVAL_AUTHORITY: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: APPROVAL_AUTHORITY list: ${err}`);
+}
+
+section('Phase 11.6b — APPROVAL_AUTHORITY single-identifier form still works (back-compat)');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 4 sensitive { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ops_lead }
+}`;
+  const ast = parse(src);
+  const t4 = ast.mutationPolicies[0]!.tiers[0]!;
+  assert(t4.approvalAuthority === 'ops_lead',                 'single ident still parses to string (not array)');
+  console.log('  Single-ident form unchanged');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: APPROVAL_AUTHORITY single: ${err}`);
+}
+
 section('Phase 11.3 — MUTATION_POLICY with REASONER refs + LEDGER');
 try {
   const src = `APP a { TITLE "A" DB a.db }

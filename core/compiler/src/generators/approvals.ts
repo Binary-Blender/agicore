@@ -92,9 +92,11 @@ fn ensure_approvals_table(db: &DbPool) -> Result<(), String> {
             id                  TEXT PRIMARY KEY,
             proposal_id         TEXT NOT NULL,
             policy_name         TEXT NOT NULL,
-            required_authority  TEXT,
+            required_authority  TEXT,                         -- JSON: single string OR string[]
+            required_threshold  INTEGER NOT NULL DEFAULT 1,   -- Phase 11.6b: signatures needed to advance
             status              TEXT NOT NULL DEFAULT 'pending',
-            resolved_by         TEXT,
+            signatures          TEXT NOT NULL DEFAULT '[]',   -- Phase 11.6b: JSON array of signoff records
+            resolved_by         TEXT,                         -- last resolver (terminal signature)
             resolved_at         TEXT,
             decision_notes      TEXT,
             requested_at        TEXT NOT NULL,
@@ -104,19 +106,33 @@ fn ensure_approvals_table(db: &DbPool) -> Result<(), String> {
          CREATE INDEX IF NOT EXISTS idx_approvals_proposal ON approval_requests(proposal_id);
          CREATE INDEX IF NOT EXISTS idx_approvals_policy   ON approval_requests(policy_name, requested_at DESC);",
     ).map_err(|e| e.to_string())?;
+    // Defensive column adds for upgrades from a pre-6b schema (no-op when columns exist).
+    let _ = conn.execute("ALTER TABLE approval_requests ADD COLUMN required_threshold INTEGER NOT NULL DEFAULT 1", []);
+    let _ = conn.execute("ALTER TABLE approval_requests ADD COLUMN signatures TEXT NOT NULL DEFAULT '[]'", []);
     Ok(())
 }
 
 // ─── Authority lookup ────────────────────────────────────────────────────
 
-/// Read approvalAuthority for a (policy, resolved_tier) pair. Returns None
-/// if the tier didn't declare an authority (which means "any reviewer is
-/// acceptable" — open chain). Returns Err only on policy lookup failure.
-pub fn lookup_required_authority(
+/// Resolved authority set for a tier. The 'authorities' field is the list
+/// of signer names; 'threshold' is how many must approve before deploy.
+/// An empty authorities vec means no APPROVAL_AUTHORITY declared (open chain).
+#[derive(Debug, Clone)]
+pub struct AuthoritySet {
+    pub authorities: Vec<String>,
+    pub threshold:   usize,
+}
+
+/// Read approvalAuthority for a (policy, resolved_tier) pair. Phase 11.6b
+/// returns an AuthoritySet that handles both the single-string form (1-of-1)
+/// and the bracketed-list form (N-of-N). Returns Err only on policy lookup
+/// failure. The empty AuthoritySet (zero authorities) means "open chain" —
+/// any single reviewer can sign.
+pub fn lookup_authority_set(
     db: &DbPool,
     policy_name: &str,
     resolved_tier: i32,
-) -> Result<Option<String>, String> {
+) -> Result<AuthoritySet, String> {
     let conn = db.lock().map_err(|e| e.to_string())?;
     let tiers_str: String = conn
         .query_row(
@@ -126,12 +142,38 @@ pub fn lookup_required_authority(
         )
         .map_err(|e| format!("Policy '{}' not found: {}", policy_name, e))?;
     let tiers: Vec<serde_json::Value> = serde_json::from_str(&tiers_str).unwrap_or_default();
-    let auth = tiers.iter()
+    let raw = tiers.iter()
         .find(|t| t.get("tier").and_then(|v| v.as_i64()) == Some(resolved_tier as i64))
-        .and_then(|t| t.get("approvalAuthority"))
-        .and_then(|v| v.as_str())
-        .map(|s| s.to_string());
-    Ok(auth)
+        .and_then(|t| t.get("approvalAuthority"));
+
+    let authorities: Vec<String> = match raw {
+        None | Some(serde_json::Value::Null) => Vec::new(),
+        Some(serde_json::Value::String(s))   => vec![s.clone()],
+        Some(serde_json::Value::Array(arr))  => arr.iter()
+            .filter_map(|v| v.as_str().map(|s| s.to_string()))
+            .collect(),
+        Some(_) => Vec::new(),  // malformed → treat as open chain (safe default)
+    };
+    let threshold = authorities.len().max(1);  // open chain = 1 signer needed
+    Ok(AuthoritySet { authorities, threshold })
+}
+
+/// Back-compat shim — returns just the JSON-serialised authority for the
+/// approval_requests.required_authority column. Single string stays single;
+/// arrays serialize as JSON arrays.
+pub fn lookup_required_authority(
+    db: &DbPool,
+    policy_name: &str,
+    resolved_tier: i32,
+) -> Result<Option<String>, String> {
+    let set = lookup_authority_set(db, policy_name, resolved_tier)?;
+    Ok(match set.authorities.len() {
+        0 => None,
+        1 => Some(set.authorities.into_iter().next().unwrap()),
+        _ => Some(serde_json::Value::Array(
+            set.authorities.iter().map(|a| serde_json::Value::String(a.clone())).collect()
+        ).to_string()),
+    })
 }
 
 // ─── Open request ────────────────────────────────────────────────────────
@@ -162,8 +204,12 @@ pub fn open_request_impl(db: &DbPool, proposal_id: &str) -> Result<ApprovalReque
         format!("Proposal '{}' has no resolved_tier", proposal_id)
     })?;
 
-    // 2) Lookup authority. None = open chain.
+    // 2) Lookup authority + threshold. Phase 11.6b — threshold is the
+    //    number of signers required (1 for single auth or open chain;
+    //    N for an N-of-N multi-signer list).
+    let auth_set = lookup_authority_set(db, &policy_name, resolved_tier)?;
     let required_authority = lookup_required_authority(db, &policy_name, resolved_tier)?;
+    let required_threshold = auth_set.threshold as i64;
 
     // 3) Check for existing open request. UNIQUE(proposal_id) ensures
     //    at most one — return it instead of erroring.
@@ -195,8 +241,8 @@ pub fn open_request_impl(db: &DbPool, proposal_id: &str) -> Result<ApprovalReque
     {
         let conn = db.lock().map_err(|e| e.to_string())?;
         conn.execute(
-            "INSERT INTO approval_requests (id, proposal_id, policy_name, required_authority, status, requested_at) VALUES (?, ?, ?, ?, 'pending', ?)",
-            params![id, proposal_id, policy_name, required_authority, now],
+            "INSERT INTO approval_requests (id, proposal_id, policy_name, required_authority, required_threshold, status, signatures, requested_at) VALUES (?, ?, ?, ?, ?, 'pending', '[]', ?)",
+            params![id, proposal_id, policy_name, required_authority, required_threshold, now],
         ).map_err(|e| e.to_string())?;
     }
 
@@ -210,9 +256,15 @@ pub fn open_request_impl(db: &DbPool, proposal_id: &str) -> Result<ApprovalReque
 
 // ─── Decision recording ──────────────────────────────────────────────────
 
-/// Common signoff path. Updates the approval row + the proposal row in one
-/// pair of writes, and appends to the proposal's approval_chain audit JSON
-/// so the trail survives even if the approval row is later purged.
+/// Multi-signer signoff path (Phase 11.6b). Appends the resolver's
+/// decision to the approval_request.signatures JSON list. For 'rejected',
+/// any single rejection terminates the chain — proposal becomes 'rejected'
+/// immediately. For 'approved', the chain stays pending until the count of
+/// approvals reaches required_threshold, at which point the proposal
+/// becomes 'deployed' and the approval row becomes status='approved'.
+///
+/// The approval_chain JSON column on the proposal accumulates every
+/// signoff event regardless — that's the full per-signer audit.
 fn record_decision(
     db: &DbPool,
     proposal_id: &str,
@@ -223,27 +275,73 @@ fn record_decision(
     ensure_approvals_table(db)?;
     let now = chrono::Utc::now().to_rfc3339();
 
-    // 1) Update approval row.
+    // 1) Read current approval state (must be pending; collect signatures + threshold).
+    let (signatures_str, threshold): (String, i64) = {
+        let conn = db.lock().map_err(|e| e.to_string())?;
+        conn.query_row(
+            "SELECT signatures, required_threshold FROM approval_requests WHERE proposal_id = ? AND status = 'pending'",
+            params![proposal_id],
+            |r| Ok((r.get::<_, String>(0)?, r.get::<_, i64>(1)?)),
+        ).map_err(|_| format!(
+            "No pending approval request found for proposal '{}' (already resolved, or never opened)",
+            proposal_id
+        ))?
+    };
+    let mut signatures: Vec<serde_json::Value> = serde_json::from_str(&signatures_str).unwrap_or_default();
+
+    // 2) Append this signature.
+    let new_sig = serde_json::json!({
+        "signer":   resolver,
+        "decision": decision,
+        "at":       now,
+        "notes":    notes,
+    });
+    signatures.push(new_sig);
+    let signatures_json = serde_json::Value::Array(signatures.clone()).to_string();
+
+    // 3) Decide whether the chain advances to a terminal state.
+    //    - Any single 'rejected' = chain terminates as rejected.
+    //    - 'approved' tally >= threshold = chain terminates as approved.
+    //    - Otherwise: chain stays pending; partial signoff recorded.
+    let approve_count = signatures.iter()
+        .filter(|s| s.get("decision").and_then(|v| v.as_str()) == Some("approved"))
+        .count() as i64;
+    let any_rejection = signatures.iter()
+        .any(|s| s.get("decision").and_then(|v| v.as_str()) == Some("rejected"));
+
+    let (terminal, approval_status): (bool, &str) = if any_rejection {
+        (true, "rejected")
+    } else if approve_count >= threshold {
+        (true, "approved")
+    } else {
+        (false, "pending")
+    };
+
+    // 4) Update approval row. Only set resolved_* fields on terminal transition.
     {
         let conn = db.lock().map_err(|e| e.to_string())?;
-        let rows = conn.execute(
-            "UPDATE approval_requests SET status = ?, resolved_by = ?, resolved_at = ?, decision_notes = ? WHERE proposal_id = ? AND status = 'pending'",
-            params![decision, resolver, now, notes, proposal_id],
-        ).map_err(|e| e.to_string())?;
-        if rows == 0 {
-            return Err(format!(
-                "No pending approval request found for proposal '{}' (already resolved, or never opened)",
-                proposal_id
-            ));
+        if terminal {
+            conn.execute(
+                "UPDATE approval_requests SET status = ?, signatures = ?, resolved_by = ?, resolved_at = ?, decision_notes = ? WHERE proposal_id = ?",
+                params![approval_status, signatures_json, resolver, now, notes, proposal_id],
+            ).map_err(|e| e.to_string())?;
+        } else {
+            conn.execute(
+                "UPDATE approval_requests SET signatures = ? WHERE proposal_id = ?",
+                params![signatures_json, proposal_id],
+            ).map_err(|e| e.to_string())?;
         }
     }
 
-    // 2) Append to proposal's approval_chain (preserves prior signers).
+    // 5) Append this signoff to the proposal's approval_chain. Every
+    //    individual signature appears here regardless of whether the chain
+    //    has reached threshold — full per-signer audit.
     let chain_entry = serde_json::json!({
         "decision": decision,
         "resolver": resolver,
         "at":       now,
         "notes":    notes,
+        "terminal": terminal,
     });
     {
         let conn = db.lock().map_err(|e| e.to_string())?;
@@ -260,23 +358,36 @@ fn record_decision(
                 serde_json::Value::Array(arr)
             }
         };
-        let new_proposal_status = if decision == "approved" { "deployed" } else { "rejected" };
-        let audit = serde_json::json!({
-            "trigger":    "approval_chain",
-            "resolver":   resolver,
-            "decision":   decision,
-            "decidedAt":  now,
-            "notes":      notes,
-        });
-        conn.execute(
-            "UPDATE mutation_proposals SET status = ?, approval_chain = ?, deploy_audit = COALESCE(deploy_audit, ?), updated_at = ? WHERE id = ?",
-            params![new_proposal_status, new_chain.to_string(), audit.to_string(), now, proposal_id],
-        ).map_err(|e| e.to_string())?;
+        // Only transition the proposal status on the terminal sig; partial
+        // signoffs leave the proposal in 'escalated' so it stays in the
+        // approval queue UI.
+        if terminal {
+            let new_proposal_status = if any_rejection { "rejected" } else { "deployed" };
+            let audit = serde_json::json!({
+                "trigger":       "approval_chain",
+                "finalResolver": resolver,
+                "finalDecision": if any_rejection { "rejected" } else { "approved" },
+                "decidedAt":     now,
+                "notes":         notes,
+                "signatures":    signatures,
+            });
+            conn.execute(
+                "UPDATE mutation_proposals SET status = ?, approval_chain = ?, deploy_audit = COALESCE(deploy_audit, ?), updated_at = ? WHERE id = ?",
+                params![new_proposal_status, new_chain.to_string(), audit.to_string(), now, proposal_id],
+            ).map_err(|e| e.to_string())?;
+        } else {
+            // Partial signoff — update only the chain audit, leave status.
+            conn.execute(
+                "UPDATE mutation_proposals SET approval_chain = ?, updated_at = ? WHERE id = ?",
+                params![new_chain.to_string(), now, proposal_id],
+            ).map_err(|e| e.to_string())?;
+        }
     }
 
-    // 3a) Phase 11.7 — record the signoff on the ledger. Need policy_name
-    //     from the proposal row (the approval row also has it but reading
-    //     from proposal keeps this idempotent if approval table is reset).
+    // 6) Phase 11.7 ledger entry. Choose event type by terminality:
+    //    - terminal approved → "APPROVED"
+    //    - terminal rejected → "REJECTED_BY_AUTHORITY"
+    //    - partial signoff   → "PARTIAL_APPROVAL"  (new in Phase 11.6b)
     let policy_name: String = {
         let conn = db.lock().map_err(|e| e.to_string())?;
         conn.query_row(
@@ -285,14 +396,24 @@ fn record_decision(
             |r| r.get(0),
         ).map_err(|e| e.to_string())?
     };
-    let event_type = if decision == "approved" { "APPROVED" } else { "REJECTED_BY_AUTHORITY" };
+    let event_type = if !terminal {
+        "PARTIAL_APPROVAL"
+    } else if any_rejection {
+        "REJECTED_BY_AUTHORITY"
+    } else {
+        "APPROVED"
+    };
     let _ = ledger_append(db, proposal_id, &policy_name, event_type, resolver, serde_json::json!({
-        "decision":  decision,
-        "decidedAt": now,
-        "notes":     notes,
+        "decision":       decision,
+        "decidedAt":      now,
+        "notes":          notes,
+        "approvals":      approve_count,
+        "threshold":      threshold,
+        "remaining":      (threshold - approve_count).max(0),
+        "terminal":       terminal,
     }))?;
 
-    // 3b) Return the updated approval row.
+    // 7) Return the updated approval row.
     let conn = db.lock().map_err(|e| e.to_string())?;
     conn.query_row(
         "SELECT id, proposal_id, policy_name, required_authority, status, resolved_by, resolved_at, decision_notes, requested_at FROM approval_requests WHERE proposal_id = ?",

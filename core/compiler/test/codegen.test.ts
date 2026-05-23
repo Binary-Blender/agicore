@@ -6748,6 +6748,102 @@ ENTITY E { name: string  TIMESTAMPS }`;
   assert(!main2.includes('improver::start_improvement_scheduler'),  'no scheduler call without MUTATION_POLICY');
 }
 
+section('Phase 11.6b — multi-signer: bracketed APPROVAL_AUTHORITY round-trips into tier JSON');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 4 sensitive { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [ops_lead, security_lead] }
+  TIER 5 governance { SCOPE [MUTATION_POLICY_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [ceo, cto, board_chair] }
+}`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  // T4 (2-of-2): array of 2 signers serialized into the tiers JSON
+  assert(sql.includes('"approvalAuthority":["ops_lead","security_lead"]'),
+    'T4 multi-signer list serializes as JSON array');
+  // T5 (3-of-3): array of 3 signers
+  assert(sql.includes('"approvalAuthority":["ceo","cto","board_chair"]'),
+    'T5 3-signer list serializes as JSON array');
+}
+
+section('Phase 11.6b — single-string APPROVAL_AUTHORITY still serializes as string');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 4 sensitive { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ops_lead }
+}`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(sql.includes('"approvalAuthority":"ops_lead"'),                  'single ident stays as JSON string');
+}
+
+section('Phase 11.6b — approvals.rs grows AuthoritySet + lookup_authority_set helper');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 4 sensitive { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [ops, sec] } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/approvals.rs') ?? '';
+  assert(rs.includes('pub struct AuthoritySet'),                          'AuthoritySet struct present');
+  assert(rs.includes('pub authorities: Vec<String>'),                     'authorities is Vec<String>');
+  assert(rs.includes('pub threshold:   usize'),                           'threshold is usize');
+  assert(rs.includes('pub fn lookup_authority_set'),                      'lookup_authority_set helper present');
+  // Backward-compat shim still exists
+  assert(rs.includes('pub fn lookup_required_authority'),                 'lookup_required_authority shim retained');
+  // Schema additions
+  assert(rs.includes('required_threshold  INTEGER NOT NULL DEFAULT 1'),   'required_threshold column declared');
+  assert(rs.includes("signatures          TEXT NOT NULL DEFAULT '[]'"),   'signatures column declared');
+  // Defensive ALTER for upgrades
+  assert(rs.includes('ALTER TABLE approval_requests ADD COLUMN required_threshold'), 'idempotent ALTER for required_threshold');
+  assert(rs.includes('ALTER TABLE approval_requests ADD COLUMN signatures'),         'idempotent ALTER for signatures');
+}
+
+section('Phase 11.6b — record_decision implements M-of-N aggregation logic');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 4 sensitive { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [a, b] } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/approvals.rs') ?? '';
+  // Aggregation logic
+  assert(rs.includes('let approve_count = signatures.iter()'),            'counts approve sigs');
+  assert(rs.includes('let any_rejection = signatures.iter()'),            'checks for any rejection');
+  assert(rs.includes('if any_rejection'),                                 'rejection terminates immediately');
+  assert(rs.includes('approve_count >= threshold'),                       'approvals must hit threshold');
+  // Partial vs terminal branching
+  assert(rs.includes('if terminal'),                                      'terminal branch handles status transitions');
+  assert(rs.includes('// Partial signoff'),                               'partial branch leaves status pending');
+  // Ledger event selection
+  assert(rs.includes('"PARTIAL_APPROVAL"'),                               'partial signoffs get PARTIAL_APPROVAL ledger event');
+  assert(rs.includes('"APPROVED"'),                                       'terminal approve gets APPROVED');
+  assert(rs.includes('"REJECTED_BY_AUTHORITY"'),                          'terminal reject gets REJECTED_BY_AUTHORITY');
+}
+
+section('Phase 11.6b — TS ledger bindings include PARTIAL_APPROVAL event');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/ledger.ts') ?? '';
+  assert(ts.includes("'PARTIAL_APPROVAL'"),                               'PARTIAL_APPROVAL in LedgerEventType union');
+  // Comment notes Phase 11.6b association
+  assert(ts.includes('Phase 11.6b'),                                      'PARTIAL_APPROVAL annotated with phase');
+}
+
 section('Phase 11.7 — LEDGER declaration round-trips through SQL seed');
 {
   const src = `APP a { TITLE "A" DB a.db }

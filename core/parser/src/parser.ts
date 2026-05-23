@@ -5351,7 +5351,7 @@ export class Parser {
     let regressionSuite: string | undefined;
     let monitoringWindow: string | undefined;
     let nbveWindow: string | undefined;
-    let approvalAuthority: string | undefined;
+    let approvalAuthority: string | string[] | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -5405,7 +5405,13 @@ export class Parser {
       }
       if (token.type === TokenType.APPROVAL_AUTHORITY) {
         this.advance();
-        approvalAuthority = this.expectIdentifier();
+        // Phase 11.6b — accept either a single identifier (1-of-1 signoff)
+        // or a bracketed list (N-of-N multi-signer consensus).
+        if (this.current().type === TokenType.LBRACKET) {
+          approvalAuthority = this.parseBracketedIdentifierList();
+        } else {
+          approvalAuthority = this.expectIdentifier();
+        }
         continue;
       }
       this.error(`Unexpected token in TIER: ${token.value}`);

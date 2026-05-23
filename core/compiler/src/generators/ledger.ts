@@ -500,6 +500,7 @@ export type LedgerEventType =
   | 'DEPLOYED'
   | 'ESCALATED'
   | 'REJECTED_BY_SANDBOX'
+  | 'PARTIAL_APPROVAL'        // Phase 11.6b — N-of-N intermediate sigs
   | 'APPROVED'
   | 'REJECTED_BY_AUTHORITY';
 
