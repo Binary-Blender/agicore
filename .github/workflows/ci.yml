@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test compiler toolchain
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [18, 20, 22]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install workspace
+        run: npm install --workspaces
+
+      - name: Build
+        run: npm run build --workspaces --if-present
+
+      - name: Type-check
+        run: npm run type-check --workspaces --if-present
+
+      - name: Test
+        run: npm test --workspaces --if-present
+
+  showcase:
+    name: Compile canary (.agi → Tauri project)
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install + build compiler
+        run: |
+          npm install --workspaces
+          npm run build --workspaces --if-present
+
+      - name: Compile NovaSyn Chat canary
+        run: |
+          node core/compiler/dist/cli.js generate \
+            apps/novasyn-chat/novasyn_chat.agi \
+            --output /tmp/novasyn-chat-out
+
+      - name: Verify expected output files exist
+        run: |
+          test -d /tmp/novasyn-chat-out/src-tauri
+          test -d /tmp/novasyn-chat-out/src
+          test -f /tmp/novasyn-chat-out/src-tauri/Cargo.toml
+          test -f /tmp/novasyn-chat-out/src-tauri/src/main.rs
+          echo "Canary compiled cleanly."

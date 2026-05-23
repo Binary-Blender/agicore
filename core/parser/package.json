@@ -1,17 +1,51 @@
 {
   "name": "@agicore/parser",
-  "version": "0.1.0",
-  "description": "Agicore DSL parser - converts .agi files to typed AST",
+  "version": "1.0.0",
+  "description": "Agicore DSL parser — converts .agi files to a typed AST. 58 declaration types, 843 tests, zero failures.",
+  "keywords": [
+    "agicore",
+    "dsl",
+    "parser",
+    "ast",
+    "compiler",
+    "deterministic",
+    "ai-build-time"
+  ],
+  "homepage": "https://github.com/Binary-Blender/agicore#readme",
+  "bugs": {
+    "url": "https://github.com/Binary-Blender/agicore/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Binary-Blender/agicore.git",
+    "directory": "core/parser"
+  },
+  "license": "MIT",
+  "author": "Christopher Bender",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "tsc",
     "test": "node --import tsx test/parser.test.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test"
   },
   "devDependencies": {
     "typescript": "5.9.3",
     "tsx": "4.21.0"
-  },
-  "license": "MIT"
+  }
 }

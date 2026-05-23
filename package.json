@@ -1,0 +1,28 @@
+{
+  "name": "agicore-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agicore monorepo — DSL parser + compiler + canary reference app",
+  "homepage": "https://github.com/Binary-Blender/agicore#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Binary-Blender/agicore.git"
+  },
+  "license": "MIT",
+  "author": "Christopher Bender",
+  "workspaces": [
+    "core/parser",
+    "core/compiler"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "test:parser": "npm test --workspace=@agicore/parser",
+    "test:compiler": "npm test --workspace=@agicore/compiler",
+    "agicore": "node core/compiler/dist/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

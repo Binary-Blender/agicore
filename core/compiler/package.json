@@ -1,24 +1,61 @@
 {
   "name": "@agicore/compiler",
-  "version": "0.1.0",
-  "description": "Agicore DSL compiler - generates Tauri applications from .agi files",
+  "version": "1.0.0",
+  "description": "Agicore DSL compiler — generates complete Tauri applications (Rust + TypeScript + SQLite) from .agi files. 58 declaration types, 1,616 tests.",
+  "keywords": [
+    "agicore",
+    "dsl",
+    "compiler",
+    "codegen",
+    "tauri",
+    "rust",
+    "typescript",
+    "sqlite",
+    "deterministic",
+    "ai-build-time"
+  ],
+  "homepage": "https://github.com/Binary-Blender/agicore#readme",
+  "bugs": {
+    "url": "https://github.com/Binary-Blender/agicore/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Binary-Blender/agicore.git",
+    "directory": "core/compiler"
+  },
+  "license": "MIT",
+  "author": "Christopher Bender",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "bin": {
     "agicore": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
     "build": "tsc",
     "test": "node --import tsx test/codegen.test.ts && node --import tsx test/validator.test.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
-    "@agicore/parser": "file:../parser"
+    "@agicore/parser": "1.0.0"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
     "tsx": "4.21.0",
     "typescript": "5.9.3"
-  },
-  "license": "MIT"
+  }
 }
