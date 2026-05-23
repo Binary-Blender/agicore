@@ -620,6 +620,121 @@ COMPILER doc_compiler {
   assert(!hasWarning(results, "EXTRACT field"), 'All valid EXTRACT fields should produce no warning');
 }
 
+// ─── Phase 11.8 — MODULE-policy bindings ─────────────────────────────────────
+
+section('Phase 11.8 — MODULE.MUTATION_POLICY referencing unknown policy warns');
+{
+  const src = `
+APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+MODULE alerts { MUTATION_POLICY no_such_policy }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasWarning(results, "MUTATION_POLICY 'no_such_policy' is not declared"),
+    'Dangling MUTATION_POLICY ref should warn');
+}
+
+section('Phase 11.8 — MODULE.MUTATION_POLICY pointing to declared policy is OK');
+{
+  const src = `
+APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY ops { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }
+MODULE alerts { MUTATION_POLICY ops }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasWarning(results, "MUTATION_POLICY"), 'Valid ref should produce no warning');
+}
+
+section('Phase 11.8 — EXPECTS_MATCH true without MUTATION_POLICY warns');
+{
+  const src = `
+APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+MODULE alerts { EXPECTS_MATCH true }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasWarning(results, "EXPECTS_MATCH true without MUTATION_POLICY"),
+    'EXPECTS_MATCH without policy → andon would escalate, warn');
+}
+
+section('Phase 11.8 — EXPECTS_MATCH true with MUTATION_POLICY is OK');
+{
+  const src = `
+APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY ops { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }
+MODULE alerts { EXPECTS_MATCH true  MUTATION_POLICY ops }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasWarning(results, "EXPECTS_MATCH true without"),
+    'EXPECTS_MATCH paired with policy → no warning');
+}
+
+section('Phase 11.8 — MODULE.RULES referencing unknown rule warns');
+{
+  const src = `
+APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+RULE r1 { WHEN E.name = "x" THEN flag_one }
+MODULE alerts { RULES [r1, no_such_rule] }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasWarning(results, "undeclared rule 'no_such_rule'"),
+    'Dangling rule ref should warn');
+  assert(!hasWarning(results, "undeclared rule 'r1'"),
+    'Declared rule should not warn');
+}
+
+section('Phase 11.8 — RULE.MUTATION_TIER outside policy tier set warns');
+{
+  const src = `
+APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY ops {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] }
+  TIER 3 structural { SCOPE [WORKFLOW_modify] }
+}
+RULE r_t1 { WHEN E.name = "x" THEN flag_one MUTATION_TIER 1 }
+RULE r_t99 { WHEN E.name = "y" THEN flag_two MUTATION_TIER 99 }
+MODULE alerts { MUTATION_POLICY ops  RULES [r_t1, r_t99] }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(hasWarning(results, "MUTATION_TIER 99 is not declared in policy 'ops'"),
+    'Out-of-policy tier should warn');
+  assert(!hasWarning(results, "Rule 'r_t1'"),
+    'Valid in-policy tier should not warn');
+}
+
+section('Phase 11.8 — RULE.MUTATION_TIER in policy scope is OK');
+{
+  const src = `
+APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY ops { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }
+RULE r1 { WHEN E.name = "x" THEN flag_one MUTATION_TIER 1 }
+MODULE alerts { MUTATION_POLICY ops  RULES [r1] }
+`;
+  const ast = parse(src);
+  const results = validate(ast);
+  assert(!hasWarning(results, "MUTATION_TIER"), 'Valid tier should produce no warning');
+}
+
 // ─── Results ──────────────────────────────────────────────────────────────────
 
 console.log(`\n=== Validator Tests: ${passed} passed, ${failed} failed ===\n`);

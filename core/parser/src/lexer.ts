@@ -250,6 +250,11 @@ export enum TokenType {
 
   // Phase 11.3 — Mutation policy + rollback completers
   MUTATION_POLICY = 'MUTATION_POLICY',
+  // Phase 11.8 — MODULE-level "expects match" andon trigger
+  EXPECTS_MATCH = 'EXPECTS_MATCH',
+  // Phase 11.8 — MODULE rule-ref list (RULES [a, b, c]) + per-RULE mutation tier
+  RULES_KW = 'RULES_KW',
+  MUTATION_TIER = 'MUTATION_TIER',
   COMPENSATING_ACTION = 'COMPENSATING_ACTION',
   ON_ANDON_ESCALATE = 'ON_ANDON_ESCALATE',
   TARGETS = 'TARGETS',
@@ -688,6 +693,9 @@ const KEYWORDS: Record<string, TokenType> = {
   ROLLBACK_BOUNDARY: TokenType.ROLLBACK_BOUNDARY,
   SUCCESS_METRIC: TokenType.SUCCESS_METRIC,
   MUTATION_POLICY: TokenType.MUTATION_POLICY,
+  EXPECTS_MATCH:   TokenType.EXPECTS_MATCH,
+  RULES:           TokenType.RULES_KW,
+  MUTATION_TIER:   TokenType.MUTATION_TIER,
   COMPENSATING_ACTION: TokenType.COMPENSATING_ACTION,
   ON_ANDON_ESCALATE: TokenType.ON_ANDON_ESCALATE,
   TARGETS: TokenType.TARGETS,

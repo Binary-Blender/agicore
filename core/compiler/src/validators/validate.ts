@@ -195,6 +195,67 @@ export function validate(ast: AgiFile): ValidationResult[] {
     }
   }
 
+  // Phase 11.8 — MODULE.mutationPolicy must reference a declared policy
+  // and MODULE.ruleRefs must each reference a declared rule. Warn (not
+  // error) because cross-app references may resolve at link time.
+  const mutationPolicyNames = new Set((ast.mutationPolicies ?? []).map((p) => p.name));
+  const ruleNames = new Set(ast.rules.map((r) => r.name));
+  for (const module of ast.modules) {
+    if (module.mutationPolicy && !mutationPolicyNames.has(module.mutationPolicy)) {
+      results.push({
+        severity: 'warning',
+        message: `Module '${module.name}': MUTATION_POLICY '${module.mutationPolicy}' is not declared`,
+        node: `module:${module.name}`,
+        span: module.span,
+      });
+    }
+    if (module.expectsMatch === true && !module.mutationPolicy) {
+      // EXPECTS_MATCH true without a policy ref means andon pulls will fire
+      // but nothing is authorised to respond — the andon will just escalate.
+      results.push({
+        severity: 'warning',
+        message: `Module '${module.name}': EXPECTS_MATCH true without MUTATION_POLICY — andon pulls will escalate without an automated responder`,
+        node: `module:${module.name}`,
+        span: module.span,
+      });
+    }
+    if (module.ruleRefs) {
+      for (const ref of module.ruleRefs) {
+        if (!ruleNames.has(ref)) {
+          results.push({
+            severity: 'warning',
+            message: `Module '${module.name}': RULES list references undeclared rule '${ref}'`,
+            node: `module:${module.name}`,
+            span: module.span,
+          });
+        }
+      }
+    }
+  }
+
+  // Phase 11.8 — RULE.mutationTier must be a tier in the bound policy's
+  // scope. We can only check this when the rule is bound through a module's
+  // mutationPolicy declaration. Pass: rule → module → policy → tier list.
+  for (const module of ast.modules) {
+    if (!module.mutationPolicy) continue;
+    const policy = (ast.mutationPolicies ?? []).find((p) => p.name === module.mutationPolicy);
+    if (!policy) continue;  // already warned above
+    const tierNumbers = new Set(policy.tiers.map((t) => t.tier));
+    const allRefs = [...(module.ruleRefs ?? []), ...module.rules.map((r) => r.name)];
+    for (const ruleName of allRefs) {
+      const rule = ast.rules.find((r) => r.name === ruleName) ?? module.rules.find((r) => r.name === ruleName);
+      if (!rule || rule.mutationTier === undefined) continue;
+      if (!tierNumbers.has(rule.mutationTier)) {
+        results.push({
+          severity: 'warning',
+          message: `Rule '${rule.name}' (in module '${module.name}'): MUTATION_TIER ${rule.mutationTier} is not declared in policy '${policy.name}'`,
+          node: `rule:${rule.name}`,
+          span: rule.span,
+        });
+      }
+    }
+  }
+
   // 16. HAS_MANY ↔ BELONGS_TO symmetry (warning)
   // If A HAS_MANY B, B should declare BELONGS_TO A
   for (const entity of ast.entities) {

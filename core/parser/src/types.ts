@@ -333,6 +333,10 @@ export interface RuleDecl {
   flag?: string;
   severity?: 'critical' | 'high' | 'medium' | 'low';
   priority: number;
+  /** Phase 11.8 — Tier within the bound MUTATION_POLICY that governs
+   *  AI-authored modifications to this rule. Validator can cross-check
+   *  against the policy's scope (e.g., RULES_modify is in T1's scope). */
+  mutationTier?: number;
   span: SourceSpan;
 }
 
@@ -723,6 +727,21 @@ export interface ModuleDecl {
   description: string;
   activateWhen?: string;
   deactivateWhen?: string;
+  /** Phase 11.8 — When true, the module's rules are EXPECTED to match
+   *  every incoming event. A no-match condition will pull the andon cord
+   *  with trigger_category='no_rule_match'. Pairs naturally with a
+   *  MUTATION_POLICY field that authorises an ANDON_RESPONDER to propose
+   *  a new RULE in response. */
+  expectsMatch?: boolean;
+  /** Phase 11.8 — Name of the top-level MUTATION_POLICY that governs
+   *  AI authoring authority on this module (which rule fields can be
+   *  modified by which tier, which RESPONDER/IMPROVER may propose, etc.). */
+  mutationPolicy?: string;
+  /** Phase 11.8 — References to top-level RULE declarations (by name).
+   *  Used when the same rule library is shared across modules. Validator
+   *  warns on dangling refs. Coexists with the inline `rules` field —
+   *  resolved rules from both sources are unioned at runtime. */
+  ruleRefs?: string[];
   patterns: PatternDecl[];
   rules: RuleDecl[];
   states: StateDecl[];

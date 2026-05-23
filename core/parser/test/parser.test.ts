@@ -3621,6 +3621,120 @@ MUTATION_POLICY mp {
   console.error(`  FAIL: APPROVAL_AUTHORITY single: ${err}`);
 }
 
+section('Phase 11.8 — MODULE EXPECTS_MATCH true/false captured');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+MODULE m1 { EXPECTS_MATCH true }
+MODULE m2 { EXPECTS_MATCH false }
+MODULE m3 { DESCRIPTION "no expects" }`;
+  const ast = parse(src);
+  assert(ast.modules.length === 3,                            '3 modules parsed');
+  const m1 = ast.modules.find((m) => m.name === 'm1')!;
+  const m2 = ast.modules.find((m) => m.name === 'm2')!;
+  const m3 = ast.modules.find((m) => m.name === 'm3')!;
+  assert(m1.expectsMatch === true,                            'EXPECTS_MATCH true captured');
+  assert(m2.expectsMatch === false,                           'EXPECTS_MATCH false captured');
+  assert(m3.expectsMatch === undefined,                       'absent → undefined (not defaulted)');
+  console.log('  EXPECTS_MATCH parsed across 3 modules');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: EXPECTS_MATCH: ${err}`);
+}
+
+section('Phase 11.8 — MODULE MUTATION_POLICY <name> reference captured');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY ops { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }
+MODULE alerts { MUTATION_POLICY ops }`;
+  const ast = parse(src);
+  const m = ast.modules.find((x) => x.name === 'alerts')!;
+  assert(m.mutationPolicy === 'ops',                          'MUTATION_POLICY reference captured');
+  // Top-level MUTATION_POLICY declaration still parses normally
+  assert(ast.mutationPolicies.length === 1 && ast.mutationPolicies[0]!.name === 'ops',
+                                                              'top-level policy unchanged');
+  console.log('  MODULE MUTATION_POLICY ref parsed');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: MODULE MUTATION_POLICY ref: ${err}`);
+}
+
+section('Phase 11.8 — MODULE RULES [a, b, c] reference list captured');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+RULE r1 { WHEN E.name = "x" THEN flag_one }
+RULE r2 { WHEN E.name = "y" THEN flag_two }
+MODULE alerts { RULES [r1, r2] }`;
+  const ast = parse(src);
+  const m = ast.modules[0]!;
+  assert(Array.isArray(m.ruleRefs),                           'ruleRefs is array');
+  assert(m.ruleRefs!.length === 2,                            '2 rule references');
+  assert(m.ruleRefs!.includes('r1') && m.ruleRefs!.includes('r2'), 'both names present');
+  // Inline rules still empty (no RULE blocks inside the module)
+  assert(m.rules.length === 0,                                'inline rules empty when only refs used');
+  console.log('  MODULE RULES ref list parsed');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: MODULE RULES ref: ${err}`);
+}
+
+section('Phase 11.8 — RULE MUTATION_TIER <n> captured');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+RULE classify { WHEN E.name = "x" THEN flag_it MUTATION_TIER 2 }
+RULE untiered { WHEN E.name = "y" THEN flag_two }`;
+  const ast = parse(src);
+  const r1 = ast.rules.find((r) => r.name === 'classify')!;
+  const r2 = ast.rules.find((r) => r.name === 'untiered')!;
+  assert(r1.mutationTier === 2,                               'MUTATION_TIER 2 captured');
+  assert(r2.mutationTier === undefined,                       'absent → undefined (no default)');
+  console.log('  RULE MUTATION_TIER parsed');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: RULE MUTATION_TIER: ${err}`);
+}
+
+section('Phase 11.8 — full Andon module pattern: EXPECTS_MATCH + MUTATION_POLICY + RULES list');
+try {
+  const src = `APP ops { TITLE "Ops" DB ops.db }
+ENTITY Alert { source: string  severity: string  TIMESTAMPS }
+ACTION classify_as_cpu_pressure { INPUT id: id OUTPUT result: string }
+WORKFLOW classification { STEP run { ACTION classify_as_cpu_pressure } }
+MUTATION_POLICY ops_mutation_policy {
+  TARGETS [classification]
+  TIER 2 rule_tuning { SCOPE [RULES_modify] AUTO_DEPLOY true REGRESSION_SUITE 24h_recent_workflows }
+}
+RULE classify_cpu_pressure {
+  WHEN     Alert.source = "datadog"
+  AND      Alert.severity != "info"
+  THEN     classify_as_cpu_pressure
+  PRIORITY 100
+  MUTATION_TIER 2
+}
+MODULE alert_classification {
+  EXPECTS_MATCH true
+  MUTATION_POLICY ops_mutation_policy
+  RULES [classify_cpu_pressure]
+}`;
+  const ast = parse(src);
+  const m = ast.modules[0]!;
+  assert(m.expectsMatch === true,                             'EXPECTS_MATCH');
+  assert(m.mutationPolicy === 'ops_mutation_policy',          'MUTATION_POLICY ref');
+  assert(m.ruleRefs?.length === 1 && m.ruleRefs[0] === 'classify_cpu_pressure', 'RULES ref');
+  const r = ast.rules[0]!;
+  assert(r.priority === 100,                                  'PRIORITY round-trip');
+  assert(r.mutationTier === 2,                                'MUTATION_TIER round-trip');
+  console.log('  Full Andon-module pattern parsed end-to-end');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: full Andon pattern: ${err}`);
+}
+
 section('Phase 11.3 — MUTATION_POLICY with REASONER refs + LEDGER');
 try {
   const src = `APP a { TITLE "A" DB a.db }

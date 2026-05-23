@@ -1548,6 +1548,7 @@ export class Parser {
     let flag: string | undefined;
     let severity: RuleDecl['severity'] | undefined;
     let priority = 0;
+    let mutationTier: number | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -1591,11 +1592,20 @@ export class Parser {
         continue;
       }
 
+      // Phase 11.8 — MUTATION_TIER <n>. Declares which MUTATION_POLICY
+      // tier governs AI-authored modifications of this rule. Validator
+      // can cross-check this against the bound MUTATION_POLICY's tier scope.
+      if (token.type === TokenType.MUTATION_TIER) {
+        this.advance();
+        mutationTier = Number(this.expectToken(TokenType.NUMBER_LITERAL).value);
+        continue;
+      }
+
       this.error(`Unexpected token in RULE: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'rule', name, conditions, action, flag, severity, priority, span: { start, end } };
+    return { kind: 'rule', name, conditions, action, flag, severity, priority, mutationTier, span: { start, end } };
   }
 
   // --- WORKFLOW ---
@@ -2632,6 +2642,9 @@ export class Parser {
     let description = '';
     let activateWhen: string | undefined;
     let deactivateWhen: string | undefined;
+    let expectsMatch: boolean | undefined;
+    let mutationPolicy: string | undefined;
+    let ruleRefs: string[] | undefined;
     const patterns: PatternDecl[] = [];
     const rules: RuleDecl[] = [];
     const states: StateDecl[] = [];
@@ -2656,6 +2669,43 @@ export class Parser {
       if (token.type === TokenType.DEACTIVATE_WHEN) {
         this.advance();
         deactivateWhen = this.parseInlineExpression();
+        continue;
+      }
+
+      // Phase 11.8 — EXPECTS_MATCH true|false. Declares "this module's
+      // rules should match incoming events; surface no-match as an andon
+      // pull with trigger_category='no_rule_match'." Runtime wiring lands
+      // in a focused follow-up; the parser captures the intent today.
+      if (token.type === TokenType.EXPECTS_MATCH) {
+        this.advance();
+        const t = this.current();
+        if (t.type === TokenType.TRUE)        { this.advance(); expectsMatch = true; }
+        else if (t.type === TokenType.FALSE)  { this.advance(); expectsMatch = false; }
+        else if (t.type === TokenType.IDENTIFIER && (t.value === 'true' || t.value === 'false')) {
+          this.advance(); expectsMatch = (t.value === 'true');
+        } else {
+          this.error(`EXPECTS_MATCH requires true or false; got '${t.value}'`);
+        }
+        continue;
+      }
+
+      // Phase 11.8 — MUTATION_POLICY <name>. Binds this module to a
+      // top-level MUTATION_POLICY that governs its mutation authority.
+      // Distinct from the top-level MUTATION_POLICY declaration which
+      // takes a block; here it's just a name reference.
+      if (token.type === TokenType.MUTATION_POLICY) {
+        this.advance();
+        mutationPolicy = this.expectIdentifier();
+        continue;
+      }
+
+      // Phase 11.8 — RULES [a, b, c]. Reference top-level RULE
+      // declarations by name. Used when the same rule library is shared
+      // across modules (vs the inline RULE form which couples a rule to
+      // exactly one module). Validator warns on dangling refs.
+      if (token.type === TokenType.RULES_KW) {
+        this.advance();
+        ruleRefs = this.parseBracketedIdentifierList();
         continue;
       }
 
@@ -2688,7 +2738,13 @@ export class Parser {
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'module', name, description, activateWhen, deactivateWhen, patterns, rules, states, scores, facts, span: { start, end } };
+    return {
+      kind: 'module', name, description,
+      activateWhen, deactivateWhen,
+      expectsMatch, mutationPolicy, ruleRefs,
+      patterns, rules, states, scores, facts,
+      span: { start, end },
+    };
   }
 
   // --- ROUTER ---
