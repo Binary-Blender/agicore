@@ -6263,6 +6263,94 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY
   assert(ts.includes("import type { TierVerification, SandboxOutcome } from './mutations'"), 'cross-module TS types imported');
 }
 
+section('Phase 11.5a — improver.rs emitted with pipeline + stub improver');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true REGRESSION_SUITE 24h_recent_workflows }
+  IMPROVEMENT_REASONER weekly_kaizen
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/improver.rs') ?? '';
+  assert(rs.length > 0,                                                   'improver.rs emitted when MUTATION_POLICY present');
+  // Public types
+  assert(rs.includes('pub struct ImprovementCycle'),                      'ImprovementCycle struct present');
+  assert(rs.includes('pub struct ImprovementDraft'),                      'ImprovementDraft struct present');
+  // Pipeline functions
+  assert(rs.includes('pub fn run_improvement_cycle_impl'),                'pipeline implementation present');
+  assert(rs.includes('pub fn generate_stub_improvement'),                 'stub improver present');
+  assert(rs.includes('fn count_recent_completed_runs'),                   'recent-runs counter present');
+  assert(rs.includes('fn ensure_cycles_table'),                           'cycles table bootstrapped');
+  assert(rs.includes('fn load_policy'),                                   'policy loader present');
+  // Cross-module reuse of the proposal lifecycle
+  assert(rs.includes('use crate::commands::mutations::'),                 'imports from mutations module');
+  assert(rs.includes('create_proposal_in_db'),                            'calls create_proposal_in_db');
+  assert(rs.includes('verify_and_persist'),                               'calls verify_and_persist');
+  assert(rs.includes('execute_sandbox'),                                  'calls execute_sandbox');
+  // Tauri commands
+  assert(rs.includes('pub fn run_improvement_cycle'),                     'run_improvement_cycle Tauri command');
+  assert(rs.includes('pub fn list_improvement_cycles'),                   'list_improvement_cycles command');
+  // Disposition discriminants mirror the responder's contract
+  assert(rs.includes('"no_policy"'),                                      'no_policy disposition');
+  assert(rs.includes('"no_reasoner"'),                                    'no_reasoner disposition (improver counterpart of no_responder)');
+  assert(rs.includes('"no_candidate"'),                                   'no_candidate disposition');
+  assert(rs.includes('"proposed"'),                                       'proposed disposition');
+  // Identity prefix distinguishes improver- vs responder-originated proposals
+  assert(rs.includes('format!("improver:{}"'),                            'proposer_identity prefixed with "improver:"');
+  // Embedded unit tests
+  assert(rs.includes('stub_declines_when_no_recent_runs'),                'embedded test: zero-signal decline');
+  assert(rs.includes('stub_proposes_when_runs_exist'),                    'embedded test: positive signal');
+  assert(rs.includes('stub_reasoning_mentions_run_count'),                'embedded test: reasoning audit');
+}
+
+section('Phase 11.5a — no MUTATION_POLICY → no improver.rs (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/improver.rs'),                'no improver.rs without MUTATION_POLICY');
+  assert(!files.has('src/lib/improver.ts'),                               'no improver.ts without MUTATION_POLICY');
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(!modRs.includes('pub mod improver;'),                            'improver module not declared');
+}
+
+section('Phase 11.5a — improver module + commands registered in main.rs');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }  IMPROVEMENT_REASONER weekly }`;
+  const { files } = compile(src);
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(modRs.includes('pub mod improver;'),                             'improver module declared');
+  assert(mainRs.includes('commands::improver::run_improvement_cycle'),    'run_improvement_cycle registered');
+  assert(mainRs.includes('commands::improver::list_improvement_cycles'),  'list_improvement_cycles registered');
+}
+
+section('Phase 11.5a — TS bindings expose runImprovementCycle + ImprovementCycle');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }  IMPROVEMENT_REASONER kz }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/improver.ts') ?? '';
+  assert(ts.length > 0,                                                   'improver.ts emitted');
+  assert(ts.includes('export interface ImprovementCycle'),                'ImprovementCycle type exported');
+  assert(ts.includes('export type ImprovementDisposition'),               'disposition union exported');
+  assert(ts.includes('runImprovementCycle'),                              'runImprovementCycle wrapper exported');
+  assert(ts.includes('listImprovementCycles'),                            'listImprovementCycles wrapper exported');
+  assert(ts.includes("invoke<ImprovementCycle>('run_improvement_cycle'"), 'runImprovementCycle invokes run_improvement_cycle');
+  assert(ts.includes("import type { TierVerification, SandboxOutcome } from './mutations'"), 'cross-module types imported');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

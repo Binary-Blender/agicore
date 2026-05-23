@@ -486,6 +486,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasMutationRuntime) modLines.push('pub mod mutations;');
   // Phase 11.4c — Andon responder (closes the loop end-to-end).
   if (hasMutationRuntime) modLines.push('pub mod responder;');
+  // Phase 11.5a — Improvement reasoner (kaizen entry into proposal pipeline).
+  if (hasMutationRuntime) modLines.push('pub mod improver;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -663,7 +665,14 @@ export function generateRust(ast: AgiFile): Map<string, string> {
         'commands::responder::list_andon_responder_dispositions',
       ]
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds];
+  // Phase 11.5a — Improvement reasoner commands (kaizen entry).
+  const improverCmds = hasMutationRuntime
+    ? [
+        'commands::improver::run_improvement_cycle',
+        'commands::improver::list_improvement_cycles',
+      ]
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

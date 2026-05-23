@@ -1,0 +1,481 @@
+// Improvement Reasoner Generator
+//
+// Phase 11.5a of the Andon Loop architecture (see Idea Factory/andon_loop_architecture.md).
+//
+// Adds the proactive (kaizen) entry into the proposal lifecycle. Where Phase
+// 4c's responder is *reactive* (an andon fires → propose a fix), the improver
+// is *scheduled* (look at recent runs → propose an improvement).
+//
+// Both paths produce the same artifact — a MutationProposal — and run through
+// the same verify+sandbox+deploy lifecycle. The tier verifier still gates,
+// AUTO_DEPLOY still decides deploy vs escalate. The only difference is the
+// proposer_identity ("improver:<reasoner>" vs "responder:<reasoner>") and the
+// presence/absence of an andon_event_id linkage.
+//
+// Phase 5a ships a deterministic stub improver: it picks the policy, looks for
+// any recent workflow_run, and proposes a low-risk RULES_modify (e.g., minor
+// threshold tweak). Real REASONER dispatch arrives in Phase 5b/c alongside
+// the NBVE shadow-evaluation substrate.
+//
+// Gated on the same condition as the mutations runtime (≥1 MUTATION_POLICY).
+
+import type { AgiFile } from '@agicore/parser';
+
+function isEnabled(ast: AgiFile): boolean {
+  return !!ast.mutationPolicies && ast.mutationPolicies.length > 0;
+}
+
+export function generateImprover(ast: AgiFile): Map<string, string> {
+  const files = new Map<string, string>();
+  if (!isEnabled(ast)) return files;
+  files.set('src-tauri/src/commands/improver.rs', buildImproverRs());
+  files.set('src/lib/improver.ts', buildImproverTs());
+  return files;
+}
+
+export function improverCommandNames(ast: AgiFile): string[] {
+  if (!isEnabled(ast)) return [];
+  return ['run_improvement_cycle', 'list_improvement_cycles'];
+}
+
+// ─── Rust runtime ──────────────────────────────────────────────────────────
+
+function buildImproverRs(): string {
+  return `// Agicore Generated — Improvement reasoner (Phase 11.5a)
+// DO NOT EDIT BY HAND. See core/compiler/src/generators/improver.ts.
+//
+// Scheduled / on-demand kaizen entry into the proposal lifecycle. Runs the
+// IMPROVEMENT_REASONER for a given MUTATION_POLICY, drafts a candidate
+// improvement, and pipes it through the same proposal pipeline that the
+// andon responder uses.
+//
+// Disposition contract mirrors the responder's:
+//   'proposed'       proposal created (carries verification + sandbox)
+//   'no_policy'      no MUTATION_POLICY by that name
+//   'no_reasoner'    policy exists but IMPROVEMENT_REASONER not declared
+//   'no_candidate'   reasoner declined (insufficient signal in recent data)
+
+use crate::commands::mutations::{
+    create_proposal_in_db, execute_sandbox, verify_and_persist,
+    ProposalInput, SandboxOutcome, TierVerification,
+};
+use crate::db::DbPool;
+use rusqlite::params;
+use serde::{Deserialize, Serialize};
+use tauri::State;
+use uuid::Uuid;
+
+// ─── Public types ─────────────────────────────────────────────────────────
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ImprovementCycle {
+    pub id: String,
+    pub policy_name: String,
+    pub reasoner_name: Option<String>,
+    pub disposition: String,
+    pub proposal_id: Option<String>,
+    pub verification: Option<TierVerification>,
+    pub sandbox: Option<SandboxOutcome>,
+    pub recent_runs_scanned: i64,
+    pub notes: Option<String>,
+    pub started_at: String,
+    pub completed_at: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ImprovementDraft {
+    pub target: String,
+    pub claimed_tier: i32,
+    pub claimed_scope: Vec<String>,
+    pub mutation_content: serde_json::Value,
+    pub reasoning: String,
+}
+
+// ─── Stub reasoner (Phase 5a) ─────────────────────────────────────────────
+
+/// Generate an improvement candidate from a scan of recent activity. Phase
+/// 5a is a deterministic stub: if any recent runs exist, propose a tiny T1
+/// rule tweak; otherwise decline (insufficient signal).
+///
+/// Phase 5b/c replaces this with: (1) a real telemetry scan that identifies
+/// candidates (low-confidence rule hits, recurring score-threshold misses,
+/// stale rules with zero matches in N days), and (2) a real REASONER call
+/// that consumes those candidates and proposes mutations. The interface
+/// stays stable: (target, recent_runs) → draft (or None).
+pub fn generate_stub_improvement(
+    target: &str,
+    recent_runs_scanned: i64,
+) -> Option<ImprovementDraft> {
+    if recent_runs_scanned == 0 {
+        return None;
+    }
+    Some(ImprovementDraft {
+        target: target.to_string(),
+        claimed_tier: 1,
+        claimed_scope: vec!["RULES_modify".to_string()],
+        mutation_content: serde_json::json!({
+            "kind":   "tighten_threshold",
+            "reason": "Stub kaizen — proposing a 5% threshold tightening to surface borderline cases for review",
+            "target_rule":          "score_gate",
+            "old_threshold_hint":   0.70,
+            "new_threshold_hint":   0.735,
+            "expected_effect":      "marginal increase in escalation rate; expected zero false positives based on recent traffic shape",
+        }),
+        reasoning: format!(
+            "Stub improver scanned {} recent run(s) on '{}' and proposes a low-risk threshold tightening. The mutation runs the same regression suite as andon-triggered proposals; if it doesn't strictly improve, it will be rejected or escalated.",
+            recent_runs_scanned, target
+        ),
+    })
+}
+
+// ─── Persistence helpers ─────────────────────────────────────────────────
+
+fn count_recent_completed_runs(db: &DbPool, workflow_name: &str) -> Result<i64, String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let n: i64 = conn
+        .query_row(
+            "SELECT COUNT(*) FROM workflow_runs WHERE workflow_name = ? AND status = 'completed' AND started_at > datetime('now', '-7 days')",
+            params![workflow_name],
+            |r| r.get(0),
+        )
+        .unwrap_or(0);
+    Ok(n)
+}
+
+#[derive(Debug, Clone)]
+struct PolicySnapshot {
+    name: String,
+    targets: Vec<String>,
+    improvement_reasoner: Option<String>,
+}
+
+fn load_policy(db: &DbPool, policy_name: &str) -> Result<Option<PolicySnapshot>, String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let row = conn.query_row(
+        "SELECT name, targets, improvement_reasoner FROM mutation_policies WHERE name = ?",
+        params![policy_name],
+        |r| {
+            let targets_str: String = r.get(1)?;
+            let targets: Vec<String> = serde_json::from_str(&targets_str).unwrap_or_default();
+            Ok(PolicySnapshot {
+                name: r.get(0)?,
+                targets,
+                improvement_reasoner: r.get(2)?,
+            })
+        },
+    );
+    match row {
+        Ok(p) => Ok(Some(p)),
+        Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+fn ensure_cycles_table(db: &DbPool) -> Result<(), String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    conn.execute_batch(
+        "CREATE TABLE IF NOT EXISTS improvement_cycles (
+            id                    TEXT PRIMARY KEY,
+            policy_name           TEXT NOT NULL,
+            reasoner_name         TEXT,
+            disposition           TEXT NOT NULL,
+            proposal_id           TEXT,
+            recent_runs_scanned   INTEGER NOT NULL DEFAULT 0,
+            notes                 TEXT,
+            started_at            TEXT NOT NULL,
+            completed_at          TEXT
+         );
+         CREATE INDEX IF NOT EXISTS idx_improvement_cycles_policy ON improvement_cycles(policy_name, started_at DESC);",
+    ).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+fn insert_cycle_row(
+    db: &DbPool,
+    id: &str,
+    policy_name: &str,
+    reasoner_name: Option<&str>,
+    disposition: &str,
+    proposal_id: Option<&str>,
+    recent_runs_scanned: i64,
+    notes: Option<&str>,
+    started_at: &str,
+    completed_at: &str,
+) -> Result<(), String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    conn.execute(
+        "INSERT INTO improvement_cycles (id, policy_name, reasoner_name, disposition, proposal_id, recent_runs_scanned, notes, started_at, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        params![id, policy_name, reasoner_name, disposition, proposal_id, recent_runs_scanned, notes, started_at, completed_at],
+    ).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+// ─── Pipeline ─────────────────────────────────────────────────────────────
+
+pub fn run_improvement_cycle_impl(db: &DbPool, policy_name: &str) -> Result<ImprovementCycle, String> {
+    ensure_cycles_table(db)?;
+    let cycle_id   = Uuid::new_v4().to_string();
+    let started_at = chrono::Utc::now().to_rfc3339();
+
+    // 1) Load the policy.
+    let policy = match load_policy(db, policy_name)? {
+        Some(p) => p,
+        None => {
+            let cycle = build_cycle(
+                &cycle_id, policy_name, None, "no_policy",
+                None, None, None, 0,
+                Some(format!("Policy '{}' not declared", policy_name)),
+                &started_at,
+            );
+            insert_cycle_row(db, &cycle.id, &cycle.policy_name, cycle.reasoner_name.as_deref(),
+                &cycle.disposition, cycle.proposal_id.as_deref(), cycle.recent_runs_scanned,
+                cycle.notes.as_deref(), &cycle.started_at, cycle.completed_at.as_deref().unwrap_or(&started_at))?;
+            return Ok(cycle);
+        }
+    };
+
+    let reasoner_name = match &policy.improvement_reasoner {
+        Some(r) => r.clone(),
+        None => {
+            let cycle = build_cycle(
+                &cycle_id, &policy.name, None, "no_reasoner",
+                None, None, None, 0,
+                Some(format!("Policy '{}' has no IMPROVEMENT_REASONER declared", policy.name)),
+                &started_at,
+            );
+            insert_cycle_row(db, &cycle.id, &cycle.policy_name, cycle.reasoner_name.as_deref(),
+                &cycle.disposition, cycle.proposal_id.as_deref(), cycle.recent_runs_scanned,
+                cycle.notes.as_deref(), &cycle.started_at, cycle.completed_at.as_deref().unwrap_or(&started_at))?;
+            return Ok(cycle);
+        }
+    };
+
+    // 2) Pick a target — Phase 5a uses the first policy target. Real
+    //    reasoner will choose the highest-signal target across the set.
+    let target = policy.targets.first().cloned().unwrap_or_default();
+
+    // 3) Scan recent activity for that target.
+    let recent_runs_scanned = if target.is_empty() {
+        0
+    } else {
+        count_recent_completed_runs(db, &target).unwrap_or(0)
+    };
+
+    // 4) Generate candidate.
+    let draft = match generate_stub_improvement(&target, recent_runs_scanned) {
+        Some(d) => d,
+        None => {
+            let cycle = build_cycle(
+                &cycle_id, &policy.name, Some(reasoner_name.clone()), "no_candidate",
+                None, None, None, recent_runs_scanned,
+                Some("Insufficient signal in recent runs to propose an improvement".to_string()),
+                &started_at,
+            );
+            insert_cycle_row(db, &cycle.id, &cycle.policy_name, cycle.reasoner_name.as_deref(),
+                &cycle.disposition, cycle.proposal_id.as_deref(), cycle.recent_runs_scanned,
+                cycle.notes.as_deref(), &cycle.started_at, cycle.completed_at.as_deref().unwrap_or(&started_at))?;
+            return Ok(cycle);
+        }
+    };
+
+    // 5) Run through proposal pipeline.
+    let proposer_identity = format!("improver:{}", reasoner_name);
+    let input = ProposalInput {
+        andon_event_id: None,
+        policy_name: policy.name.clone(),
+        proposer_identity,
+        target: draft.target,
+        claimed_tier: draft.claimed_tier,
+        claimed_scope: draft.claimed_scope,
+        mutation_content: serde_json::json!({
+            "reasoning": draft.reasoning,
+            "mutation":  draft.mutation_content,
+        }),
+    };
+    let proposal_id = create_proposal_in_db(db, &input)?;
+    let verification = verify_and_persist(db, &proposal_id)?;
+    let sandbox = if verification.allowed {
+        Some(execute_sandbox(db, &proposal_id)?)
+    } else {
+        None
+    };
+
+    let cycle = build_cycle(
+        &cycle_id, &policy.name, Some(reasoner_name),
+        "proposed",
+        Some(proposal_id.clone()),
+        Some(verification),
+        sandbox,
+        recent_runs_scanned,
+        None,
+        &started_at,
+    );
+    insert_cycle_row(db, &cycle.id, &cycle.policy_name, cycle.reasoner_name.as_deref(),
+        &cycle.disposition, cycle.proposal_id.as_deref(), cycle.recent_runs_scanned,
+        cycle.notes.as_deref(), &cycle.started_at, cycle.completed_at.as_deref().unwrap_or(&started_at))?;
+    Ok(cycle)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn build_cycle(
+    cycle_id: &str,
+    policy_name: &str,
+    reasoner_name: Option<String>,
+    disposition: &str,
+    proposal_id: Option<String>,
+    verification: Option<TierVerification>,
+    sandbox: Option<SandboxOutcome>,
+    recent_runs_scanned: i64,
+    notes: Option<String>,
+    started_at: &str,
+) -> ImprovementCycle {
+    let completed_at = chrono::Utc::now().to_rfc3339();
+    ImprovementCycle {
+        id: cycle_id.to_string(),
+        policy_name: policy_name.to_string(),
+        reasoner_name,
+        disposition: disposition.to_string(),
+        proposal_id,
+        verification,
+        sandbox,
+        recent_runs_scanned,
+        notes,
+        started_at: started_at.to_string(),
+        completed_at: Some(completed_at),
+    }
+}
+
+// ─── Tauri commands ──────────────────────────────────────────────────────
+
+#[tauri::command]
+pub fn run_improvement_cycle(
+    db: State<'_, DbPool>,
+    policy_name: String,
+) -> Result<ImprovementCycle, String> {
+    run_improvement_cycle_impl(db.inner(), &policy_name)
+}
+
+#[tauri::command]
+pub fn list_improvement_cycles(
+    db: State<'_, DbPool>,
+    policy_name: Option<String>,
+    limit: Option<i64>,
+) -> Result<Vec<ImprovementCycle>, String> {
+    ensure_cycles_table(db.inner())?;
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let lim = limit.unwrap_or(50).clamp(1, 1000);
+    let mut sql = String::from(
+        "SELECT id, policy_name, reasoner_name, disposition, proposal_id, recent_runs_scanned, notes, started_at, completed_at FROM improvement_cycles WHERE 1=1"
+    );
+    let mut args: Vec<String> = Vec::new();
+    if let Some(pn) = &policy_name { sql.push_str(" AND policy_name = ?"); args.push(pn.clone()); }
+    sql.push_str(" ORDER BY started_at DESC LIMIT ?");
+    let mut stmt = conn.prepare(&sql).map_err(|e| e.to_string())?;
+    let param_refs: Vec<&dyn rusqlite::ToSql> = args
+        .iter()
+        .map(|s| s as &dyn rusqlite::ToSql)
+        .chain(std::iter::once(&lim as &dyn rusqlite::ToSql))
+        .collect();
+    let rows = stmt
+        .query_map(param_refs.as_slice(), |row| {
+            Ok(ImprovementCycle {
+                id: row.get(0)?,
+                policy_name: row.get(1)?,
+                reasoner_name: row.get(2)?,
+                disposition: row.get(3)?,
+                proposal_id: row.get(4)?,
+                verification: None,   // not denormalised onto the cycle row; fetch via proposal_id
+                sandbox: None,
+                recent_runs_scanned: row.get(5)?,
+                notes: row.get(6)?,
+                started_at: row.get(7)?,
+                completed_at: row.get(8)?,
+            })
+        })
+        .map_err(|e| e.to_string())?;
+    let mut out = Vec::new();
+    for r in rows { out.push(r.map_err(|e| e.to_string())?); }
+    Ok(out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn stub_declines_when_no_recent_runs() {
+        let r = generate_stub_improvement("order_flow", 0);
+        assert!(r.is_none(), "no signal → no candidate");
+    }
+
+    #[test]
+    fn stub_proposes_when_runs_exist() {
+        let r = generate_stub_improvement("order_flow", 50);
+        assert!(r.is_some());
+        let d = r.unwrap();
+        assert_eq!(d.claimed_tier, 1);
+        assert_eq!(d.claimed_scope, vec!["RULES_modify".to_string()]);
+        assert_eq!(d.target, "order_flow");
+        // Tightening, not loosening — kaizen is conservative
+        let kind = d.mutation_content.get("kind").and_then(|v| v.as_str());
+        assert_eq!(kind, Some("tighten_threshold"));
+        let new_hint = d.mutation_content.get("new_threshold_hint").and_then(|v| v.as_f64()).unwrap_or(0.0);
+        let old_hint = d.mutation_content.get("old_threshold_hint").and_then(|v| v.as_f64()).unwrap_or(0.0);
+        assert!(new_hint > old_hint, "tightening should raise the threshold");
+    }
+
+    #[test]
+    fn stub_reasoning_mentions_run_count() {
+        let r = generate_stub_improvement("flow_x", 42).unwrap();
+        assert!(r.reasoning.contains("42"), "reasoning explains the scan basis");
+    }
+}
+`;
+}
+
+// ─── TypeScript bindings ──────────────────────────────────────────────────
+
+function buildImproverTs(): string {
+  return `// Agicore Generated — Improvement reasoner client bindings (Phase 11.5a)
+// DO NOT EDIT BY HAND. See core/compiler/src/generators/improver.ts.
+
+import { invoke } from '@tauri-apps/api/core';
+import type { TierVerification, SandboxOutcome } from './mutations';
+
+export type ImprovementDisposition =
+  | 'proposed'
+  | 'no_policy'
+  | 'no_reasoner'
+  | 'no_candidate';
+
+export interface ImprovementCycle {
+  id: string;
+  policyName: string;
+  reasonerName: string | null;
+  disposition: ImprovementDisposition;
+  proposalId: string | null;
+  verification: TierVerification | null;
+  sandbox: SandboxOutcome | null;
+  recentRunsScanned: number;
+  notes: string | null;
+  startedAt: string;
+  completedAt: string | null;
+}
+
+export async function runImprovementCycle(policyName: string): Promise<ImprovementCycle> {
+  return invoke<ImprovementCycle>('run_improvement_cycle', { policyName });
+}
+
+export async function listImprovementCycles(filter?: {
+  policyName?: string;
+  limit?: number;
+}): Promise<ImprovementCycle[]> {
+  return invoke<ImprovementCycle[]>('list_improvement_cycles', {
+    policyName: filter?.policyName ?? null,
+    limit:      filter?.limit ?? null,
+  });
+}
+`;
+}
