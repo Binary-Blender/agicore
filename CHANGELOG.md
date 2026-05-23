@@ -30,9 +30,12 @@ First public release. The full pipeline is proven end-to-end: a single `.agi` fi
 - New [`skills/agicore.baby.skill.md`](skills/agicore.baby.skill.md) — ~7.5k token Baby Step for small-context models. 5 worked examples, all parse and compile.
 - New [`skills/agicore.super.skill.md`](skills/agicore.super.skill.md) — ~18k token Super Skill Doc for frontier models. 14 worked recipes, all parse and compile; 30 anti-patterns with rationale; comprehensive error→fix table; 12 self-check prompts.
 
-**Consulting skill docs (rubric self-check):**
-- New [`skills/accelerando.manufacturing.baby.skill.md`](skills/accelerando.manufacturing.baby.skill.md) — ~8.3k token Baby Step for advising mid-sized discrete manufacturers (100–300 employees) on Accelerando ERP deployment. Catalog of all 12 Enterprise Core apps in manufacturing context. The "Acme Machining" 18-month deployment walked end-to-end. 10 anti-patterns from real ERP failures (Hershey, FoxMeyer, HP, Lidl). 5 rubric self-checks.
-- New [`skills/accelerando.manufacturing.super.skill.md`](skills/accelerando.manufacturing.super.skill.md) — ~25k token Super Skill Doc. 5 industry archetypes (greenfield discrete, legacy ERP replacement, multi-plant rollout, M&A integration, customer-pressure rescue). Per-app deployment guidance with configuration decisions, integration patterns, common configurations per archetype, gotchas. KPI framework with target ranges. Change-management playbook. 20 anti-patterns. Edge cases (process manufacturing, regulated industries, multi-currency, Tier-1 vs Tier-2). 10 rubric self-checks.
+**Consulting skill docs (rubric self-check) — ship in the `agicore-examples` repo:**
+
+Skill docs that advise on deploying the Accelerando apps live alongside those apps in the [agicore-examples](https://github.com/Binary-Blender/agicore-examples) repository. This keeps each skill doc adjacent to the artifact it teaches about.
+
+- [`agicore-examples/skills/accelerando.manufacturing.baby.skill.md`](https://github.com/Binary-Blender/agicore-examples/blob/main/skills/accelerando.manufacturing.baby.skill.md) — ~8.3k token Baby Step for advising mid-sized discrete manufacturers (100–300 employees) on Accelerando ERP deployment. Catalog of all 12 Enterprise Core apps in manufacturing context. The "Acme Machining" 18-month deployment walked end-to-end. 10 anti-patterns from real ERP failures (Hershey, FoxMeyer, HP, Lidl). 5 rubric self-checks.
+- [`agicore-examples/skills/accelerando.manufacturing.super.skill.md`](https://github.com/Binary-Blender/agicore-examples/blob/main/skills/accelerando.manufacturing.super.skill.md) — ~25k token Super Skill Doc. 5 industry archetypes (greenfield discrete, legacy ERP replacement, multi-plant rollout, M&A integration, customer-pressure rescue). Per-app deployment guidance. KPI framework. Change-management playbook. 20 anti-patterns. 10 rubric self-checks.
 
 ### Packaging
 

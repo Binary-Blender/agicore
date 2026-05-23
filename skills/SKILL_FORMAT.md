@@ -237,11 +237,11 @@ This format is proven by skill docs in the same directory, covering both self-ch
 - [`agicore.baby.skill.md`](agicore.baby.skill.md) — Baby Step for the Agicore DSL (~7.5k tokens; small open-source models). Every L4 example compiles.
 - [`agicore.super.skill.md`](agicore.super.skill.md) — Super Skill Doc for the Agicore DSL (~18k tokens; frontier models). Every L4 recipe compiles.
 
-**Rubric self-check (consulting domain):**
-- [`accelerando.manufacturing.baby.skill.md`](accelerando.manufacturing.baby.skill.md) — Baby Step for advising mid-sized discrete manufacturers on Accelerando ERP deployment (~16k tokens).
-- [`accelerando.manufacturing.super.skill.md`](accelerando.manufacturing.super.skill.md) — Super Skill Doc with 4+ industry archetypes, per-app config playbooks, KPI frameworks, failure modes (~60k tokens).
+**Rubric self-check (consulting domain) — ships in the `agicore-examples` repo alongside the apps it advises on:**
+- [`agicore-examples/skills/accelerando.manufacturing.baby.skill.md`](https://github.com/Binary-Blender/agicore-examples/blob/main/skills/accelerando.manufacturing.baby.skill.md) — Baby Step for advising mid-sized discrete manufacturers on Accelerando ERP deployment (~8k tokens).
+- [`agicore-examples/skills/accelerando.manufacturing.super.skill.md`](https://github.com/Binary-Blender/agicore-examples/blob/main/skills/accelerando.manufacturing.super.skill.md) — Super Skill Doc with 5 industry archetypes, per-app config playbooks, KPI frameworks, failure modes (~25k tokens).
 
-If you adopt this format for a new domain, the matching pair (Agicore for authoring, Accelerando for consulting) is the pattern to copy.
+If you adopt this format for a new domain, the matching pair (Agicore for authoring, Accelerando for consulting) is the pattern to copy. Skill docs live with the artifact they teach about — DSL docs in the framework repo, deployment docs alongside the apps being deployed.
 
 ---
 
