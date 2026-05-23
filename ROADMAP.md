@@ -1,21 +1,25 @@
 # Agicore Roadmap
 
-## Current Status — MVP Complete (May 2026)
+## Current Status — v1.0 (May 2026)
 
-**The full pipeline is proven end-to-end.** A single `.agi` file compiles to a running Tauri application. The reference app (NovaSyn Chat 2.0) runs in production with streaming AI, multi-provider support, conversation management, folder-based knowledge, and semantic state transitions — all from generated code.
+**The full pipeline is proven end-to-end.** A single `.agi` file compiles to a running Tauri application. The canary app (NovaSyn Chat 2.0) runs in production with streaming AI, multi-provider support, conversation management, folder-based knowledge, and semantic state transitions — all from generated code.
 
-| Milestone | Tests | Status |
+| Layer | Tests | Status |
 |---|---|---|
-| DSL Parser | 800 passing | Complete |
-| Tauri Codegen | 1511 passing | Complete |
+| DSL Parser | 843 passing | Complete |
+| Tauri Codegen | 1,576 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| Reference App (NovaSyn Chat 2.0) | End-to-end verified | **MVP Complete** |
-| Phase 7 — Adaptive Intelligence Layer | 40 declaration types | Complete (7.1 + 7.2 + 7.3) |
-| Phase 8.1 — Distributed Orchestration | 41 declaration types | Complete (MESH, NODE network fields, CHANNEL OVERFLOW_TO) |
-| Phase 8.2 — EVENT-Driven Distributed Workflows | 41 declaration types | Complete (EVENT SUBSCRIBERS, CHANNEL FROM/TO_NODE, AUTHORITY GOVERNS) |
-| Phase 8.3 — Cooperative Compute Accounting | 41 declaration types | Complete (NODE CONTRIBUTES, MESH ACCOUNTING, SQL balance view, TS helpers) |
-| Phase 9 — Cognitive Tier Hierarchy | 41 declaration types | Complete (COGNITION_ROLE TIER + SPC_FLOOR, cheapestViableRole, SQL metrics) |
+| Canary (NovaSyn Chat 2.0) | End-to-end verified | **Green** |
 | **Total** | **2,453 passing, 0 failures** | |
+
+| Capability milestone | Declarations | Notes |
+|---|---|---|
+| Phase 7 — Adaptive Intelligence Layer | 40 | EVENT, NBVE, CONTRACT, REPUTATION, SUBSCRIPTION, DISPUTE (7.1 + 7.2 + 7.3) |
+| Phase 8.1 — Distributed Orchestration | 41 | MESH, NODE network fields, CHANNEL OVERFLOW_TO |
+| Phase 8.2 — EVENT-Driven Distributed Workflows | 41 | EVENT SUBSCRIBERS, CHANNEL FROM/TO_NODE, AUTHORITY GOVERNS |
+| Phase 8.3 — Cooperative Compute Accounting | 41 | NODE CONTRIBUTES, MESH ACCOUNTING, SQL balance view, TS helpers |
+| Phase 9 — Cognitive Tier Hierarchy | 41 | COGNITION_ROLE TIER + SPC_FLOOR, cheapestViableRole, SQL metrics |
+| Phase 10 — Sprint X.1–X.8 hardening | 58 | Universal fields (VERSION/DESCRIPTION/PROMPT), soft keywords, lexer expressions, block-shape flex, TRIGGER EVENT, SEED bracket form, MACRO/MACRO_REGISTRY/ACTUATOR/PLATFORM/NULLCLAW/BRAIN_BODY/LOG/THEME/SEED/TYPE surfaced as first-class |
 
 ---
 

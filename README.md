@@ -7,13 +7,15 @@ Agicore separates AI intelligence from runtime execution. AI handles interpretat
 ```
 Human Intent
     |
-AI Compiler / Orchestration
+Author (human, often pair-programming with an AI assistant)
     |
-Agicore DSL (constraint boundary)
+Agicore DSL (.agi file — the constraint boundary)
     |
-Deterministic Runtime
+Agicore Compiler (deterministic codegen)
     |
-Validated System
+Generated Tauri Application (Rust + TypeScript + SQLite)
+    |
+Validated, Reproducible System
 ```
 
 This is not an agent framework. It is not a chatbot. It is not no-code.
@@ -111,14 +113,10 @@ agicore/
 |-- SKILLDOCS.md               # SKILLDOC governance: signed skill docs, clearance, audit
 |-- LICENSE                    # MIT
 |
-|-- dsl/                       # DSL grammar specification
-|-- core/                      # Parser, validator, runtime, test runner
-|   |-- parser/
-|   |-- validator/
-|   |-- runtime/
-|   +-- test-runner/
-|-- compiler/                  # AI compiler (natural language -> DSL)
-|   +-- ai-compiler/
+|-- dsl/                       # Formal grammar specification (grammar.md)
+|-- core/                      # The compiler toolchain (TypeScript)
+|   |-- parser/                # .agi -> AST (843 tests)
+|   +-- compiler/              # AST -> Tauri project + static validator (1,610 tests)
 |
 |-- history/                   # Evolutionary lineage (1G -> 4G)
 |   |-- 1g-coding-standards/
@@ -127,12 +125,14 @@ agicore/
 |   |-- promptcore/
 |   +-- agicore-foundation/
 |
-|-- examples/                  # Compact .agi demos of individual DSL features
-|-- apps/                      # Real applications built on Agicore
-|   +-- novasyn-chat/          # First flagship: multi-provider AI chat client
-|-- docs/                      # Technical documentation
-+-- prompts/                   # AI compiler prompt templates
+|-- apps/                      # Reference applications living in-repo
+|   +-- novasyn-chat/          # Canary: multi-provider AI chat client
+|-- docs/                      # Tutorial, getting-started, DSL reference, cookbook, case studies
+|-- Idea Factory/              # In-flight feature proposals + sprint aftermath notes
++-- LICENSE                    # MIT
 ```
+
+> Showcase apps (Accelerando suite, pattern demos, additional reference apps) live in the separate [agicore-examples](https://github.com/Binary-Blender/agicore-examples) repository so platform releases stay focused on the canary.
 
 ---
 
@@ -242,28 +242,31 @@ See [EVOLVING.md](EVOLVING.md) for the full methodology, the feature request tem
 
 ---
 
-## Status — MVP Complete (May 2026)
+## Status — v1.0 (May 2026)
 
-**The full pipeline works end-to-end.** A single `.agi` file compiles to a running Tauri application. The reference app has been tested in production: API key entry, multi-provider streaming AI responses, conversation history, folder-based knowledge, tag management, and exchange library all work from generated code.
+**The full pipeline works end-to-end.** A single `.agi` file compiles to a running Tauri application. The canary app (NovaSyn Chat 2.0) compiles cleanly and runs in production: API key entry, multi-provider streaming AI responses, conversation history, folder-based knowledge, tag management, and exchange library all work from generated code.
 
 | Layer | Tests | Status |
 |---|---|---|
-| Parser | 763 passing | Complete |
-| Compiler | 1,181 passing | Complete |
+| Parser | 843 passing | Complete |
+| Compiler | 1,576 passing | Complete |
 | Static Validator | 34 passing | Complete |
-| **Total** | **1,978 passing** | **0 failures** |
+| **Total** | **2,453 passing** | **0 failures** |
 
-The DSL covers 53 declaration types across 9 layers:
+The DSL covers **58 declaration types across 10 layers**:
 
-- **Application:** APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST, PREFERENCE
-- **Orchestration:** WORKFLOW, PIPELINE, QC, VAULT, STAGES
-- **Expert System:** RULE, FACT, STATE, PATTERN, SCORE, MODULE
-- **Cooperative Intelligence:** ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED, COGNITION_ROLE, ESCALATION_CHAIN, QC_MESH
-- **Semantic Infrastructure:** PACKET, AUTHORITY, CHANNEL, IDENTITY, FEED
-- **Ambient Intelligence:** NODE, SENSOR, ZONE
-- **Semantic Operating Environment:** SESSION, COMPILER
-- **Adaptive Intelligence:** EVENT, NBVE, CONTRACT, REPUTATION, SUBSCRIPTION, DISPUTE
-- **Deployment:** TARGET, AUTH, TENANT
+- **Application** (7): APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST, PREFERENCE
+- **Orchestration** (5): WORKFLOW, PIPELINE, QC, VAULT, STAGES
+- **Expert System** (6): RULE, FACT, STATE, PATTERN, SCORE, MODULE
+- **Cooperative Intelligence** (10): ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED, COGNITION_ROLE, ESCALATION_CHAIN, QC_MESH
+- **Semantic Infrastructure** (5): PACKET, AUTHORITY, CHANNEL, IDENTITY, FEED
+- **Adaptive Intelligence** (6): EVENT, NBVE, CONTRACT, REPUTATION, SUBSCRIPTION, DISPUTE
+- **Semantic Operating Environment** (2): SESSION, COMPILER
+- **Ambient + Embedded** (8): NODE, SENSOR, ZONE, MESH, ACTUATOR, PLATFORM, NULLCLAW, BRAIN_BODY
+- **Deployment** (3): TARGET, AUTH, TENANT
+- **Primitives** (6): MACRO, MACRO_REGISTRY, LOG, THEME, SEED, TYPE
+
+See [`dsl/grammar.md`](dsl/grammar.md) for the formal grammar and [`docs/dsl-reference.md`](docs/dsl-reference.md) for the quick reference.
 
 **What the compiler generates from a single `.agi` file:**
 

@@ -86,13 +86,14 @@ Crucially: the runtime never calls back to the source language. Once compiled, t
 
 | Traditional Computing | Agicore Architecture |
 |---|---|
-| Human writes source code | Human expresses intent |
-| Compiler translates to IR/AST | AI compiler translates to DSL |
-| Linker validates dependencies | DSL validator checks references |
-| Runtime executes machine code | Deterministic runtime executes DSL |
-| Unit tests verify correctness | AI-generated tests verify compilation |
+| Human writes source code | Human (often pair-programming with an AI assistant) writes a `.agi` specification |
+| Compiler translates to IR/AST | Agicore compiler translates DSL to AST |
+| Linker validates dependencies | Static validator checks references across the AST |
+| Code generator emits machine code | Tauri codegen emits Rust + TypeScript + SQL |
+| Runtime executes machine code | Deterministic generated runtime executes |
+| Unit tests verify correctness | Generated test suite verifies the compiled system |
 
-Agicore treats AI as a compiler for deterministic systems. The AI operates at build time. The DSL is the intermediate representation. The runtime is deterministic.
+The translation step from intent to DSL is where AI participates most freely — and where its output is most easily validated, because the next step is a parser that either accepts the `.agi` file or rejects it with a line number. AI operates at build time. The DSL is the constraint boundary. The runtime is deterministic.
 
 ### 2.3 The DSL as constraint boundary
 
@@ -430,21 +431,24 @@ The architecture is ready. The constraint is not technical. It is recognizing th
 
 ## Appendix: Grammar Summary
 
-The Agicore DSL covers 34 declaration types across 7 layers:
+The Agicore DSL covers **58 declaration types across 10 layers**:
 
 | Layer | Declarations |
 |---|---|
-| Application | APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST |
-| Orchestration | WORKFLOW, PIPELINE, QC, VAULT |
+| Application | APP, ENTITY, ACTION, VIEW, AI_SERVICE, TEST, PREFERENCE |
+| Orchestration | WORKFLOW, PIPELINE, QC, VAULT, STAGES |
 | Expert System | RULE, FACT, STATE, PATTERN, SCORE, MODULE |
-| Cooperative Intelligence | ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED |
+| Cooperative Intelligence | ROUTER, SKILL, SKILLDOC, REASONER, TRIGGER, LIFECYCLE, BREED, COGNITION_ROLE, ESCALATION_CHAIN, QC_MESH |
 | Semantic Infrastructure | PACKET, AUTHORITY, CHANNEL, IDENTITY, FEED |
-| Ambient Intelligence | NODE, SENSOR, ZONE |
+| Adaptive Intelligence | EVENT, NBVE, CONTRACT, REPUTATION, SUBSCRIPTION, DISPUTE |
 | Semantic Operating Environment | SESSION, COMPILER |
+| Ambient + Embedded | NODE, SENSOR, ZONE, MESH, ACTUATOR, PLATFORM, NULLCLAW, BRAIN_BODY |
+| Deployment | TARGET, AUTH, TENANT |
+| Primitives | MACRO, MACRO_REGISTRY, LOG, THEME, SEED, TYPE |
 
 Full grammar specification: `dsl/grammar.md`
 
-Reference application: `apps/novasyn-chat/novasyn_chat.agi` (~440 lines → complete Tauri application)
+Reference application: `apps/novasyn-chat/novasyn_chat.agi` (~595 lines → complete Tauri application, 54+ generated files)
 
 Literary case study: `docs/case-study/meridian.epub`
 

@@ -41,11 +41,11 @@ Clone the repo, open it in your terminal, and start asking questions.
 ### Explore the DSL
 
 ```
-"Read dsl/grammar.md. Write an Agicore DSL definition for a simple CRM application."
+"Read dsl/grammar.md and docs/dsl-reference.md. Write an Agicore DSL definition for a simple CRM application."
 ```
 
 ```
-"Take the invoice-approval example and extend it with a new entity and workflow."
+"Clone https://github.com/Binary-Blender/agicore-examples and pick any showcase file. Extend it with a new entity and workflow."
 ```
 
 ```
@@ -75,19 +75,22 @@ Clone the repo, open it in your terminal, and start asking questions.
 ## What You Will Find
 
 ### /dsl
-The formal grammar specification for the Agicore DSL. This is the constraint boundary -- the language that sits between probabilistic AI generation and deterministic system execution.
+The formal grammar specification for the Agicore DSL (`grammar.md`). This is the constraint boundary — the language that sits between probabilistic AI generation and deterministic system execution.
 
 ### /core
-The parser, validator, runtime engine, and test runner. These take DSL definitions and produce working, verified systems.
-
-### /compiler
-The AI compiler layer. Takes natural language intent and generates valid DSL. This is where AI creativity is useful -- but its output is constrained by the DSL grammar and validated before execution.
+The compiler toolchain. `core/parser/` turns `.agi` files into an AST (843 tests). `core/compiler/` turns the AST into a complete Tauri project — Rust commands, TypeScript types, Zustand store, React components, SQLite migrations, Tauri config — plus the static validator (1,576 + 34 tests).
 
 ### /history
 The evolutionary lineage of the architecture. Four generations of AI-native development, from coding standards to platform to systems language. Includes PromptCore (the orchestration language that predicted this architecture before it was fully understood) and the foundational Agicore concept documents.
 
-### /examples
-Working examples that demonstrate the full pipeline: intent -> DSL -> compiled system -> passing tests.
+### /apps/novasyn-chat
+The canary application — a real multi-provider AI chat client generated from `novasyn_chat.agi`. Used as a regression test for the framework itself: if a framework change breaks the canary, the framework change is wrong.
+
+### /docs
+Tutorial, getting-started guide, DSL reference, cookbook, and a literary case-study (Meridian).
+
+### Where does the AI live?
+The Agicore *runtime* never calls an LLM. AI participates as a **build-time author**, typically a human pair-programming with an AI assistant (Claude Code, Cursor, etc.) to write the `.agi` source. The compiler itself is fully deterministic. A future `compiler/ai-compiler/` package will package the "natural-language → DSL" workflow as a CLI; today that workflow is "open Claude Code in this repo and ask."
 
 ---
 
