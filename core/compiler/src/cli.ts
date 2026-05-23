@@ -92,6 +92,12 @@ const command = args[0];
 
 if (!command) usage();
 
+// Help flags are friendly synonyms for "show usage" — accept anywhere.
+if (command === '--help' || command === '-h' || command === 'help') {
+  usage();
+}
+
+// Recognized commands…
 if (command === 'generate') {
   const inputFile = args[1];
   if (!inputFile) { console.error('Error: No input file specified'); usage(); }

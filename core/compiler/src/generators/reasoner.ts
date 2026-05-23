@@ -326,7 +326,7 @@ async fn run_scheduled_reasoner(app: &AppHandle, db: &DbPool, keys: &std::collec
 }
 
 pub fn start_reasoner_scheduler(app: AppHandle, db: crate::db::DbPool, keys: std::sync::Arc<ApiKeyStore>, default_model: String) {
-    tokio::spawn(async move {
+    tauri::async_runtime::spawn(async move {
         tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
         let keys_snap: std::collections::HashMap<String, String> = match keys.lock() { Ok(k) => k.clone(), Err(_) => return };
 ${schedulerEntries}

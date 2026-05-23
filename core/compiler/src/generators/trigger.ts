@@ -243,7 +243,7 @@ async fn check_and_fire(app: &AppHandle, db: &DbPool, keys: &std::sync::Arc<ApiK
                     let model = default_model.to_string();
                     let db_clone = db.clone();
                     let app_clone = app.clone();
-                    tokio::spawn(async move {
+                    tauri::async_runtime::spawn(async move {
                         let run_id = match start_run(&db_clone, target, &model) { Ok(id) => id, Err(e) => { eprintln!("[Trigger→Reasoner] {}", e); return; } };
                         let _ = app_clone.emit("reasoner-started", &run_id);
                         match execute_reasoner(target, &model, &db_clone, &keys_snap).await {
@@ -266,7 +266,7 @@ async fn check_and_fire(app: &AppHandle, db: &DbPool, keys: &std::sync::Arc<ApiK
 }
 
 pub fn start_trigger_dispatcher(app: AppHandle, db: DbPool, keys: std::sync::Arc<ApiKeyStore>, default_model: String) {
-    tokio::spawn(async move {
+    tauri::async_runtime::spawn(async move {
         tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
         let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(5));
         loop {

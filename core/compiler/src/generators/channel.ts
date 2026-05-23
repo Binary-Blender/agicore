@@ -255,6 +255,7 @@ CREATE TABLE IF NOT EXISTS channel_messages (
   published_at TEXT NOT NULL,
   processed_at TEXT,
   expires_at TEXT,
+  validation_errors TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_channel_messages_channel ON channel_messages(channel_name, published_at DESC);

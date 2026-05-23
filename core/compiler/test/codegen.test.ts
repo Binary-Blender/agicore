@@ -1522,8 +1522,10 @@ assert(routerRs!.includes('call_model_sync'), 'router.rs should include dispatch
 assert(routerRs!.includes('"Qwen/Qwen3-8B"'), 'router.rs provider_from_model should match HuggingFace model IDs');
 assert(routerRs!.includes('router.huggingface.co'), 'router.rs should use HuggingFace router endpoint');
 
-// broadcast_chat should use tokio::spawn for parallelism
-assert(routerRs!.includes('tokio::spawn'), 'broadcast_chat should spawn parallel tasks');
+// broadcast_chat should use tauri::async_runtime::spawn for parallelism (works in all
+// Tauri contexts — required at app-startup, safe inside command handlers, consistent
+// throughout the codegen surface)
+assert(routerRs!.includes('tauri::async_runtime::spawn'), 'broadcast_chat should spawn parallel tasks');
 
 // council_chat should emit a council-result event
 assert(routerRs!.includes('council-result'), 'council_chat should emit council-result event');
@@ -2178,6 +2180,13 @@ REASONER on_demand_summarizer {
   // Scheduler only for daily/weekly — not on_demand
   assert(rs.includes('start_reasoner_scheduler'), 'Should emit scheduler fn since daily/weekly present');
 
+  // Regression: scheduler must use tauri::async_runtime::spawn, not raw tokio::spawn.
+  // tokio::spawn from main.rs setup hook panics — there's no current tokio runtime
+  // until Tauri builds one; tauri::async_runtime::spawn is the correct entrypoint
+  // for any task started before/outside a Tauri command handler.
+  assert(rs.includes('tauri::async_runtime::spawn'), 'start_reasoner_scheduler must use tauri::async_runtime::spawn');
+  assert(!rs.includes('tokio::spawn'), 'reasoner.rs must not use raw tokio::spawn (Tauri runtime safety)');
+
   // SQL migration fragment
   assert(files.has('migrations/reasoner_runs.sql'), 'Should emit reasoner_runs migration');
   const sql = files.get('migrations/reasoner_runs.sql') ?? '';
@@ -2255,6 +2264,10 @@ CHANNEL audit_log {
   assert(sql.includes('CREATE TABLE IF NOT EXISTS channel_messages'), 'Migration should create channel_messages table');
   assert(sql.includes('channel_name TEXT NOT NULL'), 'Migration should have channel_name column');
   assert(sql.includes("status TEXT NOT NULL DEFAULT 'pending'"), 'Migration should have status column with default');
+  // Regression: validation_errors column must be defined inline in CREATE TABLE,
+  // not added later via ALTER TABLE from packet.sql (caused write-amplification +
+  // upgrade-path issues in the canary).
+  assert(sql.includes('validation_errors TEXT'), 'channel_messages CREATE TABLE should include validation_errors column inline');
 
   // ChannelView stub
   assert(files.has('src/components/ChannelView.tsx'), 'Should emit ChannelView.tsx stub');
@@ -2324,6 +2337,10 @@ TRIGGER on_chat_burst {
   assert(rs.includes('list_trigger_statuses'), 'trigger.rs should define list_trigger_statuses command');
   assert(rs.includes('list_trigger_log'), 'trigger.rs should define list_trigger_log command');
   assert(rs.includes('start_trigger_dispatcher'), 'trigger.rs should define start_trigger_dispatcher fn');
+  // Regression: dispatcher and inner spawns must use tauri::async_runtime::spawn
+  // (see reasoner.rs note — same Tauri-runtime-context reasoning).
+  assert(rs.includes('tauri::async_runtime::spawn'), 'trigger.rs must use tauri::async_runtime::spawn');
+  assert(!rs.includes('tokio::spawn'), 'trigger.rs must not use raw tokio::spawn');
   assert(rs.includes('debounce_secs: 300'), 'Should parse 5m debounce as 300 seconds');
   assert(rs.includes('debounce_secs: 3600'), 'Should parse 1h debounce as 3600 seconds');
   assert(rs.includes('fires_kind: "reasoner"'), 'Should emit fires_kind for reasoner target');
@@ -2424,6 +2441,10 @@ CHANNEL batch_queue {
   const sql = files.get('migrations/packets.sql') ?? '';
   assert(sql.includes('packet_validation_log'), 'Migration should create packet_validation_log table');
   assert(sql.includes('channel_name TEXT NOT NULL'), 'Migration should have channel_name column');
+  // Regression: validation_errors column belongs in channels.sql CREATE TABLE,
+  // NOT here as an ALTER. Co-located ALTER caused write-amplification on every
+  // app start and broke initial-migration replay.
+  assert(!sql.includes('ALTER TABLE channel_messages'), 'packets.sql must not ALTER channel_messages — column is now defined inline in channels.sql');
 
   // mod.rs includes packet module
   const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';

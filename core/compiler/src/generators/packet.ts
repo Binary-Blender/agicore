@@ -285,8 +285,8 @@ ${rules}
 // ─── Migration ────────────────────────────────────────────────────────────────
 
 function buildMigrationSql(): string {
-  return `-- PACKET: validation audit log (channel_messages gets validation_errors column via ALTER TABLE)
-ALTER TABLE channel_messages ADD COLUMN IF NOT EXISTS validation_errors TEXT;
+  return `-- PACKET: validation audit log
+-- (channel_messages.validation_errors column is defined inline in channels.sql)
 
 CREATE TABLE IF NOT EXISTS packet_validation_log (
   id TEXT PRIMARY KEY,
