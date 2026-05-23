@@ -5505,6 +5505,178 @@ ENTITY Note { title: string  TIMESTAMPS }`;
   assert(sql.includes('telemetry_events'),                  'TELEMETRY explicit: telemetry table still emitted');
 }
 
+// --- Phase 11 Andon Loop — Phase 1b: Workflow runtime + checkpoints ---
+
+section('Phase 11.1b — workflow runtime NOT emitted when telemetry is off (back-compat for existing workflows)');
+{
+  // The framework already parses WORKFLOWs (Accelerando + showcase apps use them).
+  // Phase 1b must NOT change their generated output. Backward-compat gate:
+  // workflow runtime only emits when TELEMETRY is enabled.
+  const wfNoTelSrc = `APP nt { TITLE "NoTel" DB nt.db }
+ENTITY Note { title: string  TIMESTAMPS }
+ACTION a1 { INPUT id: id  OUTPUT result: string }
+ACTION a2 { INPUT id: id  OUTPUT result: string }
+WORKFLOW pipeline {
+  STEP first  { ACTION a1 }
+  STEP second { ACTION a2 }
+}`;
+  const { files } = compile(wfNoTelSrc);
+  assert(!files.has('src-tauri/src/commands/workflow.rs'), 'No workflow.rs when TELEMETRY off');
+  assert(!files.has('src/lib/workflow.ts'),                 'No workflow.ts when TELEMETRY off');
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(!sql.includes('workflow_checkpoints'),             'No workflow_checkpoints table when TELEMETRY off');
+  assert(!sql.includes('workflow_runs'),                    'No workflow_runs table when TELEMETRY off');
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(!modRs.includes('pub mod workflow;'),              'workflow not declared in mod.rs when TELEMETRY off');
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(!mainRs.includes('commands::workflow::'),          'No workflow commands registered when TELEMETRY off');
+}
+
+section('Phase 11.1b — workflow runtime NOT emitted when telemetry on but no workflows');
+{
+  // The dual gate: also needs workflows to exist.
+  const noWfSrc = `APP nw { TITLE "NoWf" DB nw.db TELEMETRY auto }
+ENTITY Note { title: string  TIMESTAMPS }`;
+  const { files } = compile(noWfSrc);
+  assert(!files.has('src-tauri/src/commands/workflow.rs'), 'No workflow.rs when no WORKFLOWs declared');
+  assert(!files.has('src/lib/workflow.ts'),                 'No workflow.ts when no WORKFLOWs declared');
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(!sql.includes('workflow_checkpoints'),             'No workflow_checkpoints table when no WORKFLOWs');
+}
+
+section('Phase 11.1b — workflow runtime emitted when telemetry + workflows present');
+{
+  const wfSrc = `APP wf { TITLE "Wf" DB wf.db TELEMETRY auto }
+ENTITY Note { title: string  TIMESTAMPS }
+ACTION proofread { INPUT id: id  OUTPUT result: string }
+ACTION summarize { INPUT id: id  OUTPUT result: string }
+ACTION fact_check { INPUT id: id  OUTPUT result: string }
+ACTION publish    { INPUT id: id  OUTPUT result: string }
+
+WORKFLOW publish_pipeline {
+  STEP proof   { ACTION proofread }
+  STEP sum     { ACTION summarize }
+  STEP facts   { ACTION fact_check }
+  STEP pub     { ACTION publish }
+  PARALLEL proof, sum, facts
+}
+
+WORKFLOW simple_seq {
+  STEP step_a { ACTION proofread }
+  STEP step_b { ACTION summarize }
+}`;
+  const { files } = compile(wfSrc);
+
+  // SQL: workflow_checkpoints + workflow_runs tables
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS workflow_checkpoints'), 'workflow_checkpoints table emitted');
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS workflow_runs'),         'workflow_runs table emitted');
+  assert(sql.includes('idx_wf_checkpoints_run'),                            'checkpoint run_id index');
+  assert(sql.includes('idx_wf_checkpoints_workflow'),                       'checkpoint workflow_name index');
+  assert(sql.includes('idx_wf_runs_workflow'),                              'runs workflow_name index');
+  assert(sql.includes('idx_wf_runs_status'),                                'runs status index');
+
+  // Rust: workflow.rs with per-workflow Tauri commands + query commands
+  assert(files.has('src-tauri/src/commands/workflow.rs'),                  'workflow.rs emitted');
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  assert(rs.includes('use crate::commands::telemetry::'),                  'workflow.rs imports telemetry helpers');
+  assert(rs.includes('pub async fn run_publish_pipeline('),                'run_publish_pipeline command emitted');
+  assert(rs.includes('pub async fn run_simple_seq('),                      'run_simple_seq command emitted');
+  assert(rs.includes('pub fn list_workflow_runs('),                        'list_workflow_runs query command emitted');
+  assert(rs.includes('pub fn get_workflow_checkpoints('),                  'get_workflow_checkpoints query command emitted');
+  assert(rs.includes('async fn dispatch_action('),                         'action dispatcher present');
+  assert(rs.includes('"proofread" =>'),                                    'dispatcher knows about "proofread" action');
+  assert(rs.includes('"summarize" =>'),                                    'dispatcher knows about "summarize" action');
+  assert(rs.includes('"fact_check" =>'),                                   'dispatcher knows about "fact_check" action');
+  assert(rs.includes('"publish" =>'),                                      'dispatcher knows about "publish" action');
+  assert(rs.includes('save_checkpoint'),                                   'checkpoint save helper present');
+  assert(rs.includes('save_run_started'),                                  'run started persistence helper present');
+  assert(rs.includes('save_run_completed'),                                'run completed persistence helper present');
+  assert(rs.includes('emit_telemetry'),                                    'workflow steps emit telemetry');
+  assert(rs.includes('complete_telemetry'),                                'workflow steps complete telemetry');
+  assert(rs.includes('tauri::async_runtime::spawn'),                       'parallel batch uses tauri::async_runtime::spawn (canonical)');
+  assert(!rs.includes('tokio::spawn'),                                     'workflow.rs must not use raw tokio::spawn');
+  assert(rs.includes('"workflow_started"'),                                'workflow_started telemetry event type');
+  assert(rs.includes('"workflow_step_started"'),                           'workflow_step_started telemetry event type');
+
+  // TypeScript: workflow.ts with typed run* wrappers + query wrappers
+  assert(files.has('src/lib/workflow.ts'),                                 'workflow.ts client API emitted');
+  const ts = files.get('src/lib/workflow.ts') ?? '';
+  assert(ts.includes('export interface WorkflowRunResult {'),              'WorkflowRunResult interface');
+  assert(ts.includes('export interface WorkflowCheckpoint {'),             'WorkflowCheckpoint interface');
+  assert(ts.includes('export interface WorkflowRunSummary {'),             'WorkflowRunSummary interface');
+  assert(ts.includes('export async function runPublishPipeline('),         'runPublishPipeline TS wrapper');
+  assert(ts.includes('export async function runSimpleSeq('),               'runSimpleSeq TS wrapper');
+  assert(ts.includes('export async function listWorkflowRuns('),           'listWorkflowRuns TS wrapper');
+  assert(ts.includes('export async function getWorkflowCheckpoints('),     'getWorkflowCheckpoints TS wrapper');
+
+  // mod.rs + main.rs registration
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod workflow;'),                              'workflow module declared in commands/mod.rs');
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::workflow::run_publish_pipeline'),      'run_publish_pipeline registered in main.rs');
+  assert(mainRs.includes('commands::workflow::run_simple_seq'),            'run_simple_seq registered in main.rs');
+  assert(mainRs.includes('commands::workflow::list_workflow_runs'),        'list_workflow_runs registered in main.rs');
+  assert(mainRs.includes('commands::workflow::get_workflow_checkpoints'),  'get_workflow_checkpoints registered in main.rs');
+}
+
+section('Phase 11.1b — ON_FAIL semantics emit the right code branches');
+{
+  const onFailSrc = `APP of { TITLE "OF" DB of.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION step_action { INPUT id: id  OUTPUT result: string }
+
+WORKFLOW with_retry {
+  STEP retried { ACTION step_action  ON_FAIL retry }
+}
+
+WORKFLOW with_skip {
+  STEP skipped { ACTION step_action  ON_FAIL skip }
+}
+
+WORKFLOW with_stop {
+  STEP must_succeed { ACTION step_action  ON_FAIL stop }
+}`;
+  const { files } = compile(onFailSrc);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+
+  // retry: must emit a retry attempt + workflow_step_retry telemetry event
+  assert(rs.includes('"workflow_step_retry"'),                'retry semantics emit workflow_step_retry event');
+  assert(rs.includes('retrying once'),                        'retry branch present');
+  // skip: must emit a skip log line that continues the loop
+  assert(rs.includes('on_fail: skip'),                        'skip branch present');
+  assert(rs.includes('continue to next step'),                'skip branch documents continue behavior');
+  // stop: default; returns failed run with error
+  assert(rs.includes('status: "failed".to_string()'),         'stop branch returns failed status');
+}
+
+section('Phase 11.1b — PARALLEL batch generates concurrent dispatch');
+{
+  const parSrc = `APP par { TITLE "Par" DB par.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION a1 { INPUT id: id  OUTPUT result: string }
+ACTION a2 { INPUT id: id  OUTPUT result: string }
+ACTION a3 { INPUT id: id  OUTPUT result: string }
+ACTION a4 { INPUT id: id  OUTPUT result: string }
+
+WORKFLOW concurrent {
+  STEP s1 { ACTION a1 }
+  STEP s2 { ACTION a2 }
+  STEP s3 { ACTION a3 }
+  STEP s4 { ACTION a4 }
+  PARALLEL s1, s2, s3
+}`;
+  const { files } = compile(parSrc);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  // Parallel batch: spawn each in its own task, await all
+  assert(rs.includes('tauri::async_runtime::spawn'),          'PARALLEL spawns concurrent tasks');
+  assert(rs.includes('handles.push('),                        'PARALLEL collects join handles');
+  assert(rs.includes('handle.await'),                         'PARALLEL awaits all handles');
+  assert(rs.includes('parallel batch of 3 steps'),            'PARALLEL batch comment names the batch size');
+  // Non-parallel step (s4) should still be a serial step after the batch
+  assert(rs.includes('step 3: s4'),                           'serial step after parallel batch present');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

@@ -478,6 +478,9 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   // Phase 1a — Andon Loop telemetry substrate.
   const hasTelemetry = !!ast.app.telemetry && ast.app.telemetry !== 'off';
   if (hasTelemetry) modLines.push('pub mod telemetry;');
+  // Phase 1b — Workflow runtime (requires telemetry enabled + workflows declared).
+  const hasWorkflowRuntime = hasTelemetry && ast.workflows && ast.workflows.length > 0;
+  if (hasWorkflowRuntime) modLines.push('pub mod workflow;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -623,7 +626,15 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const telemetryCmds = hasTelemetry
     ? ['commands::telemetry::query_telemetry', 'commands::telemetry::get_telemetry_summary', 'commands::telemetry::clear_telemetry_before']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds];
+  // Phase 1b — Workflow runtime: one run_<name> per workflow + 2 query commands.
+  const workflowCmds = hasWorkflowRuntime
+    ? [
+        ...ast.workflows.map((wf) => `commands::workflow::run_${toSnakeCase(wf.name)}`),
+        'commands::workflow::list_workflow_runs',
+        'commands::workflow::get_workflow_checkpoints',
+      ]
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

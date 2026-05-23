@@ -52,6 +52,7 @@ import { generateAxum } from './generators/axum.js';
 import { generateDocker } from './generators/docker.js';
 import { generateWebClient } from './generators/web-client.js';
 import { generateTelemetry } from './generators/telemetry.js';
+import { generateWorkflow } from './generators/workflow.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -124,6 +125,7 @@ export function compile(source: string): CompileResult {
     generateDocker(ast),
     generateWebClient(ast),
     generateTelemetry(ast),
+    generateWorkflow(ast),
   ];
 
   for (const gen of generators) {

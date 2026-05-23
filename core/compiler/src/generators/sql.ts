@@ -4,6 +4,7 @@
 import type { AgiFile, EntityDecl, FieldDef, AgiType, LiteralValue } from '@agicore/parser';
 import { toTableName, toForeignKey, toSnakeCase } from '../naming.js';
 import { telemetrySql } from './telemetry.js';
+import { workflowCheckpointsSql } from './workflow.js';
 
 function isWebTarget(ast: AgiFile): boolean {
   return ast.target?.runtime === 'axum';
@@ -154,6 +155,13 @@ export function generateSql(ast: AgiFile): Map<string, string> {
   const telemetryDdl = telemetrySql(ast);
   if (telemetryDdl) {
     migration += '\n\n' + telemetryDdl;
+  }
+
+  // Append workflow_checkpoints + workflow_runs tables when workflow runtime
+  // is active (telemetry enabled AND any WORKFLOW declared). Phase 1b.
+  const workflowDdl = workflowCheckpointsSql(ast);
+  if (workflowDdl) {
+    migration += '\n\n' + workflowDdl;
   }
 
   // Append SEED-driven INSERT statements AFTER every CREATE TABLE / CREATE INDEX,
