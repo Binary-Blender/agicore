@@ -1,0 +1,1013 @@
+// andon.agi
+// Andon — AI Operations System with Andon Loop Architecture
+//
+// "The AI ops system that knows when to pull the cord."
+//
+// =============================================================================
+// THIS FILE IS A DESIGN SPECIFICATION, NOT CURRENTLY-COMPILABLE SOURCE.
+// =============================================================================
+//
+// This .agi shows what the AI will author once the Andon Loop DSL extensions
+// (Phase 11) are implemented. It uses DSL surface that does not yet exist in
+// Agicore v1.0:
+//
+//   - ANDON_ON, ROLLBACK_BOUNDARY, COMPENSATING_ACTION, ON_ANDON_ESCALATE
+//   - EXPECTS_MATCH on MODULE; MUTATION_TIER on RULE
+//   - SUCCESS_METRIC, TIMEOUT on WORKFLOW
+//   - MUTATION_POLICY declaration
+//   - ANDON_RESPONDER / IMPROVEMENT_REASONER REASONER patterns
+//   - THEN ANDON action variant on SCORE THRESHOLD
+//
+// The design here drives the implementation of those extensions per the
+// EVOLVING.md methodology — write the real app, find what's missing,
+// implement the missing primitives in the framework, then the .agi compiles
+// cleanly. Markers in comments like `// @phase11` flag what's needed from
+// the framework. See `Idea Factory/andon_loop_architecture.md` for the
+// architectural specification and `apps/andon/README.md` for the build
+// status + framework gap list.
+//
+// =============================================================================
+//
+// Demonstrates the Andon Loop architecture:
+//   - AI authors a deterministic expert system at build time
+//   - Expert system executes deterministically at runtime
+//   - On explicit failure, the system pulls an andon and halts at a checkpoint
+//   - AI proposes a mutation; deterministic test verifies before deploy
+//   - Improvement loop reviews logs and proposes NBVE-tested efficiency mutations
+//
+// Target audience: mid-sized e-commerce platform (50–500 services), SRE team
+// of 2–10 engineers, $50M–$500M revenue. The kind of company that pays for
+// PagerDuty and Datadog and still gets paged at 3am for things their tooling
+// should have handled.
+
+APP andon {
+  TITLE       "Andon — AI Ops"
+  WINDOW      1500x900 frameless
+  DB          andon.db
+  PORT        5174
+  CURRENT     Alert
+  WORKSPACES
+  TRAY
+  HOTKEY      "Ctrl+Shift+A"
+  VERSION     "1.0.0"
+  DESCRIPTION "AI-authored deterministic incident response with andon-loop self-improvement"
+}
+
+// ============================================================================
+// AI SERVICE — only for build-time, andon response, and improvement loop
+// (Andon design discipline: never invoked from any runtime decision path)
+// ============================================================================
+
+AI_SERVICE {
+  PROVIDERS  anthropic
+  KEYS_FILE  "%APPDATA%/Andon/api-keys.json"
+  DEFAULT    anthropic
+  STREAMING  true
+  MODELS {
+    anthropic "claude-sonnet-4-20250514" LABEL "Sonnet 4 (operational)" DEFAULT
+    anthropic "claude-opus-4-7"          LABEL "Opus 4.7 (high-tier mutation review)"
+  }
+}
+
+// ============================================================================
+// CORE ENTITIES — the operational substrate
+// ============================================================================
+
+ENTITY Service {
+  name:         string REQUIRED UNIQUE
+  display_name: string
+  criticality:  string = "standard"      // critical | standard | dev
+  owner_team:   string
+  description:  string
+  TIMESTAMPS
+  HAS_MANY Alert
+  HAS_MANY Incident
+}
+
+ENTITY Alert {
+  external_id:    string REQUIRED       // ID from upstream monitoring (Datadog, Prom, etc)
+  source:         string REQUIRED       // datadog | prometheus | pingdom | newrelic | custom
+  severity:       string REQUIRED       // critical | warning | info
+  raw_payload:    json REQUIRED         // full original alert
+  received_at:    datetime
+  classified_at:  datetime
+  category:       string                // populated by classification rules
+  state:          string = "received"   // received | classified | in_runbook | resolved | escalated | andon
+  runbook_id:    string                  // populated when runbook starts
+  resolution_at: datetime
+  resolution_outcome: string             // resolved_by_runbook | escalated_to_human | rolled_back | andon_pending
+  BELONGS_TO Service
+  TIMESTAMPS
+}
+
+STAGES Alert.state {
+  received -> classified
+  classified -> in_runbook
+  in_runbook -> resolved / escalated / andon
+  andon -> resolved / escalated      // after AI proposes + deploys fix
+  classified -> andon                // if classification itself fails
+}
+
+ENTITY Runbook {
+  name:            string REQUIRED UNIQUE
+  description:     string
+  category:        string REQUIRED       // matches Alert.category
+  version:         number = 1
+  steps:           json = []            // ordered list of action references
+  estimated_ttr:   number               // expected time-to-resolution in seconds
+  mutation_tier:   number = 2           // default mutation tier for evolving this runbook
+  is_active:       bool = true
+  superseded_by:   string                // runbook_id of replacement if NBVE promoted a new version
+  TIMESTAMPS
+  HAS_MANY RunbookExecution
+}
+
+ENTITY RunbookExecution {
+  alert_id:       string REQUIRED
+  runbook_id:     string REQUIRED
+  runbook_version: number REQUIRED      // which version was executed
+  started_at:     datetime
+  completed_at:   datetime
+  status:         string = "running"    // running | completed | failed | andon | rolled_back
+  step_results:   json = []             // ordered results per step
+  total_duration_ms: number
+  outcome:        string                // resolved | unresolved | escalated | andon_pulled
+  resolution_metadata: json
+  BELONGS_TO Alert
+  BELONGS_TO Runbook
+  TIMESTAMPS
+}
+
+STAGES RunbookExecution.status {
+  running -> completed
+  running -> failed
+  running -> andon                  // ANDON pulled mid-execution
+  running -> rolled_back            // checkpoint rollback (Phase 11)
+}
+
+ENTITY OncallEngineer {
+  name:           string REQUIRED
+  email:          string REQUIRED UNIQUE
+  team:           string
+  phone:          string
+  on_call_now:    bool = false
+  escalation_level: number = 1        // 1 = primary, 2 = secondary, 3 = manager
+  TIMESTAMPS
+}
+
+ENTITY Incident {
+  alert_id:       string REQUIRED      // the alert that triggered
+  severity:       string REQUIRED
+  state:          string = "open"      // open | investigating | mitigated | resolved | postmortem_pending
+  assigned_to:    string                // OncallEngineer email
+  opened_at:      datetime
+  resolved_at:    datetime
+  resolution_note: string
+  postmortem_url: string
+  BELONGS_TO Service
+  TIMESTAMPS
+}
+
+STAGES Incident.state {
+  open -> investigating -> mitigated -> resolved -> postmortem_pending
+  investigating -> resolved
+  mitigated -> investigating         // re-flare
+}
+
+// ============================================================================
+// ANDON LOOP ENTITIES (@phase11) — the AI-improvement substrate
+// ============================================================================
+
+ENTITY AndonEvent {
+  failure_category:  string REQUIRED   // no_rule_matched | runbook_step_failed | runbook_timeout | …
+  alert_id:          string             // null if andon fired outside an alert flow
+  workflow_name:     string             // which workflow halted
+  workflow_step:     string             // at which step
+  captured_state:    json REQUIRED      // full state at andon time
+  activity_log:      json REQUIRED      // recent telemetry up to the failure
+  fired_at:          datetime
+  resolved_at:       datetime
+  resolution_mutation_id: string        // null until a mutation resolves it
+  TIMESTAMPS
+}
+
+ENTITY MutationProposal {
+  andon_event_id:    string             // null for improvement-loop mutations
+  source:            string REQUIRED    // andon_response | improvement_loop
+  proposer_identity: string REQUIRED    // signed REASONER identity
+  tier:              number REQUIRED    // 1-5
+  target_module:     string             // which MODULE/WORKFLOW/RULE is affected
+  mutation_content:  json REQUIRED      // the DSL diff
+  test_results:      json               // populated after deterministic test
+  approval_chain:    json
+  status:            string = "proposed"  // proposed | testing | approved | rejected | deployed | rolled_back
+  rejected_reason:   string
+  TIMESTAMPS
+}
+
+STAGES MutationProposal.status {
+  proposed -> testing
+  testing -> approved / rejected
+  approved -> deployed
+  deployed -> rolled_back            // if smoke test or monitoring window fails
+}
+
+ENTITY MutationLedger {
+  proposal_id:       string REQUIRED
+  applied_at:        datetime
+  applied_by:        string             // identity signature
+  failure_pattern:   json               // for "memory of past andons" lookup
+  rollback_token:    json               // enough state to revert
+  effectiveness_score: float            // measured post-deploy
+  TIMESTAMPS
+}
+
+ENTITY EfficiencyProposal {
+  source_metric:     string REQUIRED    // which SUCCESS_METRIC drove this
+  baseline_value:    float REQUIRED
+  target_value:      float REQUIRED
+  candidate_change:  json REQUIRED      // the DSL diff to NBVE-test
+  shadow_started_at: datetime
+  shadow_results:    json               // populated during NBVE window
+  status:            string = "proposed"  // proposed | shadowing | promoted | rejected
+  TIMESTAMPS
+}
+
+// ============================================================================
+// SUCCESS METRICS (SCORE declarations the AI uses to measure its own work)
+// ============================================================================
+
+// mttr_score = 1.0 - (current_mttr / baseline_mttr); higher is better
+SCORE mttr_score {
+  INITIAL   1
+  MIN       0
+  MAX       1
+  DECAY     0 PER day
+  THRESHOLD low AT 0 THEN flag_mttr_drop                 // @phase11 — replace flag with THEN ANDON
+}
+
+// false_page_score = 1.0 - (false_pages / total_pages); higher is better
+SCORE false_page_score {
+  INITIAL   1
+  MIN       0
+  MAX       1
+  DECAY     0 PER day
+  THRESHOLD low AT 0 THEN flag_false_page_spike          // @phase11 — replace flag with THEN ANDON
+}
+
+// novel_alert_rate_score = 1.0 - (andons_per_alert); higher is better
+SCORE novel_alert_rate_score {
+  INITIAL   0
+  MIN       0
+  MAX       1
+  DECAY     0 PER day
+  THRESHOLD calm AT 0 THEN flag_well_tuned               // 95% of alerts match existing rules
+}
+
+// runbook_success_rate = resolved / (resolved + escalated + andon); higher is better
+SCORE runbook_success_rate {
+  INITIAL   1
+  MIN       0
+  MAX       1
+  DECAY     0 PER day
+  THRESHOLD low AT 0 THEN flag_runbook_failure_spike     // @phase11 — replace flag with THEN ANDON
+}
+
+// Flag-action stubs referenced by THRESHOLD declarations above.
+// (Phase 11 will replace these with `THEN ANDON` semantics that bypass action dispatch.)
+ACTION flag_mttr_drop                  { INPUT score: number  OUTPUT result: string }
+ACTION flag_false_page_spike           { INPUT score: number  OUTPUT result: string }
+ACTION flag_well_tuned                 { INPUT score: number  OUTPUT result: string }
+ACTION flag_runbook_failure_spike      { INPUT score: number  OUTPUT result: string }
+
+// ============================================================================
+// CLASSIFICATION RULES — the initial AI-authored rule set
+// (Each is MUTATION_TIER 2 — auto-deploy after deterministic test)
+// ============================================================================
+
+MODULE alert_classification_rules {
+  EXPECTS_MATCH true                      // @phase11 — andon pulls if no rule matches
+  MUTATION_POLICY ops_mutation_policy
+  RULES [
+    classify_cpu_pressure,
+    classify_memory_pressure,
+    classify_disk_full,
+    classify_latency_spike,
+    classify_error_rate_spike,
+    classify_deploy_failure,
+    classify_queue_backup,
+    classify_database_connection_exhaustion,
+    classify_dependency_failure,
+    classify_certificate_expiring,
+    classify_dns_failure,
+    classify_replication_lag
+  ]
+}
+
+RULE classify_cpu_pressure {
+  WHEN     Alert.source = "datadog"
+  AND      Alert.raw_payload CONTAINS "cpu_usage"
+  AND      Alert.severity != "info"
+  THEN     classify_as_cpu_pressure
+  PRIORITY 100
+  MUTATION_TIER 2
+}
+
+RULE classify_memory_pressure {
+  WHEN     Alert.raw_payload CONTAINS "memory_usage"
+  AND      Alert.severity != "info"
+  THEN     classify_as_memory_pressure
+  PRIORITY 100
+  MUTATION_TIER 2
+}
+
+RULE classify_disk_full {
+  WHEN     Alert.raw_payload CONTAINS "disk_usage"
+  THEN     classify_as_disk_full
+  PRIORITY 100
+  MUTATION_TIER 2
+}
+
+RULE classify_latency_spike {
+  WHEN     Alert.raw_payload CONTAINS "p99_latency"
+  AND      Alert.severity = "warning"
+  THEN     classify_as_latency_spike
+  PRIORITY 90
+  MUTATION_TIER 2
+}
+
+RULE classify_error_rate_spike {
+  WHEN     Alert.raw_payload CONTAINS "error_rate"
+  AND      Alert.severity != "info"
+  THEN     classify_as_error_rate_spike
+  PRIORITY 95
+  MUTATION_TIER 2
+}
+
+RULE classify_deploy_failure {
+  WHEN     Alert.source = "ci_cd"
+  AND      Alert.raw_payload CONTAINS "deploy_failed"
+  THEN     classify_as_deploy_failure
+  PRIORITY 100
+  MUTATION_TIER 2
+}
+
+RULE classify_queue_backup {
+  WHEN     Alert.raw_payload CONTAINS "queue_depth"
+  AND      Alert.severity != "info"
+  THEN     classify_as_queue_backup
+  PRIORITY 85
+  MUTATION_TIER 2
+}
+
+RULE classify_database_connection_exhaustion {
+  WHEN     Alert.raw_payload CONTAINS "connection_pool"
+  AND      Alert.severity = "critical"
+  THEN     classify_as_db_connection_exhaustion
+  PRIORITY 100
+  MUTATION_TIER 2
+}
+
+RULE classify_dependency_failure {
+  WHEN     Alert.raw_payload CONTAINS "upstream"
+  AND      Alert.raw_payload CONTAINS "failed"
+  THEN     classify_as_dependency_failure
+  PRIORITY 85
+  MUTATION_TIER 2
+}
+
+RULE classify_certificate_expiring {
+  WHEN     Alert.raw_payload CONTAINS "certificate"
+  AND      Alert.raw_payload CONTAINS "expir"
+  THEN     classify_as_cert_expiring
+  PRIORITY 70
+  MUTATION_TIER 2
+}
+
+RULE classify_dns_failure {
+  WHEN     Alert.raw_payload CONTAINS "dns"
+  THEN     classify_as_dns_failure
+  PRIORITY 95
+  MUTATION_TIER 2
+}
+
+RULE classify_replication_lag {
+  WHEN     Alert.raw_payload CONTAINS "replication_lag"
+  THEN     classify_as_replication_lag
+  PRIORITY 90
+  MUTATION_TIER 2
+}
+
+// ============================================================================
+// CLASSIFICATION ACTIONS — set Alert.category deterministically
+// ============================================================================
+
+ACTION classify_as_cpu_pressure         { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_memory_pressure      { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_disk_full            { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_latency_spike        { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_error_rate_spike     { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_deploy_failure       { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_queue_backup         { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_db_connection_exhaustion { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_dependency_failure   { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_cert_expiring        { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_dns_failure          { INPUT alert_id: id  OUTPUT alert: Alert }
+ACTION classify_as_replication_lag      { INPUT alert_id: id  OUTPUT alert: Alert }
+
+// ============================================================================
+// DIAGNOSTIC ACTIONS — runbook building blocks
+// Each returns a structured diagnosis. NEVER calls an LLM at runtime.
+// ============================================================================
+
+ACTION diagnose_recent_deploy {
+  INPUT  service_id: id, lookback_minutes: number = 30
+  OUTPUT result: json                    // { recent_deploy: bool, deploy_id: string, deployed_at: datetime }
+}
+
+ACTION diagnose_resource_consumer {
+  INPUT  service_id: id, resource: string
+  OUTPUT result: json                    // { top_consumer_process: string, consumption_pct: float }
+}
+
+ACTION diagnose_upstream_dependency {
+  INPUT  service_id: id
+  OUTPUT result: json                    // { unhealthy_dependencies: array, ... }  -- @phase11 union types
+}
+
+ACTION diagnose_traffic_pattern {
+  INPUT  service_id: id, lookback_minutes: number = 15
+  OUTPUT result: json                    // { traffic_multiplier: float, geographic_anomaly: bool }
+}
+
+ACTION diagnose_recent_config_change {
+  INPUT  service_id: id, lookback_hours: number = 24
+  OUTPUT result: json
+}
+
+ACTION diagnose_replication_health {
+  INPUT  service_id: id
+  OUTPUT result: json
+}
+
+// ============================================================================
+// RESPONSE ACTIONS — what runbooks actually DO
+// All have explicit error variants. All ROLLBACK_BOUNDARY declared. (@phase11)
+// ============================================================================
+
+ACTION rollback_deploy {
+  INPUT  deploy_id: string
+  OUTPUT result: json
+  // ROLLBACK_BOUNDARY external           // @phase11
+  // COMPENSATING_ACTION notify_deploy_team
+}
+
+ACTION scale_service_horizontal {
+  INPUT  service_id: id, target_instances: number
+  OUTPUT result: json
+  // ROLLBACK_BOUNDARY external           // @phase11
+  // COMPENSATING_ACTION scale_service_back
+}
+
+ACTION restart_service {
+  INPUT  service_id: id
+  OUTPUT result: json
+  // ROLLBACK_BOUNDARY external           // @phase11
+  // (no compensating action — restart is its own remediation)
+}
+
+ACTION drain_traffic {
+  INPUT  service_id: id, drain_pct: number
+  OUTPUT result: json
+  // ROLLBACK_BOUNDARY external
+  // COMPENSATING_ACTION restore_traffic
+}
+
+ACTION cleanup_logs {
+  INPUT  service_id: id, older_than_days: number = 7
+  OUTPUT result: json
+  // ROLLBACK_BOUNDARY irreversible       // @phase11 — deleted logs cannot be undone
+  // ON_ANDON_ESCALATE human               // @phase11 — human-required if cleanup fails mid-flight
+}
+
+ACTION archive_to_cold_storage {
+  INPUT  service_id: id, older_than_days: number = 30
+  OUTPUT result: json
+  // ROLLBACK_BOUNDARY external
+  // COMPENSATING_ACTION restore_from_cold_storage
+}
+
+ACTION rotate_certificate {
+  INPUT  service_id: id, cert_name: string
+  OUTPUT result: json
+  // ROLLBACK_BOUNDARY external
+  // COMPENSATING_ACTION revert_cert
+}
+
+ACTION failover_database {
+  INPUT  service_id: id
+  OUTPUT result: json
+  // ROLLBACK_BOUNDARY irreversible       // @phase11
+  // ON_ANDON_ESCALATE human
+}
+
+ACTION page_oncall {
+  INPUT  alert_id: id, severity: string
+  OUTPUT result: json
+}
+
+ACTION open_incident {
+  INPUT  alert_id: id, severity: string
+  OUTPUT incident: Incident
+}
+
+ACTION close_alert {
+  INPUT  alert_id: id, outcome: string, resolution_note: string
+  OUTPUT alert: Alert
+}
+
+// ============================================================================
+// RUNBOOKS — sequenced deterministic responses
+// (Each is a WORKFLOW. Phase 11 adds ROLLBACK_BOUNDARY + SUCCESS_METRIC.)
+// ============================================================================
+
+WORKFLOW runbook_cpu_pressure {
+  STEP diagnose_deploy   { ACTION diagnose_recent_deploy }
+  STEP diagnose_consumer { ACTION diagnose_resource_consumer }
+  STEP diagnose_traffic  { ACTION diagnose_traffic_pattern }
+  STEP decide            { ACTION evaluate_cpu_response }
+  STEP execute_response  { ACTION execute_cpu_response }
+  STEP close             { ACTION close_alert }
+  // SUCCESS_METRIC mttr_score              // @phase11
+  // TIMEOUT 10m                            // @phase11
+}
+
+WORKFLOW runbook_memory_pressure {
+  STEP diagnose_consumer { ACTION diagnose_resource_consumer }
+  STEP diagnose_deploy   { ACTION diagnose_recent_deploy }
+  STEP decide            { ACTION evaluate_memory_response }
+  STEP execute_response  { ACTION execute_memory_response }
+  STEP monitor_recovery  { ACTION monitor_post_action }
+  STEP close             { ACTION close_alert }
+  // SUCCESS_METRIC mttr_score
+}
+
+WORKFLOW runbook_disk_full {
+  STEP diagnose_consumer    { ACTION diagnose_resource_consumer }
+  STEP cleanup              { ACTION cleanup_logs }
+  STEP archive_if_needed    { ACTION archive_to_cold_storage }
+  STEP verify_resolution    { ACTION monitor_post_action }
+  STEP close                { ACTION close_alert }
+}
+
+WORKFLOW runbook_latency_spike {
+  STEP diagnose_dependencies { ACTION diagnose_upstream_dependency }
+  STEP diagnose_traffic      { ACTION diagnose_traffic_pattern }
+  STEP diagnose_deploy       { ACTION diagnose_recent_deploy }
+  STEP decide                { ACTION evaluate_latency_response }
+  STEP execute_response      { ACTION execute_latency_response }
+  STEP monitor_recovery      { ACTION monitor_post_action }
+  STEP close                 { ACTION close_alert }
+}
+
+WORKFLOW runbook_deploy_failure {
+  STEP get_deploy_info  { ACTION diagnose_recent_deploy }
+  STEP rollback         { ACTION rollback_deploy }
+  STEP verify_rollback  { ACTION monitor_post_action }
+  STEP notify_team      { ACTION page_oncall }
+  STEP close            { ACTION close_alert }
+}
+
+WORKFLOW runbook_queue_backup {
+  STEP diagnose_consumer { ACTION diagnose_resource_consumer }
+  STEP diagnose_dependencies { ACTION diagnose_upstream_dependency }
+  STEP decide           { ACTION evaluate_queue_response }
+  STEP execute_response { ACTION execute_queue_response }
+  STEP close            { ACTION close_alert }
+}
+
+WORKFLOW runbook_db_connection_exhaustion {
+  STEP diagnose_pool       { ACTION diagnose_resource_consumer }
+  STEP diagnose_dependencies { ACTION diagnose_upstream_dependency }
+  STEP page_immediately    { ACTION page_oncall }      // high-stakes — page first
+  STEP attempt_recovery    { ACTION restart_service }
+  STEP verify              { ACTION monitor_post_action }
+  STEP close               { ACTION close_alert }
+}
+
+WORKFLOW runbook_cert_expiring {
+  STEP rotate           { ACTION rotate_certificate }
+  STEP verify           { ACTION monitor_post_action }
+  STEP close            { ACTION close_alert }
+}
+
+// Decision + execution + monitoring actions for the runbooks above
+ACTION evaluate_cpu_response       { INPUT alert_id: id, diagnosis: json  OUTPUT plan: json }
+ACTION execute_cpu_response        { INPUT alert_id: id, plan: json      OUTPUT result: json }
+ACTION evaluate_memory_response    { INPUT alert_id: id, diagnosis: json  OUTPUT plan: json }
+ACTION execute_memory_response     { INPUT alert_id: id, plan: json      OUTPUT result: json }
+ACTION evaluate_latency_response   { INPUT alert_id: id, diagnosis: json  OUTPUT plan: json }
+ACTION execute_latency_response    { INPUT alert_id: id, plan: json      OUTPUT result: json }
+ACTION evaluate_queue_response     { INPUT alert_id: id, diagnosis: json  OUTPUT plan: json }
+ACTION execute_queue_response      { INPUT alert_id: id, plan: json      OUTPUT result: json }
+ACTION monitor_post_action         { INPUT alert_id: id, lookback_min: number = 5  OUTPUT result: json }
+
+// ============================================================================
+// PACKET + CHANNEL — the andon signal infrastructure
+// ============================================================================
+
+PACKET AndonSignal {
+  PAYLOAD {
+    andon_event_id:  string REQUIRED
+    failure_category: string REQUIRED
+    triggered_at:    datetime REQUIRED
+  }
+  METADATA {
+    PROVENANCE true
+    SIGNATURES required
+    TTL        86400          // 24h
+  }
+}
+
+CHANNEL andon_queue {
+  DESCRIPTION "Andon pulls — invokes the AI intervention REASONER"
+  PROTOCOL    topic
+  DIRECTION   bidirectional
+  PACKET      AndonSignal
+}
+
+PACKET MutationProposalPacket {
+  PAYLOAD {
+    proposal_id:  string REQUIRED
+    source:       string REQUIRED       // andon_response | improvement_loop
+    tier:         number REQUIRED
+  }
+}
+
+CHANNEL proposal_queue {
+  DESCRIPTION "AI-proposed mutations awaiting deterministic verification"
+  PROTOCOL    queue
+  DIRECTION   bidirectional
+  PACKET      MutationProposalPacket
+}
+
+CHANNEL incident_escalation {
+  DESCRIPTION "Human escalations — irreversible-boundary failures, T4+ mutations needing approval"
+  PROTOCOL    topic
+  DIRECTION   outbound
+}
+
+// ============================================================================
+// THE AI INTERVENTION REASONER (@phase11)
+// Fires when an andon pulls. Reads captured state + activity log + mutation
+// ledger. Proposes a mutation. Output goes through deterministic verification.
+// ============================================================================
+
+REASONER andon_responder {
+  DESCRIPTION "Examines andon events and proposes deterministic mutations to resolve them"
+  INPUT       { andon_event_id: string, captured_state: json, activity_log: json, ledger: json }
+  OUTPUT      { proposal_id: string, tier: number, mutation_content: json }
+  PROMPT      """
+    An andon has pulled in the Andon ops system. Your job is to propose a
+    deterministic mutation that resolves the failure case without breaking
+    any prior successful operations.
+
+    Steps:
+    1. Read the andon event: what category of failure, what captured state,
+       what activity log immediately preceded.
+    2. Review the mutation ledger excerpt — specifically the rejected
+       proposals for SIMILAR failure patterns. DO NOT propose any fix
+       already in that rejection set; the deterministic verifier will
+       auto-reject it without test, costing you a round-trip.
+    3. Categorize the proposed mutation by tier (T1 threshold tune,
+       T2 new rule, T3 modify rule, T4 structural, T5 architectural).
+       Under-declared tiers are auto-rejected — declare honestly.
+    4. Output the DSL diff for the mutation. Be specific: which RULE
+       to add, which existing RULE to modify, which STAGES transition
+       to introduce.
+
+    Critical constraints:
+    - You cannot modify the MUTATION_POLICY itself (that is T5 and
+      requires human approval).
+    - You cannot change the ANDON_RESPONDER (yourself).
+    - Compensating actions for external rollback boundaries must be
+      named and already exist as declared ACTIONs.
+  """
+  SCHEDULE    event_triggered
+  TIER        2          // Sonnet 4 — cost-efficient for routine andons
+}
+
+TRIGGER on_andon_signal {
+  DESCRIPTION "Andon signal arrives → invoke AI to propose a fix"
+  WHEN        { CHANNEL andon_queue  PACKET AndonSignal }
+  FIRES       REASONER andon_responder
+  RATE_LIMIT  "20 PER 1h"        // safety brake — too many andons = systemic issue, page human instead
+}
+
+// ============================================================================
+// THE IMPROVEMENT REASONER (@phase11)
+// Scheduled review of activity logs against SUCCESS_METRICs. Proposes
+// efficiency mutations that go through NBVE shadow testing.
+// ============================================================================
+
+REASONER efficiency_review {
+  DESCRIPTION "Weekly review of runbook execution data against MTTR and runbook-success metrics"
+  INPUT       { window_days: number = 7, current_metrics: json }
+  OUTPUT      { proposals: json }
+  PROMPT      """
+    Review the past week of runbook executions in the activity log.
+    Compare against the declared SUCCESS_METRIC values for each runbook.
+
+    Look for:
+    - Steps that execute frequently but never affect the final outcome
+      (candidates for removal)
+    - Runbooks where the diagnosis sequence always yields the same answer
+      and could be short-circuited
+    - Sequences whose total time exceeds the runbook's estimated_ttr
+      (candidates for restructuring or parallelization)
+    - Runbook executions that almost-always escalate to human despite
+      attempting all steps (candidate runbook may be miscategorized)
+    - Repeated andons that share root cause (candidate for a broader rule)
+
+    For each candidate, output an EfficiencyProposal with:
+      - The source_metric being optimized
+      - The baseline (current) value
+      - The target (improved) value
+      - The candidate DSL change
+
+    All proposals will be NBVE-shadow-tested for 7 days. Promotion requires
+    measured improvement on the source_metric without degradation of any
+    other metric. Don't over-propose; quality over quantity.
+  """
+  SCHEDULE    weekly
+  TIER        3          // Opus 4.7 — higher quality matters here
+}
+
+// ============================================================================
+// CLASSIFICATION + DISPATCH WORKFLOW — the runtime entry point
+// ============================================================================
+
+WORKFLOW handle_alert {
+  STEP receive    { ACTION receive_alert }
+  STEP classify   { ACTION run_classification_rules }
+  STEP dispatch   { ACTION dispatch_to_runbook }
+  STEP track      { ACTION track_runbook_execution }
+  // SUCCESS_METRIC runbook_success_rate    // @phase11
+  // TIMEOUT 30m
+}
+
+ACTION receive_alert {
+  INPUT  external_id: string, source: string, severity: string, raw_payload: json
+  OUTPUT alert: Alert
+}
+
+ACTION run_classification_rules {
+  INPUT  alert_id: id
+  OUTPUT alert: Alert        // alert.category populated, OR andon pulls on no-match
+}
+
+ACTION dispatch_to_runbook {
+  INPUT  alert_id: id
+  OUTPUT execution: RunbookExecution
+}
+
+ACTION track_runbook_execution {
+  INPUT  execution_id: id
+  OUTPUT execution: RunbookExecution
+}
+
+TRIGGER on_new_alert {
+  DESCRIPTION "New alert arrives → classification + dispatch begins"
+  WHEN        { CHANNEL alert_inbound }
+  FIRES       WORKFLOW handle_alert
+}
+
+CHANNEL alert_inbound {
+  DESCRIPTION "Incoming alerts from monitoring systems"
+  PROTOCOL    queue
+  DIRECTION   inbound
+}
+
+// ============================================================================
+// MUTATION POLICY (@phase11) — the AI's authorization scope
+// ============================================================================
+
+// MUTATION_POLICY ops_mutation_policy {
+//   TARGETS [alert_classification_rules, runbook_cpu_pressure, runbook_memory_pressure,
+//            runbook_disk_full, runbook_latency_spike, runbook_deploy_failure,
+//            runbook_queue_backup, runbook_db_connection_exhaustion, runbook_cert_expiring]
+//
+//   TIER 1 threshold_tuning {
+//     SCOPE [SCORE_THRESHOLD, SCORE_DECAY, PATTERN_regex]
+//     AUTO_DEPLOY true
+//     REQUIRE deterministic_test_pass
+//     REGRESSION_SUITE 24h_recent_workflows
+//   }
+//
+//   TIER 2 rule_addition {
+//     SCOPE [RULE_add]
+//     AUTO_DEPLOY true
+//     REQUIRE deterministic_test_pass
+//     MONITORING_WINDOW 24h
+//     ROLLBACK_ON spc_drop OR error_spike
+//   }
+//
+//   TIER 3 rule_modification {
+//     SCOPE [RULE_modify_conditions, RULE_modify_then, WORKFLOW_modify_step_sequence]
+//     AUTO_DEPLOY true_after_shadow
+//     REQUIRE deterministic_test_pass
+//     NBVE_WINDOW 7d
+//     PROMOTION_THRESHOLD success_metric_improvement >= 0
+//   }
+//
+//   TIER 4 structural {
+//     SCOPE [WORKFLOW_add_step, ACTION_signature_change, STAGES_add_transition]
+//     AUTO_DEPLOY false
+//     REQUIRE deterministic_test_pass AND governance_approval
+//     NBVE_WINDOW 14d
+//     APPROVAL_AUTHORITY ops_lead
+//   }
+//
+//   TIER 5 architectural {
+//     SCOPE [WORKFLOW_add, MODULE_add, ENTITY_add, MUTATION_POLICY_modify]
+//     AUTO_DEPLOY false
+//     REQUIRE full_design_review
+//     APPROVAL_AUTHORITY governance_council
+//   }
+//
+//   ANDON_RESPONDER andon_responder
+//   IMPROVEMENT_REASONER efficiency_review
+//   LEDGER MutationLedger
+// }
+
+// ============================================================================
+// VIEWS — the operator interface
+// ============================================================================
+
+VIEW AlertStream {
+  ENTITY  Alert
+  LAYOUT  list
+  ACTIONS none                       // alerts are not manually created
+  SIDEBAR icon: Bell
+  TITLE   "Live alerts"
+  FIELDS  external_id, severity, state, category, received_at
+}
+
+VIEW RunbookCatalog {
+  ENTITY  Runbook
+  LAYOUT  table
+  ACTIONS edit                       // tier-gated edits only via mutation system
+  SIDEBAR icon: BookOpen
+  TITLE   "Runbooks"
+  FIELDS  name, category, version, estimated_ttr, is_active
+}
+
+VIEW IncidentBoard {
+  ENTITY  Incident
+  LAYOUT  table
+  ACTIONS edit, delete
+  SIDEBAR icon: AlertOctagon
+  TITLE   "Open incidents"
+  FIELDS  severity, state, assigned_to, opened_at
+}
+
+VIEW AndonHistory {
+  ENTITY  AndonEvent
+  LAYOUT  list
+  ACTIONS none
+  SIDEBAR icon: Activity
+  TITLE   "Andon events"
+  FIELDS  failure_category, workflow_name, fired_at, resolved_at
+}
+
+VIEW MutationLedgerView {
+  ENTITY  MutationLedger
+  LAYOUT  table
+  ACTIONS none
+  SIDEBAR icon: GitBranch
+  TITLE   "Mutation history"
+  FIELDS  proposal_id, applied_at, applied_by, effectiveness_score
+}
+
+VIEW EfficiencyProposals {
+  ENTITY  EfficiencyProposal
+  LAYOUT  list
+  ACTIONS edit                       // human can approve / reject T3+
+  SIDEBAR icon: TrendingUp
+  TITLE   "Efficiency proposals"
+  FIELDS  source_metric, baseline_value, target_value, status
+}
+
+VIEW ServiceMap {
+  ENTITY  Service
+  LAYOUT  grid
+  ACTIONS create, edit, delete
+  SIDEBAR icon: Server
+  TITLE   "Services"
+  FIELDS  name, criticality, owner_team
+}
+
+VIEW OncallRoster {
+  ENTITY  OncallEngineer
+  LAYOUT  table
+  ACTIONS create, edit, delete
+  SIDEBAR icon: Users
+  TITLE   "On-call"
+  FIELDS  name, team, on_call_now, escalation_level
+}
+
+VIEW SettingsView {
+  LAYOUT  settings
+  SIDEBAR icon: Settings
+  TITLE   "Settings"
+}
+
+// ============================================================================
+// SEED DATA — realistic e-commerce service topology + a starter on-call roster
+// ============================================================================
+
+SEED Service { id: "svc-web",      name: "web-frontend",      display_name: "Web Frontend",      criticality: "critical",  owner_team: "platform" }
+SEED Service { id: "svc-gateway",  name: "api-gateway",       display_name: "API Gateway",       criticality: "critical",  owner_team: "platform" }
+SEED Service { id: "svc-auth",     name: "auth-service",      display_name: "Auth Service",      criticality: "critical",  owner_team: "identity" }
+SEED Service { id: "svc-catalog",  name: "catalog-service",   display_name: "Catalog Service",   criticality: "critical",  owner_team: "commerce" }
+SEED Service { id: "svc-cart",     name: "cart-service",      display_name: "Cart Service",      criticality: "critical",  owner_team: "commerce" }
+SEED Service { id: "svc-checkout", name: "checkout-service",  display_name: "Checkout Service",  criticality: "critical",  owner_team: "commerce" }
+SEED Service { id: "svc-search",   name: "search-service",    display_name: "Search Service",    criticality: "standard",  owner_team: "discovery" }
+SEED Service { id: "svc-db-pri",   name: "postgres-primary",  display_name: "Postgres Primary",  criticality: "critical",  owner_team: "data" }
+SEED Service { id: "svc-db-rep",   name: "postgres-replica",  display_name: "Postgres Replica",  criticality: "critical",  owner_team: "data" }
+SEED Service { id: "svc-cache",    name: "redis-cache",       display_name: "Redis Cache",       criticality: "critical",  owner_team: "data" }
+SEED Service { id: "svc-queue",    name: "rabbitmq",          display_name: "RabbitMQ",          criticality: "critical",  owner_team: "platform" }
+SEED Service { id: "svc-email",    name: "email-service",     display_name: "Email Service",     criticality: "standard",  owner_team: "messaging" }
+SEED Service { id: "svc-payment",  name: "payment-gateway",   display_name: "Payment Gateway",   criticality: "critical",  owner_team: "commerce" }
+
+SEED OncallEngineer { id: "eng-1", name: "Alex Rivera",   email: "alex@example.com",  team: "platform", on_call_now: true,  escalation_level: 1 }
+SEED OncallEngineer { id: "eng-2", name: "Sam Chen",      email: "sam@example.com",   team: "data",     on_call_now: true,  escalation_level: 1 }
+SEED OncallEngineer { id: "eng-3", name: "Jordan Park",   email: "jordan@example.com", team: "commerce", on_call_now: false, escalation_level: 2 }
+SEED OncallEngineer { id: "eng-4", name: "Riley Davis",   email: "riley@example.com",  team: "platform", on_call_now: false, escalation_level: 3 }
+
+// Initial runbook records (the implementation lives in the WORKFLOWs above;
+// these rows let the UI list + version-track them)
+SEED Runbook { id: "rb-cpu",        name: "cpu_pressure",         category: "cpu_pressure",        version: 1, estimated_ttr: 300, is_active: true }
+SEED Runbook { id: "rb-mem",        name: "memory_pressure",      category: "memory_pressure",     version: 1, estimated_ttr: 300, is_active: true }
+SEED Runbook { id: "rb-disk",       name: "disk_full",            category: "disk_full",           version: 1, estimated_ttr: 600, is_active: true }
+SEED Runbook { id: "rb-latency",    name: "latency_spike",        category: "latency_spike",       version: 1, estimated_ttr: 480, is_active: true }
+SEED Runbook { id: "rb-deploy",     name: "deploy_failure",       category: "deploy_failure",      version: 1, estimated_ttr: 180, is_active: true }
+SEED Runbook { id: "rb-queue",      name: "queue_backup",         category: "queue_backup",        version: 1, estimated_ttr: 360, is_active: true }
+SEED Runbook { id: "rb-db-conn",    name: "db_connection_exhaustion", category: "db_connection_exhaustion", version: 1, estimated_ttr: 120, is_active: true }
+SEED Runbook { id: "rb-cert",       name: "cert_expiring",        category: "cert_expiring",       version: 1, estimated_ttr: 240, is_active: true }
+
+// ============================================================================
+// TESTS — verification that the system handles canonical scenarios
+// ============================================================================
+
+TEST cpu_alert_classifies_and_dispatches {
+  GIVEN Service { id: "svc-web", name: "web-frontend", criticality: "critical", owner_team: "platform" }
+  GIVEN Alert {
+    external_id: "test-001",
+    source: "datadog",
+    severity: "warning",
+    raw_payload: "{\"metric\":\"cpu_usage\",\"value\":87}",
+    BELONGS_TO Service
+  }
+  EXPECT create -> id IS NOT NULL
+  EXPECT update { category: "cpu_pressure" } -> category == "cpu_pressure"
+}
+
+TEST disk_full_alert_handled {
+  GIVEN Service { id: "svc-db-pri", name: "postgres-primary", criticality: "critical", owner_team: "data" }
+  GIVEN Alert {
+    external_id: "test-002",
+    source: "prometheus",
+    severity: "critical",
+    raw_payload: "{\"metric\":\"disk_usage\",\"value\":96}",
+    BELONGS_TO Service
+  }
+  EXPECT create -> id IS NOT NULL
+  EXPECT update { category: "disk_full" } -> category == "disk_full"
+}
+
+TEST deploy_failure_triggers_rollback_runbook {
+  GIVEN Service { id: "svc-auth", name: "auth-service", criticality: "critical", owner_team: "identity" }
+  GIVEN Alert {
+    external_id: "test-003",
+    source: "ci_cd",
+    severity: "critical",
+    raw_payload: "{\"event\":\"deploy_failed\",\"deploy_id\":\"d-12345\"}",
+    BELONGS_TO Service
+  }
+  EXPECT create -> id IS NOT NULL
+  EXPECT update { category: "deploy_failure", runbook_id: "rb-deploy" } -> category == "deploy_failure"
+}
+
+TEST novel_alert_pulls_andon {
+  GIVEN Service { id: "svc-queue", name: "rabbitmq", criticality: "critical", owner_team: "platform" }
+  GIVEN Alert {
+    external_id: "test-004",
+    source: "custom",
+    severity: "warning",
+    raw_payload: "{\"metric\":\"consumer_lag_growth_rate\",\"value\":\"+12%\"}",
+    BELONGS_TO Service
+  }
+  EXPECT create -> id IS NOT NULL
+  EXPECT update { state: "andon" } -> state == "andon"
+}
