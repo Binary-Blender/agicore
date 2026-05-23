@@ -4,7 +4,7 @@
 import type { AgiFile, EntityDecl, FieldDef, AgiType, LiteralValue } from '@agicore/parser';
 import { toTableName, toForeignKey, toSnakeCase } from '../naming.js';
 import { telemetrySql } from './telemetry.js';
-import { workflowCheckpointsSql } from './workflow.js';
+import { workflowCheckpointsSql, mutationPoliciesSql } from './workflow.js';
 
 function isWebTarget(ast: AgiFile): boolean {
   return ast.target?.runtime === 'axum';
@@ -162,6 +162,14 @@ export function generateSql(ast: AgiFile): Map<string, string> {
   const workflowDdl = workflowCheckpointsSql(ast);
   if (workflowDdl) {
     migration += '\n\n' + workflowDdl;
+  }
+
+  // Append mutation_policies table + idempotent SEED inserts when any
+  // MUTATION_POLICY is declared. Independent of telemetry/workflows since
+  // the table is also queried by tooling. Phase 11.3.
+  const policiesDdl = mutationPoliciesSql(ast);
+  if (policiesDdl) {
+    migration += '\n\n' + policiesDdl;
   }
 
   // Append SEED-driven INSERT statements AFTER every CREATE TABLE / CREATE INDEX,

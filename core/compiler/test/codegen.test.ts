@@ -5837,6 +5837,131 @@ WORKFLOW wf {
   assert(files.has('src-tauri/src/commands/workflow.rs'),                  'codegen succeeds with SUCCESS_METRIC declared');
 }
 
+section('Phase 11.3 — mutation_policies table + idempotent SEED inserts');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [SCORE_THRESHOLD] AUTO_DEPLOY true REQUIRE deterministic_test_pass REGRESSION_SUITE 24h_recent_workflows }
+  TIER 4 structural { SCOPE [WORKFLOW_add_step] AUTO_DEPLOY false APPROVAL_AUTHORITY ops_lead }
+  ANDON_RESPONDER andon_handler
+  IMPROVEMENT_REASONER weekly
+  LEDGER MutationLedger
+}`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS mutation_policies'),  'mutation_policies table emitted');
+  assert(sql.includes('name                  TEXT NOT NULL UNIQUE'),    'name column with UNIQUE');
+  assert(sql.includes('tiers                 TEXT NOT NULL'),           'tiers JSON column');
+  assert(sql.includes('idx_mutation_policies_name'),                     'name index emitted');
+  assert(sql.includes("INSERT OR IGNORE INTO mutation_policies"),       'idempotent seed insert emitted');
+  assert(sql.includes("'policy-mp'"),                                    'policy id derived from name');
+  assert(sql.includes('andon_handler'),                                  'andon_responder seeded');
+  assert(sql.includes('weekly'),                                         'improvement_reasoner seeded');
+  assert(sql.includes('MutationLedger'),                                 'ledger seeded');
+  // tiers column contains the JSON-serialized array — assert a representative tier name
+  assert(sql.includes('threshold') || sql.includes('base'),              'tier names round-trip into JSON');
+  assert(sql.includes('SCORE_THRESHOLD'),                                'tier scope round-trips into JSON');
+}
+
+section('Phase 11.3 — no MUTATION_POLICY → no mutation_policies table (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(!sql.includes('mutation_policies'),                            'no mutation_policies table when no MUTATION_POLICY declared');
+}
+
+section('Phase 11.3 — external boundary calls COMPENSATING_ACTION on andon halt');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION charge_card { INPUT id: id OUTPUT result: string }
+ACTION refund_card { INPUT id: id OUTPUT result: string }
+
+WORKFLOW order_flow {
+  STEP charge {
+    ACTION charge_card
+    ANDON_ON action_error
+    ROLLBACK_BOUNDARY external
+    COMPENSATING_ACTION refund_card
+  }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  // Andon path runs the compensating action via typed inline dispatch
+  assert(rs.includes('"compensating_action_started"'),                  'compensating action telemetry event emitted');
+  assert(rs.includes('crate::commands::refund_card::refund_card'),      'typed inline call to refund_card');
+  assert(rs.includes('// COMPENSATING_ACTION: refund_card'),            'compensating action comment');
+  // Boundary is still forwarded into the AndonEvent
+  assert(rs.includes('Some("external")'),                                'rollback_boundary captured in andon event');
+}
+
+section('Phase 11.3 — irreversible boundary emits andon_escalated telemetry');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION ship_goods { INPUT id: id OUTPUT result: string }
+
+WORKFLOW shipment {
+  STEP ship {
+    ACTION ship_goods
+    ANDON_ON action_error
+    ROLLBACK_BOUNDARY irreversible
+    ON_ANDON_ESCALATE human
+  }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  assert(rs.includes('"andon_escalated"'),                              'andon_escalated telemetry event emitted');
+  assert(rs.includes('escalation_target=human'),                         'escalation target embedded in telemetry');
+  assert(rs.includes('IRREVERSIBLE boundary'),                           'comment documents the boundary semantics');
+  assert(rs.includes('Some("irreversible")'),                            'rollback_boundary captured in andon event');
+}
+
+section('Phase 11.3 — external boundary WITHOUT compensating action logs but does not crash');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION risky { INPUT id: id OUTPUT result: string }
+
+WORKFLOW partial {
+  STEP attempt {
+    ACTION risky
+    ANDON_ON action_error
+    ROLLBACK_BOUNDARY external
+  }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  assert(rs.includes('external boundary without COMPENSATING_ACTION'),  'logs missing compensating action without crashing');
+  assert(!rs.includes('compensating_action_started'),                    'no compensating action telemetry when none declared');
+}
+
+section('Phase 11.3 — internal boundary halts cleanly without rollback work');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION query { INPUT id: id OUTPUT result: string }
+
+WORKFLOW lookup {
+  STEP fetch {
+    ACTION query
+    ANDON_ON action_error
+    ROLLBACK_BOUNDARY internal
+  }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  assert(rs.includes('internal rollback: andon event capture IS the rollback'), 'internal boundary documented as no-op');
+  assert(!rs.includes('andon_escalated'),                                'no escalation telemetry for internal boundary');
+  assert(!rs.includes('compensating_action_started'),                    'no compensating telemetry for internal boundary');
+}
+
 section('Phase 11.1c — actions with no INPUT skip the serde input parse');
 {
   const noInputSrc = `APP ni { TITLE "NoInput" DB ni.db TELEMETRY auto }

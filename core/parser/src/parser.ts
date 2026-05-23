@@ -53,6 +53,7 @@ import type {
   TargetDecl, TargetRuntime, TargetFrontend, TargetDeploy,
   AuthDecl, AuthStrategy,
   TenantDecl, TenantModel, TenantIsolation,
+  MutationPolicyDecl, MutationTierDecl,
 } from './types.js';
 
 export class ParseError extends Error {
@@ -132,6 +133,7 @@ export class Parser {
     let target: TargetDecl | undefined;
     let auth: AuthDecl | undefined;
     let tenant: TenantDecl | undefined;
+    const mutationPolicies: MutationPolicyDecl[] = [];
 
     while (!this.isAtEnd()) {
       const token = this.current();
@@ -309,12 +311,15 @@ export class Parser {
         case TokenType.TENANT_KW:
           tenant = this.parseTenant();
           break;
+        case TokenType.MUTATION_POLICY:
+          mutationPolicies.push(this.parseMutationPolicy());
+          break;
         default:
           this.error(`Unexpected token: ${token.value}. Expected a top-level declaration`);
       }
     }
 
-    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains, qcMeshes, meshes, target, auth, tenant };
+    return { app, entities, actions, views, aiService, tests, rules, workflows, pipelines, qcs, vault, log, macros, macroRegistry, actuators, platforms, nullclaw, brainBody, facts, states, patterns, scores, modules, routers, skills, skilldocs, reasoners, triggers, lifecycles, breeds, packets, authorities, channels, identities, feeds, nodes, sensors, zones, sessions, compilers, events, nbves, contracts, reputations, subscriptions, disputes, preferences, topLevelSeeds, typeAliases, themes, stages, cognitionRoles, escalationChains, qcMeshes, meshes, target, auth, tenant, mutationPolicies };
   }
 
   // --- APP ---
@@ -1667,6 +1672,8 @@ export class Parser {
     let andonOn: ('action_error' | 'timeout' | 'guard_failure' | 'no_rule_match' | 'score_threshold' | 'response_unparseable')[] | undefined;
     let timeout: string | undefined;
     let rollbackBoundary: 'internal' | 'external' | 'irreversible' | undefined;
+    let compensatingAction: string | undefined;
+    let onAndonEscalate: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -1716,11 +1723,23 @@ export class Parser {
         continue;
       }
 
+      // Phase 11.3 — rollback completers
+      if (token.type === TokenType.COMPENSATING_ACTION) {
+        this.advance();
+        compensatingAction = this.expectIdentifier();
+        continue;
+      }
+      if (token.type === TokenType.ON_ANDON_ESCALATE) {
+        this.advance();
+        onAndonEscalate = this.expectIdentifier();
+        continue;
+      }
+
       this.error(`Unexpected token in STEP: ${token.value}`);
     }
 
     this.expectToken(TokenType.RBRACE);
-    return { name, action, input, onFail, andonOn, timeout, rollbackBoundary, span: this.spanFrom(start) };
+    return { name, action, input, onFail, andonOn, timeout, rollbackBoundary, compensatingAction, onAndonEscalate, span: this.spanFrom(start) };
   }
 
   /**
@@ -5264,6 +5283,179 @@ export class Parser {
 
     const end = this.expectToken(TokenType.RBRACE).location;
     return { kind: 'tenant', model, key, isolate, span: { start, end } };
+  }
+
+  // --- MUTATION_POLICY (Phase 11.3) ---
+
+  private parseMutationPolicy(): MutationPolicyDecl {
+    const start = this.expectToken(TokenType.MUTATION_POLICY).location;
+    const name = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let targets: string[] = [];
+    const tiers: MutationTierDecl[] = [];
+    let andonResponder: string | undefined;
+    let improvementReasoner: string | undefined;
+    let ledger: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.TARGETS) {
+        this.advance();
+        targets = this.parseBracketedIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.TIER) {
+        tiers.push(this.parseMutationTier());
+        continue;
+      }
+      if (token.type === TokenType.ANDON_RESPONDER_KW) {
+        this.advance();
+        andonResponder = this.expectIdentifier();
+        continue;
+      }
+      if (token.type === TokenType.IMPROVEMENT_REASONER_KW) {
+        this.advance();
+        improvementReasoner = this.expectIdentifier();
+        continue;
+      }
+      if (token.type === TokenType.LEDGER) {
+        this.advance();
+        ledger = this.expectIdentifier();
+        continue;
+      }
+      this.error(`Unexpected token in MUTATION_POLICY: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return {
+      kind: 'mutation_policy', name, targets, tiers,
+      andonResponder, improvementReasoner, ledger,
+      span: { start, end },
+    };
+  }
+
+  private parseMutationTier(): MutationTierDecl {
+    const start = this.expectToken(TokenType.TIER).location;
+    const tierToken = this.advance();
+    const tier = Number(tierToken.value);
+    if (!Number.isInteger(tier) || tier < 1 || tier > 9) {
+      this.error(`TIER number must be an integer 1-9 (got '${tierToken.value}')`);
+    }
+    const tierName = this.expectIdentifier();
+    this.expectToken(TokenType.LBRACE);
+
+    let scope: string[] = [];
+    let autoDeploy: string | undefined;
+    let require: string[] | undefined;
+    let regressionSuite: string | undefined;
+    let monitoringWindow: string | undefined;
+    let nbveWindow: string | undefined;
+    let approvalAuthority: string | undefined;
+
+    while (!this.check(TokenType.RBRACE)) {
+      const token = this.current();
+      if (token.type === TokenType.SCOPE) {
+        this.advance();
+        scope = this.parseBracketedIdentifierList();
+        continue;
+      }
+      if (token.type === TokenType.AUTO_DEPLOY) {
+        this.advance();
+        // Accept identifier (true_after_shadow), bool literal (true/false),
+        // or string literal ("true_after_shadow") — all flatten to a string.
+        if (this.check(TokenType.STRING_LITERAL) || this.check(TokenType.TRUE) || this.check(TokenType.FALSE)) {
+          autoDeploy = this.advance().value;
+        } else {
+          autoDeploy = this.expectIdentifier();
+        }
+        continue;
+      }
+      if (token.type === TokenType.REQUIRE_KW) {
+        this.advance();
+        // Accept either bracket form or bare comma list; values may include
+        // boolean operators (deterministic_test_pass AND governance_approval)
+        // which the parser flattens to a list of underscored names.
+        require = this.parseGateExpressionList();
+        continue;
+      }
+      if (token.type === TokenType.REGRESSION_SUITE) {
+        this.advance();
+        // Accept identifier, string literal, or digit-prefixed composite
+        // (e.g. "24h_recent_workflows" is lexed as NUMBER then IDENTIFIER).
+        // Concatenate adjacent NUMBER + IDENTIFIER tokens into a single value.
+        if (this.check(TokenType.STRING_LITERAL)) {
+          regressionSuite = this.advance().value;
+        } else {
+          let v = this.advance().value;
+          while (this.check(TokenType.IDENTIFIER)) v += this.advance().value;
+          regressionSuite = v;
+        }
+        continue;
+      }
+      if (token.type === TokenType.MONITORING_WINDOW) {
+        this.advance();
+        monitoringWindow = this.consumeDurationLikeValue();
+        continue;
+      }
+      if (token.type === TokenType.NBVE_WINDOW) {
+        this.advance();
+        nbveWindow = this.consumeDurationLikeValue();
+        continue;
+      }
+      if (token.type === TokenType.APPROVAL_AUTHORITY) {
+        this.advance();
+        approvalAuthority = this.expectIdentifier();
+        continue;
+      }
+      this.error(`Unexpected token in TIER: ${token.value}`);
+    }
+
+    const end = this.expectToken(TokenType.RBRACE).location;
+    return {
+      tier, name: tierName, scope,
+      autoDeploy, require, regressionSuite, monitoringWindow, nbveWindow, approvalAuthority,
+      span: { start, end },
+    };
+  }
+
+  /**
+   * Consume a duration-like value at the cursor. Accepts:
+   *   - string literal: "24h"
+   *   - identifier: 24h_recent or session
+   *   - digit-prefixed composite: 24h (NUMBER + IDENTIFIER)
+   * Concatenates and returns as a single string. Used by MONITORING_WINDOW,
+   * NBVE_WINDOW, and other Phase 11 fields that take duration-like values.
+   */
+  private consumeDurationLikeValue(): string {
+    if (this.check(TokenType.STRING_LITERAL)) return this.advance().value;
+    let v = this.advance().value;
+    while (this.check(TokenType.IDENTIFIER)) v += this.advance().value;
+    return v;
+  }
+
+  /**
+   * Parse a gate-expression list: either bracketed [a, b, c] or a flat
+   * comma/AND/OR sequence. AND/OR are flattened to a simple list — the
+   * conjunction semantics are conventional (all gates apply unless
+   * documented otherwise per gate name). The parser intentionally doesn't
+   * impose boolean structure; that's for the verifier in Phase 4.
+   */
+  private parseGateExpressionList(): string[] {
+    const out: string[] = [];
+    const hasBracket = this.check(TokenType.LBRACKET);
+    if (hasBracket) this.advance();
+    do {
+      // Skip noise tokens AND/OR/&& between identifiers
+      while (this.check(TokenType.AND) || this.check(TokenType.OR)) this.advance();
+      out.push(this.expectIdentifier());
+      // Continue while next token is comma OR AND/OR connector
+      if (this.check(TokenType.COMMA)) { this.advance(); continue; }
+      if (this.check(TokenType.AND) || this.check(TokenType.OR)) { this.advance(); continue; }
+      break;
+    } while (!this.check(TokenType.RBRACKET) && !this.check(TokenType.RBRACE));
+    if (hasBracket) this.expectToken(TokenType.RBRACKET);
+    return out;
   }
 
   // --- Top-Level SEED ---

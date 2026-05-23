@@ -43,6 +43,60 @@ export function generateWorkflow(ast: AgiFile): Map<string, string> {
   return files;
 }
 
+/**
+ * SQL for the mutation_policies table + idempotent SEED inserts for every
+ * declared MUTATION_POLICY. Splice into 001_initial.sql via sql.ts.
+ *
+ * The schema serializes the tier array as JSON in the `tiers` column —
+ * keeps the table schema stable as new tier fields are added in later
+ * phases, and the Phase 4 andon responder reads the whole policy at once
+ * anyway, so JSON-blob storage matches the read pattern.
+ */
+export function mutationPoliciesSql(ast: AgiFile): string {
+  if (!ast.mutationPolicies || ast.mutationPolicies.length === 0) return '';
+
+  const tableDdl = `
+-- MUTATION POLICIES: AI authorization scope per target set (Phase 11.3)
+-- Each policy declares tiered mutation scopes + verification gates. The
+-- Phase 4 andon-responder REASONER reads this table to bound its proposals.
+CREATE TABLE IF NOT EXISTS mutation_policies (
+  id                    TEXT PRIMARY KEY,
+  name                  TEXT NOT NULL UNIQUE,
+  targets               TEXT NOT NULL,                -- JSON array of module/workflow names
+  tiers                 TEXT NOT NULL,                -- JSON array of tier descriptors
+  andon_responder       TEXT,
+  improvement_reasoner  TEXT,
+  ledger                TEXT,
+  created_at            TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_mutation_policies_name ON mutation_policies(name);`;
+
+  const seedLines: string[] = ast.mutationPolicies.map((p) => {
+    const id = `policy-${p.name}`;
+    const targets = JSON.stringify(p.targets);
+    const tiers = JSON.stringify(p.tiers.map((t) => ({
+      tier: t.tier,
+      name: t.name,
+      scope: t.scope,
+      autoDeploy: t.autoDeploy ?? null,
+      require: t.require ?? null,
+      regressionSuite: t.regressionSuite ?? null,
+      monitoringWindow: t.monitoringWindow ?? null,
+      nbveWindow: t.nbveWindow ?? null,
+      approvalAuthority: t.approvalAuthority ?? null,
+    })));
+    const escape = (s: string) => s.replace(/'/g, "''");
+    const cols = ['id', 'name', 'targets', 'tiers'];
+    const vals = [`'${id}'`, `'${escape(p.name)}'`, `'${escape(targets)}'`, `'${escape(tiers)}'`];
+    if (p.andonResponder)       { cols.push('andon_responder');      vals.push(`'${escape(p.andonResponder)}'`); }
+    if (p.improvementReasoner)  { cols.push('improvement_reasoner'); vals.push(`'${escape(p.improvementReasoner)}'`); }
+    if (p.ledger)               { cols.push('ledger');               vals.push(`'${escape(p.ledger)}'`); }
+    return `INSERT OR IGNORE INTO mutation_policies (${cols.join(', ')}) VALUES (${vals.join(', ')});`;
+  });
+
+  return tableDdl + '\n\n-- Idempotent seed: MUTATION_POLICY declarations from the .agi source\n' + seedLines.join('\n');
+}
+
 // SQL for the workflow_checkpoints table — splice into 001_initial.sql via sql.ts.
 export function workflowCheckpointsSql(ast: AgiFile): string {
   if (!isEnabled(ast)) return '';
@@ -112,19 +166,25 @@ function buildWorkflowRs(ast: AgiFile): string {
   // Phase 1c: stop generating a runtime dispatcher; emit inline typed calls
   // at each step's call site. The lookup map gives the workflow function
   // builder the spec it needs per step.
+  // Phase 11.3: also include COMPENSATING_ACTIONs declared on steps so the
+  // andon path can call them with the same typed dispatch.
   const dispatchByAction = new Map<string, ActionDispatchSpec>();
+  const collectAction = (name: string): void => {
+    if (dispatchByAction.has(name)) return;
+    const decl = ast.actions.find((a) => a.name === name);
+    if (!decl) {
+      dispatchByAction.set(name, {
+        kind: 'unsupported',
+        reason: `action '${name}' is not declared (workflow validator should catch this; defensive fallback)`,
+      });
+      return;
+    }
+    dispatchByAction.set(name, actionDispatchSpec(decl, ast));
+  };
   for (const wf of workflows) {
     for (const step of wf.steps) {
-      if (dispatchByAction.has(step.action)) continue;
-      const decl = ast.actions.find((a) => a.name === step.action);
-      if (!decl) {
-        dispatchByAction.set(step.action, {
-          kind: 'unsupported',
-          reason: `action '${step.action}' is not declared (workflow validator should catch this; defensive fallback)`,
-        });
-        continue;
-      }
-      dispatchByAction.set(step.action, actionDispatchSpec(decl, ast));
+      collectAction(step.action);
+      if (step.compensatingAction) collectAction(step.compensatingAction);
     }
   }
 
@@ -556,7 +616,10 @@ function buildRunWorkflowFn(
       stepBlocks.push(parallelBatchBlock(batch, i, wfLiteral));
       i = j;
     } else {
-      stepBlocks.push(serialStepBlock(step, i, wfLiteral, dispatchByAction.get(step.action)));
+      const compensatingSpec = step.compensatingAction
+        ? dispatchByAction.get(step.compensatingAction)
+        : undefined;
+      stepBlocks.push(serialStepBlock(step, i, wfLiteral, dispatchByAction.get(step.action), compensatingSpec));
       i++;
     }
   }
@@ -612,6 +675,7 @@ function serialStepBlock(
   index: number,
   wfName: string,
   dispatchSpec: ActionDispatchSpec | undefined,
+  compensatingSpec: ActionDispatchSpec | undefined,
 ): string {
   const stepName = step.name;
   const actionName = step.action;
@@ -624,7 +688,12 @@ function serialStepBlock(
 
   const dispatchBlock = buildSerialDispatchBlock(actionName, dispatchSpec);
   const retryDispatchBlock = buildSerialDispatchBlock(actionName, dispatchSpec);
-  const andonHaltBlock = buildAndonHaltBlock(stepName, index, rollbackBoundary);
+  // Phase 11.3: rollback-completer block runs in the andon path before the
+  // halted result returns. external boundary → call COMPENSATING_ACTION.
+  // irreversible boundary → emit "andon_escalated" telemetry (Phase 4
+  // andon-responder REASONER will read the escalation target from there).
+  const rollbackCompleter = buildRollbackCompleter(step, compensatingSpec);
+  const andonHaltBlock = buildAndonHaltBlock(stepName, index, rollbackBoundary, rollbackCompleter);
 
   // The dispatch future is the inner async block. When the step declares a
   // TIMEOUT, wrap it in tokio::time::timeout so the runtime cancels rather
@@ -704,11 +773,18 @@ ${errorArm}
 }
 
 /**
- * Emit the body of an andon halt — persist the event, mark the run halted,
- * close the workflow's wrapping telemetry, and return a halted WorkflowRunResult.
+ * Emit the body of an andon halt — persist the event, run the rollback
+ * completer for the boundary, mark the run halted, close the workflow's
+ * wrapping telemetry, and return a halted WorkflowRunResult.
+ *
  * Placeholders __TRIGGER__ and __MESSAGE__ are replaced by the caller.
  */
-function buildAndonHaltBlock(stepName: string, index: number, rollbackBoundary: string | null): string {
+function buildAndonHaltBlock(
+  stepName: string,
+  index: number,
+  rollbackBoundary: string | null,
+  rollbackCompleter: string,
+): string {
   const rbLit = rollbackBoundary ? `Some("${rollbackBoundary}")` : 'None';
   return `let andon_id = emit_andon_event(
     db_ref,
@@ -721,6 +797,7 @@ function buildAndonHaltBlock(stepName: string, index: number, rollbackBoundary: 
     &context,
     ${rbLit},
 );
+${rollbackCompleter}
 let total_dur = started.elapsed().as_millis() as i64;
 save_run_completed(db_ref, &run_id, "halted", steps_completed, &context, Some(&format!("andon:{}", andon_id)));
 complete_telemetry(db_ref, &wf_event_id, "andon", Some(&context.to_string()), Some(&format!("andon_event_id={}", andon_id)), Some(total_dur));
@@ -731,6 +808,68 @@ return Ok(WorkflowRunResult {
     final_context: context, error: Some(format!("ANDON pulled at step '${stepName}' (event {})", andon_id)),
     duration_ms: total_dur,
 });`;
+}
+
+/**
+ * Emit the rollback-completer block for an andon halt:
+ *   external boundary    → call COMPENSATING_ACTION inline (typed), log result
+ *   irreversible boundary → emit "andon_escalated" telemetry with target
+ *   internal boundary     → nothing (rollback is the andon-event capture itself)
+ *
+ * Phase 11.3 wires the synchronous completer; Phase 4 will wire compensating
+ * actions that themselves take the workflow context as input.
+ */
+function buildRollbackCompleter(
+  step: WorkflowStep,
+  compensatingSpec: ActionDispatchSpec | undefined,
+): string {
+  const boundary = step.rollbackBoundary;
+  if (!boundary || boundary === 'internal') return '// internal rollback: andon event capture IS the rollback';
+
+  if (boundary === 'external') {
+    if (!step.compensatingAction) {
+      return `// external boundary without COMPENSATING_ACTION — logging and halting; effects remain.
+eprintln!("[andon] step '${step.name}' has ROLLBACK_BOUNDARY external but no COMPENSATING_ACTION declared; side effects not undone.");`;
+    }
+    const compName = step.compensatingAction;
+    const callBlock = buildSerialDispatchBlock(compName, compensatingSpec)
+      .split('\n')
+      .map((l) => '    ' + l)
+      .join('\n');
+    return `// COMPENSATING_ACTION: ${compName}
+let comp_event_id = emit_telemetry(
+    db_ref, "compensating_action_started", "${compName}", Some("action"),
+    Some(&run_id), Some("${step.name}"), "in_progress",
+    None, None, None, None, None,
+);
+let comp_started = Instant::now();
+let comp_input = context.clone();
+let _comp_result: Result<serde_json::Value, String> = async {
+    let step_input = comp_input;
+${callBlock}
+}.await;
+let comp_dur = comp_started.elapsed().as_millis() as i64;
+match _comp_result {
+    Ok(comp_out) => {
+        complete_telemetry(db_ref, &comp_event_id, "success", Some(&comp_out.to_string()), None, Some(comp_dur));
+        eprintln!("[andon] compensating action '${compName}' completed for step '${step.name}'");
+    }
+    Err(comp_err) => {
+        complete_telemetry(db_ref, &comp_event_id, "error", None, Some(&comp_err), Some(comp_dur));
+        eprintln!("[andon] compensating action '${compName}' FAILED for step '${step.name}': {}", comp_err);
+    }
+}`;
+  }
+
+  // irreversible
+  const target = step.onAndonEscalate ?? 'human';
+  return `// IRREVERSIBLE boundary: no rollback possible; escalating to ${target}.
+let _ = emit_telemetry(
+    db_ref, "andon_escalated", workflow_name, Some("workflow"),
+    Some(&run_id), Some("${step.name}"), "andon",
+    Some(&context.to_string()), None, Some(&format!("escalation_target=${target}")), None,
+    Some(&format!("{{\\"andon_event_id\\":\\"{}\\",\\"target\\":\\"${target}\\"}}", andon_id)),
+);`;
 }
 
 function jsonStringLit(s: string): string {

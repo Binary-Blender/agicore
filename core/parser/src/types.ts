@@ -371,6 +371,13 @@ export interface WorkflowStep {
   timeout?: string;
   /** Phase 11.2 — Andon Loop DSL: rollback envelope for the step's side effects. */
   rollbackBoundary?: RollbackBoundary;
+  /** Phase 11.3 — ACTION called to undo this step's side effects when an
+   * external-boundary andon fires. Required for external boundaries; ignored
+   * for internal boundaries; never used for irreversible (no rollback). */
+  compensatingAction?: string;
+  /** Phase 11.3 — escalation target for irreversible-boundary andons.
+   * "human" → route to operator queue. Otherwise the named REASONER. */
+  onAndonEscalate?: string;
   span: SourceSpan;
 }
 
@@ -382,6 +389,52 @@ export interface WorkflowDecl {
   idempotent?: boolean;
   /** Phase 11.2 — name of the SCORE the improvement loop optimizes for this workflow. */
   successMetric?: string;
+  span: SourceSpan;
+}
+
+// --- MUTATION_POLICY Declaration (Phase 11.3) ---
+//
+// Declares the AI's authorization scope for evolving a target set of
+// MODULEs / WORKFLOWs. Each TIER bucket bundles a scope (what kinds of
+// mutations are in this tier), a deployment policy (auto vs human),
+// and verification gates (regression suite scope, NBVE shadow window).
+// See Idea Factory/andon_loop_architecture.md § Mutation Tier System.
+
+export type MutationScope =
+  | 'SCORE_THRESHOLD' | 'SCORE_DECAY' | 'PATTERN_regex'
+  | 'RULE_add' | 'RULE_modify_conditions' | 'RULE_modify_then'
+  | 'WORKFLOW_modify_step_sequence' | 'WORKFLOW_add_step'
+  | 'ACTION_signature_change' | 'STAGES_add_transition'
+  | 'WORKFLOW_add' | 'MODULE_add' | 'ENTITY_add'
+  | 'MUTATION_POLICY_modify'
+  | string;  // open vocabulary — future scope kinds without parser change
+
+export interface MutationTierDecl {
+  tier: number;                       // 1..5 by convention
+  name: string;                       // e.g. 'threshold_tuning'
+  scope: MutationScope[];             // allowed mutation kinds at this tier
+  autoDeploy?: string;                // "true" | "false" | "true_after_shadow"
+  require?: string[];                 // gate names: "deterministic_test_pass", "governance_approval", etc.
+  regressionSuite?: string;           // e.g. "24h_recent_workflows" | "full_golden_set"
+  monitoringWindow?: string;          // duration string
+  nbveWindow?: string;                // duration string
+  approvalAuthority?: string;         // identity name or human role
+  span: SourceSpan;
+}
+
+export interface MutationPolicyDecl {
+  kind: 'mutation_policy';
+  name: string;
+  /** Modules / workflows this policy governs. */
+  targets: string[];
+  tiers: MutationTierDecl[];
+  /** Optional: name of the REASONER that handles andons under this policy. */
+  andonResponder?: string;
+  /** Optional: name of the REASONER that runs the scheduled improvement loop. */
+  improvementReasoner?: string;
+  /** Optional: entity name where the mutation ledger persists. Defaults to a
+   * generated MutationLedger entity. */
+  ledger?: string;
   span: SourceSpan;
 }
 
@@ -1600,6 +1653,8 @@ export interface AgiFile {
   target?: TargetDecl;
   auth?: AuthDecl;
   tenant?: TenantDecl;
+  /** Phase 11.3 — AI authorization scope declarations. */
+  mutationPolicies: MutationPolicyDecl[];
 }
 
 // --- Parse Error ---

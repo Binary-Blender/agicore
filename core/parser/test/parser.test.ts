@@ -3465,6 +3465,137 @@ WORKFLOW wf {
   console.error(`  FAIL: invalid ANDON_ON: ${err}`);
 }
 
+section('Phase 11.3 — WORKFLOW STEP COMPENSATING_ACTION + ON_ANDON_ESCALATE');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ACTION charge_card { INPUT id: id OUTPUT result: string }
+ACTION refund_card { INPUT id: id OUTPUT result: string }
+ACTION ship_goods  { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP charge {
+    ACTION charge_card
+    ANDON_ON action_error
+    ROLLBACK_BOUNDARY external
+    COMPENSATING_ACTION refund_card
+  }
+  STEP ship {
+    ACTION ship_goods
+    ANDON_ON action_error
+    ROLLBACK_BOUNDARY irreversible
+    ON_ANDON_ESCALATE human
+  }
+}`;
+  const ast = parse(src);
+  const charge = ast.workflows[0]!.steps[0]!;
+  const ship = ast.workflows[0]!.steps[1]!;
+  assert(charge.compensatingAction === 'refund_card', 'COMPENSATING_ACTION captured on charge step');
+  assert(charge.rollbackBoundary === 'external',       'rollback boundary preserved');
+  assert(ship.onAndonEscalate === 'human',             'ON_ANDON_ESCALATE captured on ship step');
+  assert(ship.rollbackBoundary === 'irreversible',     'irreversible boundary preserved');
+  console.log('  COMPENSATING_ACTION + ON_ANDON_ESCALATE: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: COMPENSATING_ACTION/ON_ANDON_ESCALATE: ${err}`);
+}
+
+section('Phase 11.3 — MUTATION_POLICY declaration with tiered scope');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW publish { STEP s { ACTION foo } }
+WORKFLOW review  { STEP s { ACTION foo } }
+
+MUTATION_POLICY ops_policy {
+  TARGETS [publish, review]
+
+  TIER 1 threshold_tuning {
+    SCOPE [SCORE_THRESHOLD, SCORE_DECAY, PATTERN_regex]
+    AUTO_DEPLOY true
+    REQUIRE deterministic_test_pass
+    REGRESSION_SUITE 24h_recent_workflows
+  }
+
+  TIER 2 rule_addition {
+    SCOPE [RULE_add]
+    AUTO_DEPLOY true
+    REQUIRE deterministic_test_pass
+    MONITORING_WINDOW 24h
+  }
+
+  TIER 3 rule_modification {
+    SCOPE [RULE_modify_conditions, RULE_modify_then]
+    AUTO_DEPLOY true_after_shadow
+    NBVE_WINDOW 7d
+  }
+
+  TIER 4 structural {
+    SCOPE [WORKFLOW_add_step, ACTION_signature_change]
+    AUTO_DEPLOY false
+    REQUIRE deterministic_test_pass AND governance_approval
+    APPROVAL_AUTHORITY ops_lead
+  }
+
+  TIER 5 architectural {
+    SCOPE [WORKFLOW_add, MODULE_add, MUTATION_POLICY_modify]
+    AUTO_DEPLOY false
+    APPROVAL_AUTHORITY governance_council
+  }
+}`;
+  const ast = parse(src);
+  assert(ast.mutationPolicies.length === 1,                  'one MUTATION_POLICY parsed');
+  const p = ast.mutationPolicies[0]!;
+  assert(p.name === 'ops_policy',                            'policy name captured');
+  assert(p.targets.length === 2 && p.targets[0] === 'publish' && p.targets[1] === 'review', 'TARGETS list captured');
+  assert(p.tiers.length === 5,                               '5 tiers parsed');
+  const t1 = p.tiers[0]!;
+  assert(t1.tier === 1 && t1.name === 'threshold_tuning',    'T1 number + name');
+  assert(t1.scope.length === 3,                              'T1 scope list captured (3 items)');
+  assert(t1.autoDeploy === 'true',                           'T1 auto_deploy = true');
+  assert(t1.regressionSuite === '24h_recent_workflows',      'T1 regression suite');
+  const t2 = p.tiers[1]!;
+  assert(t2.monitoringWindow === '24h',                      'T2 monitoring window');
+  const t3 = p.tiers[2]!;
+  assert(t3.autoDeploy === 'true_after_shadow',              'T3 auto_deploy = true_after_shadow');
+  assert(t3.nbveWindow === '7d',                             'T3 nbve window');
+  const t4 = p.tiers[3]!;
+  assert(t4.require !== undefined && t4.require.length === 2, 'T4 require list (AND flattened)');
+  assert(t4.require!.includes('deterministic_test_pass'),    'T4 require has deterministic_test_pass');
+  assert(t4.require!.includes('governance_approval'),        'T4 require has governance_approval');
+  assert(t4.approvalAuthority === 'ops_lead',                'T4 approval authority');
+  const t5 = p.tiers[4]!;
+  assert(t5.scope.includes('MUTATION_POLICY_modify'),        'T5 includes the meta-scope');
+  assert(t5.approvalAuthority === 'governance_council',      'T5 governance council');
+  console.log('  MUTATION_POLICY with 5 tiers: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: MUTATION_POLICY: ${err}`);
+}
+
+section('Phase 11.3 — MUTATION_POLICY with REASONER refs + LEDGER');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULE_add] AUTO_DEPLOY true }
+  ANDON_RESPONDER andon_handler
+  IMPROVEMENT_REASONER weekly_review
+  LEDGER MutationLedger
+}`;
+  const ast = parse(src);
+  const p = ast.mutationPolicies[0]!;
+  assert(p.andonResponder === 'andon_handler',         'ANDON_RESPONDER captured');
+  assert(p.improvementReasoner === 'weekly_review',    'IMPROVEMENT_REASONER captured');
+  assert(p.ledger === 'MutationLedger',                'LEDGER captured');
+  console.log('  REASONER refs + LEDGER: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: MUTATION_POLICY REASONER refs: ${err}`);
+}
+
 section('Phase 11.2 — invalid ROLLBACK_BOUNDARY rejected');
 try {
   const src = `APP a { TITLE "A" DB a.db }
