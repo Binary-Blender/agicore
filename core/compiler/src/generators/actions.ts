@@ -625,3 +625,63 @@ export function implActionCommandNames(ast: AgiFile): string[] {
       && (a.impl !== undefined || (categorize(a) === 'stub' && !a.ai)))
     .map((a) => `commands::${toSnakeCase(a.name)}::${toSnakeCase(a.name)}`);
 }
+
+/**
+ * Describes how to call an ACTION from outside its own Tauri-command wrapper —
+ * specifically, from the generated workflow runtime (Phase 11.1c onward).
+ *
+ * `callable` means the runtime can invoke this action with typed
+ * (input, db [, store]) parameters. `unsupported` means it must be
+ * dispatched through its own surface (AI_SERVICE / ROUTER own it)
+ * or it requires state the workflow runtime doesn't have ergonomic
+ * access to today (AppHandle for file_handler/shell_open/oauth_callback).
+ */
+export type ActionDispatchSpec =
+  | {
+      kind: 'callable';
+      modulePath: string;    // e.g. 'crate::commands::actions::proofread' or 'crate::commands::my_impl::my_impl'
+      inputStruct: string | null;  // Rust type, e.g. 'crate::commands::actions::ProofreadInput', null if no inputs
+      needsApiKeyStore: boolean;   // AI action without KEYS_ENTITY needs ApiKeyStore
+    }
+  | { kind: 'unsupported'; reason: string };
+
+export function actionDispatchSpec(action: ActionDecl, ast: AgiFile): ActionDispatchSpec {
+  if (AI_SERVICE_OWNED.has(action.name)) {
+    return { kind: 'unsupported', reason: 'owned by AI_SERVICE (use send_chat command directly)' };
+  }
+  if (ROUTER_OWNED.has(action.name)) {
+    return { kind: 'unsupported', reason: 'owned by ROUTER (use broadcast_chat / council_chat directly)' };
+  }
+  // Special patterns require AppHandle which the workflow runtime doesn't
+  // forward yet — explicit unsupported reason rather than mysterious failure.
+  if (action.pattern === 'file_handler' || action.pattern === 'shell_open' || action.pattern === 'oauth_callback') {
+    return { kind: 'unsupported', reason: `pattern '${action.pattern}' requires AppHandle (workflow dispatch arrives in a later phase)` };
+  }
+
+  const snakeName = toSnakeCase(action.name);
+  const pascalName = toPascalCase(action.name);
+  const inputStruct = action.input.length > 0
+    ? `crate::commands::${actionContainingModule(action)}::${pascalName}Input`
+    : null;
+  const cat = categorize(action);
+
+  return {
+    kind: 'callable',
+    modulePath: `crate::commands::${actionContainingModule(action)}::${snakeName}`,
+    inputStruct,
+    needsApiKeyStore: cat === 'ai' && !ast.aiService?.keysEntity,
+  };
+}
+
+/**
+ * Internal: which Rust module does this action's typed function live in?
+ *   - 'actions' for bundled actions (AI, search, web_search, export_md)
+ *   - the action's own snake_case name for IMPL + stub-protected actions
+ *
+ * Mirrors the buckets that actionCommandNames() and implActionCommandNames()
+ * compute, but returns the module string instead of the full command path.
+ */
+function actionContainingModule(action: ActionDecl): string {
+  const inBundled = action.impl === undefined && !(categorize(action) === 'stub' && !action.ai);
+  return inBundled ? 'actions' : toSnakeCase(action.name);
+}

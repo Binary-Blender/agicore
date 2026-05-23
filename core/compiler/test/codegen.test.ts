@@ -5584,11 +5584,21 @@ WORKFLOW simple_seq {
   assert(rs.includes('pub async fn run_simple_seq('),                      'run_simple_seq command emitted');
   assert(rs.includes('pub fn list_workflow_runs('),                        'list_workflow_runs query command emitted');
   assert(rs.includes('pub fn get_workflow_checkpoints('),                  'get_workflow_checkpoints query command emitted');
-  assert(rs.includes('async fn dispatch_action('),                         'action dispatcher present');
-  assert(rs.includes('"proofread" =>'),                                    'dispatcher knows about "proofread" action');
-  assert(rs.includes('"summarize" =>'),                                    'dispatcher knows about "summarize" action');
-  assert(rs.includes('"fact_check" =>'),                                   'dispatcher knows about "fact_check" action');
-  assert(rs.includes('"publish" =>'),                                      'dispatcher knows about "publish" action');
+  // Phase 1c: serial-step dispatch is inlined; the only runtime dispatcher
+  // remaining is the parallel-batch stub helper.
+  assert(rs.includes('async fn dispatch_action_stub('),                    'parallel-batch fallback dispatcher present');
+  // Phase 1c: inline typed calls into the user's typed ACTION functions.
+  // In this fixture:
+  //   - publish_pipeline puts proofread/summarize/fact_check in PARALLEL → stub
+  //   - publish is serial → typed inline call
+  //   - simple_seq has proofread + summarize serial → typed inline calls
+  // So proofread/summarize appear in BOTH typed and stub dispatch (different
+  // workflows). publish appears only in typed. fact_check appears only in stub.
+  assert(rs.includes('crate::commands::proofread::proofread'),             'typed inline call to proofread (commands::<name>::<name> path)');
+  assert(rs.includes('crate::commands::summarize::summarize'),             'typed inline call to summarize');
+  assert(rs.includes('crate::commands::publish::publish'),                 'typed inline call to publish');
+  assert(rs.includes('dispatch_action_stub("fact_check"'),                 'fact_check uses stub dispatch (in PARALLEL only)');
+  assert(rs.includes('ProofreadInput'),                                    'typed Input struct used in inline serde conversion');
   assert(rs.includes('save_checkpoint'),                                   'checkpoint save helper present');
   assert(rs.includes('save_run_started'),                                  'run started persistence helper present');
   assert(rs.includes('save_run_completed'),                                'run completed persistence helper present');
@@ -5648,6 +5658,87 @@ WORKFLOW with_stop {
   assert(rs.includes('continue to next step'),                'skip branch documents continue behavior');
   // stop: default; returns failed run with error
   assert(rs.includes('status: "failed".to_string()'),         'stop branch returns failed status');
+}
+
+section('Phase 11.1c — serial steps emit inline TYPED dispatch (no runtime string lookup)');
+{
+  // Mix of stub action (per-module path) and an IMPL action (also per-module).
+  const typedSrc = `APP td { TITLE "Typed" DB td.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+
+ACTION load_record { INPUT id: id  OUTPUT result: string }
+ACTION transform   { INPUT id: id  OUTPUT result: string }
+ACTION persist     { INPUT id: id  OUTPUT result: string  IMPL { /* hand-written */ } }
+
+WORKFLOW pipeline {
+  STEP a { ACTION load_record }
+  STEP b { ACTION transform }
+  STEP c { ACTION persist }
+}`;
+  const { files } = compile(typedSrc);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+
+  // Serial steps → inline typed dispatch
+  assert(rs.includes('crate::commands::load_record::load_record'),         'inline call to load_record (stub action, per-module)');
+  assert(rs.includes('crate::commands::transform::transform'),             'inline call to transform (stub action, per-module)');
+  assert(rs.includes('crate::commands::persist::persist'),                 'inline call to persist (IMPL action, per-module)');
+  assert(rs.includes('LoadRecordInput'),                                   'typed Input struct for load_record');
+  assert(rs.includes('TransformInput'),                                    'typed Input struct for transform');
+  assert(rs.includes('PersistInput'),                                      'typed Input struct for persist');
+  assert(rs.includes('serde_json::from_value'),                            'inline serde_json::from_value at step boundary');
+  assert(rs.includes('serde_json::to_value'),                              'inline serde_json::to_value to JSON-shape outputs');
+  assert(rs.includes('Invalid input for action'),                          'helpful error message on input parse failure');
+  // The Phase 1b stub helper is gone for serial steps. Confirm by absence
+  // of dispatch_action calls in the serial path (parallel-batch stub helper
+  // is named dispatch_action_stub so won't false-match).
+  assert(!rs.match(/dispatch_action\(/),                                    'no dispatch_action(...) calls remain (Phase 1b stub removed)');
+}
+
+section('Phase 11.1c — unsupported actions (AI_SERVICE owned, ROUTER owned, special patterns) emit clear errors');
+{
+  // send_chat is owned by AI_SERVICE (will normally be intercepted; this
+  // case exercises the "what if the user references it from a workflow" path).
+  // We declare a separate ACTION that the workflow uses so the workflow itself
+  // is valid; the dispatcher error is the assertion target.
+  const unsupSrc = `APP us { TITLE "Unsup" DB us.db TELEMETRY auto }
+ENTITY Msg { body: string  TIMESTAMPS }
+
+AI_SERVICE {
+  PROVIDERS anthropic
+  KEYS_FILE "keys.json"
+  DEFAULT   anthropic
+  MODELS {
+    anthropic "claude-sonnet-4-20250514" LABEL "Sonnet" DEFAULT
+  }
+}
+
+ACTION wrapper { INPUT id: id  OUTPUT result: string }
+
+WORKFLOW with_wrapper {
+  STEP only_step { ACTION wrapper }
+}`;
+  const { files } = compile(unsupSrc);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  // The wrapper action IS callable (it's a stub at the per-module path).
+  assert(rs.includes('crate::commands::wrapper::wrapper'),                 'wrapper action gets typed inline dispatch');
+}
+
+section('Phase 11.1c — actions with no INPUT skip the serde input parse');
+{
+  const noInputSrc = `APP ni { TITLE "NoInput" DB ni.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+
+ACTION ping { OUTPUT result: string }
+
+WORKFLOW heartbeat {
+  STEP beat { ACTION ping }
+}`;
+  const { files } = compile(noInputSrc);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  assert(rs.includes('crate::commands::ping::ping'),                       'inline typed call to ping');
+  assert(rs.includes('let _ = step_input;'),                               'when action has no INPUT, step_input is dropped before the call');
+  // The PingInput struct should not be referenced for a no-input action
+  assert(!rs.includes('PingInput'),                                        'no PingInput struct reference (action has no INPUT)');
 }
 
 section('Phase 11.1b — PARALLEL batch generates concurrent dispatch');

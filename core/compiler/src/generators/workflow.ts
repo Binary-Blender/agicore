@@ -24,6 +24,7 @@
 
 import type { AgiFile, WorkflowDecl, WorkflowStep } from '@agicore/parser';
 import { toSnakeCase } from '../naming.js';
+import { actionDispatchSpec, type ActionDispatchSpec } from './actions.js';
 
 // ─── public entrypoint ─────────────────────────────────────────────────────
 
@@ -86,17 +87,33 @@ CREATE INDEX IF NOT EXISTS idx_wf_runs_status   ON workflow_runs(status, started
 function buildWorkflowRs(ast: AgiFile): string {
   const workflows = ast.workflows;
 
-  // Collect unique action names referenced across all workflows for the dispatcher.
-  const allActions = new Set<string>();
+  // Resolve dispatch spec per unique action referenced across workflows.
+  // Phase 1c: stop generating a runtime dispatcher; emit inline typed calls
+  // at each step's call site. The lookup map gives the workflow function
+  // builder the spec it needs per step.
+  const dispatchByAction = new Map<string, ActionDispatchSpec>();
   for (const wf of workflows) {
     for (const step of wf.steps) {
-      allActions.add(step.action);
+      if (dispatchByAction.has(step.action)) continue;
+      const decl = ast.actions.find((a) => a.name === step.action);
+      if (!decl) {
+        dispatchByAction.set(step.action, {
+          kind: 'unsupported',
+          reason: `action '${step.action}' is not declared (workflow validator should catch this; defensive fallback)`,
+        });
+        continue;
+      }
+      dispatchByAction.set(step.action, actionDispatchSpec(decl, ast));
     }
   }
-  const actionList = Array.from(allActions).sort();
+
+  // Does ANY callable action need the API key store? Determines whether
+  // the per-workflow run_* commands declare a store parameter.
+  const anyActionNeedsStore = Array.from(dispatchByAction.values())
+    .some((s) => s.kind === 'callable' && s.needsApiKeyStore);
 
   const perWorkflowFns = workflows
-    .map((wf) => buildRunWorkflowFn(wf))
+    .map((wf) => buildRunWorkflowFn(wf, dispatchByAction, anyActionNeedsStore))
     .join('\n\n');
 
   return `// Agicore Generated — Workflow runtime + checkpoint capture (Phase 1b)
@@ -219,31 +236,35 @@ fn save_checkpoint(
     })();
 }
 
-// ─── Action dispatcher (Phase 1b: stubbed; Phase 1c wires typed actions) ─
+// ─── Parallel-batch fallback stub ─────────────────────────────────────────
+//
+// Phase 1c wires typed dispatch for SERIAL steps (one ACTION per step,
+// known at codegen time, inlined as a direct typed call). Parallel batches
+// still need a runtime-callable helper because the spawned 'static tasks
+// can't capture tauri::State<'_, _> references with non-static lifetimes.
+// Typed parallel dispatch is a focused Phase 1d follow-up; until then,
+// parallel steps return a structured stub so the rest of the runtime
+// (telemetry, checkpoints, ON_FAIL semantics) still exercises end-to-end.
 
-/// Dispatch an action call by name. Phase 1b returns a structured stub so
-/// the runtime + telemetry + checkpoint flow can be exercised end-to-end.
-/// Phase 1c will replace this with typed dispatch into the user's ACTION
-/// functions (commands::actions::*, commands::<impl_action>::*).
-async fn dispatch_action(
-    _db: &DbPool,
+async fn dispatch_action_stub(
     action_name: &str,
     input: serde_json::Value,
 ) -> Result<serde_json::Value, String> {
-    // Known action names from the user's DSL — switch arm per action so the
-    // dispatcher's call surface is mechanically verifiable from the .agi.
-    match action_name {
-${actionList.map((a) => `        "${a}" => Ok(serde_json::json!({
-            "_phase_1b_stub": true,
-            "action": "${a}",
-            "received_input": input,
-            "note": "Workflow runtime executes correctly; typed action dispatch arrives in Phase 1c."
-        })),`).join('\n')}
-        _ => Err(format!("Unknown action '{}' (not in this workflow's dispatch table)", action_name)),
-    }
+    Ok(serde_json::json!({
+        "_stub": "parallel-typed-dispatch-pending",
+        "action": action_name,
+        "received_input": input,
+        "note": "Serial steps use typed dispatch; parallel typed dispatch lands in Phase 1d."
+    }))
 }
 
 // ─── Per-workflow Tauri commands ──────────────────────────────────────────
+//
+// Phase 1c: action dispatch is inlined into each SERIAL step's call site
+// (one action per step is known at codegen time, so no runtime string lookup
+// needed). The generated code uses crate::commands::* paths to invoke the
+// typed ACTION function directly. Input/output conversion happens via serde
+// at the boundary; internal action signatures are unchanged.
 
 ${perWorkflowFns}
 
@@ -326,7 +347,11 @@ pub fn get_workflow_checkpoints(
 `;
 }
 
-function buildRunWorkflowFn(wf: WorkflowDecl): string {
+function buildRunWorkflowFn(
+  wf: WorkflowDecl,
+  dispatchByAction: Map<string, ActionDispatchSpec>,
+  anyActionNeedsStore: boolean,
+): string {
   const fnName = `run_${toSnakeCase(wf.name)}`;
   const wfLiteral = wf.name;
   const stepsTotal = wf.steps.length;
@@ -341,7 +366,6 @@ function buildRunWorkflowFn(wf: WorkflowDecl): string {
   while (i < wf.steps.length) {
     const step = wf.steps[i]!;
     if (parallelSet.has(step.name)) {
-      // collect contiguous parallel steps starting at i
       const batch: WorkflowStep[] = [];
       let j = i;
       while (j < wf.steps.length && parallelSet.has(wf.steps[j]!.name)) {
@@ -351,27 +375,34 @@ function buildRunWorkflowFn(wf: WorkflowDecl): string {
       stepBlocks.push(parallelBatchBlock(batch, i, wfLiteral));
       i = j;
     } else {
-      stepBlocks.push(serialStepBlock(step, i, wfLiteral));
+      stepBlocks.push(serialStepBlock(step, i, wfLiteral, dispatchByAction.get(step.action)));
       i++;
     }
   }
+
+  const storeParam = anyActionNeedsStore
+    ? `\n    store: State<'_, crate::ai_service::ApiKeyStore>,`
+    : '';
 
   return `// ── Workflow: ${wf.name} (${stepsTotal} steps) ──
 #[tauri::command]
 pub async fn ${fnName}(
     input: serde_json::Value,
-    db: State<'_, DbPool>,
+    db: State<'_, DbPool>,${storeParam}
 ) -> Result<WorkflowRunResult, String> {
     let run_id = Uuid::new_v4().to_string();
     let workflow_name = "${wfLiteral}";
-    let db_arc = db.inner().clone();
-    let db = &db_arc;
+    // db_arc: owned Arc<Mutex<Connection>> for helpers (telemetry/checkpoint)
+    // and for moving into parallel-spawn tasks. db (the State) stays available
+    // for serial typed dispatch since tauri::State implements Clone in 2.x.
+    let db_arc: DbPool = db.inner().clone();
+    let db_ref: &DbPool = &db_arc;
     let total_steps: i32 = ${stepsTotal};
     let started = Instant::now();
 
-    save_run_started(db, &run_id, workflow_name, total_steps, &input);
+    save_run_started(db_ref, &run_id, workflow_name, total_steps, &input);
     let wf_event_id = emit_telemetry(
-        db, "workflow_started", workflow_name, Some("workflow"),
+        db_ref, "workflow_started", workflow_name, Some("workflow"),
         Some(&run_id), None, "in_progress",
         Some(&input.to_string()), None, None, None, None,
     );
@@ -382,8 +413,8 @@ pub async fn ${fnName}(
 ${stepBlocks.join('\n\n')}
 
     let total_dur = started.elapsed().as_millis() as i64;
-    save_run_completed(db, &run_id, "completed", steps_completed, &context, None);
-    complete_telemetry(db, &wf_event_id, "success", Some(&context.to_string()), None, Some(total_dur));
+    save_run_completed(db_ref, &run_id, "completed", steps_completed, &context, None);
+    complete_telemetry(db_ref, &wf_event_id, "success", Some(&context.to_string()), None, Some(total_dur));
 
     Ok(WorkflowRunResult {
         run_id, workflow_name: workflow_name.to_string(),
@@ -395,59 +426,109 @@ ${stepBlocks.join('\n\n')}
 }`;
 }
 
-function serialStepBlock(step: WorkflowStep, index: number, wfName: string): string {
+function serialStepBlock(
+  step: WorkflowStep,
+  index: number,
+  wfName: string,
+  dispatchSpec: ActionDispatchSpec | undefined,
+): string {
   const stepName = step.name;
   const actionName = step.action;
   const onFail = step.onFail || 'stop';
 
+  const dispatchBlock = buildSerialDispatchBlock(actionName, dispatchSpec);
+  const retryDispatchBlock = buildSerialDispatchBlock(actionName, dispatchSpec);
+
   return `    // step ${index}: ${stepName} (action: ${actionName}, on_fail: ${onFail})
     {
         let step_event_id = emit_telemetry(
-            db, "workflow_step_started", "${actionName}", Some("action"),
+            db_ref, "workflow_step_started", "${actionName}", Some("action"),
             Some(&run_id), Some("${stepName}"), "in_progress",
             None, None, None, None, None,
         );
         let step_started = Instant::now();
-        match dispatch_action(db, "${actionName}", context.clone()).await {
+        let step_input = context.clone();
+        let dispatch_result: Result<serde_json::Value, String> = async {
+${dispatchBlock}
+        }.await;
+        match dispatch_result {
             Ok(output) => {
                 let dur = step_started.elapsed().as_millis() as i64;
                 if let Some(outs) = context.get_mut("outputs").and_then(|v| v.as_object_mut()) {
                     outs.insert("${stepName}".to_string(), output.clone());
                 }
-                save_checkpoint(db, &run_id, workflow_name, "${stepName}", ${index}, &context, "completed");
-                complete_telemetry(db, &step_event_id, "success", Some(&output.to_string()), None, Some(dur));
+                save_checkpoint(db_ref, &run_id, workflow_name, "${stepName}", ${index}, &context, "completed");
+                complete_telemetry(db_ref, &step_event_id, "success", Some(&output.to_string()), None, Some(dur));
                 steps_completed += 1;
             }
             Err(e) => {
                 let dur = step_started.elapsed().as_millis() as i64;
-                complete_telemetry(db, &step_event_id, "error", None, Some(&e), Some(dur));
-                save_checkpoint(db, &run_id, workflow_name, "${stepName}", ${index}, &context, "failed");
-${onFailHandler(onFail, wfName, stepName)}
+                complete_telemetry(db_ref, &step_event_id, "error", None, Some(&e), Some(dur));
+                save_checkpoint(db_ref, &run_id, workflow_name, "${stepName}", ${index}, &context, "failed");
+${onFailHandler(onFail, wfName, stepName, retryDispatchBlock)}
             }
         }
     }`;
 }
 
-function parallelBatchBlock(batch: WorkflowStep[], startIndex: number, wfName: string): string {
-  // Phase 1b parallel implementation: spawn each step's dispatch on tauri::async_runtime,
-  // collect all join handles, await all, then merge results into context.
-  // Note: on any step failure, the batch awaits the rest (no early cancellation)
-  // before applying ON_FAIL semantics — keeps observability complete.
+/**
+ * Emit the body of a per-step typed dispatch. Returns Rust code that yields
+ * Result<serde_json::Value, String> from a captured `step_input` variable.
+ *
+ * For callable actions: typed serde conversion → call the typed function →
+ * serde to_value the result. For unsupported actions: return Err with the
+ * reason from the dispatch spec.
+ */
+function buildSerialDispatchBlock(actionName: string, spec: ActionDispatchSpec | undefined): string {
+  if (!spec || spec.kind === 'unsupported') {
+    const reason = spec?.kind === 'unsupported'
+      ? spec.reason
+      : `action '${actionName}' has no dispatch spec`;
+    return `            let _ = step_input;
+            Err(format!("Action '${actionName}' is not dispatchable from workflow runtime: ${reason.replace(/"/g, '\\"')}"))`;
+  }
+
+  // Callable. Two sub-cases: AI action (needs store) or not.
+  const storeArg = spec.needsApiKeyStore ? ', store.clone()' : '';
+  if (spec.inputStruct === null) {
+    // Action with no INPUT parameters
+    return `            let _ = step_input;
+            let output = ${spec.modulePath}(db.clone()${storeArg}).await?;
+            serde_json::to_value(output).map_err(|e| format!("Failed to serialize output of '${actionName}': {}", e))`;
+  }
+  return `            let typed_input: ${spec.inputStruct} = serde_json::from_value(step_input)
+                .map_err(|e| format!("Invalid input for action '${actionName}': {}", e))?;
+            let output = ${spec.modulePath}(typed_input, db.clone()${storeArg}).await?;
+            serde_json::to_value(output).map_err(|e| format!("Failed to serialize output of '${actionName}': {}", e))`;
+}
+
+function parallelBatchBlock(batch: WorkflowStep[], startIndex: number, _wfName: string): string {
+  // Spawn each step's dispatch via tauri::async_runtime, collect handles,
+  // await all, then merge. On failure: await the rest before applying ON_FAIL
+  // (keeps observability complete; no early cancellation that hides what other
+  // parallel steps were doing).
+  //
+  // Phase 1c note: parallel steps use the dispatch_action_stub fallback for
+  // action execution. Typed parallel dispatch requires either making typed
+  // actions take raw &DbPool (invasive) or generating per-action 'static
+  // adapters (focused Phase 1d work). The workflow runtime, telemetry, and
+  // checkpoint flow still exercise end-to-end for parallel batches; only the
+  // action output is stubbed.
   const stepCalls = batch.map((step, k) => {
     const idx = startIndex + k;
-    return `        // parallel step ${idx}: ${step.name}
+    return `        // parallel step ${idx}: ${step.name} (parallel typed dispatch is Phase 1d)
         {
-            let db_p = db_arc.clone();
+            let _db_p = db_arc.clone();
             let run_id_p = run_id.clone();
             let context_p = context.clone();
             let step_event_id = emit_telemetry(
-                db, "workflow_step_started", "${step.action}", Some("action"),
+                db_ref, "workflow_step_started", "${step.action}", Some("action"),
                 Some(&run_id), Some("${step.name}"), "in_progress",
                 None, None, None, None, None,
             );
             let started_p = Instant::now();
             let handle = tauri::async_runtime::spawn(async move {
-                let res = dispatch_action(&db_p, "${step.action}", context_p).await;
+                let res = dispatch_action_stub("${step.action}", context_p).await;
                 let dur = started_p.elapsed().as_millis() as i64;
                 (res, dur, step_event_id, run_id_p)
             });
@@ -467,13 +548,13 @@ ${stepCalls}
                     if let Some(outs) = context.get_mut("outputs").and_then(|v| v.as_object_mut()) {
                         outs.insert(step_name.clone(), output.clone());
                     }
-                    save_checkpoint(db, &run_id, workflow_name, &step_name, idx, &context, "completed");
-                    complete_telemetry(db, &step_event_id, "success", Some(&output.to_string()), None, Some(dur));
+                    save_checkpoint(db_ref, &run_id, workflow_name, &step_name, idx, &context, "completed");
+                    complete_telemetry(db_ref, &step_event_id, "success", Some(&output.to_string()), None, Some(dur));
                     steps_completed += 1;
                 }
                 Ok((Err(e), dur, step_event_id, _)) => {
-                    save_checkpoint(db, &run_id, workflow_name, &step_name, idx, &context, "failed");
-                    complete_telemetry(db, &step_event_id, "error", None, Some(&e), Some(dur));
+                    save_checkpoint(db_ref, &run_id, workflow_name, &step_name, idx, &context, "failed");
+                    complete_telemetry(db_ref, &step_event_id, "error", None, Some(&e), Some(dur));
                     if on_fail == "stop" && batch_failed.is_none() {
                         batch_failed = Some(format!("Step '{}' failed: {}", step_name, e));
                     }
@@ -488,8 +569,8 @@ ${stepCalls}
 
         if let Some(err) = batch_failed {
             let total_dur = started.elapsed().as_millis() as i64;
-            save_run_completed(db, &run_id, "failed", steps_completed, &context, Some(&err));
-            complete_telemetry(db, &wf_event_id, "error", None, Some(&err), Some(total_dur));
+            save_run_completed(db_ref, &run_id, "failed", steps_completed, &context, Some(&err));
+            complete_telemetry(db_ref, &wf_event_id, "error", None, Some(&err), Some(total_dur));
             return Ok(WorkflowRunResult {
                 run_id, workflow_name: workflow_name.to_string(),
                 status: "failed".to_string(),
@@ -501,36 +582,42 @@ ${stepCalls}
     }`;
 }
 
-function onFailHandler(onFail: string, _wfName: string, stepName: string): string {
+function onFailHandler(onFail: string, _wfName: string, stepName: string, retryDispatchBlock: string): string {
   switch (onFail) {
     case 'skip':
       return `                eprintln!("[workflow] step '${stepName}' failed (on_fail: skip): {}", e);
                 // continue to next step`;
     case 'retry':
-      // Phase 1b simple retry: one immediate retry on error.
+      // Phase 1c retry: one immediate retry using the SAME typed dispatch
+      // block that the initial attempt used. Inlined per step to keep the
+      // call site monomorphic.
       return `                eprintln!("[workflow] step '${stepName}' failed (on_fail: retry): {} — retrying once", e);
                 let retry_event_id = emit_telemetry(
-                    db, "workflow_step_retry", "${stepName}", Some("action"),
+                    db_ref, "workflow_step_retry", "${stepName}", Some("action"),
                     Some(&run_id), Some("${stepName}"), "in_progress",
                     None, None, None, None, None,
                 );
                 let retry_started = Instant::now();
-                match dispatch_action(db, "${stepName}", context.clone()).await {
+                let step_input = context.clone();
+                let retry_result: Result<serde_json::Value, String> = async {
+${retryDispatchBlock}
+                }.await;
+                match retry_result {
                     Ok(retry_output) => {
                         let retry_dur = retry_started.elapsed().as_millis() as i64;
                         if let Some(outs) = context.get_mut("outputs").and_then(|v| v.as_object_mut()) {
                             outs.insert("${stepName}".to_string(), retry_output.clone());
                         }
-                        save_checkpoint(db, &run_id, workflow_name, "${stepName}", -1, &context, "completed");
-                        complete_telemetry(db, &retry_event_id, "success", Some(&retry_output.to_string()), None, Some(retry_dur));
+                        save_checkpoint(db_ref, &run_id, workflow_name, "${stepName}", -1, &context, "completed");
+                        complete_telemetry(db_ref, &retry_event_id, "success", Some(&retry_output.to_string()), None, Some(retry_dur));
                         steps_completed += 1;
                     }
                     Err(retry_err) => {
                         let retry_dur = retry_started.elapsed().as_millis() as i64;
-                        complete_telemetry(db, &retry_event_id, "error", None, Some(&retry_err), Some(retry_dur));
+                        complete_telemetry(db_ref, &retry_event_id, "error", None, Some(&retry_err), Some(retry_dur));
                         let total_dur = started.elapsed().as_millis() as i64;
-                        save_run_completed(db, &run_id, "failed", steps_completed, &context, Some(&retry_err));
-                        complete_telemetry(db, &wf_event_id, "error", None, Some(&retry_err), Some(total_dur));
+                        save_run_completed(db_ref, &run_id, "failed", steps_completed, &context, Some(&retry_err));
+                        complete_telemetry(db_ref, &wf_event_id, "error", None, Some(&retry_err), Some(total_dur));
                         return Ok(WorkflowRunResult {
                             run_id, workflow_name: workflow_name.to_string(),
                             status: "failed".to_string(),
@@ -541,11 +628,11 @@ function onFailHandler(onFail: string, _wfName: string, stepName: string): strin
                     }
                 }`;
     case 'fallback':
-      // No fallback action wired in Phase 1b — same as stop with a clear note.
+      // No fallback action wired yet — same as stop with a clear note.
       return `                eprintln!("[workflow] step '${stepName}' failed (on_fail: fallback) — fallback action not yet supported, halting");
                 let total_dur = started.elapsed().as_millis() as i64;
-                save_run_completed(db, &run_id, "failed", steps_completed, &context, Some(&e));
-                complete_telemetry(db, &wf_event_id, "error", None, Some(&e), Some(total_dur));
+                save_run_completed(db_ref, &run_id, "failed", steps_completed, &context, Some(&e));
+                complete_telemetry(db_ref, &wf_event_id, "error", None, Some(&e), Some(total_dur));
                 return Ok(WorkflowRunResult {
                     run_id, workflow_name: workflow_name.to_string(),
                     status: "failed".to_string(),
@@ -555,8 +642,8 @@ function onFailHandler(onFail: string, _wfName: string, stepName: string): strin
                 });`;
     default: // 'stop'
       return `                let total_dur = started.elapsed().as_millis() as i64;
-                save_run_completed(db, &run_id, "failed", steps_completed, &context, Some(&e));
-                complete_telemetry(db, &wf_event_id, "error", None, Some(&e), Some(total_dur));
+                save_run_completed(db_ref, &run_id, "failed", steps_completed, &context, Some(&e));
+                complete_telemetry(db_ref, &wf_event_id, "error", None, Some(&e), Some(total_dur));
                 return Ok(WorkflowRunResult {
                     run_id, workflow_name: workflow_name.to_string(),
                     status: "failed".to_string(),
