@@ -1,0 +1,436 @@
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║              Home Operations Center (HOC) — v0.1                          ║
+// ║                                                                          ║
+// ║  "OS for your home network." The Andon Loop architecture, applied to     ║
+// ║  the messiest probabilistic-but-needs-deterministic-safety domain there  ║
+// ║  is: a home network full of devices nobody fully understands.            ║
+// ║                                                                          ║
+// ║  AI proposes new firewall and device-classification rules. Deterministic ║
+// ║  gates (tier verifier + sandbox + your single-signer approval) make sure ║
+// ║  AI cannot lock you out of your own router.                              ║
+// ║                                                                          ║
+// ║  Pairs naturally with a Home Assistant Green: HA's MQTT broker becomes   ║
+// ║  the andon-light surface (red/yellow/green smart bulbs literally) and    ║
+// ║  HA's device discovery feeds the device table here.                      ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+APP hoc {
+  TITLE "Home Ops Center"
+  WINDOW 1100x800 frameless
+  DB hoc.db
+  TELEMETRY auto
+  TRAY
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Entities — the durable observation surface
+// ════════════════════════════════════════════════════════════════════════════
+
+ENTITY Device {
+  mac:              string REQUIRED UNIQUE
+  ip:               string
+  hostname:         string
+  vendor:           string                           // OUI lookup result
+  classification:   string DEFAULT "unknown"        // phone | laptop | iot | smart_bulb | server | home_assistant | unknown
+  trust_level:      string DEFAULT "unknown"        // trusted | guest | iot | quarantine | unknown
+  first_seen:       datetime
+  last_seen:        datetime
+  notes:            string
+  TIMESTAMPS
+}
+
+ENTITY ConnectionProbe {
+  target:           string REQUIRED                 // "1.1.1.1" | "https://google.com" | "192.168.1.1"
+  status:           string REQUIRED                 // up | slow | down
+  latency_ms:       number
+  failure_kind:     string                          // timeout | dns_fail | http_error | (null on success)
+  TIMESTAMPS
+}
+
+ENTITY InternetOutage {
+  started_at:        datetime REQUIRED
+  ended_at:          datetime
+  duration_seconds:  number
+  classified_cause:  string                         // populated by the classifier module
+  TIMESTAMPS
+}
+
+ENTITY AndonLightState {
+  zone:    string REQUIRED UNIQUE                   // "main" | "office" | "kitchen" — anywhere you put a bulb
+  color:   string REQUIRED                          // red | yellow | green
+  reason:  string
+  TIMESTAMPS
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Channels + Packets — typed message buses for the rule engine + AI
+// ════════════════════════════════════════════════════════════════════════════
+
+PACKET ProbeResult {
+  DESCRIPTION "Outcome of an internet connectivity probe"
+  PAYLOAD {
+    target:      string REQUIRED
+    status:      string REQUIRED
+    latency_ms:  number
+    probed_at:   datetime REQUIRED
+  }
+}
+
+PACKET DeviceObservation {
+  DESCRIPTION "A device was seen on the local network"
+  PAYLOAD {
+    mac:      string REQUIRED
+    ip:       string
+    vendor:   string
+    seen_at:  datetime REQUIRED
+  }
+}
+
+PACKET AndonStateChange {
+  DESCRIPTION "Andon light should change color (consumed by HA MQTT publisher)"
+  PAYLOAD {
+    zone:    string REQUIRED
+    color:   string REQUIRED
+    reason:  string
+  }
+}
+
+CHANNEL probe_events {
+  DESCRIPTION "Internet probe outcomes — fed by probe_internet workflow"
+  PROTOCOL    fifo
+  DIRECTION   input
+  PACKET      ProbeResult
+}
+
+CHANNEL device_observations {
+  DESCRIPTION "Local network device sightings — fed by scan_network workflow"
+  PROTOCOL    fifo
+  DIRECTION   input
+  PACKET      DeviceObservation
+}
+
+CHANNEL andon_changes {
+  DESCRIPTION "Outbound andon-light color changes (HA MQTT publisher subscribes)"
+  PROTOCOL    fifo
+  DIRECTION   output
+  PACKET      AndonStateChange
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Actions — what the workflows actually invoke
+//
+//  The generated Rust scaffolds expect you to fill in the body of each action
+//  in src-tauri/src/actions/. Stub implementations are emitted; you replace
+//  them with real network calls. (See README.md for the canonical implementations.)
+// ════════════════════════════════════════════════════════════════════════════
+
+ACTION ping_target {
+  INPUT  target: string
+  OUTPUT result: ProbeResult
+}
+
+ACTION arp_scan {
+  OUTPUT devices: json
+}
+
+ACTION publish_andon_mqtt {
+  INPUT  zone: string, color: string, reason: string
+  OUTPUT published: bool
+}
+
+ACTION send_notification {
+  INPUT  title: string, body: string
+  OUTPUT sent: bool
+}
+
+ACTION update_andon_state {
+  INPUT  zone: string, color: string, reason: string
+  OUTPUT updated: bool
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Modules — the rule library, with Andon Loop wiring
+//
+//  EXPECTS_MATCH=true means: if no rule fires for an incoming event, that's
+//  itself an andon pull. The bound MUTATION_POLICY says who's authorised to
+//  propose new rules when that happens. (Hint: the AI, with your approval.)
+// ════════════════════════════════════════════════════════════════════════════
+
+MODULE internet_health {
+  DESCRIPTION "Classifies internet probe outcomes into outage causes"
+  EXPECTS_MATCH    true
+  MUTATION_POLICY  home_policy
+  RULES [
+    classify_dns_failure,
+    classify_complete_outage,
+    classify_router_unreachable,
+    classify_high_latency,
+    classify_normal
+  ]
+}
+
+MODULE device_classifier {
+  DESCRIPTION "Identifies what a newly-seen device probably is from its OUI vendor + behaviour"
+  EXPECTS_MATCH    true                          // unknown device → AI gets asked to classify
+  MUTATION_POLICY  home_policy
+  RULES [
+    classify_apple_phone,
+    classify_smart_bulb_lifx,
+    classify_smart_bulb_hue,
+    classify_home_assistant,
+    classify_known_laptop
+  ]
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Rules — the actual classification logic
+//
+//  Each rule declares MUTATION_TIER, which tells the policy which tier
+//  governs AI edits to this rule. T1 = AI can refine thresholds freely after
+//  regression test. T2 = AI proposing a new device classifier needs your
+//  approval. T5 = nothing should touch policy structure without you.
+// ════════════════════════════════════════════════════════════════════════════
+
+// Internet-health rules
+
+RULE classify_dns_failure {
+  WHEN     ConnectionProbe.failure_kind = "dns_fail"
+  THEN     classify_as_dns_outage
+  PRIORITY 100
+  MUTATION_TIER 1
+}
+
+RULE classify_complete_outage {
+  WHEN     ConnectionProbe.status = "down"
+  AND      ConnectionProbe.failure_kind = "timeout"
+  THEN     classify_as_isp_outage
+  PRIORITY 90
+  MUTATION_TIER 1
+}
+
+RULE classify_router_unreachable {
+  WHEN     ConnectionProbe.target = "192.168.1.1"
+  AND      ConnectionProbe.status = "down"
+  THEN     classify_as_router_needs_reboot
+  PRIORITY 95
+  MUTATION_TIER 1
+}
+
+RULE classify_high_latency {
+  WHEN     ConnectionProbe.status = "slow"
+  THEN     classify_as_congestion
+  PRIORITY 50
+  MUTATION_TIER 1
+}
+
+RULE classify_normal {
+  WHEN     ConnectionProbe.status = "up"
+  THEN     classify_as_healthy
+  PRIORITY 10
+  MUTATION_TIER 1
+}
+
+// Device-classifier rules (OUI-prefix based — vendor comes from the MAC's OUI lookup)
+
+RULE classify_apple_phone {
+  WHEN     Device.vendor = "Apple Inc"
+  AND      Device.classification = "unknown"
+  THEN     classify_as_phone
+  PRIORITY 80
+  MUTATION_TIER 2
+}
+
+RULE classify_smart_bulb_lifx {
+  WHEN     Device.vendor = "LIFX"
+  THEN     classify_as_smart_bulb
+  PRIORITY 90
+  MUTATION_TIER 2
+}
+
+RULE classify_smart_bulb_hue {
+  WHEN     Device.vendor = "Signify Netherlands B.V"
+  THEN     classify_as_smart_bulb
+  PRIORITY 90
+  MUTATION_TIER 2
+}
+
+RULE classify_home_assistant {
+  WHEN     Device.vendor = "Raspberry Pi Trading Ltd"
+  THEN     classify_as_home_assistant
+  PRIORITY 95
+  MUTATION_TIER 2
+}
+
+RULE classify_known_laptop {
+  WHEN     Device.vendor = "Dell Inc"
+  THEN     classify_as_laptop
+  PRIORITY 70
+  MUTATION_TIER 2
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Workflows — the deterministic runtime
+//
+//  Each workflow becomes a Tauri command (`run_probe_internet`, etc).
+//  The frontend kicks them on a setInterval. ANDON_ON ensures failures
+//  pull the cord rather than silently no-op-ing.
+// ════════════════════════════════════════════════════════════════════════════
+
+WORKFLOW probe_internet {
+  STEP ping_target {
+    ACTION ping_target
+    ANDON_ON action_error
+    ANDON_ON timeout
+    TIMEOUT "5s"
+  }
+}
+
+WORKFLOW scan_network {
+  STEP discover {
+    ACTION arp_scan
+    ANDON_ON action_error
+    TIMEOUT "10s"
+  }
+}
+
+WORKFLOW notify_andon {
+  STEP write_state {
+    ACTION update_andon_state
+    ANDON_ON action_error
+  }
+  STEP publish {
+    ACTION publish_andon_mqtt
+    ANDON_ON action_error
+    ROLLBACK_BOUNDARY external                     // MQTT publish is fire-and-forget; can't un-flash a bulb
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  AI service — only used by the AI-orchestrated responder/improver paths
+// ════════════════════════════════════════════════════════════════════════════
+
+AI_SERVICE {
+  PROVIDERS  anthropic
+  DEFAULT    anthropic
+  KEYS_FILE  "hoc-keys.json"
+  MODELS {
+    anthropic "claude-sonnet-4-6" DEFAULT
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Reasoners — AI entry points (referenced by the MUTATION_POLICY below)
+//
+//  These are wired into the Andon Loop pipeline. The codegen emits the
+//  scheduler for IMPROVEMENT_REASONER (weekly) and the on-demand dispatch
+//  for ANDON_RESPONDER. The actual AI calls happen via send_chat with the
+//  prompts in src/lib/responder.ts + improver.ts.
+// ════════════════════════════════════════════════════════════════════════════
+
+CHANNEL ai_outputs {
+  DESCRIPTION "Reasoner output sink (required by REASONER OUTPUT block)"
+  PROTOCOL    fifo
+  DIRECTION   output
+  PACKET      AndonStateChange
+}
+
+REASONER andon_handler {
+  DESCRIPTION "When the home network pulls an andon cord, diagnose and propose a mutation"
+  INPUT       { CHANNEL probe_events  WINDOW "1d" }
+  OUTPUT      { PACKET AndonStateChange }
+  SCHEDULE    on_demand
+}
+
+REASONER weekly_kaizen {
+  DESCRIPTION "Weekly review of network behavior; propose rule refinements"
+  INPUT       { CHANNEL device_observations  WINDOW "7d" }
+  OUTPUT      { PACKET AndonStateChange }
+  SCHEDULE    weekly
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  MUTATION_POLICY — the Andon Loop applied to your house
+//
+//  This is the file that says "yes, AI may write rules for me, BUT:"
+//    - T1: refining existing rule thresholds is safe; auto-deploy after test.
+//    - T2: adding a new device classifier needs my explicit OK in the UI.
+//    - T5: nothing touches MUTATION_POLICY itself without ordered signoff
+//          (in single-user form: just me, but the slot is there for "me+spouse"
+//           when family safety matters).
+//
+//  Combined with TELEMETRY auto + LEDGER, every AI-proposed change is on a
+//  tamper-evident hash chain. Even if AI hallucinates a wildly wrong rule,
+//  the tier verifier rejects under-declared scopes BEFORE the sandbox runs,
+//  and you have an immutable record of what was proposed, when, and why.
+// ════════════════════════════════════════════════════════════════════════════
+
+MUTATION_POLICY home_policy {
+  TARGETS [probe_internet, scan_network]
+
+  TIER 1 threshold_tuning {
+    SCOPE              [RULES_modify]
+    AUTO_DEPLOY        true
+    REGRESSION_SUITE   24h_recent_workflows
+  }
+
+  TIER 2 new_classifier {
+    SCOPE                [RULES_modify]
+    AUTO_DEPLOY          false
+    APPROVAL_AUTHORITY   chris
+  }
+
+  TIER 5 governance {
+    SCOPE                [MUTATION_POLICY_modify]
+    AUTO_DEPLOY          false
+    APPROVAL_AUTHORITY   ORDERED [chris]
+  }
+
+  ANDON_RESPONDER       andon_handler
+  IMPROVEMENT_REASONER  weekly_kaizen
+  LEDGER                HomeLedger
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Views — generated React UI for the operator (you)
+//
+//  Plus: the MutationConsole component is emitted automatically from the
+//  MUTATION_POLICY declaration above. Mount <MutationConsole /> somewhere
+//  in your generated src/App.tsx and you get the proposal/approval/ledger UI
+//  for free.
+// ════════════════════════════════════════════════════════════════════════════
+
+VIEW Devices {
+  ENTITY Device
+  LAYOUT table
+  ACTIONS edit, delete
+}
+
+VIEW RecentProbes {
+  ENTITY ConnectionProbe
+  LAYOUT table
+}
+
+VIEW Outages {
+  ENTITY InternetOutage
+  LAYOUT table
+}
+
+VIEW AndonLights {
+  ENTITY AndonLightState
+  LAYOUT table
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Tests — what the regression suite runs against AI-proposed rule changes
+// ════════════════════════════════════════════════════════════════════════════
+
+TEST dns_failure_classified {
+  GIVEN ConnectionProbe { target: "1.1.1.1", status: "down", failure_kind: "dns_fail" }
+  EXPECT create -> id IS NOT NULL
+}
+
+TEST device_create {
+  GIVEN Device { mac: "AA:BB:CC:DD:EE:01", ip: "192.168.1.50", vendor: "Apple Inc" }
+  EXPECT create -> id IS NOT NULL
+  EXPECT get_by_id -> vendor == "Apple Inc"
+}

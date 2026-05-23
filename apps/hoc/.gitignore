@@ -1,0 +1,12 @@
+# Output of the in-place compile (see README.md compile recipe).
+# The .agi source is canonical; generated/ is reproducible from it.
+generated/
+
+# Local AI credentials.
+hoc-keys.json
+
+# Tauri/Cargo/npm build artifacts (only present if you build in-place).
+node_modules/
+src-tauri/target/
+src-tauri/Cargo.lock
+dist/
