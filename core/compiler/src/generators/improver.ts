@@ -28,7 +28,7 @@ function isEnabled(ast: AgiFile): boolean {
 export function generateImprover(ast: AgiFile): Map<string, string> {
   const files = new Map<string, string>();
   if (!isEnabled(ast)) return files;
-  files.set('src-tauri/src/commands/improver.rs', buildImproverRs());
+  files.set('src-tauri/src/commands/improver.rs', buildImproverRs(ast));
   files.set('src/lib/improver.ts', buildImproverTs());
   return files;
 }
@@ -38,10 +38,118 @@ export function improverCommandNames(ast: AgiFile): string[] {
   return ['run_improvement_cycle', 'list_improvement_cycles'];
 }
 
+/**
+ * Returns true if the app has at least one (policy, reasoner, schedulable
+ * cadence) triple — i.e., a kaizen loop the scheduler should drive.
+ * The main.rs setup hook calls start_improvement_scheduler only when this
+ * is true, so apps without scheduled improvers don't spawn an idle task.
+ */
+export function hasImprovementSchedule(ast: AgiFile): boolean {
+  if (!isEnabled(ast)) return false;
+  return collectScheduledImprovers(ast).length > 0;
+}
+
+interface ScheduledImprover {
+  policyName: string;
+  reasonerName: string;
+  schedule: string;
+  intervalSecs: number;
+}
+
+/** Map a ReasonerSchedule string to a polling interval in seconds.
+ *  Returns null for non-schedulable cadences (on_demand, event_triggered)
+ *  and for unrecognised strings (the kaizen loop is opt-in, not opt-out). */
+function scheduleToSeconds(schedule: string): number | null {
+  switch (schedule) {
+    case 'hourly':           return 3600;
+    case 'daily':            return 86400;
+    case 'weekly':           return 604800;
+    case 'on_demand':        return null;
+    case 'event_triggered':  return null;
+    default:                 return null;  // custom strings → manual trigger only for now
+  }
+}
+
+function collectScheduledImprovers(ast: AgiFile): ScheduledImprover[] {
+  const out: ScheduledImprover[] = [];
+  for (const policy of ast.mutationPolicies ?? []) {
+    const reasonerName = policy.improvementReasoner;
+    if (!reasonerName) continue;
+    const reasoner = ast.reasoners.find((r) => r.name === reasonerName);
+    if (!reasoner) continue;  // validator already warns about dangling refs
+    const interval = scheduleToSeconds(reasoner.schedule);
+    if (interval === null) continue;
+    out.push({
+      policyName:    policy.name,
+      reasonerName:  reasoner.name,
+      schedule:      reasoner.schedule,
+      intervalSecs:  interval,
+    });
+  }
+  return out;
+}
+
 // ─── Rust runtime ──────────────────────────────────────────────────────────
 
-function buildImproverRs(): string {
-  return `// Agicore Generated — Improvement reasoner (Phase 11.5a)
+function buildSchedulerBlock(scheduled: ScheduledImprover[]): string {
+  // Always emit the start_improvement_scheduler function — main.rs calls
+  // it whenever any policy declares an IMPROVEMENT_REASONER (regardless of
+  // schedule), and downstream test fixtures expect it to be defined. When
+  // no schedulable cadences exist, the body is a no-op (`let _ = db;`) so
+  // the function signature stays stable.
+  const tasks = scheduled.length === 0
+    ? '    let _ = db;'
+    : scheduled.map((s) => `
+    // ${s.policyName} (reasoner: ${s.reasonerName}, schedule: ${s.schedule})
+    {
+        let db_clone = db.clone();
+        tauri::async_runtime::spawn(async move {
+            // Initial delay so the scheduler doesn't run during app warm-up.
+            tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
+            let mut ticker = tokio::time::interval(tokio::time::Duration::from_secs(${s.intervalSecs}));
+            // First tick fires immediately; we already paused 60s, so consume it
+            // and only ACT on subsequent ticks. That keeps the first run aligned
+            // with the declared cadence rather than firing twice at startup.
+            ticker.tick().await;
+            loop {
+                ticker.tick().await;
+                match run_improvement_cycle_impl(&db_clone, "${s.policyName}") {
+                    Ok(cycle) => eprintln!(
+                        "[improver] policy={} disposition={} proposalId={:?}",
+                        cycle.policy_name, cycle.disposition, cycle.proposal_id,
+                    ),
+                    Err(e) => eprintln!(
+                        "[improver] policy=${s.policyName} cycle failed: {}",
+                        e
+                    ),
+                }
+            }
+        });
+    }
+`).join('');
+  return `
+// ─── Phase 5b — Self-driving scheduler ────────────────────────────────────
+//
+// Spawns one independent task per (policy, reasoner) with a schedulable
+// cadence. Tasks live for the lifetime of the app process. Failure in one
+// loop doesn't affect the others.
+//
+// Schedulable cadences map to seconds at codegen time:
+//   hourly  =     3600s
+//   daily   =    86400s
+//   weekly  =   604800s
+//   on_demand / event_triggered / custom → not scheduled (manual trigger only)
+
+pub fn start_improvement_scheduler(db: crate::db::DbPool) {
+${tasks}
+}
+`;
+}
+
+function buildImproverRs(ast: AgiFile): string {
+  const scheduled = collectScheduledImprovers(ast);
+  const schedulerBlock = buildSchedulerBlock(scheduled);
+  return `// Agicore Generated — Improvement reasoner (Phase 11.5a + 11.5b scheduler)
 // DO NOT EDIT BY HAND. See core/compiler/src/generators/improver.ts.
 //
 // Scheduled / on-demand kaizen entry into the proposal lifecycle. Runs the
@@ -432,7 +540,7 @@ mod tests {
         assert!(r.reasoning.contains("42"), "reasoning explains the scan basis");
     }
 }
-`;
+${schedulerBlock}`;
 }
 
 // ─── TypeScript bindings ──────────────────────────────────────────────────

@@ -6611,6 +6611,143 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes("invoke<IntegrityReport>('verify_ledger_integrity'"),'verifyLedgerIntegrity invokes verify_ledger_integrity');
 }
 
+section('Phase 11.5b — scheduler emits one spawn per (policy, reasoner, schedulable cadence)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+CHANNEL ch { DESCRIPTION "x" }
+PACKET P { DESCRIPTION "x"  PAYLOAD { msg: string } }
+
+REASONER weekly_kaizen {
+  DESCRIPTION "weekly review"
+  INPUT { CHANNEL ch  WINDOW "7d" }
+  OUTPUT { PACKET P }
+  SCHEDULE weekly
+}
+REASONER daily_check {
+  DESCRIPTION "daily nudge"
+  INPUT { CHANNEL ch  WINDOW "1d" }
+  OUTPUT { PACKET P }
+  SCHEDULE daily
+}
+
+MUTATION_POLICY mp1 { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }  IMPROVEMENT_REASONER weekly_kaizen }
+MUTATION_POLICY mp2 { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }  IMPROVEMENT_REASONER daily_check }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/improver.rs') ?? '';
+  assert(rs.includes('pub fn start_improvement_scheduler'),               'scheduler entry-point emitted');
+  assert(rs.includes('tauri::async_runtime::spawn'),                      'spawns async task per loop');
+  assert(rs.includes('tokio::time::interval'),                            'uses interval ticker for cadence');
+  assert(rs.includes('Duration::from_secs(604800)'),                      'weekly = 604800s');
+  assert(rs.includes('Duration::from_secs(86400)'),                       'daily = 86400s');
+  assert(rs.includes('run_improvement_cycle_impl(&db_clone, "mp1")'),     'fires cycle for mp1 policy');
+  assert(rs.includes('run_improvement_cycle_impl(&db_clone, "mp2")'),     'fires cycle for mp2 policy');
+  // 60s initial warm-up delay
+  assert(rs.includes('Duration::from_secs(60)').valueOf(),                'initial 60s warm-up before first tick');
+}
+
+section('Phase 11.5b — hourly schedule maps to 3600s');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+CHANNEL ch { DESCRIPTION "x" }
+PACKET P { DESCRIPTION "x"  PAYLOAD { msg: string } }
+REASONER hourly_r {
+  DESCRIPTION "h"
+  INPUT { CHANNEL ch  WINDOW "1h" }
+  OUTPUT { PACKET P }
+  SCHEDULE hourly
+}
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] }  IMPROVEMENT_REASONER hourly_r }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/improver.rs') ?? '';
+  assert(rs.includes('Duration::from_secs(3600)'),                        'hourly = 3600s');
+}
+
+section('Phase 11.5b — on_demand schedule does NOT spawn a scheduler task');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+CHANNEL ch { DESCRIPTION "x" }
+PACKET P { DESCRIPTION "x"  PAYLOAD { msg: string } }
+REASONER manual_only {
+  DESCRIPTION "manual"
+  INPUT { CHANNEL ch  WINDOW "1d" }
+  OUTPUT { PACKET P }
+  SCHEDULE on_demand
+}
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] }  IMPROVEMENT_REASONER manual_only }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/improver.rs') ?? '';
+  assert(rs.includes('pub fn start_improvement_scheduler'),               'scheduler stub still emitted (empty body)');
+  // The body should not contain a spawn since on_demand doesn't schedule.
+  const fnIdx = rs.indexOf('pub fn start_improvement_scheduler');
+  const fnEndIdx = rs.indexOf('\n}', fnIdx);
+  const body = rs.substring(fnIdx, fnEndIdx);
+  assert(!body.includes('tauri::async_runtime::spawn'),                   'on_demand reasoner does NOT spawn a task');
+}
+
+section('Phase 11.5b — policy without IMPROVEMENT_REASONER does NOT spawn');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/improver.rs') ?? '';
+  assert(rs.includes('pub fn start_improvement_scheduler'),               'scheduler stub still emitted (empty body)');
+  const fnIdx = rs.indexOf('pub fn start_improvement_scheduler');
+  const fnEndIdx = rs.indexOf('\n}', fnIdx);
+  const body = rs.substring(fnIdx, fnEndIdx);
+  assert(!body.includes('tauri::async_runtime::spawn'),                   'no spawn without IMPROVEMENT_REASONER');
+}
+
+section('Phase 11.5b — main.rs calls start_improvement_scheduler when a schedulable improver exists');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+CHANNEL ch { DESCRIPTION "x" }
+PACKET P { DESCRIPTION "x"  PAYLOAD { msg: string } }
+REASONER weekly_r {
+  DESCRIPTION "w"
+  INPUT { CHANNEL ch  WINDOW "7d" }
+  OUTPUT { PACKET P }
+  SCHEDULE weekly
+}
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] }  IMPROVEMENT_REASONER weekly_r }`;
+  const { files } = compile(src);
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::improver::start_improvement_scheduler(pool_ref)'),
+    'main.rs setup invokes the improvement scheduler');
+}
+
+section('Phase 11.5b — main.rs does NOT call scheduler when no schedulable improver exists');
+{
+  // Policy declared but no IMPROVEMENT_REASONER — no scheduler call.
+  const src1 = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const main1 = compile(src1).files.get('src-tauri/src/main.rs') ?? '';
+  assert(!main1.includes('improver::start_improvement_scheduler'),  'no scheduler call without IMPROVEMENT_REASONER');
+
+  // No MUTATION_POLICY at all — no scheduler call.
+  const src2 = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const main2 = compile(src2).files.get('src-tauri/src/main.rs') ?? '';
+  assert(!main2.includes('improver::start_improvement_scheduler'),  'no scheduler call without MUTATION_POLICY');
+}
+
 section('Phase 11.7 — LEDGER declaration round-trips through SQL seed');
 {
   const src = `APP a { TITLE "A" DB a.db }

@@ -809,6 +809,30 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       '            }',
     );
   }
+  // Phase 11.5b — Improvement scheduler. Independent of REASONERs/TRIGGERS:
+  // it doesn't need the AI service, just the DbPool. Spawn it from its own
+  // background-runtimes block so apps that have improvers but no reasoners
+  // still get the scheduler running.
+  const hasImprovementScheduler = hasMutationRuntime && (() => {
+    // Inline check: at least one MUTATION_POLICY has IMPROVEMENT_REASONER
+    // pointing to a REASONER with a schedulable cadence (hourly/daily/weekly).
+    const schedulable = new Set(['hourly', 'daily', 'weekly']);
+    return (ast.mutationPolicies ?? []).some((p) => {
+      const ref = p.improvementReasoner;
+      if (!ref) return false;
+      const r = ast.reasoners.find((rr) => rr.name === ref);
+      return !!r && schedulable.has(r.schedule);
+    });
+  })();
+  if (hasImprovementScheduler) {
+    mainRsLines.push(
+      '            // Phase 11.5b — start the improvement scheduler (kaizen loop)',
+      '            {',
+      '                let pool_ref = app.state::<db::DbPool>().inner().clone();',
+      '                commands::improver::start_improvement_scheduler(pool_ref);',
+      '            }',
+    );
+  }
   if (hasReasoners || hasTriggers) {
     const keysArcLine = hasAiService && ast.aiService!.keysEntity
       // KEYS_ENTITY mode — lock the DbPool to read keys from the singleton table
