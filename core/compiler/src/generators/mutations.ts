@@ -417,6 +417,18 @@ fn tier_regression_suite(policy_tiers: &[serde_json::Value], resolved_tier: i32)
         .map(|s| s.to_string())
 }
 
+/// Phase 11.5e — read NBVE_WINDOW from the resolved tier. When set, the
+/// sandbox does not auto-deploy on test pass; instead the proposal enters
+/// 'shadow_evaluating' and is observed against production traffic for the
+/// declared duration before promotion.
+fn tier_nbve_window(policy_tiers: &[serde_json::Value], resolved_tier: i32) -> Option<String> {
+    policy_tiers.iter()
+        .find(|t| t.get("tier").and_then(|v| v.as_i64()) == Some(resolved_tier as i64))
+        .and_then(|t| t.get("nbveWindow"))
+        .and_then(|v| v.as_str())
+        .map(|s| s.to_string())
+}
+
 /// Run a tier-verified proposal through the sandbox: resolve its regression
 /// suite, (stub-)replay runs, record the test outcome, then either auto-deploy
 /// or mark escalated based on the tier's AUTO_DEPLOY flag. End-to-end audit
@@ -456,6 +468,7 @@ pub fn execute_sandbox(db: &DbPool, proposal_id: &str) -> Result<SandboxOutcome,
     };
     let suite_name = tier_regression_suite(&policy_tiers, resolved_tier);
     let auto_deploys = tier_auto_deploys(&policy_tiers, resolved_tier);
+    let nbve_window = tier_nbve_window(&policy_tiers, resolved_tier);  // Phase 11.5e
 
     // 3) Resolve suite → run ids, then (stub-)replay.
     let run_ids: Vec<String> = if let Some(s) = suite_name.as_deref() {
@@ -480,12 +493,42 @@ pub fn execute_sandbox(db: &DbPool, proposal_id: &str) -> Result<SandboxOutcome,
     }))?;
 
     // 5) Decide deploy disposition.
+    //    NBVE_WINDOW (Phase 11.5e) takes priority over AUTO_DEPLOY: if the
+    //    tier wants shadow evaluation, the proposal cannot auto-deploy on
+    //    test pass — it goes into 'shadow_evaluating' first. Only after the
+    //    shadow window closes with SPC pass does it become 'deployed'.
     let (final_status, audit_value): (String, Option<serde_json::Value>) = if !passed {
         let _ = ledger_append(db, proposal_id, &policy_name, "REJECTED_BY_SANDBOX", "sandbox", serde_json::json!({
             "regressionBroken": broken,
             "resolvedFailure":  resolved_failure,
         }))?;
         ("rejected".to_string(), None)
+    } else if let Some(window) = nbve_window.as_deref() {
+        // Phase 11.5e — start shadow evaluation. Defaults: 5% defect
+        // threshold, 100 min samples. (A future phase can add per-tier
+        // NBVE_THRESHOLD + NBVE_MIN_SAMPLES; current DSL only carries
+        // the window duration.)
+        let _eval = crate::commands::shadow_eval::start_evaluation(
+            db, proposal_id, window, 0.05, 100,
+        )?;
+        let now = chrono::Utc::now().to_rfc3339();
+        {
+            let conn = db.lock().map_err(|e| e.to_string())?;
+            conn.execute(
+                "UPDATE mutation_proposals SET status = 'shadow_evaluating', updated_at = ? WHERE id = ?",
+                params![now, proposal_id],
+            ).map_err(|e| e.to_string())?;
+        }
+        let audit = serde_json::json!({
+            "trigger":         "sandbox_starts_shadow",
+            "policy":          policy_name,
+            "resolvedTier":    resolved_tier,
+            "nbveWindow":      window,
+            "regressionTotal": total,
+            "startedAt":       now,
+        });
+        let _ = ledger_append(db, proposal_id, &policy_name, "SHADOW_EVALUATING", "sandbox", audit.clone())?;
+        ("shadow_evaluating".to_string(), Some(audit))
     } else if auto_deploys {
         let audit = serde_json::json!({
             "trigger":           "sandbox_auto_deploy",

@@ -705,6 +705,7 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       ]
     : [];
   // Phase 11.5d — Shadow evaluation substrate (mutation NBVE).
+  // Phase 11.5e — adds finalize + active-list for the runtime integration.
   const shadowEvalCmds = hasMutationRuntime
     ? [
         'commands::shadow_eval::start_shadow_evaluation',
@@ -712,6 +713,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
         'commands::shadow_eval::evaluate_shadow_window',
         'commands::shadow_eval::list_shadow_evaluations',
         'commands::shadow_eval::get_shadow_evaluation',
+        'commands::shadow_eval::finalize_shadow_evaluations',
+        'commands::shadow_eval::list_active_shadow_proposals',
       ]
     : [];
   const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds, ...approvalsCmds, ...ledgerCmds, ...shadowEvalCmds];
@@ -850,6 +853,18 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       '            {',
       '                let pool_ref = app.state::<db::DbPool>().inner().clone();',
       '                commands::improver::start_improvement_scheduler(pool_ref);',
+      '            }',
+    );
+  }
+  // Phase 11.5e — start the shadow-evaluation finalizer. Polls every 60s
+  // for shadow windows that need to close. Gated on mutation runtime
+  // (same gate as the shadow_eval module).
+  if (hasMutationRuntime) {
+    mainRsLines.push(
+      '            // Phase 11.5e — start the shadow-evaluation finalizer (NBVE runtime)',
+      '            {',
+      '                let pool_ref = app.state::<db::DbPool>().inner().clone();',
+      '                commands::shadow_eval::start_shadow_finalizer(pool_ref, 60);',
       '            }',
     );
   }

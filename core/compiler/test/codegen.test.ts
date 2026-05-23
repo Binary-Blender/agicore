@@ -6894,6 +6894,157 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes('Phase 11.6b'),                                      'PARTIAL_APPROVAL annotated with phase');
 }
 
+section('Phase 11.5e — sandbox branches to shadow_evaluating when tier has NBVE_WINDOW');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true REGRESSION_SUITE 24h_recent_workflows NBVE_WINDOW 24h }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/mutations.rs') ?? '';
+  // The NBVE branch
+  assert(rs.includes('fn tier_nbve_window'),                              'tier_nbve_window helper emitted');
+  assert(rs.includes('let nbve_window = tier_nbve_window'),               'sandbox reads nbve_window');
+  assert(rs.includes('crate::commands::shadow_eval::start_evaluation'),   'sandbox calls start_evaluation');
+  assert(rs.includes("status = 'shadow_evaluating'"),                     'sandbox updates proposal status');
+  // NBVE_WINDOW takes priority over auto_deploy
+  const nbveIdx = rs.indexOf('else if let Some(window) = nbve_window');
+  const autoIdx = rs.indexOf('else if auto_deploys');
+  assert(nbveIdx > 0 && autoIdx > nbveIdx,                                'NBVE branch precedes auto_deploy branch');
+  // SHADOW_EVALUATING ledger event
+  assert(rs.includes('"SHADOW_EVALUATING"'),                              'sandbox appends SHADOW_EVALUATING ledger event');
+  assert(rs.includes('"trigger":         "sandbox_starts_shadow"'),       'audit trigger tagged');
+}
+
+section('Phase 11.5e — finalize_shadow_evaluations + active list + background poller emitted');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] NBVE_WINDOW 24h } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/shadow_eval.rs') ?? '';
+  // Types
+  assert(rs.includes('pub struct ActiveShadowProposal'),                  'ActiveShadowProposal struct');
+  assert(rs.includes('pub struct FinalizationOutcome'),                   'FinalizationOutcome struct');
+  assert(rs.includes('pub struct ProposalTransition'),                    'ProposalTransition struct');
+  // Tauri commands
+  assert(rs.includes('pub fn list_active_shadow_proposals'),              'active-list command');
+  assert(rs.includes('pub fn finalize_shadow_evaluations'),               'finalizer command');
+  // Status → terminal mapping
+  assert(rs.includes('"promoted"     => Some("deployed")'),               'shadow promoted → deployed');
+  assert(rs.includes('"rolled_back"  => Some("rejected")'),               'shadow rolled_back → rejected');
+  assert(rs.includes('"inconclusive" => Some("escalated")'),              'shadow inconclusive → escalated');
+  // transition_proposal helper appends correct ledger event
+  assert(rs.includes('"SHADOW_PROMOTED"'),                                'promoted ledger event');
+  assert(rs.includes('"SHADOW_ROLLED_BACK"'),                             'rolled_back ledger event');
+  assert(rs.includes('"SHADOW_INCONCLUSIVE"'),                            'inconclusive ledger event');
+  // Background poller
+  assert(rs.includes('pub fn start_shadow_finalizer'),                    'background poller function');
+  assert(rs.includes('tauri::async_runtime::spawn'),                      'poller spawns async task');
+  assert(rs.includes('tokio::time::interval'),                            'poller uses interval ticker');
+  // Active proposals query filters to status='shadow_evaluating'
+  assert(rs.includes("p.status = 'shadow_evaluating' AND p.target = ?"),  'active lookup filters correctly');
+}
+
+section('Phase 11.5e — main.rs registers all new commands + spawns the finalizer');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::shadow_eval::finalize_shadow_evaluations'),   'finalize command registered');
+  assert(mainRs.includes('commands::shadow_eval::list_active_shadow_proposals'),  'active-list registered');
+  assert(mainRs.includes('commands::shadow_eval::start_shadow_finalizer(pool_ref, 60)'), 'poller spawned with 60s interval');
+}
+
+section('Phase 11.5e — TS bindings expose evaluateWithShadow + dual-routing types');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] NBVE_WINDOW 24h } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/shadow_eval.ts') ?? '';
+  // New types
+  assert(ts.includes('export interface ActiveShadowProposal'),            'ActiveShadowProposal type');
+  assert(ts.includes('export interface ProposalTransition'),              'ProposalTransition type');
+  assert(ts.includes('export interface FinalizationOutcome'),             'FinalizationOutcome type');
+  // Wrappers
+  assert(ts.includes('listActiveShadowProposals'),                        'listActiveShadowProposals wrapper');
+  assert(ts.includes('finalizeShadowEvaluations'),                        'finalizeShadowEvaluations wrapper');
+  // Core dual-routing helper
+  assert(ts.includes('export async function evaluateWithShadow'),         'evaluateWithShadow generic helper');
+  assert(ts.includes('prodFn:'),                                          'takes prodFn');
+  assert(ts.includes('shadowFn:'),                                        'takes shadowFn');
+  // Production-protective design: prod result always returned
+  assert(ts.includes('return prodOutput'),                                'always returns prodOutput');
+  // Fallthrough when active shadows lookup fails
+  assert(ts.includes('listActiveShadowProposals failed'),                 'lookup failure → production continues');
+  // Shadow throw counts as divergence
+  assert(ts.includes('// Shadow execution error counts as divergence'),   'shadow error documented');
+  // Custom equals + fingerprint hooks
+  assert(ts.includes('options?: {'),                                      'options bag');
+  assert(ts.includes('equals?:'),                                         'custom equals supported');
+  assert(ts.includes('fingerprint?:'),                                    'custom fingerprint supported');
+}
+
+section('Phase 11.5e — SHADOW_* ledger events added to TS union');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/ledger.ts') ?? '';
+  for (const ev of ['SHADOW_EVALUATING', 'SHADOW_PROMOTED', 'SHADOW_ROLLED_BACK', 'SHADOW_INCONCLUSIVE']) {
+    assert(ts.includes(`'${ev}'`),                                        `event union has ${ev}`);
+  }
+}
+
+section('Phase 11.5e — MutationConsole gains Shadow tab + shadow_evaluating status pill');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true NBVE_WINDOW 24h } }`;
+  const { files } = compile(src);
+  const tsx = files.get('src/components/MutationConsole.tsx') ?? '';
+  // New tab + pane
+  assert(tsx.includes("id: 'shadow'"),                                    'Shadow tab id added');
+  assert(tsx.includes('function ShadowPane'),                             'ShadowPane component');
+  // STATUS_COLOR covers shadow_evaluating + the 4 shadow_eval lifecycle states
+  for (const s of ['shadow_evaluating', 'collecting', 'sufficient_data', 'promoted', 'inconclusive']) {
+    assert(tsx.includes(`${s}:`),                                         `STATUS_COLOR includes ${s}`);
+  }
+  // Wires the new shadow eval bindings
+  assert(tsx.includes("from '../lib/shadow_eval'"),                       'imports shadow_eval bindings');
+  assert(tsx.includes('listShadowEvaluations'),                           'list call');
+  assert(tsx.includes('finalizeShadowEvaluations'),                       'finalize call');
+  assert(tsx.includes('evaluateShadowWindow'),                            'evaluate call');
+}
+
+section('Phase 11.5e — no MUTATION_POLICY → no NBVE runtime emitted (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(!mainRs.includes('start_shadow_finalizer'),                       'no poller without MUTATION_POLICY');
+  assert(!mainRs.includes('finalize_shadow_evaluations'),                  'no finalize command without MUTATION_POLICY');
+}
+
 section('Phase 11.5d — shadow_eval.rs emitted with table + lifecycle helpers');
 {
   const src = `APP a { TITLE "A" DB a.db }

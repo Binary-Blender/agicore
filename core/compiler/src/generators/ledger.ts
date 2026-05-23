@@ -605,7 +605,11 @@ export type LedgerEventType =
   | 'DEPLOYED'
   | 'ESCALATED'
   | 'REJECTED_BY_SANDBOX'
-  | 'PARTIAL_APPROVAL'        // Phase 11.6b — N-of-N intermediate sigs
+  | 'SHADOW_EVALUATING'         // Phase 11.5e — tier with NBVE_WINDOW entered shadow mode
+  | 'SHADOW_PROMOTED'           // Phase 11.5e — SPC pass, proposal advances to deployed
+  | 'SHADOW_ROLLED_BACK'        // Phase 11.5e — SPC fail, proposal rejected
+  | 'SHADOW_INCONCLUSIVE'       // Phase 11.5e — window elapsed without enough samples
+  | 'PARTIAL_APPROVAL'          // Phase 11.6b — N-of-N intermediate sigs
   | 'APPROVED'
   | 'REJECTED_BY_AUTHORITY';
 

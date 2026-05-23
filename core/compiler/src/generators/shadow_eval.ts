@@ -45,6 +45,8 @@ export function shadowEvalCommandNames(ast: AgiFile): string[] {
     'evaluate_shadow_window',
     'list_shadow_evaluations',
     'get_shadow_evaluation',
+    'finalize_shadow_evaluations',   // Phase 11.5e — runtime closer
+    'list_active_shadow_proposals',  // Phase 11.5e — for dual-routing helper
   ];
 }
 
@@ -411,6 +413,251 @@ pub fn get_shadow_evaluation(
     }
 }
 
+// ─── Phase 11.5e — Runtime integration ────────────────────────────────────
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ActiveShadowProposal {
+    pub proposal_id:       String,
+    pub target:            String,        // the mutation's target (module or workflow name)
+    pub mutation_content:  serde_json::Value,
+    pub samples_count:     i64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FinalizationOutcome {
+    pub total_active:        i64,
+    pub promoted:            i64,
+    pub rolled_back:         i64,
+    pub inconclusive:        i64,
+    pub still_collecting:    i64,
+    pub transitions:         Vec<ProposalTransition>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProposalTransition {
+    pub proposal_id: String,
+    pub from_status: String,
+    pub to_status:   String,
+    pub reason:      String,
+}
+
+/// Phase 11.5e — fetch every proposal currently in 'shadow_evaluating'
+/// status that targets the given workflow/module, with the mutation
+/// content the consumer needs to dispatch the shadow run. Used by the
+/// TS evaluateWithShadow helper to decide whether a given evaluation
+/// path needs to ALSO run the shadow.
+#[tauri::command]
+pub fn list_active_shadow_proposals(
+    db: State<'_, DbPool>,
+    target: String,
+) -> Result<Vec<ActiveShadowProposal>, String> {
+    ensure_shadow_table(db.inner())?;
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let mut stmt = conn.prepare(
+        "SELECT p.id, p.target, p.mutation_content, COALESCE(s.samples_count, 0) FROM mutation_proposals p \
+         LEFT JOIN mutation_shadow_evaluations s ON s.proposal_id = p.id \
+         WHERE p.status = 'shadow_evaluating' AND p.target = ? \
+         ORDER BY p.created_at DESC"
+    ).map_err(|e| e.to_string())?;
+    let rows = stmt
+        .query_map(params![target], |r| {
+            let mc_str: String = r.get(2)?;
+            let mc: serde_json::Value = serde_json::from_str(&mc_str).unwrap_or(serde_json::Value::Null);
+            Ok(ActiveShadowProposal {
+                proposal_id:      r.get(0)?,
+                target:           r.get(1)?,
+                mutation_content: mc,
+                samples_count:    r.get(3)?,
+            })
+        })
+        .map_err(|e| e.to_string())?;
+    let mut out = Vec::new();
+    for r in rows { out.push(r.map_err(|e| e.to_string())?); }
+    Ok(out)
+}
+
+/// Phase 11.5e — runtime closer. Walks every shadow evaluation in
+/// 'collecting' status, calls evaluate_window, and transitions the
+/// originating proposal to its terminal status when the window decides:
+///
+///   shadow_evaluating + SPC pass  → deployed       + ledger SHADOW_PROMOTED
+///   shadow_evaluating + SPC fail  → rejected       + ledger SHADOW_ROLLED_BACK
+///   shadow_evaluating + inconclusive → escalated   + ledger SHADOW_INCONCLUSIVE
+///                                      (kicks the decision to humans)
+///   shadow_evaluating + still collecting → no-op   (window not yet elapsed
+///                                                   OR not enough samples)
+///
+/// Designed to run on a cadence (every N minutes). The background poller
+/// spawned in main.rs calls this; a UI button can also trigger it for
+/// faster feedback during development.
+#[tauri::command]
+pub fn finalize_shadow_evaluations(
+    db: State<'_, DbPool>,
+) -> Result<FinalizationOutcome, String> {
+    ensure_shadow_table(db.inner())?;
+    let proposal_ids: Vec<String> = {
+        let conn = db.lock().map_err(|e| e.to_string())?;
+        let mut stmt = conn.prepare(
+            "SELECT s.proposal_id FROM mutation_shadow_evaluations s \
+             JOIN mutation_proposals p ON p.id = s.proposal_id \
+             WHERE s.status = 'collecting' AND p.status = 'shadow_evaluating'"
+        ).map_err(|e| e.to_string())?;
+        stmt.query_map([], |r| r.get::<_, String>(0))
+            .map_err(|e| e.to_string())?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| e.to_string())?
+    };
+    let total_active = proposal_ids.len() as i64;
+    let mut promoted = 0i64;
+    let mut rolled_back = 0i64;
+    let mut inconclusive = 0i64;
+    let mut still_collecting = 0i64;
+    let mut transitions = Vec::new();
+
+    for proposal_id in proposal_ids {
+        // Evaluate the window — may transition shadow status from collecting
+        // to promoted/rolled_back/inconclusive, or stay in collecting if the
+        // window hasn't elapsed yet.
+        let eval = evaluate_window(db.inner(), &proposal_id)?;
+
+        match eval.status.as_str() {
+            "promoted" => {
+                promoted += 1;
+                let _ = transition_proposal(db.inner(), &proposal_id, "deployed", &eval)?;
+                transitions.push(ProposalTransition {
+                    proposal_id:  proposal_id.clone(),
+                    from_status:  "shadow_evaluating".to_string(),
+                    to_status:    "deployed".to_string(),
+                    reason:       eval.notes.unwrap_or_default(),
+                });
+            }
+            "rolled_back" => {
+                rolled_back += 1;
+                let _ = transition_proposal(db.inner(), &proposal_id, "rejected", &eval)?;
+                transitions.push(ProposalTransition {
+                    proposal_id:  proposal_id.clone(),
+                    from_status:  "shadow_evaluating".to_string(),
+                    to_status:    "rejected".to_string(),
+                    reason:       eval.notes.unwrap_or_default(),
+                });
+            }
+            "inconclusive" => {
+                inconclusive += 1;
+                let _ = transition_proposal(db.inner(), &proposal_id, "escalated", &eval)?;
+                transitions.push(ProposalTransition {
+                    proposal_id:  proposal_id.clone(),
+                    from_status:  "shadow_evaluating".to_string(),
+                    to_status:    "escalated".to_string(),
+                    reason:       eval.notes.unwrap_or_default(),
+                });
+            }
+            _ => {
+                still_collecting += 1;  // window still open + not enough samples
+            }
+        }
+    }
+
+    Ok(FinalizationOutcome {
+        total_active, promoted, rolled_back, inconclusive, still_collecting, transitions,
+    })
+}
+
+/// Transition a proposal out of 'shadow_evaluating' to the resolved
+/// terminal status and append a SHADOW_* ledger event. Idempotent
+/// in practice — caller has already filtered to status='shadow_evaluating'.
+fn transition_proposal(
+    db: &DbPool,
+    proposal_id: &str,
+    to_status: &str,
+    eval: &ShadowEvaluation,
+) -> Result<(), String> {
+    let now = chrono::Utc::now().to_rfc3339();
+    let (policy_name, conn_release): (String, ()) = {
+        let conn = db.lock().map_err(|e| e.to_string())?;
+        let pn: String = conn.query_row(
+            "SELECT policy_name FROM mutation_proposals WHERE id = ?",
+            params![proposal_id],
+            |r| r.get(0),
+        ).map_err(|e| e.to_string())?;
+        conn.execute(
+            "UPDATE mutation_proposals SET status = ?, updated_at = ? WHERE id = ?",
+            params![to_status, now, proposal_id],
+        ).map_err(|e| e.to_string())?;
+        (pn, ())
+    };
+    let _ = conn_release;
+
+    let event_type = match to_status {
+        "deployed"  => "SHADOW_PROMOTED",
+        "rejected"  => "SHADOW_ROLLED_BACK",
+        "escalated" => "SHADOW_INCONCLUSIVE",
+        _ => "SHADOW_PROMOTED",
+    };
+    let payload = serde_json::json!({
+        "samplesCount":    eval.samples_count,
+        "samplesDiverged": eval.samples_diverged,
+        "defectRate":      eval.defect_rate,
+        "defectThreshold": eval.defect_threshold,
+        "spcPass":         eval.spc_pass,
+        "notes":           eval.notes,
+        "decidedAt":       now,
+    });
+    let _ = crate::commands::ledger::append_entry(
+        db, proposal_id, &policy_name, event_type, "shadow_runtime", payload,
+    )?;
+    Ok(())
+}
+
+// ─── Background poller (Phase 11.5e) ──────────────────────────────────────
+
+/// Spawn a tokio task at app startup that calls finalize_shadow_evaluations
+/// every check_interval_seconds. Independent task; failures don't propagate.
+/// Called from main.rs setup hook (gated on hasMutationRuntime). The
+/// default interval is 60s which is fast enough for typical NBVE windows
+/// (24h+) without spinning unnecessarily.
+pub fn start_shadow_finalizer(db: crate::db::DbPool, check_interval_seconds: u64) {
+    tauri::async_runtime::spawn(async move {
+        // Initial warm-up sleep so the poller doesn't run during app boot.
+        tokio::time::sleep(tokio::time::Duration::from_secs(30)).await;
+        let mut ticker = tokio::time::interval(tokio::time::Duration::from_secs(check_interval_seconds));
+        ticker.tick().await;  // consume first immediate tick
+        loop {
+            ticker.tick().await;
+            // Inline the finalization logic (can't easily call the Tauri
+            // command from here without a State<'static>). Reuses the same
+            // pure helper functions.
+            let proposal_ids: Vec<String> = {
+                let conn = match db.lock() { Ok(c) => c, Err(_) => continue };
+                let mut stmt = match conn.prepare(
+                    "SELECT s.proposal_id FROM mutation_shadow_evaluations s \
+                     JOIN mutation_proposals p ON p.id = s.proposal_id \
+                     WHERE s.status = 'collecting' AND p.status = 'shadow_evaluating'"
+                ) { Ok(s) => s, Err(_) => continue };
+                let rows = match stmt.query_map([], |r| r.get::<_, String>(0)) { Ok(r) => r, Err(_) => continue };
+                let mut out = Vec::new();
+                for r in rows { if let Ok(id) = r { out.push(id); } }
+                out
+            };
+            for proposal_id in proposal_ids {
+                let eval = match evaluate_window(&db, &proposal_id) { Ok(e) => e, Err(_) => continue };
+                let to_status = match eval.status.as_str() {
+                    "promoted"     => Some("deployed"),
+                    "rolled_back"  => Some("rejected"),
+                    "inconclusive" => Some("escalated"),
+                    _ => None,
+                };
+                if let Some(to) = to_status {
+                    let _ = transition_proposal(&db, &proposal_id, to, &eval);
+                    eprintln!("[shadow_finalizer] proposal={} → {} ({})", proposal_id, to, eval.notes.unwrap_or_default());
+                }
+            }
+        }
+    });
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -506,6 +753,121 @@ export async function listShadowEvaluations(filter?: {
 
 export async function getShadowEvaluation(proposalId: string): Promise<ShadowEvaluation | null> {
   return invoke<ShadowEvaluation | null>('get_shadow_evaluation', { proposalId });
+}
+
+// ─── Phase 11.5e — Runtime integration ────────────────────────────────────
+
+export interface ActiveShadowProposal {
+  proposalId:      string;
+  target:          string;
+  mutationContent: unknown;
+  samplesCount:    number;
+}
+
+export interface ProposalTransition {
+  proposalId: string;
+  fromStatus: string;
+  toStatus:   string;
+  reason:     string;
+}
+
+export interface FinalizationOutcome {
+  totalActive:      number;
+  promoted:         number;
+  rolledBack:       number;
+  inconclusive:     number;
+  stillCollecting:  number;
+  transitions:      ProposalTransition[];
+}
+
+export async function listActiveShadowProposals(target: string): Promise<ActiveShadowProposal[]> {
+  return invoke<ActiveShadowProposal[]>('list_active_shadow_proposals', { target });
+}
+
+export async function finalizeShadowEvaluations(): Promise<FinalizationOutcome> {
+  return invoke<FinalizationOutcome>('finalize_shadow_evaluations');
+}
+
+/**
+ * Phase 11.5e — Dual-routing helper. The user's expert-system runtime calls
+ * this wherever it evaluates an event/input for which a mutated rule set
+ * MIGHT be in shadow mode. Pattern:
+ *
+ *   function classifyAlert(alert: Alert): Classification {
+ *     return evaluateWithShadow('alert_classification', alert,
+ *       (input) => productionClassifier(input),
+ *       (input, shadowMutation) => applyMutationAndClassify(input, shadowMutation),
+ *     );
+ *   }
+ *
+ * Production always runs (its result is always returned). When a proposal
+ * is in 'shadow_evaluating' targeting the given module/workflow, the
+ * shadow function ALSO runs and the diff is recorded as a shadow
+ * observation. If no shadow is active, the shadow function is skipped
+ * (zero overhead).
+ *
+ * Equality is shallow JSON.stringify by default — pass a custom equals
+ * if your outputs need structural comparison or tolerance windows.
+ */
+export async function evaluateWithShadow<TIn, TOut>(
+  target:    string,
+  input:     TIn,
+  prodFn:    (input: TIn) => TOut,
+  shadowFn:  (input: TIn, mutationContent: unknown) => TOut,
+  options?: {
+    equals?: (a: TOut, b: TOut) => boolean;
+    fingerprint?: (input: TIn) => string;
+  },
+): Promise<TOut> {
+  const prodOutput = prodFn(input);
+  // Check for active shadows. If none, return prod result immediately.
+  // (The list is small in steady state — usually 0 or 1 active per target.)
+  let activeShadows: ActiveShadowProposal[] = [];
+  try {
+    activeShadows = await listActiveShadowProposals(target);
+  } catch (e) {
+    // If the lookup fails (DB down, runtime not initialised), production
+    // path still works — the shadow eval just doesn't record this round.
+    console.warn('[shadow] listActiveShadowProposals failed:', e);
+    return prodOutput;
+  }
+  if (activeShadows.length === 0) return prodOutput;
+
+  const equals = options?.equals ?? ((a, b) => JSON.stringify(a) === JSON.stringify(b));
+  const fingerprint = options?.fingerprint ?? ((i) => JSON.stringify(i).substring(0, 200));
+  const inputFingerprint = fingerprint(input);
+
+  // Run the shadow against EACH active proposal. Record each observation
+  // independently; they're separate evaluations even if they share input.
+  for (const sp of activeShadows) {
+    let shadowOutput: TOut;
+    let diffDetail: unknown = null;
+    let diverged: boolean;
+    try {
+      shadowOutput = shadowFn(input, sp.mutationContent);
+      diverged = !equals(prodOutput, shadowOutput);
+      if (diverged) {
+        diffDetail = { prod: prodOutput, shadow: shadowOutput };
+      }
+    } catch (e) {
+      // Shadow execution error counts as divergence — production rules
+      // wouldn't have thrown.
+      diverged = true;
+      diffDetail = { error: String(e).substring(0, 200) };
+    }
+    try {
+      await recordShadowObservation(sp.proposalId, {
+        inputFingerprint,
+        diverged,
+        diffDetail,
+      });
+    } catch (e) {
+      console.warn('[shadow] recordShadowObservation failed:', e);
+      // Don't fail production — the shadow observation just doesn't land.
+    }
+  }
+
+  return prodOutput;
 }
 `;
 }

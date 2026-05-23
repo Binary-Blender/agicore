@@ -45,7 +45,7 @@ function buildConsoleTsx(): string {
 // approve, reject, integrity-check.
 
 import { useState, useEffect, useCallback } from 'react';
-import { Inbox, Shield, BookOpen, AlertOctagon, RefreshCw, CheckCircle2, XCircle, Play, BadgeCheck } from 'lucide-react';
+import { Inbox, Shield, BookOpen, AlertOctagon, RefreshCw, CheckCircle2, XCircle, Play, BadgeCheck, Eye, Zap } from 'lucide-react';
 
 import {
   listMutationProposals,
@@ -69,27 +69,39 @@ import {
   listAndonEvents,
   type AndonEvent,
 } from '../lib/workflow';
+import {
+  listShadowEvaluations,
+  finalizeShadowEvaluations,
+  evaluateShadowWindow,
+  type ShadowEvaluation,
+} from '../lib/shadow_eval';
 
-type Tab = 'proposals' | 'approvals' | 'ledger' | 'andon';
+type Tab = 'proposals' | 'approvals' | 'shadow' | 'ledger' | 'andon';
 
 const TABS: { id: Tab; label: string; icon: typeof Inbox }[] = [
   { id: 'proposals', label: 'Proposals',     icon: Inbox },
   { id: 'approvals', label: 'Approvals',     icon: Shield },
+  { id: 'shadow',    label: 'Shadow',        icon: Eye },
   { id: 'ledger',    label: 'Ledger',        icon: BookOpen },
   { id: 'andon',     label: 'Andon Events',  icon: AlertOctagon },
 ];
 
 const STATUS_COLOR: Record<string, string> = {
-  created:        'bg-gray-700  text-gray-200',
-  tier_verified:  'bg-blue-700  text-blue-100',
-  tier_rejected:  'bg-red-800   text-red-100',
-  tested:         'bg-blue-800  text-blue-100',
-  deployed:       'bg-emerald-700 text-emerald-100',
-  rejected:       'bg-red-700   text-red-100',
-  escalated:      'bg-amber-700 text-amber-100',
-  rolled_back:    'bg-orange-700 text-orange-100',
-  pending:        'bg-amber-700 text-amber-100',
-  approved:       'bg-emerald-700 text-emerald-100',
+  created:           'bg-gray-700  text-gray-200',
+  tier_verified:     'bg-blue-700  text-blue-100',
+  tier_rejected:     'bg-red-800   text-red-100',
+  tested:            'bg-blue-800  text-blue-100',
+  shadow_evaluating: 'bg-purple-700 text-purple-100',  // Phase 11.5e
+  collecting:        'bg-purple-700 text-purple-100',
+  sufficient_data:   'bg-purple-800 text-purple-100',
+  promoted:          'bg-emerald-700 text-emerald-100',
+  inconclusive:      'bg-amber-700 text-amber-100',
+  deployed:          'bg-emerald-700 text-emerald-100',
+  rejected:          'bg-red-700   text-red-100',
+  escalated:         'bg-amber-700 text-amber-100',
+  rolled_back:       'bg-orange-700 text-orange-100',
+  pending:           'bg-amber-700 text-amber-100',
+  approved:          'bg-emerald-700 text-emerald-100',
 };
 
 function StatusPill({ status }: { status: string }) {
@@ -134,6 +146,7 @@ export function MutationConsole() {
       <div className="flex-1 overflow-auto">
         {tab === 'proposals' && <ProposalsPane />}
         {tab === 'approvals' && <ApprovalsPane />}
+        {tab === 'shadow'    && <ShadowPane />}
         {tab === 'ledger'    && <LedgerPane />}
         {tab === 'andon'     && <AndonPane />}
       </div>
@@ -391,6 +404,100 @@ function LedgerPane() {
           ))}
           {items.length === 0 && (
             <div className="text-gray-500 text-sm py-8 text-center">Ledger is empty.</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Shadow tab (Phase 11.5e) ─────────────────────────────────────────────
+
+function ShadowPane() {
+  const [items, setItems] = useState<ShadowEvaluation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [finalizing, setFinalizing] = useState(false);
+  const [lastOutcome, setLastOutcome] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    try { setItems(await listShadowEvaluations({ limit: 50 })); }
+    catch (e) { console.error(e); }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { refresh(); }, [refresh]);
+
+  async function evalNow(proposalId: string) {
+    setBusy(proposalId);
+    try { await evaluateShadowWindow(proposalId); await refresh(); }
+    catch (e) { console.error(e); }
+    setBusy(null);
+  }
+
+  async function finalizeAll() {
+    setFinalizing(true);
+    try {
+      const r = await finalizeShadowEvaluations();
+      setLastOutcome(\`Reviewed \${r.totalActive}: \${r.promoted} promoted, \${r.rolledBack} rolled back, \${r.inconclusive} inconclusive, \${r.stillCollecting} still collecting\`);
+      await refresh();
+    } catch (e) { console.error(e); }
+    setFinalizing(false);
+  }
+
+  return (
+    <div className="p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <button
+          onClick={finalizeAll}
+          disabled={finalizing}
+          className="text-xs px-3 py-1 bg-purple-700 hover:bg-purple-600 rounded disabled:opacity-50"
+        >
+          <Zap size={12} className="inline mr-1" />
+          {finalizing ? 'Finalizing…' : 'Finalize All Windows'}
+        </button>
+        {lastOutcome && <span className="text-xs text-gray-400">{lastOutcome}</span>}
+        <button onClick={refresh} className="ml-auto p-1.5 hover:bg-gray-800 rounded">
+          <RefreshCw size={15} />
+        </button>
+      </div>
+      {loading ? <div className="text-gray-500">Loading…</div> : (
+        <div className="space-y-2">
+          {items.map((s) => (
+            <div key={s.id} className="border border-gray-800 rounded-lg p-4 hover:border-gray-700">
+              <div className="flex items-center gap-2 mb-2">
+                <Eye size={14} className="text-purple-400" />
+                <ShortId id={s.proposalId} />
+                <StatusPill status={s.status} />
+                <span className="text-xs text-gray-500">
+                  {s.samplesCount} samples ({s.samplesDiverged} diverged)
+                </span>
+                {s.defectRate !== null && (
+                  <span className={\`text-xs font-mono \${
+                    s.defectRate <= s.defectThreshold ? 'text-emerald-400' : 'text-red-400'
+                  }\`}>
+                    defect_rate={s.defectRate.toFixed(4)} ≤ {s.defectThreshold.toFixed(4)}
+                  </span>
+                )}
+                <span className="text-xs text-gray-400 ml-auto">
+                  window {new Date(s.windowEndsAt).toLocaleString()}
+                </span>
+              </div>
+              {s.notes && <div className="text-xs text-gray-400 mb-2">{s.notes}</div>}
+              {s.status === 'collecting' && (
+                <button
+                  onClick={() => evalNow(s.proposalId)}
+                  disabled={busy === s.proposalId}
+                  className="text-xs px-3 py-1 bg-purple-700 hover:bg-purple-600 rounded disabled:opacity-50"
+                >
+                  Evaluate Now
+                </button>
+              )}
+            </div>
+          ))}
+          {items.length === 0 && (
+            <div className="text-gray-500 text-sm py-8 text-center">No shadow evaluations.</div>
           )}
         </div>
       )}
