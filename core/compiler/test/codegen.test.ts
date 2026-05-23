@@ -6894,6 +6894,75 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes('Phase 11.6b'),                                      'PARTIAL_APPROVAL annotated with phase');
 }
 
+section('Phase 11.8c — MutationConsole React component emitted with MUTATION_POLICY');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const tsx = files.get('src/components/MutationConsole.tsx') ?? '';
+  assert(tsx.length > 0,                                                  'MutationConsole.tsx emitted');
+  assert(tsx.includes('@agicore-protected'),                              'marked protected for customisation');
+  assert(tsx.includes('export function MutationConsole'),                 'main component exported');
+  // Four panes
+  assert(tsx.includes('function ProposalsPane'),                          'Proposals pane');
+  assert(tsx.includes('function ApprovalsPane'),                          'Approvals pane');
+  assert(tsx.includes('function LedgerPane'),                             'Ledger pane');
+  assert(tsx.includes('function AndonPane'),                              'Andon Events pane');
+  // Imports from the generated TS bindings
+  assert(tsx.includes("from '../lib/mutations'"),                         'imports mutations bindings');
+  assert(tsx.includes("from '../lib/approvals'"),                         'imports approvals bindings');
+  assert(tsx.includes("from '../lib/ledger'"),                            'imports ledger bindings');
+  assert(tsx.includes("from '../lib/workflow'"),                          'imports workflow bindings (for AndonEvent)');
+}
+
+section('Phase 11.8c — no MUTATION_POLICY → no MutationConsole (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src/components/MutationConsole.tsx'),                'no console emitted without MUTATION_POLICY');
+}
+
+section('Phase 11.8c — console wires every lifecycle action to existing TS bindings');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const tsx = files.get('src/components/MutationConsole.tsx') ?? '';
+  // Read operations (every tab refreshes via these)
+  assert(tsx.includes('listMutationProposals'),                           'proposals list');
+  assert(tsx.includes('listApprovalRequests'),                            'approvals list');
+  assert(tsx.includes('listLedgerEntries'),                               'ledger list');
+  assert(tsx.includes('listAndonEvents'),                                 'andon events list');
+  // Write operations (the buttons)
+  assert(tsx.includes('verifyMutationProposal'),                          'verify button wired');
+  assert(tsx.includes('executeProposalSandbox'),                          'sandbox button wired');
+  assert(tsx.includes('approveProposal'),                                 'approve button wired');
+  assert(tsx.includes('rejectProposal'),                                  'reject button wired');
+  assert(tsx.includes('verifyLedgerIntegrity'),                           'integrity check wired');
+}
+
+section('Phase 11.8c — status pill renders every lifecycle status discriminant');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const tsx = files.get('src/components/MutationConsole.tsx') ?? '';
+  // STATUS_COLOR map covers every proposal status + approval status
+  for (const s of ['created', 'tier_verified', 'tier_rejected', 'tested', 'deployed', 'rejected', 'escalated', 'rolled_back', 'pending', 'approved']) {
+    assert(tsx.includes(`${s}:`),                                         `STATUS_COLOR has ${s}`);
+  }
+}
+
 section('Phase 11.5c — record_ai_improvement_cycle Tauri command emitted');
 {
   const src = `APP a { TITLE "A" DB a.db }
