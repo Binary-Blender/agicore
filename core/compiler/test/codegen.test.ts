@@ -6109,6 +6109,73 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes("'tier_verified'"),                                  'status union includes tier_verified');
 }
 
+section('Phase 11.4b — sandbox executor emitted with tier_auto_deploys + regression suite resolver');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true REGRESSION_SUITE 24h_recent_workflows }
+  TIER 3 structural { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ops_lead }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/mutations.rs') ?? '';
+  // Sandbox runtime functions
+  assert(rs.includes('pub struct SandboxOutcome'),                        'SandboxOutcome struct present');
+  assert(rs.includes('pub fn execute_sandbox'),                           'execute_sandbox helper present');
+  assert(rs.includes('pub fn execute_proposal_sandbox'),                  'execute_proposal_sandbox Tauri command present');
+  assert(rs.includes('pub fn tier_auto_deploys'),                         'tier_auto_deploys helper present');
+  assert(rs.includes('fn tier_regression_suite'),                         'tier_regression_suite helper present');
+  assert(rs.includes('fn resolve_regression_suite'),                      'resolve_regression_suite helper present');
+  assert(rs.includes('fn replay_runs_stub'),                              'replay_runs_stub present (Phase 4c hookup point)');
+  // Suite name mapping for canonical windows
+  assert(rs.includes('"24h_recent_workflows"'),                           '24h_recent_workflows window mapped');
+  assert(rs.includes('"7d_recent_workflows"'),                            '7d_recent_workflows window mapped');
+  // Status-gate enforcement
+  assert(rs.includes(`requires status='tier_verified'`),                  'execute_sandbox enforces tier_verified status');
+  // Auto-deploy unit tests embedded
+  assert(rs.includes('auto_deploy_true_for_boolean_true_tier'),           'embedded test: boolean true autoDeploy');
+  assert(rs.includes('auto_deploy_false_for_stringy_false_tier'),         'embedded test: string false autoDeploy');
+  assert(rs.includes('auto_deploy_false_when_unset'),                     'embedded test: missing autoDeploy defaults false');
+  assert(rs.includes('regression_suite_round_trips_through_tier_lookup'), 'embedded test: regression_suite lookup');
+}
+
+section('Phase 11.4b — execute_proposal_sandbox registered in invoke_handler');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::mutations::execute_proposal_sandbox'), 'execute_proposal_sandbox in invoke_handler');
+  // The full ordering: create → verify → execute → record* → list/get
+  const idxCreate  = mainRs.indexOf('create_mutation_proposal');
+  const idxVerify  = mainRs.indexOf('verify_mutation_proposal');
+  const idxSandbox = mainRs.indexOf('execute_proposal_sandbox');
+  const idxRecord  = mainRs.indexOf('record_proposal_test');
+  assert(idxCreate > 0 && idxVerify > idxCreate && idxSandbox > idxVerify && idxRecord > idxSandbox,
+    'lifecycle commands registered in invocation order');
+}
+
+section('Phase 11.4b — TS bindings expose executeProposalSandbox + SandboxOutcome');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/mutations.ts') ?? '';
+  assert(ts.includes('export interface SandboxOutcome'),                  'SandboxOutcome type exported');
+  assert(ts.includes('executeProposalSandbox'),                           'executeProposalSandbox wrapper exported');
+  assert(ts.includes("invoke<SandboxOutcome>('execute_proposal_sandbox'"),'executeProposalSandbox invokes execute_proposal_sandbox');
+  assert(ts.includes("'deployed' | 'escalated' | 'rejected'"),            'finalStatus union mirrors Rust discriminants');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

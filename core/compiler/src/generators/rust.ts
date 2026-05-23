@@ -641,10 +641,12 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       ]
     : [];
   // Phase 11.4a — Mutation proposal lifecycle commands.
+  // Phase 11.4b — adds execute_proposal_sandbox for the deterministic verifier.
   const mutationCmds = hasMutationRuntime
     ? [
         'commands::mutations::create_mutation_proposal',
         'commands::mutations::verify_mutation_proposal',
+        'commands::mutations::execute_proposal_sandbox',
         'commands::mutations::record_proposal_test',
         'commands::mutations::record_proposal_deploy',
         'commands::mutations::list_mutation_proposals',
