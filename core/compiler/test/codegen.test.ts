@@ -5413,6 +5413,98 @@ section('Phase 9 omit: no cognition_metrics.sql without COGNITION_ROLE declarati
   console.log('  Phase 9 omit: no cognitive hierarchy files when no COGNITION_ROLE declared');
 }
 
+// --- Phase 11 Andon Loop — Phase 1a: Telemetry substrate ---
+
+section('Phase 11.1a — TELEMETRY off (or absent) emits no telemetry artifacts');
+{
+  const offSrc = `APP off { TITLE "off" DB off.db TELEMETRY off }
+ENTITY Note { title: string  TIMESTAMPS }`;
+  const { files: offFiles } = compile(offSrc);
+  assert(!offFiles.has('src-tauri/src/commands/telemetry.rs'), 'TELEMETRY off: no telemetry.rs');
+  assert(!offFiles.has('src/lib/telemetry.ts'),                 'TELEMETRY off: no telemetry.ts');
+  const offSql = offFiles.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(!offSql.includes('telemetry_events'),                  'TELEMETRY off: no telemetry_events table in migration');
+  const offMod = offFiles.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(!offMod.includes('pub mod telemetry;'),                'TELEMETRY off: no telemetry module declaration');
+  const offMain = offFiles.get('src-tauri/src/main.rs') ?? '';
+  assert(!offMain.includes('commands::telemetry::'),            'TELEMETRY off: no telemetry commands registered');
+
+  // Same when TELEMETRY is omitted entirely (default behavior — back-compat for every existing app)
+  const absentSrc = `APP absent { TITLE "absent" DB absent.db }
+ENTITY Note { title: string  TIMESTAMPS }`;
+  const { files: absFiles } = compile(absentSrc);
+  assert(!absFiles.has('src-tauri/src/commands/telemetry.rs'), 'TELEMETRY absent: no telemetry.rs');
+  assert(!absFiles.has('src/lib/telemetry.ts'),                 'TELEMETRY absent: no telemetry.ts');
+  const absSql = absFiles.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(!absSql.includes('telemetry_events'),                  'TELEMETRY absent: no telemetry_events table');
+}
+
+section('Phase 11.1a — TELEMETRY auto emits the full telemetry substrate');
+{
+  const autoSrc = `APP auto { TITLE "auto" DB auto.db TELEMETRY auto }
+ENTITY Note { title: string  TIMESTAMPS }`;
+  const { files } = compile(autoSrc);
+
+  // SQL: telemetry_events table appended to 001_initial.sql with indexes
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS telemetry_events'), 'telemetry_events table generated');
+  assert(sql.includes('event_type    TEXT NOT NULL'),                  'telemetry_events has event_type column');
+  assert(sql.includes('source_name   TEXT NOT NULL'),                  'telemetry_events has source_name column');
+  assert(sql.includes('workflow_run_id TEXT'),                          'telemetry_events has workflow_run_id column');
+  assert(sql.includes('status        TEXT NOT NULL'),                  'telemetry_events has status column');
+  assert(sql.includes('idx_telemetry_event_type'),                      'telemetry: event_type index');
+  assert(sql.includes('idx_telemetry_source'),                          'telemetry: source_name index');
+  assert(sql.includes('idx_telemetry_workflow'),                        'telemetry: workflow_run_id index');
+  assert(sql.includes('idx_telemetry_status'),                          'telemetry: status index');
+
+  // Rust: telemetry.rs with helpers + Tauri commands
+  assert(files.has('src-tauri/src/commands/telemetry.rs'),              'telemetry.rs emitted');
+  const rs = files.get('src-tauri/src/commands/telemetry.rs') ?? '';
+  assert(rs.includes('pub fn emit_telemetry('),                         'emit_telemetry helper present');
+  assert(rs.includes('pub fn complete_telemetry('),                     'complete_telemetry helper present');
+  assert(rs.includes('#[tauri::command]'),                              'Tauri commands annotated');
+  assert(rs.includes('pub fn query_telemetry('),                        'query_telemetry command present');
+  assert(rs.includes('pub fn get_telemetry_summary('),                  'get_telemetry_summary command present');
+  assert(rs.includes('pub fn clear_telemetry_before('),                 'clear_telemetry_before command present');
+  assert(rs.includes('use crate::db::DbPool;'),                         'uses canonical DbPool');
+  // Defensive: a telemetry write failure must not propagate to the caller
+  assert(rs.includes('non-fatal'),                                       'emit failures are non-fatal (caller never bubbled)');
+
+  // TypeScript: telemetry.ts with typed wrappers
+  assert(files.has('src/lib/telemetry.ts'),                              'telemetry.ts client API emitted');
+  const ts = files.get('src/lib/telemetry.ts') ?? '';
+  assert(ts.includes('export interface TelemetryEvent {'),              'TelemetryEvent interface exported');
+  assert(ts.includes('export interface TelemetryFilter {'),             'TelemetryFilter interface exported');
+  assert(ts.includes('export interface TelemetrySummary {'),            'TelemetrySummary interface exported');
+  assert(ts.includes('export async function queryTelemetry('),          'queryTelemetry wrapper exported');
+  assert(ts.includes('export async function getTelemetrySummary('),     'getTelemetrySummary wrapper exported');
+
+  // mod.rs declares the new module
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(modRs.includes('pub mod telemetry;'),                          'telemetry module declared in commands/mod.rs');
+
+  // main.rs registers the new commands in the invoke handler
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::telemetry::query_telemetry'),       'query_telemetry registered in main.rs');
+  assert(mainRs.includes('commands::telemetry::get_telemetry_summary'), 'get_telemetry_summary registered in main.rs');
+  assert(mainRs.includes('commands::telemetry::clear_telemetry_before'),'clear_telemetry_before registered in main.rs');
+}
+
+section('Phase 11.1a — TELEMETRY explicit emits substrate but no auto-instrumentation (forward compat)');
+{
+  // Phase 1a treats `explicit` the same as `auto` for the substrate emission.
+  // The difference (auto = injected calls everywhere; explicit = only at marked
+  // sites) lands in Phase 1b when the workflow runtime + auto-instrumentation
+  // arrive. Confirm the substrate is present regardless.
+  const explSrc = `APP expl { TITLE "Expl" DB expl.db TELEMETRY explicit }
+ENTITY Note { title: string  TIMESTAMPS }`;
+  const { files } = compile(explSrc);
+  assert(files.has('src-tauri/src/commands/telemetry.rs'), 'TELEMETRY explicit: telemetry.rs still emitted');
+  assert(files.has('src/lib/telemetry.ts'),                 'TELEMETRY explicit: telemetry.ts still emitted');
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(sql.includes('telemetry_events'),                  'TELEMETRY explicit: telemetry table still emitted');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

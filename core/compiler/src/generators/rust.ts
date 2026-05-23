@@ -475,6 +475,9 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasSubscriptions) modLines.push('pub mod subscriptions;');
   const hasDisputes = ast.disputes.length > 0;
   if (hasDisputes) modLines.push('pub mod disputes;');
+  // Phase 1a — Andon Loop telemetry substrate.
+  const hasTelemetry = !!ast.app.telemetry && ast.app.telemetry !== 'off';
+  if (hasTelemetry) modLines.push('pub mod telemetry;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -616,7 +619,11 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const disputeCmds = hasDisputes
     ? ['commands::disputes::open_dispute', 'commands::disputes::get_dispute', 'commands::disputes::list_disputes', 'commands::disputes::resolve_dispute', 'commands::disputes::transition_dispute']
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds];
+  // Phase 1a — Andon Loop telemetry query API (enabled when APP.telemetry is auto|explicit).
+  const telemetryCmds = hasTelemetry
+    ? ['commands::telemetry::query_telemetry', 'commands::telemetry::get_telemetry_summary', 'commands::telemetry::clear_telemetry_before']
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

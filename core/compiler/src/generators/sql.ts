@@ -3,6 +3,7 @@
 
 import type { AgiFile, EntityDecl, FieldDef, AgiType, LiteralValue } from '@agicore/parser';
 import { toTableName, toForeignKey, toSnakeCase } from '../naming.js';
+import { telemetrySql } from './telemetry.js';
 
 function isWebTarget(ast: AgiFile): boolean {
   return ast.target?.runtime === 'axum';
@@ -147,6 +148,13 @@ export function generateSql(ast: AgiFile): Map<string, string> {
   // Generate all tables in one migration file
   const tables = ast.entities.map(e => generateEntityTable(e, pg));
   let migration = header + tables.join('\n\n');
+
+  // Append the telemetry table when APP.telemetry is enabled.
+  // (Phase 1a of the Andon Loop architecture.)
+  const telemetryDdl = telemetrySql(ast);
+  if (telemetryDdl) {
+    migration += '\n\n' + telemetryDdl;
+  }
 
   // Append SEED-driven INSERT statements AFTER every CREATE TABLE / CREATE INDEX,
   // so the migration runs schema-first then seed-second.

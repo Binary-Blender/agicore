@@ -51,6 +51,7 @@ import { generateQcMesh } from './generators/qc-mesh.js';
 import { generateAxum } from './generators/axum.js';
 import { generateDocker } from './generators/docker.js';
 import { generateWebClient } from './generators/web-client.js';
+import { generateTelemetry } from './generators/telemetry.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -122,6 +123,7 @@ export function compile(source: string): CompileResult {
     generateAxum(ast),
     generateDocker(ast),
     generateWebClient(ast),
+    generateTelemetry(ast),
   ];
 
   for (const gen of generators) {
