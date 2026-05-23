@@ -6894,6 +6894,79 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes('Phase 11.6b'),                                      'PARTIAL_APPROVAL annotated with phase');
 }
 
+section('Phase 11.7b — ledger sink helper emitted with FS-append implementation');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/ledger.rs') ?? '';
+  // Sink helper structure
+  assert(rs.includes('fn maybe_append_to_sink'),                          'maybe_append_to_sink helper present');
+  assert(rs.includes('AGICORE_LEDGER_SINK_PATH'),                         'env var name documented + read');
+  assert(rs.includes('std::env::var("AGICORE_LEDGER_SINK_PATH")'),        'env var actually read at runtime');
+  // File-system primitives
+  assert(rs.includes('std::fs::create_dir_all'),                          'creates base dir on first write');
+  assert(rs.includes('OpenOptions::new()'),                               'opens file for append');
+  assert(rs.includes('.append(true)'),                                    'append mode');
+  assert(rs.includes('sync_data()'),                                      'fsyncs after write');
+  // Per-ledger file path uses safe identifier characters only
+  assert(rs.includes('c.is_alphanumeric() || c == \'_\' || c == \'-\''),  'sanitises ledger name for filesystem path');
+  assert(rs.includes('.jsonl'),                                           'uses jsonl extension');
+  // Sink failure does NOT crash append_entry
+  assert(rs.includes('if let Err(e) = maybe_append_to_sink'),             'sink failure logged but not propagated');
+  assert(rs.includes('[ledger] sink write failed'),                       'failure log tag for grep');
+  // Status types
+  assert(rs.includes('pub struct LedgerSinkStatus'),                      'LedgerSinkStatus struct');
+  assert(rs.includes('pub struct LedgerSinkFile'),                        'LedgerSinkFile struct');
+}
+
+section('Phase 11.7b — list_ledger_sink_status Tauri command emitted + registered');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/ledger.rs') ?? '';
+  assert(rs.includes('pub fn list_ledger_sink_status'),                   'status command emitted');
+  // When env var not configured, returns {configured: false}
+  assert(rs.includes('configured: false'),                                'no-env-var path returns configured=false');
+  // When configured, sums file sizes per declared ledger_name
+  assert(rs.includes('std::fs::metadata'),                                'reads file sizes via metadata');
+  assert(rs.includes('SELECT DISTINCT ledger_name FROM mutation_ledger'), 'enumerates ledger names from DB');
+  // Main.rs registration
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::ledger::list_ledger_sink_status'),    'command in invoke_handler');
+}
+
+section('Phase 11.7b — TS bindings expose listLedgerSinkStatus + types');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/ledger.ts') ?? '';
+  assert(ts.includes('export interface LedgerSinkStatus'),                'LedgerSinkStatus type exported');
+  assert(ts.includes('export interface LedgerSinkFile'),                  'LedgerSinkFile type exported');
+  assert(ts.includes('export async function listLedgerSinkStatus'),       'wrapper exported');
+  assert(ts.includes("invoke<LedgerSinkStatus>('list_ledger_sink_status'"),'invokes the right command');
+}
+
+section('Phase 11.7b — back-compat: no MUTATION_POLICY → no sink code emitted');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/ledger.rs'),                  'no ledger.rs without MUTATION_POLICY');
+  assert(!files.has('src/lib/ledger.ts'),                                 'no ledger.ts without MUTATION_POLICY');
+}
+
 section('Phase 11.8c — MutationConsole React component emitted with MUTATION_POLICY');
 {
   const src = `APP a { TITLE "A" DB a.db }

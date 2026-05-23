@@ -693,11 +693,13 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       ]
     : [];
   // Phase 11.7 — Mutation ledger query + integrity commands.
+  // Phase 11.7b — adds list_ledger_sink_status for FS-sink visibility.
   const ledgerCmds = hasMutationRuntime
     ? [
         'commands::ledger::list_ledger_entries',
         'commands::ledger::get_ledger_entries_for_proposal',
         'commands::ledger::verify_ledger_integrity',
+        'commands::ledger::list_ledger_sink_status',
       ]
     : [];
   const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds, ...approvalsCmds, ...ledgerCmds];

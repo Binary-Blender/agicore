@@ -41,6 +41,7 @@ export function ledgerCommandNames(ast: AgiFile): string[] {
     'list_ledger_entries',
     'get_ledger_entries_for_proposal',
     'verify_ledger_integrity',
+    'list_ledger_sink_status',   // Phase 11.7b
   ];
 }
 
@@ -254,14 +255,73 @@ pub fn append_entry(
         ).map_err(|e| e.to_string())?;
     }
 
-    Ok(LedgerEntry {
+    let entry = LedgerEntry {
         id, sequence_num: next_seq, ledger_name,
         proposal_id: proposal_id.to_string(),
         policy_name: policy_name.to_string(),
         event_type: event_type.to_string(),
         actor: actor.to_string(),
         payload, prev_hash, self_hash, recorded_at,
-    })
+    };
+
+    // 5) Phase 11.7b — opportunistic external sink. When the env var
+    //    AGICORE_LEDGER_SINK_PATH is set, also append the entry as a
+    //    JSON line to <path>/<ledger_name>.jsonl. Failure to write the
+    //    sink is logged but does NOT fail the operation — the SQLite
+    //    write is the authoritative source; the sink is a redundant
+    //    copy for off-DB compliance archival. If the user needs strict
+    //    "fail loud on sink miss" semantics, they can wrap this with
+    //    a watchdog that compares SQLite count to sink line count.
+    if let Err(e) = maybe_append_to_sink(&entry) {
+        eprintln!("[ledger] sink write failed (entry still in SQLite): {}", e);
+    }
+
+    Ok(entry)
+}
+
+/// Phase 11.7b — File-system sink for ledger entries. Runtime-gated by
+/// AGICORE_LEDGER_SINK_PATH env var; when set, each entry is appended as
+/// a JSON line to <path>/<ledger_name>.jsonl. The path is created on first
+/// write if missing. Files are opened in append-mode and the write is
+/// fsync'd so crash recovery still has the most recent entries.
+fn maybe_append_to_sink(entry: &LedgerEntry) -> Result<(), String> {
+    let base = match std::env::var("AGICORE_LEDGER_SINK_PATH") {
+        Ok(p) if !p.is_empty() => std::path::PathBuf::from(p),
+        _ => return Ok(()),  // not configured → no-op
+    };
+    std::fs::create_dir_all(&base).map_err(|e| format!("create_dir_all({}): {}", base.display(), e))?;
+    // Per-ledger file so multiple ledgers in the same app don't interleave.
+    let safe_name = entry.ledger_name
+        .chars()
+        .map(|c| if c.is_alphanumeric() || c == '_' || c == '-' { c } else { '_' })
+        .collect::<String>();
+    let path = base.join(format!("{}.jsonl", safe_name));
+    let line = serde_json::to_string(entry)
+        .map_err(|e| format!("serialize entry: {}", e))?;
+    use std::io::Write;
+    let mut f = std::fs::OpenOptions::new()
+        .create(true).append(true).open(&path)
+        .map_err(|e| format!("open({}): {}", path.display(), e))?;
+    f.write_all(line.as_bytes()).map_err(|e| format!("write: {}", e))?;
+    f.write_all(b"\n").map_err(|e| format!("write newline: {}", e))?;
+    f.sync_data().map_err(|e| format!("fsync: {}", e))?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LedgerSinkStatus {
+    pub configured:    bool,
+    pub base_path:     Option<String>,
+    pub ledgers:       Vec<LedgerSinkFile>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LedgerSinkFile {
+    pub ledger_name:   String,
+    pub file_path:     String,
+    pub bytes_on_disk: u64,
 }
 
 // ─── Integrity verification ──────────────────────────────────────────────
@@ -429,6 +489,51 @@ pub fn get_ledger_entries_for_proposal(
     Ok(out)
 }
 
+/// Phase 11.7b — surface the current ledger-sink configuration + per-file
+/// disk-byte counts so an admin UI can confirm the sink is actually
+/// receiving writes (vs the env var being unset / a misconfigured path).
+#[tauri::command]
+pub fn list_ledger_sink_status(
+    db: State<'_, DbPool>,
+) -> Result<LedgerSinkStatus, String> {
+    let base = std::env::var("AGICORE_LEDGER_SINK_PATH")
+        .ok()
+        .filter(|s| !s.is_empty());
+    if base.is_none() {
+        return Ok(LedgerSinkStatus { configured: false, base_path: None, ledgers: Vec::new() });
+    }
+    let base_str = base.unwrap();
+    let base_path = std::path::PathBuf::from(&base_str);
+
+    ensure_ledger_table(db.inner())?;
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let mut stmt = conn.prepare("SELECT DISTINCT ledger_name FROM mutation_ledger")
+        .map_err(|e| e.to_string())?;
+    let names: Vec<String> = stmt
+        .query_map([], |r| r.get::<_, String>(0))
+        .map_err(|e| e.to_string())?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| e.to_string())?;
+
+    let mut files = Vec::new();
+    for name in names {
+        let safe = name.chars().map(|c| if c.is_alphanumeric() || c == '_' || c == '-' { c } else { '_' }).collect::<String>();
+        let path = base_path.join(format!("{}.jsonl", safe));
+        let bytes = std::fs::metadata(&path).map(|m| m.len()).unwrap_or(0);
+        files.push(LedgerSinkFile {
+            ledger_name:   name,
+            file_path:     path.display().to_string(),
+            bytes_on_disk: bytes,
+        });
+    }
+
+    Ok(LedgerSinkStatus {
+        configured: true,
+        base_path:  Some(base_str),
+        ledgers:    files,
+    })
+}
+
 #[tauri::command]
 pub fn verify_ledger_integrity(
     db: State<'_, DbPool>,
@@ -548,6 +653,24 @@ export async function verifyLedgerIntegrity(ledgerName?: string): Promise<Integr
   return invoke<IntegrityReport>('verify_ledger_integrity', {
     ledgerName: ledgerName ?? null,
   });
+}
+
+// Phase 11.7b — File-system sink status
+
+export interface LedgerSinkFile {
+  ledgerName:   string;
+  filePath:     string;
+  bytesOnDisk:  number;
+}
+
+export interface LedgerSinkStatus {
+  configured:   boolean;
+  basePath:     string | null;
+  ledgers:      LedgerSinkFile[];
+}
+
+export async function listLedgerSinkStatus(): Promise<LedgerSinkStatus> {
+  return invoke<LedgerSinkStatus>('list_ledger_sink_status');
 }
 `;
 }
