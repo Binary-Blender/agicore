@@ -6894,6 +6894,101 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes('Phase 11.6b'),                                      'PARTIAL_APPROVAL annotated with phase');
 }
 
+section('Phase 11.5d — shadow_eval.rs emitted with table + lifecycle helpers');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/shadow_eval.rs') ?? '';
+  assert(rs.length > 0,                                                   'shadow_eval.rs emitted when MUTATION_POLICY present');
+  // Public types
+  assert(rs.includes('pub struct ShadowEvaluation'),                      'ShadowEvaluation struct');
+  assert(rs.includes('pub struct ShadowObservation'),                     'ShadowObservation struct');
+  assert(rs.includes('pub struct StartEvalInput'),                        'StartEvalInput struct');
+  // Schema
+  assert(rs.includes('CREATE TABLE IF NOT EXISTS mutation_shadow_evaluations'), 'evaluations table DDL');
+  assert(rs.includes('CREATE TABLE IF NOT EXISTS mutation_shadow_observations'), 'observations table DDL');
+  assert(rs.includes('UNIQUE (proposal_id)'),                             'one eval per proposal enforced');
+  // Lifecycle helpers
+  assert(rs.includes('pub fn start_evaluation'),                          'start_evaluation helper');
+  assert(rs.includes('pub fn record_observation'),                        'record_observation helper');
+  assert(rs.includes('pub fn evaluate_window'),                           'evaluate_window helper (SPC gate)');
+  // Tauri commands
+  assert(rs.includes('pub fn start_shadow_evaluation'),                   'start command');
+  assert(rs.includes('pub fn record_shadow_observation'),                 'record command');
+  assert(rs.includes('pub fn evaluate_shadow_window'),                    'evaluate command');
+  assert(rs.includes('pub fn list_shadow_evaluations'),                   'list command');
+  assert(rs.includes('pub fn get_shadow_evaluation'),                     'get command');
+  // SPC decision branches
+  assert(rs.includes("'collecting'"),                                     'collecting status');
+  assert(rs.includes('"promoted"'),                                       'promoted status');
+  assert(rs.includes('"rolled_back"'),                                    'rolled_back status');
+  assert(rs.includes('"inconclusive"'),                                   'inconclusive status (window elapsed w/o samples)');
+  assert(rs.includes('dr <= eval.defect_threshold'),                      'SPC compares defect rate to threshold');
+  assert(rs.includes('eval.samples_count >= eval.min_samples'),           'SPC requires min sample count');
+  // Embedded unit tests
+  assert(rs.includes('parse_duration_ms'),                                'embedded test: duration parser');
+  assert(rs.includes('parse_duration_rejects_bad_unit'),                  'embedded test: bad unit rejection');
+}
+
+section('Phase 11.5d — no MUTATION_POLICY → no shadow_eval.rs (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/shadow_eval.rs'),             'no shadow_eval.rs without MUTATION_POLICY');
+  assert(!files.has('src/lib/shadow_eval.ts'),                            'no shadow_eval.ts without MUTATION_POLICY');
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(!modRs.includes('pub mod shadow_eval;'),                         'module not declared');
+}
+
+section('Phase 11.5d — module + 5 commands registered in main.rs');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(modRs.includes('pub mod shadow_eval;'),                          'module declared in mod.rs');
+  assert(mainRs.includes('commands::shadow_eval::start_shadow_evaluation'),   'start command registered');
+  assert(mainRs.includes('commands::shadow_eval::record_shadow_observation'), 'record command registered');
+  assert(mainRs.includes('commands::shadow_eval::evaluate_shadow_window'),    'evaluate command registered');
+  assert(mainRs.includes('commands::shadow_eval::list_shadow_evaluations'),   'list command registered');
+  assert(mainRs.includes('commands::shadow_eval::get_shadow_evaluation'),     'get command registered');
+}
+
+section('Phase 11.5d — TS bindings expose ShadowEvaluation lifecycle');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/shadow_eval.ts') ?? '';
+  assert(ts.length > 0,                                                   'shadow_eval.ts emitted');
+  assert(ts.includes('export interface ShadowEvaluation'),                'ShadowEvaluation type');
+  assert(ts.includes('export interface ShadowObservation'),               'ShadowObservation type');
+  assert(ts.includes('export interface StartEvalInput'),                  'StartEvalInput type');
+  assert(ts.includes('export type ShadowStatus'),                         'ShadowStatus union');
+  // Five wrappers
+  assert(ts.includes('export async function startShadowEvaluation'),      'start wrapper');
+  assert(ts.includes('export async function recordShadowObservation'),    'record wrapper');
+  assert(ts.includes('export async function evaluateShadowWindow'),       'evaluate wrapper');
+  assert(ts.includes('export async function listShadowEvaluations'),      'list wrapper');
+  assert(ts.includes('export async function getShadowEvaluation'),        'get wrapper');
+  // Status union has all 5 discriminants
+  for (const s of ['collecting', 'sufficient_data', 'promoted', 'rolled_back', 'inconclusive']) {
+    assert(ts.includes(`'${s}'`),                                         `status union has ${s}`);
+  }
+}
+
 section('Phase 11.7b — ledger sink helper emitted with FS-append implementation');
 {
   const src = `APP a { TITLE "A" DB a.db }

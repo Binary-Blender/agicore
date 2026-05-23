@@ -492,6 +492,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasMutationRuntime) modLines.push('pub mod improver;');
   // Phase 11.6 — Approval chains (human-in-the-loop for escalated proposals).
   if (hasMutationRuntime) modLines.push('pub mod approvals;');
+  // Phase 11.5d — Shadow evaluation substrate for mutation NBVE.
+  if (hasMutationRuntime) modLines.push('pub mod shadow_eval;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -702,7 +704,17 @@ export function generateRust(ast: AgiFile): Map<string, string> {
         'commands::ledger::list_ledger_sink_status',
       ]
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds, ...approvalsCmds, ...ledgerCmds];
+  // Phase 11.5d — Shadow evaluation substrate (mutation NBVE).
+  const shadowEvalCmds = hasMutationRuntime
+    ? [
+        'commands::shadow_eval::start_shadow_evaluation',
+        'commands::shadow_eval::record_shadow_observation',
+        'commands::shadow_eval::evaluate_shadow_window',
+        'commands::shadow_eval::list_shadow_evaluations',
+        'commands::shadow_eval::get_shadow_evaluation',
+      ]
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds, ...approvalsCmds, ...ledgerCmds, ...shadowEvalCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

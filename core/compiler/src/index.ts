@@ -59,6 +59,7 @@ import { generateImprover } from './generators/improver.js';
 import { generateApprovals } from './generators/approvals.js';
 import { generateLedger } from './generators/ledger.js';
 import { generateMutationConsole } from './generators/mutation_console.js';
+import { generateShadowEval } from './generators/shadow_eval.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -138,6 +139,7 @@ export function compile(source: string): CompileResult {
     generateApprovals(ast),
     generateLedger(ast),
     generateMutationConsole(ast),
+    generateShadowEval(ast),
   ];
 
   for (const gen of generators) {
