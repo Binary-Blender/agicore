@@ -53,6 +53,7 @@ import { generateDocker } from './generators/docker.js';
 import { generateWebClient } from './generators/web-client.js';
 import { generateTelemetry } from './generators/telemetry.js';
 import { generateWorkflow } from './generators/workflow.js';
+import { generateMutations } from './generators/mutations.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -126,6 +127,7 @@ export function compile(source: string): CompileResult {
     generateWebClient(ast),
     generateTelemetry(ast),
     generateWorkflow(ast),
+    generateMutations(ast),
   ];
 
   for (const gen of generators) {

@@ -94,7 +94,41 @@ CREATE INDEX IF NOT EXISTS idx_mutation_policies_name ON mutation_policies(name)
     return `INSERT OR IGNORE INTO mutation_policies (${cols.join(', ')}) VALUES (${vals.join(', ')});`;
   });
 
-  return tableDdl + '\n\n-- Idempotent seed: MUTATION_POLICY declarations from the .agi source\n' + seedLines.join('\n');
+  // Phase 11.4a — mutation proposals + outcomes. Always emitted alongside
+  // mutation_policies (the proposer needs somewhere to persist) — gated on
+  // the same condition (≥1 declared MUTATION_POLICY) so apps without the
+  // Andon Loop opted in stay byte-identical.
+  const proposalsDdl = `
+
+-- MUTATION PROPOSALS: every AI-proposed mutation lands here (Phase 11.4a).
+-- One row per proposal; lifecycle is mechanical:
+--   created → tier_verified → tested → (deployed | rejected | escalated)
+-- The Phase 4b sandbox executor reads candidates with status='tier_verified',
+-- runs them through the regression suite, and records the outcome here.
+-- The Phase 6 approval-chain wiring reads status='escalated' for human signoff.
+CREATE TABLE IF NOT EXISTS mutation_proposals (
+  id                    TEXT PRIMARY KEY,
+  andon_event_id        TEXT,                          -- null for improvement-loop proposals
+  policy_name           TEXT NOT NULL,
+  proposer_identity     TEXT NOT NULL,                 -- signed REASONER identity or 'human:<email>'
+  target                TEXT NOT NULL,                 -- module/workflow this affects
+  claimed_tier          INTEGER NOT NULL,              -- the tier the proposer DECLARED
+  resolved_tier         INTEGER,                       -- the tier the verifier COMPUTED from scope
+  claimed_scope         TEXT NOT NULL,                 -- JSON array of mutation kind strings
+  mutation_content      TEXT NOT NULL,                 -- the DSL diff (free-form for now)
+  status                TEXT NOT NULL DEFAULT 'created',  -- created | tier_verified | tier_rejected | tested | deployed | rejected | escalated | rolled_back
+  rejection_reason      TEXT,                          -- populated on rejection
+  test_evidence         TEXT,                          -- JSON: { resolved_failure: bool, regression: { total, unchanged, broken } }
+  approval_chain        TEXT,                          -- JSON: signers + timestamps
+  deploy_audit          TEXT,                          -- JSON: when, by whom, smoke test outcome
+  created_at            TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at            TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_mutation_proposals_andon   ON mutation_proposals(andon_event_id);
+CREATE INDEX IF NOT EXISTS idx_mutation_proposals_policy  ON mutation_proposals(policy_name, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_mutation_proposals_status  ON mutation_proposals(status, created_at DESC);`;
+
+  return tableDdl + '\n\n-- Idempotent seed: MUTATION_POLICY declarations from the .agi source\n' + seedLines.join('\n') + proposalsDdl;
 }
 
 // SQL for the workflow_checkpoints table — splice into 001_initial.sql via sql.ts.

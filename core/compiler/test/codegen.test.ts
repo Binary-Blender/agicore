@@ -6007,6 +6007,108 @@ WORKFLOW concurrent {
   assert(rs.includes('step 3: s4'),                           'serial step after parallel batch present');
 }
 
+section('Phase 11.4a — mutation_proposals table emitted alongside mutation_policies');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true REQUIRE deterministic_test_pass REGRESSION_SUITE 24h_recent_workflows }
+}`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS mutation_proposals'),  'mutation_proposals table emitted');
+  assert(sql.includes('claimed_tier          INTEGER NOT NULL'),         'claimed_tier column');
+  assert(sql.includes('resolved_tier         INTEGER'),                  'resolved_tier column');
+  assert(sql.includes("status                TEXT NOT NULL DEFAULT 'created'"), 'status defaults to created');
+  assert(sql.includes('idx_mutation_proposals_andon'),                   'andon index emitted');
+  assert(sql.includes('idx_mutation_proposals_policy'),                  'policy index emitted');
+  assert(sql.includes('idx_mutation_proposals_status'),                  'status index emitted');
+}
+
+section('Phase 11.4a — no MUTATION_POLICY → no mutation_proposals table (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(!sql.includes('mutation_proposals'),                            'no mutation_proposals table when no MUTATION_POLICY declared');
+  assert(!files.has('src-tauri/src/commands/mutations.rs'),              'no mutations.rs without policy');
+  assert(!files.has('src/lib/mutations.ts'),                             'no mutations.ts without policy');
+}
+
+section('Phase 11.4a — mutations.rs emitted with proposal lifecycle + tier verifier');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true REQUIRE test_pass REGRESSION_SUITE 24h_workflows }
+  TIER 3 structural { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ops_lead }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/mutations.rs') ?? '';
+  assert(rs.length > 0,                                                   'mutations.rs emitted when MUTATION_POLICY present');
+  assert(rs.includes('pub struct MutationProposal'),                      'MutationProposal struct present');
+  assert(rs.includes('pub struct TierVerification'),                      'TierVerification struct present');
+  assert(rs.includes('verify_proposal_tier_logic'),                       'pure tier verifier function present');
+  assert(rs.includes('verify_and_persist'),                               'verify-and-persist helper present');
+  assert(rs.includes('pub fn create_mutation_proposal'),                  'create_mutation_proposal Tauri command emitted');
+  assert(rs.includes('pub fn verify_mutation_proposal'),                  'verify_mutation_proposal Tauri command emitted');
+  assert(rs.includes('pub fn list_mutation_proposals'),                   'list_mutation_proposals command emitted');
+  assert(rs.includes('pub fn get_proposals_for_andon'),                   'get_proposals_for_andon command emitted');
+  assert(rs.includes('pub fn record_proposal_test'),                      'record_proposal_test command emitted');
+  assert(rs.includes('pub fn record_proposal_deploy'),                    'record_proposal_deploy command emitted');
+  // The mutations module embeds Rust unit tests that exercise the tier-verifier
+  // logic at runtime against a curated fixture. Codegen-time check: those tests exist.
+  assert(rs.includes('#[cfg(test)]'),                                     'embedded Rust unit tests for tier verifier');
+  assert(rs.includes('rejects_t1_claiming_workflow_modify'),              'tier verifier test rejects under-declaration');
+  assert(rs.includes('rejects_unknown_kind'),                             'tier verifier test rejects unknown kind');
+  assert(rs.includes('rejects_empty_scope'),                              'tier verifier test rejects empty scope');
+}
+
+section('Phase 11.4a — mutations module registered + commands in invoke_handler');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(modRs.includes('pub mod mutations;'),                            'mutations module declared in commands/mod.rs');
+  assert(mainRs.includes('commands::mutations::create_mutation_proposal'),'create_mutation_proposal registered in invoke_handler');
+  assert(mainRs.includes('commands::mutations::verify_mutation_proposal'),'verify_mutation_proposal registered');
+  assert(mainRs.includes('commands::mutations::list_mutation_proposals'), 'list_mutation_proposals registered');
+  assert(mainRs.includes('commands::mutations::get_proposals_for_andon'), 'get_proposals_for_andon registered');
+}
+
+section('Phase 11.4a — TypeScript client bindings emitted');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/mutations.ts') ?? '';
+  assert(ts.length > 0,                                                   'mutations.ts emitted');
+  assert(ts.includes('export interface MutationProposal'),                'MutationProposal type exported');
+  assert(ts.includes('export interface TierVerification'),                'TierVerification type exported');
+  assert(ts.includes('createMutationProposal'),                           'createMutationProposal wrapper exported');
+  assert(ts.includes('verifyMutationProposal'),                           'verifyMutationProposal wrapper exported');
+  assert(ts.includes('recordProposalTest'),                               'recordProposalTest wrapper exported');
+  assert(ts.includes('recordProposalDeploy'),                             'recordProposalDeploy wrapper exported');
+  assert(ts.includes("invoke<string>('create_mutation_proposal'"),        'createMutationProposal invokes create_mutation_proposal');
+  assert(ts.includes("'tier_rejected'"),                                  'status union includes tier_rejected');
+  assert(ts.includes("'tier_verified'"),                                  'status union includes tier_verified');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

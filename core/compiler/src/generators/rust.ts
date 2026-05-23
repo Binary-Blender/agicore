@@ -481,6 +481,9 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   // Phase 1b — Workflow runtime (requires telemetry enabled + workflows declared).
   const hasWorkflowRuntime = hasTelemetry && ast.workflows && ast.workflows.length > 0;
   if (hasWorkflowRuntime) modLines.push('pub mod workflow;');
+  // Phase 11.4a — Mutation proposal lifecycle (gated only on MUTATION_POLICY).
+  const hasMutationRuntime = !!ast.mutationPolicies && ast.mutationPolicies.length > 0;
+  if (hasMutationRuntime) modLines.push('pub mod mutations;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -637,7 +640,19 @@ export function generateRust(ast: AgiFile): Map<string, string> {
         'commands::workflow::get_andon_event',
       ]
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds];
+  // Phase 11.4a — Mutation proposal lifecycle commands.
+  const mutationCmds = hasMutationRuntime
+    ? [
+        'commands::mutations::create_mutation_proposal',
+        'commands::mutations::verify_mutation_proposal',
+        'commands::mutations::record_proposal_test',
+        'commands::mutations::record_proposal_deploy',
+        'commands::mutations::list_mutation_proposals',
+        'commands::mutations::get_mutation_proposal',
+        'commands::mutations::get_proposals_for_andon',
+      ]
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',
