@@ -84,6 +84,7 @@ CREATE INDEX IF NOT EXISTS idx_mutation_policies_name ON mutation_policies(name)
       monitoringWindow: t.monitoringWindow ?? null,
       nbveWindow: t.nbveWindow ?? null,
       approvalAuthority: t.approvalAuthority ?? null,
+      approvalAuthorityOrdered: t.approvalAuthorityOrdered ?? null,
     })));
     const escape = (s: string) => s.replace(/'/g, "''");
     const cols = ['id', 'name', 'targets', 'tiers'];

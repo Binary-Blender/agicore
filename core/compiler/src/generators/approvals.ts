@@ -116,11 +116,14 @@ fn ensure_approvals_table(db: &DbPool) -> Result<(), String> {
 
 /// Resolved authority set for a tier. The 'authorities' field is the list
 /// of signer names; 'threshold' is how many must approve before deploy.
+/// 'ordered' (Phase 11.6c) when true requires signatures to arrive in the
+/// declared list order — the Nth signature must come from authorities[N-1].
 /// An empty authorities vec means no APPROVAL_AUTHORITY declared (open chain).
 #[derive(Debug, Clone)]
 pub struct AuthoritySet {
     pub authorities: Vec<String>,
     pub threshold:   usize,
+    pub ordered:     bool,
 }
 
 /// Read approvalAuthority for a (policy, resolved_tier) pair. Phase 11.6b
@@ -142,9 +145,9 @@ pub fn lookup_authority_set(
         )
         .map_err(|e| format!("Policy '{}' not found: {}", policy_name, e))?;
     let tiers: Vec<serde_json::Value> = serde_json::from_str(&tiers_str).unwrap_or_default();
-    let raw = tiers.iter()
-        .find(|t| t.get("tier").and_then(|v| v.as_i64()) == Some(resolved_tier as i64))
-        .and_then(|t| t.get("approvalAuthority"));
+    let tier_value = tiers.iter()
+        .find(|t| t.get("tier").and_then(|v| v.as_i64()) == Some(resolved_tier as i64));
+    let raw = tier_value.and_then(|t| t.get("approvalAuthority"));
 
     let authorities: Vec<String> = match raw {
         None | Some(serde_json::Value::Null) => Vec::new(),
@@ -155,7 +158,14 @@ pub fn lookup_authority_set(
         Some(_) => Vec::new(),  // malformed → treat as open chain (safe default)
     };
     let threshold = authorities.len().max(1);  // open chain = 1 signer needed
-    Ok(AuthoritySet { authorities, threshold })
+    // Phase 11.6c — ordered flag. Only meaningful with N>1 authorities;
+    // for single-signer (or open chain), order is moot so we ignore the flag.
+    let ordered = tier_value
+        .and_then(|t| t.get("approvalAuthorityOrdered"))
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false)
+        && authorities.len() > 1;
+    Ok(AuthoritySet { authorities, threshold, ordered })
 }
 
 /// Back-compat shim — returns just the JSON-serialised authority for the
@@ -288,6 +298,42 @@ fn record_decision(
         ))?
     };
     let mut signatures: Vec<serde_json::Value> = serde_json::from_str(&signatures_str).unwrap_or_default();
+
+    // 1a) Phase 11.6c — when the bound authority set is ordered, validate
+    //     the resolver matches the next-expected signer position. Approvals
+    //     are positional: the Nth approval must come from authorities[N-1].
+    //     Rejections still terminate immediately regardless of order (any
+    //     authority in the chain can veto).
+    if decision == "approved" {
+        let (policy_name, resolved_tier_opt): (String, Option<i32>) = {
+            let conn = db.lock().map_err(|e| e.to_string())?;
+            conn.query_row(
+                "SELECT policy_name, resolved_tier FROM mutation_proposals WHERE id = ?",
+                params![proposal_id],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            ).map_err(|e| e.to_string())?
+        };
+        if let Some(resolved_tier) = resolved_tier_opt {
+            let auth_set = lookup_authority_set(db, &policy_name, resolved_tier)?;
+            if auth_set.ordered && !auth_set.authorities.is_empty() {
+                let prior_approvals = signatures.iter()
+                    .filter(|s| s.get("decision").and_then(|v| v.as_str()) == Some("approved"))
+                    .count();
+                if prior_approvals < auth_set.authorities.len() {
+                    let expected = &auth_set.authorities[prior_approvals];
+                    if expected != resolver {
+                        return Err(format!(
+                            "Ordered signing chain — position {} requires signer '{}' but '{}' attempted to sign (out-of-order rejected)",
+                            prior_approvals + 1, expected, resolver
+                        ));
+                    }
+                }
+                // (If prior_approvals >= len, the chain is already at threshold
+                //  — record_decision will mark terminal on this approval, but
+                //  the extra signature is harmless.)
+            }
+        }
+    }
 
     // 2) Append this signature.
     let new_sig = serde_json::json!({

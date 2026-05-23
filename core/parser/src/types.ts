@@ -427,6 +427,11 @@ export interface MutationTierDecl {
    *  every authority in the list must approve before the proposal is
    *  deployed. Any single rejection terminates the chain. */
   approvalAuthority?: string | string[];
+  /** Phase 11.6c — When true (set by `APPROVAL_AUTHORITY ORDERED [a, b, c]`),
+   *  signatures must arrive in the declared list order. Out-of-order signs
+   *  are rejected with a clear error. Pairs with the bracketed-list form
+   *  of approvalAuthority. */
+  approvalAuthorityOrdered?: boolean;
   span: SourceSpan;
 }
 

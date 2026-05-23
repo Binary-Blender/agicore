@@ -3621,6 +3621,50 @@ MUTATION_POLICY mp {
   console.error(`  FAIL: APPROVAL_AUTHORITY single: ${err}`);
 }
 
+section('Phase 11.6c — APPROVAL_AUTHORITY ORDERED [a, b, c] for sequential signing');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 4 sensitive { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ORDERED [manager, director, vp] }
+  TIER 5 governance { SCOPE [MUTATION_POLICY_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [ceo, board_chair] }
+}`;
+  const ast = parse(src);
+  const p = ast.mutationPolicies[0]!;
+  const t4 = p.tiers.find((t) => t.tier === 4)!;
+  const t5 = p.tiers.find((t) => t.tier === 5)!;
+  assert(t4.approvalAuthorityOrdered === true,                'T4 ordered = true');
+  assert(Array.isArray(t4.approvalAuthority),                 'T4 still a list');
+  assert((t4.approvalAuthority as string[]).length === 3,     'T4 has 3 signers');
+  assert(t5.approvalAuthorityOrdered === undefined,           'T5 unordered (no flag)');
+  console.log('  Sequential signing chain parsed');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ORDERED chain: ${err}`);
+}
+
+section('Phase 11.6c — ORDERED without bracketed list rejected');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 4 sensitive { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ORDERED ops_lead }
+}`;
+  let threw = false;
+  try { parse(src); } catch { threw = true; }
+  assert(threw,                                                'ORDERED single-ident form must error');
+  console.log('  ORDERED requires bracketed list');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ORDERED rejection: ${err}`);
+}
+
 section('Phase 11.8 — MODULE EXPECTS_MATCH true/false captured');
 try {
   const src = `APP a { TITLE "A" DB a.db }

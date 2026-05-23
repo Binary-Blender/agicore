@@ -6894,6 +6894,77 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes('Phase 11.6b'),                                      'PARTIAL_APPROVAL annotated with phase');
 }
 
+section('Phase 11.6c — ORDERED authority chain serializes approvalAuthorityOrdered: true');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 4 ordered_tier   { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ORDERED [manager, director] }
+  TIER 5 unordered_tier { SCOPE [MUTATION_POLICY_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [ceo, board_chair] }
+}`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  // Both tiers serialize the field, but only T4 has it set to true
+  assert(sql.includes('"approvalAuthorityOrdered":true'),                'T4 ordered flag serializes to true');
+  // T5 still has the key (with null value, because we serialize undefined as null)
+  assert(sql.includes('"approvalAuthorityOrdered":null'),                'T5 has null (unordered)');
+}
+
+section('Phase 11.6c — AuthoritySet struct gains ordered field');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 4 t { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ORDERED [a, b] } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/approvals.rs') ?? '';
+  assert(rs.includes('pub ordered:     bool'),                            'AuthoritySet has ordered field');
+  // Logic: ordered is only "true" when both flag set AND authorities.len() > 1
+  assert(rs.includes('&& authorities.len() > 1'),                         'ordered ignored when single-signer (open chain)');
+  // Reads the flag from the tier JSON
+  assert(rs.includes('"approvalAuthorityOrdered"'),                       'runtime reads approvalAuthorityOrdered key');
+}
+
+section('Phase 11.6c — record_decision validates next-expected signer when ordered');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 4 t { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ORDERED [a, b] } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/approvals.rs') ?? '';
+  assert(rs.includes('Ordered signing chain'),                            'out-of-order rejection error message present');
+  assert(rs.includes('out-of-order rejected'),                            'rejection message tagged');
+  // The check uses prior_approvals count to index into the authorities list
+  assert(rs.includes('prior_approvals'),                                  'prior_approvals position counter');
+  assert(rs.includes('auth_set.authorities[prior_approvals]'),            'next expected signer indexed positionally');
+  // Only applies when decision == "approved"
+  const guardIdx = rs.indexOf('if decision == "approved"');
+  const orderedIdx = rs.indexOf('auth_set.ordered', guardIdx);
+  assert(guardIdx > 0 && orderedIdx > guardIdx,                           'ordered check only runs in the approve branch');
+}
+
+section('Phase 11.6c — unordered chain (no ORDERED keyword) emits same code paths but flag false');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 4 t { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY [a, b] } }`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  // Field serializes as null when no ORDERED keyword
+  assert(sql.includes('"approvalAuthorityOrdered":null'),                 'unordered → flag null in JSON');
+  // Runtime still has the AuthoritySet.ordered field (always emitted)
+  const rs = files.get('src-tauri/src/commands/approvals.rs') ?? '';
+  assert(rs.includes('pub ordered:     bool'),                            'ordered field still in struct');
+}
+
 section('Phase 11.7 — LEDGER declaration round-trips through SQL seed');
 {
   const src = `APP a { TITLE "A" DB a.db }

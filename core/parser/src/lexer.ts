@@ -255,6 +255,8 @@ export enum TokenType {
   // Phase 11.8 — MODULE rule-ref list (RULES [a, b, c]) + per-RULE mutation tier
   RULES_KW = 'RULES_KW',
   MUTATION_TIER = 'MUTATION_TIER',
+  // Phase 11.6c — APPROVAL_AUTHORITY ORDERED [a, b, c] for sequential signing
+  ORDERED = 'ORDERED',
   COMPENSATING_ACTION = 'COMPENSATING_ACTION',
   ON_ANDON_ESCALATE = 'ON_ANDON_ESCALATE',
   TARGETS = 'TARGETS',
@@ -696,6 +698,7 @@ const KEYWORDS: Record<string, TokenType> = {
   EXPECTS_MATCH:   TokenType.EXPECTS_MATCH,
   RULES:           TokenType.RULES_KW,
   MUTATION_TIER:   TokenType.MUTATION_TIER,
+  ORDERED:         TokenType.ORDERED,
   COMPENSATING_ACTION: TokenType.COMPENSATING_ACTION,
   ON_ANDON_ESCALATE: TokenType.ON_ANDON_ESCALATE,
   TARGETS: TokenType.TARGETS,

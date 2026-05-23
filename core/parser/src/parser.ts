@@ -5408,6 +5408,7 @@ export class Parser {
     let monitoringWindow: string | undefined;
     let nbveWindow: string | undefined;
     let approvalAuthority: string | string[] | undefined;
+    let approvalAuthorityOrdered: boolean | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -5463,7 +5464,16 @@ export class Parser {
         this.advance();
         // Phase 11.6b — accept either a single identifier (1-of-1 signoff)
         // or a bracketed list (N-of-N multi-signer consensus).
-        if (this.current().type === TokenType.LBRACKET) {
+        // Phase 11.6c — optional ORDERED keyword before the list requires
+        // signatures to arrive in the declared order (out-of-order rejected).
+        if (this.current().type === TokenType.ORDERED) {
+          this.advance();
+          approvalAuthorityOrdered = true;
+          if (this.current().type !== TokenType.LBRACKET) {
+            this.error(`APPROVAL_AUTHORITY ORDERED requires a bracketed list; got '${this.current().value}'`);
+          }
+          approvalAuthority = this.parseBracketedIdentifierList();
+        } else if (this.current().type === TokenType.LBRACKET) {
           approvalAuthority = this.parseBracketedIdentifierList();
         } else {
           approvalAuthority = this.expectIdentifier();
@@ -5476,7 +5486,8 @@ export class Parser {
     const end = this.expectToken(TokenType.RBRACE).location;
     return {
       tier, name: tierName, scope,
-      autoDeploy, require, regressionSuite, monitoringWindow, nbveWindow, approvalAuthority,
+      autoDeploy, require, regressionSuite, monitoringWindow, nbveWindow,
+      approvalAuthority, approvalAuthorityOrdered,
       span: { start, end },
     };
   }
