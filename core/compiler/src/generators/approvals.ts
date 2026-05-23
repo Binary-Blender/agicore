@@ -60,6 +60,7 @@ function buildApprovalsRs(): string {
 // approves or rejects, and the proposal transitions to its terminal state
 // with full audit.
 
+use crate::commands::ledger::append_entry as ledger_append;
 use crate::db::DbPool;
 use rusqlite::params;
 use serde::{Deserialize, Serialize};
@@ -273,7 +274,25 @@ fn record_decision(
         ).map_err(|e| e.to_string())?;
     }
 
-    // 3) Return the updated approval row.
+    // 3a) Phase 11.7 — record the signoff on the ledger. Need policy_name
+    //     from the proposal row (the approval row also has it but reading
+    //     from proposal keeps this idempotent if approval table is reset).
+    let policy_name: String = {
+        let conn = db.lock().map_err(|e| e.to_string())?;
+        conn.query_row(
+            "SELECT policy_name FROM mutation_proposals WHERE id = ?",
+            params![proposal_id],
+            |r| r.get(0),
+        ).map_err(|e| e.to_string())?
+    };
+    let event_type = if decision == "approved" { "APPROVED" } else { "REJECTED_BY_AUTHORITY" };
+    let _ = ledger_append(db, proposal_id, &policy_name, event_type, resolver, serde_json::json!({
+        "decision":  decision,
+        "decidedAt": now,
+        "notes":     notes,
+    }))?;
+
+    // 3b) Return the updated approval row.
     let conn = db.lock().map_err(|e| e.to_string())?;
     conn.query_row(
         "SELECT id, proposal_id, policy_name, required_authority, status, resolved_by, resolved_at, decision_notes, requested_at FROM approval_requests WHERE proposal_id = ?",

@@ -57,6 +57,7 @@ import { generateMutations } from './generators/mutations.js';
 import { generateResponder } from './generators/responder.js';
 import { generateImprover } from './generators/improver.js';
 import { generateApprovals } from './generators/approvals.js';
+import { generateLedger } from './generators/ledger.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -134,6 +135,7 @@ export function compile(source: string): CompileResult {
     generateResponder(ast),
     generateImprover(ast),
     generateApprovals(ast),
+    generateLedger(ast),
   ];
 
   for (const gen of generators) {

@@ -483,6 +483,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasWorkflowRuntime) modLines.push('pub mod workflow;');
   // Phase 11.4a — Mutation proposal lifecycle (gated only on MUTATION_POLICY).
   const hasMutationRuntime = !!ast.mutationPolicies && ast.mutationPolicies.length > 0;
+  // Phase 11.7 — Mutation ledger (declared first so other modules can `use` it).
+  if (hasMutationRuntime) modLines.push('pub mod ledger;');
   if (hasMutationRuntime) modLines.push('pub mod mutations;');
   // Phase 11.4c — Andon responder (closes the loop end-to-end).
   if (hasMutationRuntime) modLines.push('pub mod responder;');
@@ -684,7 +686,15 @@ export function generateRust(ast: AgiFile): Map<string, string> {
         'commands::approvals::reject_proposal',
       ]
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds, ...approvalsCmds];
+  // Phase 11.7 — Mutation ledger query + integrity commands.
+  const ledgerCmds = hasMutationRuntime
+    ? [
+        'commands::ledger::list_ledger_entries',
+        'commands::ledger::get_ledger_entries_for_proposal',
+        'commands::ledger::verify_ledger_integrity',
+      ]
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds, ...approvalsCmds, ...ledgerCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

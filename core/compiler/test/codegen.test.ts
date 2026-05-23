@@ -6465,6 +6465,170 @@ MUTATION_POLICY mp {
   assert(rs.includes('"approvalAuthority"'),                              'runtime reads approvalAuthority key from tier JSON');
 }
 
+section('Phase 11.7 — ledger.rs emitted with hash-chain primitives');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }
+  LEDGER ComplianceLedger
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/ledger.rs') ?? '';
+  assert(rs.length > 0,                                                   'ledger.rs emitted when MUTATION_POLICY present');
+  // Schema
+  assert(rs.includes('CREATE TABLE IF NOT EXISTS mutation_ledger'),       'mutation_ledger table DDL present');
+  assert(rs.includes('UNIQUE (ledger_name, sequence_num)'),               'unique (ledger_name, sequence_num) constraint');
+  assert(rs.includes('idx_ledger_chain'),                                 'chain index emitted');
+  assert(rs.includes('idx_ledger_proposal'),                              'proposal index emitted');
+  // Types
+  assert(rs.includes('pub struct LedgerEntry'),                           'LedgerEntry struct present');
+  assert(rs.includes('pub struct IntegrityReport'),                       'IntegrityReport struct present');
+  // Hash machinery
+  assert(rs.includes('use sha2::'),                                       'imports sha2 crate');
+  assert(rs.includes('pub fn compute_self_hash'),                         'compute_self_hash present');
+  assert(rs.includes('pub fn canonical_json'),                            'canonical_json present');
+  assert(rs.includes('pub fn append_entry'),                              'append_entry present');
+  assert(rs.includes('pub fn verify_integrity_impl'),                     'verify_integrity_impl present');
+  assert(rs.includes('"GENESIS"'),                                        'genesis sentinel');
+  // Tauri commands
+  assert(rs.includes('pub fn list_ledger_entries'),                       'list_ledger_entries command');
+  assert(rs.includes('pub fn get_ledger_entries_for_proposal'),           'get_ledger_entries_for_proposal command');
+  assert(rs.includes('pub fn verify_ledger_integrity'),                   'verify_ledger_integrity command');
+  // Embedded Rust unit tests for hash properties
+  assert(rs.includes('canonical_json_sorts_object_keys'),                 'embedded test: canonical sorting');
+  assert(rs.includes('compute_self_hash_is_deterministic'),               'embedded test: hash determinism');
+  assert(rs.includes('compute_self_hash_differs_on_payload_change'),      'embedded test: payload tampering caught');
+  assert(rs.includes('compute_self_hash_differs_on_prev_hash_change'),    'embedded test: chain break caught');
+}
+
+section('Phase 11.7 — no MUTATION_POLICY → no ledger.rs or sha2 dep (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/ledger.rs'),                  'no ledger.rs without MUTATION_POLICY');
+  assert(!files.has('src/lib/ledger.ts'),                                 'no ledger.ts without MUTATION_POLICY');
+  const cargo = files.get('src-tauri/Cargo.toml') ?? '';
+  assert(!cargo.includes('sha2 '),                                        'no sha2 dep without MUTATION_POLICY');
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(!modRs.includes('pub mod ledger;'),                              'ledger module not declared');
+}
+
+section('Phase 11.7 — sha2 dep added to Cargo.toml when MUTATION_POLICY present');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const cargo = files.get('src-tauri/Cargo.toml') ?? '';
+  assert(cargo.includes('sha2 = "0.10"'),                                 'sha2 0.10 added to Cargo deps');
+}
+
+section('Phase 11.7 — ledger module registered + 3 commands in main.rs');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(modRs.includes('pub mod ledger;'),                                  'ledger module declared');
+  // Order: ledger before mutations (so mutations can `use` it)
+  const idxLedger = modRs.indexOf('pub mod ledger;');
+  const idxMutations = modRs.indexOf('pub mod mutations;');
+  assert(idxLedger > 0 && idxLedger < idxMutations,                          'ledger declared before mutations module');
+  assert(mainRs.includes('commands::ledger::list_ledger_entries'),           'list command registered');
+  assert(mainRs.includes('commands::ledger::get_ledger_entries_for_proposal'),'get command registered');
+  assert(mainRs.includes('commands::ledger::verify_ledger_integrity'),       'verify command registered');
+}
+
+section('Phase 11.7 — mutations.rs hooks ledger at every lifecycle transition');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true REGRESSION_SUITE 24h_recent_workflows }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/mutations.rs') ?? '';
+  assert(rs.includes('use crate::commands::ledger::append_entry'),         'mutations imports ledger_append');
+  // PROPOSED hook in create_proposal_in_db
+  assert(rs.includes('"PROPOSED"'),                                        'create_proposal_in_db appends PROPOSED');
+  // TIER_VERIFIED / TIER_REJECTED branch in verify_and_persist
+  assert(rs.includes('"TIER_VERIFIED"'),                                   'verify appends TIER_VERIFIED');
+  assert(rs.includes('"TIER_REJECTED"'),                                   'verify appends TIER_REJECTED');
+  // TESTED + final disposition in execute_sandbox
+  assert(rs.includes('"TESTED"'),                                          'sandbox appends TESTED');
+  assert(rs.includes('"DEPLOYED"'),                                        'sandbox appends DEPLOYED (auto-deploy)');
+  assert(rs.includes('"ESCALATED"'),                                       'sandbox appends ESCALATED');
+  assert(rs.includes('"REJECTED_BY_SANDBOX"'),                             'sandbox appends REJECTED_BY_SANDBOX');
+}
+
+section('Phase 11.7 — approvals.rs hooks ledger on approve/reject');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/approvals.rs') ?? '';
+  assert(rs.includes('use crate::commands::ledger::append_entry'),         'approvals imports ledger_append');
+  assert(rs.includes('"APPROVED"'),                                        'approve appends APPROVED');
+  assert(rs.includes('"REJECTED_BY_AUTHORITY"'),                           'reject appends REJECTED_BY_AUTHORITY');
+}
+
+section('Phase 11.7 — TS bindings expose ledger queries + integrity check');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/ledger.ts') ?? '';
+  assert(ts.length > 0,                                                   'ledger.ts emitted');
+  assert(ts.includes('export interface LedgerEntry'),                     'LedgerEntry type exported');
+  assert(ts.includes('export interface IntegrityReport'),                 'IntegrityReport type exported');
+  assert(ts.includes('export type LedgerEventType'),                      'event type union exported');
+  assert(ts.includes("'PROPOSED'"),                                       'PROPOSED in event union');
+  assert(ts.includes("'DEPLOYED'"),                                       'DEPLOYED in event union');
+  assert(ts.includes("'APPROVED'"),                                       'APPROVED in event union');
+  assert(ts.includes('listLedgerEntries'),                                'listLedgerEntries wrapper');
+  assert(ts.includes('getLedgerEntriesForProposal'),                      'getLedgerEntriesForProposal wrapper');
+  assert(ts.includes('verifyLedgerIntegrity'),                            'verifyLedgerIntegrity wrapper');
+  assert(ts.includes("invoke<IntegrityReport>('verify_ledger_integrity'"),'verifyLedgerIntegrity invokes verify_ledger_integrity');
+}
+
+section('Phase 11.7 — LEDGER declaration round-trips through SQL seed');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }
+  LEDGER ComplianceLedger
+}`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  // The seed insert for the policy must include the LEDGER name so the
+  // runtime's append_entry can read it back per-policy.
+  assert(sql.includes('ComplianceLedger'),                                'LEDGER name seeded into mutation_policies row');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

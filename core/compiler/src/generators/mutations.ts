@@ -51,13 +51,15 @@ export function mutationCommandNames(ast: AgiFile): string[] {
 // ─── Rust runtime ──────────────────────────────────────────────────────────
 
 function buildMutationsRs(): string {
-  return `// Agicore Generated — Mutation proposal lifecycle (Phase 11.4a)
+  return `// Agicore Generated — Mutation proposal lifecycle (Phase 11.4a + 11.7 ledger hooks)
 // DO NOT EDIT BY HAND. See core/compiler/src/generators/mutations.ts.
 //
 // Owns the mutation_proposals table. Every AI-proposed change to the system
 // lands here as a row; the tier verifier mechanically blocks under-declared
-// proposals from reaching the sandbox.
+// proposals from reaching the sandbox. Every state transition is appended
+// to the hash-chained mutation_ledger (Phase 11.7) for compliance audit.
 
+use crate::commands::ledger::append_entry as ledger_append;
 use crate::db::DbPool;
 use rusqlite::params;
 use serde::{Deserialize, Serialize};
@@ -231,14 +233,23 @@ pub fn create_proposal_in_db(db: &DbPool, input: &ProposalInput) -> Result<Strin
     let now = chrono::Utc::now().to_rfc3339();
     let scope_json = serde_json::to_string(&input.claimed_scope).unwrap_or_else(|_| "[]".to_string());
     let content_json = input.mutation_content.to_string();
-    let conn = db.lock().map_err(|e| e.to_string())?;
-    conn.execute(
-        "INSERT INTO mutation_proposals (id, andon_event_id, policy_name, proposer_identity, target, claimed_tier, claimed_scope, mutation_content, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'created', ?, ?)",
-        params![
-            id, input.andon_event_id, input.policy_name, input.proposer_identity,
-            input.target, input.claimed_tier, scope_json, content_json, now, now,
-        ],
-    ).map_err(|e| e.to_string())?;
+    {
+        let conn = db.lock().map_err(|e| e.to_string())?;
+        conn.execute(
+            "INSERT INTO mutation_proposals (id, andon_event_id, policy_name, proposer_identity, target, claimed_tier, claimed_scope, mutation_content, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'created', ?, ?)",
+            params![
+                id, input.andon_event_id, input.policy_name, input.proposer_identity,
+                input.target, input.claimed_tier, scope_json, content_json, now, now,
+            ],
+        ).map_err(|e| e.to_string())?;
+    }
+    // Phase 11.7 — record the proposal birth on the ledger.
+    let _ = ledger_append(db, &id, &input.policy_name, "PROPOSED", &input.proposer_identity, serde_json::json!({
+        "andonEventId": input.andon_event_id,
+        "target":       input.target,
+        "claimedTier":  input.claimed_tier,
+        "claimedScope": input.claimed_scope,
+    }))?;
     Ok(id)
 }
 
@@ -257,17 +268,28 @@ pub fn verify_and_persist(db: &DbPool, proposal_id: &str) -> Result<TierVerifica
         let tiers = load_policy_tiers(&conn, &pn)?;
         (pn, ct, cs, tiers)
     };
-    let _ = policy_name;  // currently used for diagnostics only
-
     let verification = verify_proposal_tier_logic(claimed_tier, &claimed_scope, &policy_tiers);
 
     let now = chrono::Utc::now().to_rfc3339();
     let new_status = if verification.allowed { "tier_verified" } else { "tier_rejected" };
-    let conn = db.lock().map_err(|e| e.to_string())?;
-    conn.execute(
-        "UPDATE mutation_proposals SET status = ?, resolved_tier = ?, rejection_reason = ?, updated_at = ? WHERE id = ?",
-        params![new_status, verification.resolved_tier, verification.rejection_reason, now, proposal_id],
-    ).map_err(|e| e.to_string())?;
+    {
+        let conn = db.lock().map_err(|e| e.to_string())?;
+        conn.execute(
+            "UPDATE mutation_proposals SET status = ?, resolved_tier = ?, rejection_reason = ?, updated_at = ? WHERE id = ?",
+            params![new_status, verification.resolved_tier, verification.rejection_reason, now, proposal_id],
+        ).map_err(|e| e.to_string())?;
+    }
+
+    // Phase 11.7 — record tier verifier outcome on the ledger.
+    let _ = ledger_append(db, proposal_id, &policy_name,
+        if verification.allowed { "TIER_VERIFIED" } else { "TIER_REJECTED" },
+        "tier_verifier",
+        serde_json::json!({
+            "claimedTier":     claimed_tier,
+            "resolvedTier":    verification.resolved_tier,
+            "rejectionReason": verification.rejection_reason,
+        }),
+    )?;
 
     Ok(verification)
 }
@@ -447,9 +469,22 @@ pub fn execute_sandbox(db: &DbPool, proposal_id: &str) -> Result<SandboxOutcome,
 
     // 4) Record test outcome on the proposal.
     record_test_outcome(db, proposal_id, resolved_failure, total, unchanged, broken)?;
+    // Phase 11.7 — TESTED entry on the ledger (always recorded; outcome shown via the next entry).
+    let _ = ledger_append(db, proposal_id, &policy_name, "TESTED", "sandbox", serde_json::json!({
+        "regressionTotal":     total,
+        "regressionUnchanged": unchanged,
+        "regressionBroken":    broken,
+        "resolvedFailure":     resolved_failure,
+        "passed":              passed,
+        "suiteName":           suite_name,
+    }))?;
 
     // 5) Decide deploy disposition.
     let (final_status, audit_value): (String, Option<serde_json::Value>) = if !passed {
+        let _ = ledger_append(db, proposal_id, &policy_name, "REJECTED_BY_SANDBOX", "sandbox", serde_json::json!({
+            "regressionBroken": broken,
+            "resolvedFailure":  resolved_failure,
+        }))?;
         ("rejected".to_string(), None)
     } else if auto_deploys {
         let audit = serde_json::json!({
@@ -461,14 +496,22 @@ pub fn execute_sandbox(db: &DbPool, proposal_id: &str) -> Result<SandboxOutcome,
             "deployedAt":        chrono::Utc::now().to_rfc3339(),
         });
         record_deploy_outcome(db, proposal_id, true, &audit)?;
+        let _ = ledger_append(db, proposal_id, &policy_name, "DEPLOYED", "sandbox", audit.clone())?;
         ("deployed".to_string(), Some(audit))
     } else {
         let now = chrono::Utc::now().to_rfc3339();
-        let conn = db.lock().map_err(|e| e.to_string())?;
-        conn.execute(
-            "UPDATE mutation_proposals SET status = 'escalated', updated_at = ? WHERE id = ?",
-            params![now, proposal_id],
-        ).map_err(|e| e.to_string())?;
+        {
+            let conn = db.lock().map_err(|e| e.to_string())?;
+            conn.execute(
+                "UPDATE mutation_proposals SET status = 'escalated', updated_at = ? WHERE id = ?",
+                params![now, proposal_id],
+            ).map_err(|e| e.to_string())?;
+        }
+        let _ = ledger_append(db, proposal_id, &policy_name, "ESCALATED", "sandbox", serde_json::json!({
+            "resolvedTier":  resolved_tier,
+            "suiteName":     suite_name,
+            "escalatedAt":   now,
+        }))?;
         ("escalated".to_string(), None)
     };
 

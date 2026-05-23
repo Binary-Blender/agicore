@@ -65,6 +65,11 @@ export function generateTauriConfig(ast: AgiFile): Map<string, string> {
   const hotkeyDep = hasHotkey
     ? `tauri-plugin-global-shortcut = "2"\n`
     : '';
+  // Phase 11.7 — sha2 powers the tamper-evident ledger's hash chain.
+  const hasMutationPolicies = !!ast.mutationPolicies && ast.mutationPolicies.length > 0;
+  const ledgerDeps = hasMutationPolicies
+    ? `sha2 = "0.10"\n`
+    : '';
   const dialogDep = ast.app.workspaces
     ? `tauri-plugin-dialog = "2"\n`
     : '';
@@ -80,7 +85,7 @@ serde_json = "1"
 rusqlite = { version = "0.31", features = ["bundled"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-${aiServiceDeps}${vaultDeps}${hotkeyDep}${dialogDep}
+${aiServiceDeps}${vaultDeps}${hotkeyDep}${dialogDep}${ledgerDeps}
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 `;
