@@ -1,104 +1,147 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { MODELS, broadcastModelIds } from '../lib/models';
+import { MODELS } from '../lib/models';
+
+const PROVIDER_LABELS: Record<string, string> = {
+  anthropic:    'Anthropic (Claude)',
+  openai:       'OpenAI (GPT)',
+  google:       'Google (Gemini)',
+  xai:          'xAI (Grok)',
+  huggingface:  'BabyAI (HuggingFace)',
+};
 
 export function ModelPicker() {
   const selectedModel = useAppStore((s) => s.selectedModel);
   const setSelectedModel = useAppStore((s) => s.setSelectedModel);
   const councilModels = useAppStore((s) => s.councilModels);
   const setCouncilModels = useAppStore((s) => s.setCouncilModels);
-  const broadcastMode = useAppStore((s) => s.broadcastMode);
-  const setBroadcastMode = useAppStore((s) => s.setBroadcastMode);
   const hiddenModels = useAppStore((s) => s.hiddenModels);
-  const [showCouncil, setShowCouncil] = useState(false);
 
-  const visibleModels = MODELS.filter((m) => !hiddenModels.includes(m.id));
-  const visiblePaidModels = visibleModels.filter((m) => m.provider !== 'huggingface');
-  const visibleHfModels = visibleModels.filter((m) => m.provider === 'huggingface');
-  const bcastIds = broadcastModelIds().filter((id) => !hiddenModels.includes(id));
+  const visibleModels = useMemo(
+    () => MODELS.filter((m) => !hiddenModels.includes(m.id)),
+    [hiddenModels],
+  );
 
-  function toggleCouncilModel(modelId: string) {
-    if (modelId === selectedModel) return;
-    setCouncilModels(
-      councilModels.includes(modelId)
-        ? councilModels.filter((m) => m !== modelId)
-        : [...councilModels, modelId]
-    );
+  const providers = useMemo(() => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const m of visibleModels) {
+      if (!seen.has(m.provider)) { seen.add(m.provider); out.push(m.provider); }
+    }
+    return out;
+  }, [visibleModels]);
+
+  const [provider, setProvider] = useState<string>(() => {
+    const current = visibleModels.find((m) => m.id === selectedModel);
+    return current?.provider ?? providers[0] ?? '';
+  });
+
+  const modelsForProvider = visibleModels.filter((m) => m.provider === provider);
+  const [draftModel, setDraftModel] = useState<string>(() => modelsForProvider[0]?.id ?? '');
+
+  // Keep draftModel valid as provider changes
+  const validDraft = modelsForProvider.some((m) => m.id === draftModel)
+    ? draftModel
+    : (modelsForProvider[0]?.id ?? '');
+
+  const allSelected = [selectedModel, ...councilModels];
+
+  function addModel(modelId: string) {
+    if (!modelId) return;
+    if (allSelected.includes(modelId)) return;
+    setCouncilModels([...councilModels, modelId]);
   }
 
-  const isCouncilActive = councilModels.length > 0;
+  function removeModel(modelId: string) {
+    if (modelId === selectedModel) {
+      // Promote the first council model to primary, or no-op if none left
+      if (councilModels.length === 0) return;
+      const [next, ...rest] = councilModels;
+      setSelectedModel(next);
+      setCouncilModels(rest);
+    } else {
+      setCouncilModels(councilModels.filter((m) => m !== modelId));
+    }
+  }
+
+  function promote(modelId: string) {
+    if (modelId === selectedModel) return;
+    const without = councilModels.filter((m) => m !== modelId);
+    setCouncilModels([selectedModel, ...without]);
+    setSelectedModel(modelId);
+  }
 
   return (
-    <div className="px-3 py-2 border-b border-slate-700">
-      <label className="text-xs text-gray-500 block mb-1">Model</label>
-      <select
-        value={selectedModel}
-        onChange={(e) => {
-          setSelectedModel(e.target.value);
-          setCouncilModels(councilModels.filter((m) => m !== e.target.value));
-        }}
-        className="w-full bg-slate-700 border border-slate-600 text-white text-xs px-2 py-1.5 rounded focus:outline-none focus:border-blue-500"
-      >
-        {visiblePaidModels.map((m) => (
-          <option key={m.id} value={m.id}>{m.label}</option>
-        ))}
-        {visibleHfModels.length > 0 && (
-          <optgroup label="BabyAI — HuggingFace (free tier)">
-            {visibleHfModels.map((m) => (
-              <option key={m.id} value={m.id}>{m.label}</option>
-            ))}
-          </optgroup>
-        )}
-      </select>
-
-      <button
-        onClick={() => { setShowCouncil((v) => !v); if (broadcastMode) setBroadcastMode(false); }}
-        className={`mt-1.5 w-full text-left text-xs flex items-center justify-between px-2 py-1 rounded transition ${
-          isCouncilActive
-            ? 'text-purple-300 bg-purple-900/30'
-            : 'text-gray-500 hover:text-gray-300 hover:bg-slate-700/50'
-        }`}
-      >
-        <span>{isCouncilActive ? `⚡ Council (${councilModels.length + 1})` : 'Council mode'}</span>
-        <span>{showCouncil ? '▲' : '▼'}</span>
-      </button>
-
-      <button
-        onClick={() => { setBroadcastMode(!broadcastMode); setCouncilModels([]); setShowCouncil(false); }}
-        className={`mt-0.5 w-full text-left text-xs flex items-center justify-between px-2 py-1 rounded transition ${
-          broadcastMode
-            ? 'text-sky-300 bg-sky-900/30'
-            : 'text-gray-500 hover:text-gray-300 hover:bg-slate-700/50'
-        }`}
-      >
-        <span>{broadcastMode ? `📡 Broadcast (${bcastIds.length} providers)` : 'Broadcast mode'}</span>
-      </button>
-
-      {showCouncil && (
-        <div className="mt-1 space-y-0.5">
-          {visibleModels.filter((m) => m.id !== selectedModel).map((m) => (
-            <label key={m.id} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-700/50 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={councilModels.includes(m.id)}
-                onChange={() => toggleCouncilModel(m.id)}
-                className="accent-purple-500 w-3 h-3"
-              />
-              <span className="text-xs text-gray-300 flex-1 truncate">{m.label}</span>
-              {m.provider === 'huggingface' && (
-                <span className="text-xs text-emerald-600 flex-shrink-0">free</span>
-              )}
-            </label>
+    <div className="px-3 py-2 border-b border-slate-700 space-y-1.5">
+      <label className="text-xs text-gray-500 block">Models</label>
+      <div className="flex items-center gap-1">
+        <select
+          value={provider}
+          onChange={(e) => setProvider(e.target.value)}
+          className="flex-1 min-w-0 bg-slate-700 border border-slate-600 text-white text-xs px-1.5 py-1 rounded focus:outline-none focus:border-blue-500"
+          title="Provider"
+        >
+          {providers.map((p) => (
+            <option key={p} value={p}>{PROVIDER_LABELS[p] ?? p}</option>
           ))}
-          {isCouncilActive && (
-            <button
-              onClick={() => setCouncilModels([])}
-              className="w-full text-xs text-gray-500 hover:text-gray-300 text-center py-0.5 transition"
+        </select>
+        <select
+          value={validDraft}
+          onChange={(e) => setDraftModel(e.target.value)}
+          className="flex-1 min-w-0 bg-slate-700 border border-slate-600 text-white text-xs px-1.5 py-1 rounded focus:outline-none focus:border-blue-500"
+          title="Model"
+        >
+          {modelsForProvider.map((m) => (
+            <option key={m.id} value={m.id} disabled={allSelected.includes(m.id)}>
+              {m.label}{allSelected.includes(m.id) ? ' ✓' : ''}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={() => addModel(validDraft)}
+          disabled={!validDraft || allSelected.includes(validDraft)}
+          className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded disabled:bg-slate-700 disabled:text-gray-500 transition flex-shrink-0"
+          title="Add this model"
+        >
+          +
+        </button>
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {allSelected.map((id) => {
+          const m = MODELS.find((x) => x.id === id);
+          const label = m?.label ?? id;
+          const isPrimary = id === selectedModel;
+          return (
+            <span
+              key={id}
+              className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
+                isPrimary
+                  ? 'bg-blue-600/30 text-blue-200 border border-blue-500/50'
+                  : 'bg-purple-600/30 text-purple-200 border border-purple-500/50'
+              }`}
+              title={isPrimary ? 'Primary model' : 'Click to set as primary'}
             >
-              Clear council
-            </button>
-          )}
-        </div>
+              <button
+                onClick={() => promote(id)}
+                disabled={isPrimary}
+                className={`max-w-[8rem] truncate ${isPrimary ? 'cursor-default' : 'hover:underline'}`}
+              >
+                {label}
+              </button>
+              <button
+                onClick={() => removeModel(id)}
+                disabled={allSelected.length === 1 && isPrimary}
+                className="text-current opacity-60 hover:opacity-100 disabled:opacity-20 leading-none"
+                title="Remove"
+              >
+                ×
+              </button>
+            </span>
+          );
+        })}
+      </div>
+      {councilModels.length > 0 && (
+        <p className="text-xs text-purple-400/70">⚡ Council mode — {allSelected.length} models will respond in parallel.</p>
       )}
     </div>
   );

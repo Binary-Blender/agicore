@@ -7,8 +7,9 @@ import { SearchBar } from './SearchBar';
 import { TagPicker } from './TagPicker';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
-import { webSearch } from '../lib/api';
-import { modelLabel, modelContextWindow, broadcastModelIds } from '../lib/models';
+import { webSearch, listFolderItems, listChatMessages } from '../lib/api';
+import type { FolderItem } from '../lib/types';
+import { modelLabel, modelContextWindow } from '../lib/models';
 import { ContextWindowViewer } from './ContextWindowViewer';
 import type { ChatMessage, ChatMessageAlternative } from '../lib/types';
 
@@ -41,11 +42,51 @@ export function ChatView() {
   const [streamingContent, setStreamingContent] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<ChatMessage[] | null>(null);
   const [showSearch, setShowSearch] = useState(false);
-  const [selectedFolderItems] = useState<string[]>([]);
-  const [folderItemsMap] = useState<Record<string, any>>({});
   const selectedModel = useAppStore((s) => s.selectedModel);
   const councilModels = useAppStore((s) => s.councilModels);
-  const broadcastMode = useAppStore((s) => s.broadcastMode);
+  const selectedTagIds = useAppStore((s) => s.selectedTagIds);
+  const selectedContextFolderIds = useAppStore((s) => s.selectedContextFolderIds);
+  const toggleSelectedContextFolderId = useAppStore((s) => s.toggleSelectedContextFolderId);
+  const applySessionFolderSelection = useAppStore((s) => s.applySessionFolderSelection);
+
+  // When the active session changes, restore that session's persisted folder selection.
+  useEffect(() => {
+    if (currentSession) applySessionFolderSelection(currentSession.selectedFolders);
+    else applySessionFolderSelection(null);
+  }, [currentSessionId, currentSession?.selectedFolders, applySessionFolderSelection]);
+  const [folderItemsForContext, setFolderItemsForContext] = useState<FolderItem[]>([]);
+  const [taggedMessages, setTaggedMessages] = useState<ChatMessage[]>([]);
+
+  // Load folder items for the currently-selected context folders
+  useEffect(() => {
+    if (selectedContextFolderIds.length === 0) {
+      setFolderItemsForContext([]);
+      return;
+    }
+    listFolderItems()
+      .then((all) => setFolderItemsForContext(all.filter((it) => selectedContextFolderIds.includes(it.folderId))))
+      .catch((err) => { console.error('Folder context load failed:', err); setFolderItemsForContext([]); });
+  }, [selectedContextFolderIds]);
+
+  // Load messages tagged with any of the selected tags (across all sessions)
+  useEffect(() => {
+    if (selectedTagIds.length === 0) { setTaggedMessages([]); return; }
+    listChatMessages()
+      .then((all) => {
+        const filtered = all.filter((m) => {
+          if (!m.selectedTags) return false;
+          let ids: string[] = [];
+          if (Array.isArray(m.selectedTags)) ids = m.selectedTags as string[];
+          else if (typeof m.selectedTags === 'string') { try { ids = JSON.parse(m.selectedTags); } catch { ids = []; } }
+          return ids.some((id) => selectedTagIds.includes(id));
+        });
+        setTaggedMessages(filtered);
+      })
+      .catch((err) => { console.error('Tagged message load failed:', err); setTaggedMessages([]); });
+  }, [selectedTagIds, chatMessages]);
+
+  const selectedFolderItems = folderItemsForContext.map((it) => it.id);
+  const folderItemsMap = folderItemsForContext.reduce<Record<string, FolderItem>>((acc, it) => { acc[it.id] = it; return acc; }, {});
   const modelContextOverrides = useAppStore((s) => s.modelContextOverrides);
   const [activeDocCompiler, setActiveDocCompiler] = useState<string | null>(null);
   const [compileTitle, setCompileTitle] = useState('');
@@ -56,13 +97,17 @@ export function ChatView() {
   const [showSaveToFolder, setShowSaveToFolder] = useState(false);
   const [savingToFolder, setSavingToFolder] = useState(false);
   const [alertDismissedAt, setAlertDismissedAt] = useState(0);
+  const [editingPrompt, setEditingPrompt] = useState(false);
+  const [promptDraft, setPromptDraft] = useState('');
 
   const contextWindow = modelContextWindow(selectedModel, modelContextOverrides);
   const activeMessages = chatMessages.filter((m) => !m.isExcluded && !m.isArchived && !m.isPruned);
   const contextTokens = activeMessages.reduce((sum, m) => sum + (m.totalTokens || 0), 0);
   const tokenPct = Math.min(contextTokens / contextWindow, 1);
-  const warnThreshold = 0.7;
-  const pruneThreshold = 0.85;
+  const pruneWarnPercent = useAppStore((s) => s.pruneWarnPercent);
+  const pruneTriggerPercent = useAppStore((s) => s.pruneTriggerPercent);
+  const warnThreshold = pruneWarnPercent / 100;
+  const pruneThreshold = pruneTriggerPercent / 100;
 
   async function handleAutoPrune() {
     setPruning(true);
@@ -88,7 +133,39 @@ export function ChatView() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const displayMessages = searchResults ?? chatMessages;
+  // Merge in tagged messages from other sessions (deduped, sorted by createdAt)
+  const taggedFromOtherSessions = taggedMessages.filter((tm) => tm.sessionId !== currentSessionId);
+  const mergedMessages = taggedFromOtherSessions.length > 0
+    ? [...chatMessages, ...taggedFromOtherSessions].sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      )
+    : chatMessages;
+  const displayMessages = searchResults ?? mergedMessages;
+  const currentSessionMsgIds = new Set(chatMessages.map((m) => m.id));
+
+  // Find first index in displayMessages that's actually in-context.
+  // If there are out-of-context messages BEFORE it, render a divider there.
+  const pruneDividerIndex = (() => {
+    if (searchResults) return -1;
+    let firstIncluded = -1;
+    let hasOutOfContext = false;
+    for (let i = 0; i < displayMessages.length; i++) {
+      const m = displayMessages[i];
+      const inContext = !m.isExcluded && !m.isPruned && !m.isArchived;
+      if (inContext && firstIncluded === -1) firstIncluded = i;
+      if (!inContext) hasOutOfContext = true;
+    }
+    return hasOutOfContext && firstIncluded > 0 ? firstIncluded : -1;
+  })();
+
+  function buildFolderContext(items: FolderItem[]): string {
+    if (items.length === 0) return '';
+    const parts = items.map((it) => {
+      const label = it.filename ?? it.itemType ?? 'item';
+      return `[${label}]\n${it.content}`;
+    });
+    return `[folder-context]\n${parts.join('\n\n---\n\n')}\n[/folder-context]`;
+  }
 
   const handleSend = useCallback(async (rawText: string) => {
     let userText = rawText;
@@ -116,46 +193,12 @@ export function ChatView() {
           { role: 'assistant', content: m.aiMessage },
         ];
       });
-    const apiContent = searchContext ? `${searchContext}\n\n---\n\n${userText}` : userText;
+    const folderCtx = buildFolderContext(folderItemsForContext);
+    const apiContent = [folderCtx, searchContext, userText].filter(Boolean).join('\n\n---\n\n');
 
     const isCouncil = councilModels.length > 0;
-    const isBroadcast = broadcastMode;
 
-    if (isBroadcast) {
-      const allModels = broadcastModelIds();
-      setStreamingContent(`Broadcasting to ${allModels.length} providers…`);
-      try {
-        const results = await Promise.allSettled(
-          allModels.map((model) =>
-            invoke<{ content: string; model: string; provider: string; inputTokens: number; outputTokens: number }>(
-              'send_chat',
-              { request: { messages: [...history, { role: 'user', content: apiContent }], model, systemPrompt: currentSession?.systemPrompt ?? null }, requestId: crypto.randomUUID() }
-            )
-          )
-        );
-
-        const alternatives: ChatMessageAlternative[] = results
-          .map((r, i): ChatMessageAlternative | null =>
-            r.status === 'fulfilled'
-              ? { provider: r.value.provider, providerName: modelLabel(allModels[i]), modelId: r.value.model || allModels[i], content: r.value.content, tokens: (r.value.inputTokens ?? 0) + (r.value.outputTokens ?? 0), preferred: i === 0 }
-              : null
-          )
-          .filter((a): a is ChatMessageAlternative => a !== null);
-
-        if (alternatives.length === 0) throw new Error('All broadcast requests failed');
-        const primary = alternatives[0];
-
-        await invoke('create_chat_message', {
-          input: { userMessage: userText, aiMessage: primary.content, userTokens: primary.tokens, aiTokens: primary.tokens, totalTokens: alternatives.reduce((sum, a) => sum + a.tokens, 0), model: primary.modelId, provider: primary.provider, systemPrompt: searchContext || null, alternatives: JSON.stringify(alternatives), userId: 'default-user', sessionId: currentSessionId },
-        });
-        setStreamingContent(null);
-        await loadChatMessagesForCurrentSession();
-      } catch (err) {
-        console.error('Broadcast failed:', err);
-        setStreamingContent(`Error: ${err}`);
-        setTimeout(() => setStreamingContent(null), 5000);
-      }
-    } else if (isCouncil) {
+    if (isCouncil) {
       const allModels = [selectedModel, ...councilModels];
       setStreamingContent(`Gathering ${allModels.length} council responses…`);
       try {
@@ -245,7 +288,7 @@ export function ChatView() {
         setTimeout(() => setStreamingContent(null), 5000);
       } finally { unlisten(); }
     }
-  }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, councilModels, broadcastMode, currentSessionId, currentSession]);
+  }, [loadChatMessagesForCurrentSession, chatMessages, selectedModel, councilModels, currentSessionId, currentSession]);
 
   async function handleSaveSessionToFolder(folderId: string) {
     if (!currentSessionId) return;
@@ -276,7 +319,7 @@ export function ChatView() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-0">
       {showSearch && (
         <SearchBar
           onResults={(results) => setSearchResults(results)}
@@ -312,7 +355,48 @@ export function ChatView() {
           </button>
         </div>
       )}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      {currentSession && (
+        <div className="px-4 py-1.5 border-b border-slate-700/40 bg-slate-900/30 text-xs flex items-start gap-2">
+          <span className="text-gray-500 flex-shrink-0 mt-0.5">System:</span>
+          {editingPrompt ? (
+            <textarea
+              autoFocus
+              value={promptDraft}
+              onChange={(e) => setPromptDraft(e.target.value)}
+              onBlur={async () => {
+                const next = promptDraft.trim();
+                const current = currentSession.systemPrompt ?? '';
+                if (next !== current) {
+                  try {
+                    await invoke('update_session', { id: currentSession.id, input: { systemPrompt: next || null } });
+                    await useAppStore.getState().loadSessions();
+                  } catch (err) { console.error('Save system prompt failed:', err); }
+                }
+                setEditingPrompt(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') { setEditingPrompt(false); }
+                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { (e.target as HTMLTextAreaElement).blur(); }
+              }}
+              rows={3}
+              spellCheck={false}
+              className="flex-1 min-w-0 bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white font-mono resize-y focus:outline-none focus:border-blue-500"
+              placeholder="System prompt for this session (Ctrl+Enter to save, Esc to cancel)"
+            />
+          ) : (
+            <button
+              onClick={() => { setPromptDraft(currentSession.systemPrompt ?? ''); setEditingPrompt(true); }}
+              className="flex-1 min-w-0 text-left text-gray-400 hover:text-white truncate transition italic"
+              title="Edit session system prompt"
+            >
+              {currentSession.systemPrompt?.trim()
+                ? currentSession.systemPrompt
+                : <span className="text-gray-600">(none — click to set)</span>}
+            </button>
+          )}
+        </div>
+      )}
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-4">
         {displayMessages.length === 0 && !streamingContent && (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -322,9 +406,38 @@ export function ChatView() {
             </div>
           </div>
         )}
-        {displayMessages.map((msg) => (
-          <ChatMessageItem key={msg.id} message={msg} folders={folders} tags={tags} sessions={sessions} onRefresh={loadChatMessagesForCurrentSession} />
-        ))}
+        {displayMessages.map((msg, i) => {
+          const isInCurrentSession = currentSessionMsgIds.has(msg.id);
+          const isLastInCurrent = isInCurrentSession
+            && streamingContent === null
+            && !webSearching
+            && !displayMessages.slice(i + 1).some((m) => currentSessionMsgIds.has(m.id));
+          return (
+            <div key={msg.id}>
+              {i === pruneDividerIndex && (
+                <div className="flex items-center gap-3 my-2">
+                  <div className="flex-1 h-px bg-orange-500/40" />
+                  <span className="text-xs text-orange-400 whitespace-nowrap">context window boundary</span>
+                  <div className="flex-1 h-px bg-orange-500/40" />
+                </div>
+              )}
+              <ChatMessageItem
+                message={msg}
+                folders={folders}
+                tags={tags}
+                sessions={sessions}
+                onRefresh={loadChatMessagesForCurrentSession}
+                isLast={isLastInCurrent}
+                isTagContext={!isInCurrentSession}
+                onRegenerate={async () => {
+                  await invoke('delete_chat_message', { id: msg.id });
+                  await loadChatMessagesForCurrentSession();
+                  await handleSend(msg.userMessage);
+                }}
+              />
+            </div>
+          );
+        })}
         {webSearching && (
           <div className="rounded-xl border border-blue-700/40 bg-blue-900/10 p-3 flex items-center gap-2">
             <span className="animate-spin text-blue-400 text-sm">⟳</span>
@@ -336,8 +449,17 @@ export function ChatView() {
             <div className="flex items-start gap-3">
               <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">AI</div>
               <div className="flex-1 min-w-0">
-                {streamingContent.startsWith('Gathering') || streamingContent.startsWith('Error') ? (
-                  <p className="text-sm text-gray-400 italic">{streamingContent}</p>
+                {streamingContent.startsWith('Error') ? (
+                  <p className="text-sm text-red-400 italic">{streamingContent}</p>
+                ) : streamingContent.startsWith('Gathering') || streamingContent.startsWith('Broadcasting') ? (
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </div>
+                    <span className="text-sm text-gray-400 italic">{streamingContent}</span>
+                  </div>
                 ) : (
                   <>
                     <MarkdownRenderer content={streamingContent} />
@@ -348,12 +470,19 @@ export function ChatView() {
             </div>
           </div>
         )}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} className="!mt-0" />
       </div>
       {showContextViewer && (
         <ContextWindowViewer messages={chatMessages} onClose={() => setShowContextViewer(false)} />
       )}
-      <ContextBar selectedFolderItems={selectedFolderItems} folderItemsMap={folderItemsMap} onRemove={() => {}} />
+      <ContextBar
+        selectedFolderItems={selectedFolderItems}
+        folderItemsMap={folderItemsMap}
+        onRemove={(itemId) => {
+          const item = folderItemsMap[itemId];
+          if (item) toggleSelectedContextFolderId(item.folderId);
+        }}
+      />
       <div className="border-t border-slate-700/50">
         <div className="flex items-center gap-2 px-4 py-1.5">
           <button
@@ -463,11 +592,18 @@ function TokenBar({
   );
 }
 
-function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }: {
+function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh, isLast, isTagContext, onRegenerate }: {
   message: ChatMessage; folders: any[]; tags: any[]; sessions: any[];
   onRefresh: () => Promise<void>;
+  isLast?: boolean;
+  isTagContext?: boolean;
+  onRegenerate?: () => Promise<void>;
 }) {
+  const sourceSessionName = isTagContext
+    ? sessions.find((s) => s.id === message.sessionId)?.name ?? 'Other session'
+    : null;
   const [copied, setCopied] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showFolderPicker, setShowFolderPicker] = useState(false);
   const [showTagPicker, setShowTagPicker] = useState(false);
@@ -565,13 +701,37 @@ function ChatMessageItem({ message, folders, tags: _tags, sessions, onRefresh }:
           </div>
         </div>
       )}
+      {isTagContext && sourceSessionName && (
+        <div className="flex items-center gap-1.5 text-xs text-blue-400 mb-1 px-1">
+          <span className="bg-blue-500/10 border border-blue-500/30 rounded px-2 py-0.5">
+            from <span className="font-medium text-white">{sourceSessionName}</span> · tag match
+          </span>
+        </div>
+      )}
       <div className={`group relative rounded-xl border transition-all ${
-        message.isArchived ? 'opacity-40 border-slate-700 bg-slate-800/30'
+        isTagContext
+          ? 'border-blue-700/30 bg-blue-900/10'
+          : message.isArchived ? 'opacity-40 border-slate-700 bg-slate-800/30'
           : message.isExcluded ? 'opacity-60 border-slate-700 bg-slate-800/40 border-dashed'
           : message.isPruned ? 'opacity-45 border-orange-700/40 bg-slate-800/30 border-dashed'
           : 'border-slate-700 bg-slate-800/60'
       }`}>
         <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+          {isLast && onRegenerate && (
+            <button
+              onClick={async () => {
+                if (regenerating) return;
+                setRegenerating(true);
+                try { await onRegenerate(); }
+                finally { setRegenerating(false); }
+              }}
+              disabled={regenerating}
+              className="text-xs text-gray-500 hover:text-white bg-slate-700 px-2 py-0.5 rounded transition disabled:opacity-50"
+              title="Regenerate this response"
+            >
+              {regenerating ? '⟳' : '↻ Regenerate'}
+            </button>
+          )}
           <button onClick={handleCopy} className="text-xs text-gray-500 hover:text-white bg-slate-700 px-2 py-0.5 rounded transition">
             {copied ? '✓' : 'Copy'}
           </button>

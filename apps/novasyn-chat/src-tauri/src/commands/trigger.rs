@@ -306,7 +306,7 @@ pub fn start_trigger_dispatcher(
     keys: std::sync::Arc<ApiKeyStore>,
     default_model: String,
 ) {
-    tokio::spawn(async move {
+    tauri::async_runtime::spawn(async move {
         // Brief startup delay so other systems initialize first
         tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
 

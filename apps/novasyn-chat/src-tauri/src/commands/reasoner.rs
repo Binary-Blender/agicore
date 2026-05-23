@@ -325,7 +325,7 @@ pub fn start_reasoner_scheduler(
     keys: std::sync::Arc<ApiKeyStore>,
     default_model: String,
 ) {
-    tokio::spawn(async move {
+    tauri::async_runtime::spawn(async move {
         // Brief startup delay so the UI can initialize first
         tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
 

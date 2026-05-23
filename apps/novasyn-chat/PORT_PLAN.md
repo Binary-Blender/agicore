@@ -3,7 +3,7 @@
 **Old app (3G):** `novasyn_suite/novasyn_chat_lite/` — Electron + Node.js + SQLite  
 **New app (4G):** `agicore/apps/novasyn-chat/` — Tauri 2 + Rust + SQLite  
 **Agicore:** Phase 5 complete — 34 declaration types, 1,382 tests passing, all codegen implemented  
-**Last updated:** 2026-05-17 — **ALL 12 SPRINTS COMPLETE**  
+**Last updated:** 2026-05-23 — **ALL 12 SPRINTS COMPLETE + Sprint 13 UI Refresh**  
 
 ---
 
@@ -348,6 +348,83 @@ Sprint 10:        Add TERMINAL + PROFILES to SESSION terminal
 | Multi-workspace (separate DBs) | ✅ Sprint 11 | "Open another database…" in Settings → file dialog → `switch_db` → reload |
 | BabyAI integration | ✅ Sprint 12 | 5 HF models in picker (optgroup + free badge); `call_huggingface` SSE streaming; `babyai` key slot; `model.contains('/')` provider detection |
 | Tray icon / minimize to tray | Done (core) | System tray already wired in main.rs (Sprint 1–5) |
+
+---
+
+## Sprint 13 — Post-Port UI Refresh (2026-05-23)
+
+After running the ported app side-by-side with the 3G original, the layout
+felt heavier than the old "everything in a toolbox on the left" model — every
+secondary view in the new app preempted the chat. This sprint pulled the new
+app back toward the 3G feel without dropping the Agicore-native additions.
+
+### Fixes
+- **Migration idempotency** (`migrations/001_initial.sql`, new `005_validation_errors.sql`): bare `ALTER TABLE ... ADD COLUMN` panicked on second startup. Column folded into the initial `channel_messages` CREATE TABLE; new tolerated migration backfills existing dev DBs.
+- **Reactor panic at startup**: schedulers in `commands/reasoner.rs` and `commands/trigger.rs` called `tokio::spawn` from Tauri's synchronous `setup()` hook (no runtime). Switched to `tauri::async_runtime::spawn`.
+- **Phantom scrollbars**: `space-y-4` on the chat scroller's `messagesEndRef` sibling pushed content 16px past the content area. Pinned `!mt-0` on the ref div. Also hardened `html/body/#root` with `overflow: hidden !important`, added `min-h-0` to flex columns, and `overflow-hidden` to the auto-resizing textarea to suppress its 2-pixel scroll quirk.
+
+### Verified parity items (already done in earlier sprints)
+- Synthesize button (`ChatView.tsx:667`) wired to `send_chat` with the synthesis model.
+- Auto-update: manual `Check for updates` + `Install & restart` in Settings; the 3G app's updater was a Shopify-era stub, so new app already exceeds parity here.
+
+### Net-new gap closures
+- **Message regenerate**: `↻ Regenerate` button on the last current-session assistant message; deletes and re-sends the original user prompt through `handleSend` (so it respects current model, council, system prompt, folder context).
+- **In-app keyboard shortcuts**: `Ctrl+N` new session, `Ctrl+L` focus message input, `Ctrl+,` open Settings, `Esc` close any modal/panel. `Ctrl+F` search and `Ctrl+Shift+N` window toggle were already wired.
+- **Model discovery wiring**: registered `discover_models` in `invoke_handler`; added `Refresh from providers` button in Settings → Models with inline "Found N models across X providers" feedback.
+- **Tray New Chat**: added `New Chat` menu item between `Show` and `Quit`. Emits `tray-new-chat`; frontend listens and creates a session via the centralized `createDefaultSession()` store action.
+
+### UI restructure
+- **Modal overlays for secondary views**: chat is now permanently rendered in the main area. `Folders / Tags / Channels / Reasoners / Workflows / Identity / Exchange Library / Documents / Settings` open as centered modal overlays with Esc/click-outside dismiss. NavRail icons trigger the modals; `Chat / Terminal / Settings` moved to the TitleBar.
+- **TitleBar parity with 3G**: Chat/Terminal pill toggle, selected-model badge, `+ New Chat`, `↓ Export` (markdown via `export_session_md`), `⚙ Settings`, then window controls.
+- **NavRail trimmed**: now just the launcher for Agicore-specific management views (no more Chat/Terminal/Settings entries — those are in the TitleBar).
+- **Right-side Document Panel** (`DocumentSidePanel.tsx`): documents opened from the sidebar slide in as a resizable right-edge panel (280–900px, persisted to `localStorage`) alongside the chat instead of covering it. Save (or `Ctrl+S`), dirty indicator, Esc-to-close when clean, confirm-discard when dirty.
+- **Pruned-context divider** in `ChatView`: orange `context window boundary` line between out-of-context and in-context messages, matching 3G.
+- **Update-available banner**: silent `checkUpdate()` on launch; thin blue banner under TitleBar with `Install & restart` / `Later` when an update is found. Silent failure when endpoint unconfigured (dev mode).
+
+### Sidebar as toolbox
+Sidebar now stacks (collapsible, persisted via `localStorage`):
+- Model picker (provider→model cascading dropdowns + chip list — multi-select = council)
+- Conversations + archived
+- Folders (checkbox = "use as chat context"; click name = open content modal)
+- Tags (chip filter; active tags merge tagged messages from other sessions into the chat with a "from <session> · tag match" badge)
+- Documents (click = open in right-side panel)
+
+### Model picker redesign
+- Replaced the previous single-select dropdown + council checkboxes + broadcast toggle with two cascading dropdowns (Provider → Model) and an `+` button.
+- Selected models render as removable chips; click a chip name to promote it to primary. Multi-select = council automatically.
+- **Broadcast mode removed entirely** (store field + UI + ChatView branch). To broadcast: select one model from each provider manually.
+
+### Chat-context wiring (genuinely new in 4G)
+The 3G app had folder/tag context selection in the sidebar; 4G inherited the UI surfaces but never wired the state. This sprint closes that:
+- `selectedTagIds` + `selectedContextFolderIds` in store (in-memory + per-session persistence for folders via `sessions.selected_folders`).
+- Folder items for selected folders are concatenated as `[folder-context]...[/folder-context]` and prepended to the user message in `handleSend`.
+- Tagged messages from other sessions are merged into `displayMessages` with a `from-other-session` badge; tag-match messages still feed into the AI history.
+- `ContextBar` chips removable; clicking × deselects the parent folder.
+
+### Settings additions
+- **Auto-prune thresholds**: warn % and prune % sliders (default 70 / 85), persisted to `localStorage`. ChatView reads from store instead of hardcoded constants.
+- **Default system prompt**: textarea applied to every new session via `createDefaultSession()` (called from Ctrl+N, TitleBar `+ New Chat`, tray, and sidebar `+`).
+
+### Streaming UX
+- Bouncing-dot indicator while gathering council/broadcast responses (replaces the plain italic "Gathering N responses…" text).
+- Error states get distinct red italic styling.
+
+### System prompt header
+- Above the messages list, a thin `System: <prompt>` bar shows the current session's prompt with click-to-edit textarea. Saves on blur, `Ctrl+Enter`, or `Esc` to cancel. Per-session edits override the global default.
+
+### Persisted UI state (`localStorage`)
+- `ns_doc_panel_width` — right-side document panel width
+- `ns_sidebar_show_folders / _tags / _documents` — sidebar section collapse state
+- `ns_prune_warn_pct / _trigger_pct` — auto-prune thresholds
+- `ns_default_system_prompt` — default system prompt for new sessions
+
+### Code cleanup
+- Removed dead `broadcastMode` field + `setBroadcastMode` + `isBroadcast` handleSend branch + unused `broadcastModelIds` import.
+
+### Known gaps (carry-overs, not blockers)
+- `list_chat_messages_by_tags` Rust command — tag-filter still loads all messages client-side and filters. Fine until history grows past a few thousand messages.
+- Folder selection is per-session but item-level deselection isn't supported (removing a single item from the ContextBar deselects the whole parent folder).
+- First-launch loading spinner not added (component-level loading isn't visibly slow enough to need one).
 
 ---
 

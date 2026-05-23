@@ -1,10 +1,10 @@
-import { MessageSquare, Terminal, FolderOpen, Tags, BookMarked, FileText, Settings, GitBranch, Brain, Radio, Fingerprint, ExternalLink } from 'lucide-react';
+import { FolderOpen, Tags, BookMarked, FileText, GitBranch, Brain, Radio, Fingerprint, ExternalLink } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { openViewWindow } from '../lib/popout';
 
+// Chat / Terminal / Settings now live in the TitleBar.
+// NavRail is the launcher for secondary management views (open as modals).
 const NAV_ITEMS = [
-  { view: 'ChatView',       icon: MessageSquare, title: 'Chat' },
-  { view: 'TerminalView',   icon: Terminal,      title: 'Terminal' },
   { view: 'FolderPanel',    icon: FolderOpen,    title: 'Folders' },
   { view: 'TagManager',     icon: Tags,          title: 'Tags' },
   { view: 'ExchangeLibrary',icon: BookMarked,    title: 'Exchanges' },
@@ -13,7 +13,6 @@ const NAV_ITEMS = [
   { view: 'ReasonerView',   icon: Brain,         title: 'Reasoners' },
   { view: 'ChannelView',    icon: Radio,         title: 'Channels' },
   { view: 'IdentityView',   icon: Fingerprint,   title: 'Identity' },
-  { view: 'SettingsView',   icon: Settings,      title: 'Settings' },
 ];
 
 export function NavRail() {

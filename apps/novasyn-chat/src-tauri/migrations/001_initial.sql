@@ -235,6 +235,7 @@ CREATE TABLE IF NOT EXISTS channel_messages (
   published_at TEXT NOT NULL,
   processed_at TEXT,
   expires_at TEXT,
+  validation_errors TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_channel_messages_channel ON channel_messages(channel_name, published_at DESC);
@@ -255,8 +256,6 @@ CREATE TABLE IF NOT EXISTS trigger_log (
 CREATE INDEX IF NOT EXISTS idx_trigger_log_trigger ON trigger_log(trigger_name, fired_at DESC);
 
 -- PACKET: typed message validation log
-ALTER TABLE channel_messages ADD COLUMN validation_errors TEXT;
-
 CREATE TABLE IF NOT EXISTS packet_validation_log (
   id TEXT PRIMARY KEY,
   channel_name TEXT NOT NULL,

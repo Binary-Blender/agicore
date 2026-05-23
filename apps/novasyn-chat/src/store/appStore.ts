@@ -45,14 +45,38 @@ interface AppState {
   councilModels: string[];
   setCouncilModels: (models: string[]) => void;
 
-  broadcastMode: boolean;
-  setBroadcastMode: (on: boolean) => void;
-
   synthesisModel: string;
   setSynthesisModel: (model: string) => void;
 
   hiddenModels: string[];
   setHiddenModels: (ids: string[]) => void;
+
+  // Auto-prune thresholds (% of context window, 0-100)
+  pruneWarnPercent: number;
+  pruneTriggerPercent: number;
+  setPruneWarnPercent: (n: number) => void;
+  setPruneTriggerPercent: (n: number) => void;
+
+  defaultSystemPrompt: string;
+  setDefaultSystemPrompt: (s: string) => void;
+
+  // Creates a session with the configured default system prompt + auto-selects it.
+  createDefaultSession: () => Promise<void>;
+
+  // Right-side document panel (separate from DocumentEditor modal selection)
+  panelDocumentId: string | null;
+  setPanelDocumentId: (id: string | null) => void;
+
+  // Chat-context filters (in-memory, per-session)
+  selectedTagIds: string[];
+  toggleSelectedTagId: (id: string) => void;
+  clearSelectedTagIds: () => void;
+
+  selectedContextFolderIds: string[];
+  toggleSelectedContextFolderId: (id: string) => void;
+  clearSelectedContextFolderIds: () => void;
+  // Apply the persisted folder selection from a Session row (called on session switch).
+  applySessionFolderSelection: (raw: unknown) => void;
 
   modelContextOverrides: Record<string, number>;
   setModelContextOverride: (modelId: string, tokens: number | null) => void;
@@ -192,14 +216,75 @@ export const useAppStore = create<AppState>((set, get) => ({
   councilModels: [],
   setCouncilModels: (models) => set({ councilModels: models }),
 
-  broadcastMode: false,
-  setBroadcastMode: (on) => set({ broadcastMode: on }),
-
   synthesisModel: lsGet('ns_synthesis_model', 'claude-sonnet-4-20250514'),
   setSynthesisModel: (model) => { lsSet('ns_synthesis_model', model); set({ synthesisModel: model }); },
 
   hiddenModels: lsGet<string[]>('ns_hidden_models', []),
   setHiddenModels: (ids) => { lsSet('ns_hidden_models', ids); set({ hiddenModels: ids }); },
+
+  pruneWarnPercent: lsGet<number>('ns_prune_warn_pct', 70),
+  pruneTriggerPercent: lsGet<number>('ns_prune_trigger_pct', 85),
+  setPruneWarnPercent: (n) => { lsSet('ns_prune_warn_pct', n); set({ pruneWarnPercent: n }); },
+  setPruneTriggerPercent: (n) => { lsSet('ns_prune_trigger_pct', n); set({ pruneTriggerPercent: n }); },
+
+  defaultSystemPrompt: lsGet<string>('ns_default_system_prompt', ''),
+  setDefaultSystemPrompt: (s) => { lsSet('ns_default_system_prompt', s); set({ defaultSystemPrompt: s }); },
+
+  createDefaultSession: async () => {
+    const name = `New Session ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    const prompt = get().defaultSystemPrompt;
+    await get().addSession({
+      name,
+      userId: 'default-user',
+      ...(prompt ? { systemPrompt: prompt } : {}),
+    } as any);
+    const latest = get().sessions[0];
+    if (latest) get().selectSession(latest.id);
+  },
+
+  panelDocumentId: null,
+  setPanelDocumentId: (id) => set({ panelDocumentId: id }),
+
+  selectedTagIds: [],
+  toggleSelectedTagId: (id) => set((s) => ({
+    selectedTagIds: s.selectedTagIds.includes(id)
+      ? s.selectedTagIds.filter((x) => x !== id)
+      : [...s.selectedTagIds, id],
+  })),
+  clearSelectedTagIds: () => set({ selectedTagIds: [] }),
+
+  selectedContextFolderIds: [],
+  toggleSelectedContextFolderId: (id) => {
+    set((s) => ({
+      selectedContextFolderIds: s.selectedContextFolderIds.includes(id)
+        ? s.selectedContextFolderIds.filter((x) => x !== id)
+        : [...s.selectedContextFolderIds, id],
+    }));
+    const sid = get().currentSessionId;
+    if (sid) {
+      const ids = get().selectedContextFolderIds;
+      updateSession(sid, { selectedFolders: JSON.stringify(ids) } as any).catch((err) =>
+        console.error('Persist folder selection failed:', err),
+      );
+    }
+  },
+  clearSelectedContextFolderIds: () => {
+    set({ selectedContextFolderIds: [] });
+    const sid = get().currentSessionId;
+    if (sid) {
+      updateSession(sid, { selectedFolders: JSON.stringify([]) } as any).catch((err) =>
+        console.error('Persist folder selection failed:', err),
+      );
+    }
+  },
+  applySessionFolderSelection: (raw) => {
+    let ids: string[] = [];
+    if (Array.isArray(raw)) ids = raw as string[];
+    else if (typeof raw === 'string' && raw.trim()) {
+      try { const parsed = JSON.parse(raw); if (Array.isArray(parsed)) ids = parsed; } catch { /* ignore */ }
+    }
+    set({ selectedContextFolderIds: ids });
+  },
 
   modelContextOverrides: lsGet<Record<string, number>>('ns_context_overrides', {}),
   setModelContextOverride: (modelId, tokens) => {

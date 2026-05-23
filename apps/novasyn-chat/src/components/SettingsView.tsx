@@ -26,6 +26,12 @@ export function SettingsView() {
   const setModelContextOverride = useAppStore((s) => s.setModelContextOverride);
   const synthesisModel = useAppStore((s) => s.synthesisModel);
   const setSynthesisModel = useAppStore((s) => s.setSynthesisModel);
+  const pruneWarnPercent = useAppStore((s) => s.pruneWarnPercent);
+  const setPruneWarnPercent = useAppStore((s) => s.setPruneWarnPercent);
+  const pruneTriggerPercent = useAppStore((s) => s.pruneTriggerPercent);
+  const setPruneTriggerPercent = useAppStore((s) => s.setPruneTriggerPercent);
+  const defaultSystemPrompt = useAppStore((s) => s.defaultSystemPrompt);
+  const setDefaultSystemPrompt = useAppStore((s) => s.setDefaultSystemPrompt);
 
   const [ctxDraft, setCtxDraft] = useState<Record<string, string>>({});
   const [updateStatus, setUpdateStatus] = useState<'idle' | 'checking' | 'available' | 'none' | 'error'>('idle');
@@ -34,6 +40,22 @@ export function SettingsView() {
   const [updateHandle, setUpdateHandle] = useState<Awaited<ReturnType<typeof checkUpdate>> | null>(null);
   const [dbPath, setDbPath] = useState('');
   const [switchingDb, setSwitchingDb] = useState(false);
+  const [refreshingModels, setRefreshingModels] = useState(false);
+  const [refreshResult, setRefreshResult] = useState<string | null>(null);
+
+  async function handleRefreshModels() {
+    setRefreshingModels(true);
+    setRefreshResult(null);
+    try {
+      const models = await invoke<Array<{ provider: string }>>('discover_models', { forceRefresh: true });
+      const providers = new Set(models.map((m) => m.provider));
+      setRefreshResult(`Found ${models.length} models across ${providers.size} provider${providers.size === 1 ? '' : 's'}.`);
+    } catch (e) {
+      setRefreshResult(`Refresh failed: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setRefreshingModels(false);
+    }
+  }
 
   function toggleHidden(modelId: string) {
     if (hiddenModels.includes(modelId)) {
@@ -187,7 +209,19 @@ export function SettingsView() {
         <div className="flex items-center gap-2 mb-3">
           <Cpu size={16} className="text-emerald-400" />
           <h3 className="text-sm font-medium text-white">Models</h3>
+          <button
+            onClick={handleRefreshModels}
+            disabled={refreshingModels}
+            className="ml-auto flex items-center gap-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-gray-300 hover:text-white px-2.5 py-1 rounded transition disabled:opacity-50"
+            title="Discover available models from configured providers"
+          >
+            <RefreshCw size={12} className={refreshingModels ? 'animate-spin' : ''} />
+            {refreshingModels ? 'Refreshing…' : 'Refresh from providers'}
+          </button>
         </div>
+        {refreshResult && (
+          <p className={`text-xs mb-2 ${refreshResult.startsWith('Found') ? 'text-emerald-400' : 'text-amber-400'}`}>{refreshResult}</p>
+        )}
         <p className="text-xs text-gray-500 mb-4">
           Hide models from the picker. Override context window size if a model has been updated since this release.
         </p>
@@ -230,6 +264,50 @@ export function SettingsView() {
               </div>
             );
           })}
+        </div>
+        <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4 mb-3">
+          <label className="text-sm text-gray-200 font-medium block mb-2">Default system prompt</label>
+          <p className="text-xs text-gray-500 mb-3">Applied to every newly-created session. Per-session prompts (via the session menu) override this.</p>
+          <textarea
+            value={defaultSystemPrompt}
+            onChange={(e) => setDefaultSystemPrompt(e.target.value)}
+            placeholder="e.g. You are a concise senior engineer. Prefer code examples over prose."
+            rows={3}
+            spellCheck={false}
+            className="w-full bg-slate-700/70 border border-slate-600 rounded px-2.5 py-1.5 text-xs text-white placeholder-gray-500 font-mono resize-y focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4 mb-3">
+          <label className="text-sm text-gray-200 font-medium block mb-2">Auto-prune thresholds</label>
+          <p className="text-xs text-gray-500 mb-3">Warn when context usage reaches the first threshold; show the auto-prune button (and require a manual click) at the second.</p>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-400 w-16 flex-shrink-0">Warn at</span>
+              <input
+                type="range"
+                min={10}
+                max={Math.min(pruneTriggerPercent - 1, 99)}
+                step={1}
+                value={pruneWarnPercent}
+                onChange={(e) => setPruneWarnPercent(parseInt(e.target.value, 10))}
+                className="flex-1 accent-amber-500"
+              />
+              <span className="text-xs text-amber-400 font-mono w-10 text-right">{pruneWarnPercent}%</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-400 w-16 flex-shrink-0">Prune at</span>
+              <input
+                type="range"
+                min={Math.max(pruneWarnPercent + 1, 11)}
+                max={99}
+                step={1}
+                value={pruneTriggerPercent}
+                onChange={(e) => setPruneTriggerPercent(parseInt(e.target.value, 10))}
+                className="flex-1 accent-red-500"
+              />
+              <span className="text-xs text-red-400 font-mono w-10 text-right">{pruneTriggerPercent}%</span>
+            </div>
+          </div>
         </div>
         <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4">
           <label className="text-sm text-gray-200 font-medium block mb-2">Synthesis model</label>

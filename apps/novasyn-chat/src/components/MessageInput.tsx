@@ -116,7 +116,7 @@ export function MessageInput({ onSend }: Props) {
             onKeyDown={handleKeyDown}
             placeholder="Message… or /search <query> for web context"
             rows={1}
-            className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 pr-12 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition caret-white"
+            className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 pr-12 text-sm text-white placeholder-gray-500 resize-none overflow-hidden focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition caret-white"
           />
           {input && (
             <span className="absolute bottom-2.5 right-14 text-xs text-gray-600">~{inputTokens}t</span>

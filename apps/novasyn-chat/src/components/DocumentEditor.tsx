@@ -8,7 +8,8 @@ import type { Document } from '../lib/types';
 export function DocumentEditor() {
   const documents = useAppStore((s) => s.documents);
   const loadDocuments = useAppStore((s) => s.loadDocuments);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selectedId = useAppStore((s) => s.selectedDocumentId);
+  const setSelectedId = useAppStore((s) => s.selectDocument);
   const [editing, setEditing] = useState(false);
   const [draftDocumentTitle, setDraftDocumentTitle] = useState('');
 

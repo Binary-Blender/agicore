@@ -9,7 +9,7 @@ mod vault;
 mod tests;
 
 use std::sync::Mutex;
-use tauri::Manager;
+use tauri::{Manager, Emitter};
 use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton};
 use tauri::menu::{Menu, MenuItem};
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
@@ -33,8 +33,9 @@ fn main() {
             app.manage(vault_pool);
             // System tray setup
             let show = MenuItem::with_id(app, "show", "Show NovaSyn Chat", true, None::<&str>)?;
+            let new_chat = MenuItem::with_id(app, "new_chat", "New Chat", true, None::<&str>)?;
             let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&show, &quit])?;
+            let menu = Menu::with_items(app, &[&show, &new_chat, &quit])?;
             TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
                 .menu(&menu)
@@ -44,6 +45,12 @@ fn main() {
                         if let Some(w) = app.get_webview_window("main") {
                             let _ = w.show(); let _ = w.set_focus();
                         }
+                    }
+                    "new_chat" => {
+                        if let Some(w) = app.get_webview_window("main") {
+                            let _ = w.show(); let _ = w.set_focus();
+                        }
+                        let _ = app.emit("tray-new-chat", ());
                     }
                     "quit" => app.exit(0),
                     _ => {}
@@ -92,6 +99,7 @@ fn main() {
             ai_service::send_chat,
             ai_service::get_api_keys,
             ai_service::set_api_key,
+            ai_service::discover_models,
             commands::user::list_users,
             commands::user::create_user,
             commands::user::get_user,

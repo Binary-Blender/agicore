@@ -1,10 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
-import { Plus, Pencil, Trash2, Key, MessageSquare, Download, SlidersHorizontal, Search, X, Archive, ArchiveRestore, Copy, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, Pencil, Trash2, Key, MessageSquare, Download, SlidersHorizontal, Search, X, Archive, ArchiveRestore, Copy, ChevronDown, ChevronRight, FolderOpen, Tags as TagsIcon, FileText } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { useAppStore } from '../store/appStore';
 import { ModelPicker } from './ModelPicker';
 import { ApiKeyModal } from './ApiKeyModal';
-import type { Session } from '../lib/types';
+import { FolderContentModal } from './FolderContentModal';
+import type { Session, Folder } from '../lib/types';
+
+function useStickyBool(key: string, initial: boolean): [boolean, (v: boolean | ((p: boolean) => boolean)) => void] {
+  const [val, setVal] = useState<boolean>(() => {
+    try {
+      const raw = window.localStorage.getItem(key);
+      return raw === null ? initial : raw === '1';
+    } catch { return initial; }
+  });
+  useEffect(() => {
+    try { window.localStorage.setItem(key, val ? '1' : '0'); } catch {}
+  }, [key, val]);
+  return [val, setVal];
+}
 
 interface SessionItemProps {
   session: Session;
@@ -185,7 +199,27 @@ export function Sidebar() {
   const [showFilter, setShowFilter] = useState(false);
   const [msgCounts, setMsgCounts] = useState<Record<string, number>>({});
   const [showArchived, setShowArchived] = useState(false);
+  const [showFolders, setShowFolders] = useStickyBool('ns_sidebar_show_folders', true);
+  const [showTags, setShowTags] = useStickyBool('ns_sidebar_show_tags', true);
+  const [showDocuments, setShowDocuments] = useStickyBool('ns_sidebar_show_documents', true);
+  const [managingFolder, setManagingFolder] = useState<Folder | null>(null);
   const filterRef = useRef<HTMLInputElement>(null);
+
+  const folders = useAppStore((s) => s.folders);
+  const loadFolders = useAppStore((s) => s.loadFolders);
+  const addFolder = useAppStore((s) => s.addFolder);
+  const tags = useAppStore((s) => s.tags);
+  const loadTags = useAppStore((s) => s.loadTags);
+  const addTag = useAppStore((s) => s.addTag);
+  const setCurrentView = useAppStore((s) => s.setCurrentView);
+  const selectedTagIds = useAppStore((s) => s.selectedTagIds);
+  const toggleSelectedTagId = useAppStore((s) => s.toggleSelectedTagId);
+  const clearSelectedTagIds = useAppStore((s) => s.clearSelectedTagIds);
+  const selectedContextFolderIds = useAppStore((s) => s.selectedContextFolderIds);
+  const toggleSelectedContextFolderId = useAppStore((s) => s.toggleSelectedContextFolderId);
+  const documents = useAppStore((s) => s.documents);
+  const loadDocuments = useAppStore((s) => s.loadDocuments);
+  const setPanelDocumentId = useAppStore((s) => s.setPanelDocumentId);
 
   const activeSessions = sessions.filter((s) => !s.isArchived);
   const archivedSessions = sessions.filter((s) => s.isArchived);
@@ -210,7 +244,34 @@ export function Sidebar() {
     } catch { /* non-critical */ }
   }
 
-  useEffect(() => { loadSessions(); loadMsgCounts(); }, []);
+  useEffect(() => { loadSessions(); loadMsgCounts(); loadFolders(); loadTags(); loadDocuments(); }, []);
+
+  async function handleNewDocument() {
+    const name = prompt('Document title?');
+    if (!name?.trim()) return;
+    try {
+      await invoke('create_document', { input: { title: name.trim(), filePath: name.trim(), language: 'markdown' } });
+      await loadDocuments();
+    } catch (err) { console.error('Create document failed:', err); }
+  }
+
+  function openDocument(id: string) {
+    setPanelDocumentId(id);
+  }
+
+  async function handleNewFolder() {
+    const name = prompt('Folder name?');
+    if (!name?.trim()) return;
+    try { await addFolder({ name: name.trim(), userId: 'default-user' } as any); }
+    catch (err) { console.error('Create folder failed:', err); }
+  }
+
+  async function handleNewTag() {
+    const name = prompt('Tag name?');
+    if (!name?.trim()) return;
+    try { await addTag({ name: name.trim(), userId: 'default-user' } as any); }
+    catch (err) { console.error('Create tag failed:', err); }
+  }
 
   useEffect(() => {
     if (!currentSessionId && activeSessions.length > 0) {
@@ -219,10 +280,8 @@ export function Sidebar() {
   }, [sessions, currentSessionId]);
 
   async function handleNewSession() {
-    const name = `New Session ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     try {
-      await invoke('create_session', { input: { name, userId: 'default-user' } });
-      await loadSessions();
+      await useAppStore.getState().createDefaultSession();
       await loadMsgCounts();
     } catch (err) { console.error('Create session failed:', err); }
   }
@@ -369,11 +428,173 @@ export function Sidebar() {
               ))}
             </div>
           )}
+
+          {/* Folders section */}
+          <div className="mt-3 border-t border-slate-700/50 pt-2">
+            <div className="px-3 mb-1 flex items-center justify-between">
+              <button
+                onClick={() => setShowFolders((v) => !v)}
+                className="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wide hover:text-gray-300 transition"
+              >
+                {showFolders ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                <FolderOpen size={11} />
+                <span>Folders ({folders.length})</span>
+              </button>
+              <button
+                onClick={handleNewFolder}
+                className="text-gray-400 hover:text-white p-0.5 rounded hover:bg-slate-700 transition"
+                title="New folder"
+              >
+                <Plus size={14} />
+              </button>
+            </div>
+            {showFolders && folders.length === 0 && (
+              <p className="text-xs text-gray-600 px-3 py-1">No folders yet.</p>
+            )}
+            {showFolders && folders.map((f) => {
+              const inContext = selectedContextFolderIds.includes(f.id);
+              return (
+                <div
+                  key={f.id}
+                  className={`mx-1 mb-0.5 px-2 py-1 rounded text-xs transition flex items-center gap-1.5 group ${
+                    inContext ? 'bg-blue-900/30 text-blue-200' : 'text-gray-300 hover:bg-slate-700/50 hover:text-white'
+                  }`}
+                  title={f.description ?? f.name}
+                >
+                  <input
+                    type="checkbox"
+                    checked={inContext}
+                    onChange={() => toggleSelectedContextFolderId(f.id)}
+                    className="accent-blue-500 w-3 h-3 flex-shrink-0 cursor-pointer"
+                    title={inContext ? 'Remove from chat context' : 'Use as chat context'}
+                  />
+                  <button
+                    onClick={() => setManagingFolder(f)}
+                    className="truncate flex-1 text-left flex items-center gap-1.5 min-w-0"
+                  >
+                    <FolderOpen size={11} className="text-gray-500 flex-shrink-0" />
+                    <span className="truncate">{f.name}</span>
+                  </button>
+                  {typeof f.totalTokens === 'number' && f.totalTokens > 0 && (
+                    <span className="text-xs text-gray-600 flex-shrink-0">{f.totalTokens >= 1000 ? `${(f.totalTokens / 1000).toFixed(0)}K` : f.totalTokens}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Tags section */}
+          <div className="mt-3 border-t border-slate-700/50 pt-2">
+            <div className="px-3 mb-1 flex items-center justify-between">
+              <button
+                onClick={() => setShowTags((v) => !v)}
+                className="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wide hover:text-gray-300 transition"
+              >
+                {showTags ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                <TagsIcon size={11} />
+                <span>Tags ({tags.length})</span>
+              </button>
+              <div className="flex items-center gap-0.5">
+                <button
+                  onClick={handleNewTag}
+                  className="text-gray-400 hover:text-white p-0.5 rounded hover:bg-slate-700 transition"
+                  title="New tag"
+                >
+                  <Plus size={14} />
+                </button>
+                <button
+                  onClick={() => setCurrentView('TagManager')}
+                  className="text-gray-500 hover:text-white p-0.5 rounded hover:bg-slate-700 transition"
+                  title="Manage tags"
+                >
+                  <SlidersHorizontal size={12} />
+                </button>
+              </div>
+            </div>
+            {showTags && tags.length === 0 && (
+              <p className="text-xs text-gray-600 px-3 py-1">No tags yet.</p>
+            )}
+            {showTags && (
+              <div className="px-3 flex flex-wrap gap-1 items-center">
+                {tags.map((t) => {
+                  const active = selectedTagIds.includes(t.id);
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => toggleSelectedTagId(t.id)}
+                      className={`text-xs px-2 py-0.5 rounded-full truncate max-w-[10rem] transition ${
+                        active ? 'ring-1 ring-blue-400' : 'opacity-70 hover:opacity-100'
+                      }`}
+                      style={
+                        t.color
+                          ? { backgroundColor: `${t.color}${active ? '50' : '30'}`, color: t.color }
+                          : { backgroundColor: active ? 'rgb(30 64 175 / 0.5)' : 'rgb(51 65 85 / 0.6)', color: '#d1d5db' }
+                      }
+                      title={active ? `Filter: ${t.name} (click to remove)` : `Filter by ${t.name}`}
+                    >
+                      {t.name}
+                    </button>
+                  );
+                })}
+                {selectedTagIds.length > 0 && (
+                  <button
+                    onClick={clearSelectedTagIds}
+                    className="text-xs text-gray-500 hover:text-white px-2 py-0.5 transition"
+                    title="Clear tag filters"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Documents section */}
+          <div className="mt-3 border-t border-slate-700/50 pt-2">
+            <div className="px-3 mb-1 flex items-center justify-between">
+              <button
+                onClick={() => setShowDocuments((v) => !v)}
+                className="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wide hover:text-gray-300 transition"
+              >
+                {showDocuments ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                <FileText size={11} />
+                <span>Documents ({documents.length})</span>
+              </button>
+              <button
+                onClick={handleNewDocument}
+                className="text-gray-400 hover:text-white p-0.5 rounded hover:bg-slate-700 transition"
+                title="New document"
+              >
+                <Plus size={14} />
+              </button>
+            </div>
+            {showDocuments && documents.length === 0 && (
+              <p className="text-xs text-gray-600 px-3 py-1">No documents yet.</p>
+            )}
+            {showDocuments && documents.map((d) => (
+              <button
+                key={d.id}
+                onClick={() => openDocument(d.id)}
+                className="mx-1 mb-0.5 px-2 py-1 rounded text-xs text-gray-300 hover:bg-slate-700/50 hover:text-white transition flex items-center gap-1.5 w-[calc(100%-0.5rem)] text-left"
+                title={d.title}
+              >
+                <FileText size={11} className="text-gray-500 flex-shrink-0" />
+                <span className="truncate flex-1">{d.title}</span>
+              </button>
+            ))}
+          </div>
         </div>
         <div className="px-3 py-2 border-t border-slate-700 text-xs text-gray-600">
           <span>Built on Agicore</span>
         </div>
       </aside>
+      {managingFolder && (
+        <FolderContentModal
+          folder={managingFolder}
+          onClose={() => setManagingFolder(null)}
+          onChanged={() => { loadFolders(); }}
+        />
+      )}
     </>
   );
 }

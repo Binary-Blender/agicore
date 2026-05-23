@@ -20,6 +20,8 @@ pub fn init_db(db_path: PathBuf) -> DbPool {
     let _ = conn.execute_batch(migration3);
     let migration4 = include_str!("../migrations/004_session_archived.sql");
     let _ = conn.execute_batch(migration4);
+    let migration5 = include_str!("../migrations/005_validation_errors.sql");
+    let _ = conn.execute_batch(migration5);
 
     Arc::new(Mutex::new(conn))
 }
