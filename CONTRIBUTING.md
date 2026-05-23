@@ -34,12 +34,19 @@ See [`EVOLVING.md`](EVOLVING.md) for the full methodology and feature-request te
 ## Development workflow
 
 ```bash
+# Clone agicore AND agicore-examples as siblings.
+# Some tests load fixture .agi files from agicore-examples; the relative
+# paths assume the two repos sit side-by-side.
 git clone https://github.com/Binary-Blender/agicore.git
+git clone https://github.com/Binary-Blender/agicore-examples.git
+
 cd agicore
 npm install                # installs both workspaces via root package.json
 npm test                   # runs parser + compiler + validator suites
 npm run build              # tsc on both packages
 ```
+
+If `agicore-examples` isn't a sibling directory, the test suites will fail fast with a message telling you where to clone it. Inline-DSL tests (the bulk of the 2,459-test suite) work without it; only the fixture-loading tests need the sibling.
 
 To run a single package's tests:
 

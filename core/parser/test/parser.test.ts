@@ -1,10 +1,31 @@
 // Agicore DSL Parser Test Suite
+//
+// NOTE: Some tests load fixture .agi files from the sibling agicore-examples
+// repo (see paths starting with `../../../../agicore-examples/`). If you run
+// this suite locally, clone agicore-examples as a sibling of agicore:
+//   git clone https://github.com/Binary-Blender/agicore-examples
+// CI does this automatically (see .github/workflows/ci.yml).
 
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { parse } from '../src/index.js';
 import type { AgiFile } from '../src/types.js';
+
+const examplesRoot = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../../../agicore-examples'
+);
+if (!existsSync(examplesRoot)) {
+  console.error('');
+  console.error('ERROR: Fixture tests require the agicore-examples sibling repo.');
+  console.error(`  Expected at: ${examplesRoot}`);
+  console.error('  Fix:');
+  console.error(`    git clone https://github.com/Binary-Blender/agicore-examples \\`);
+  console.error(`      ${examplesRoot}`);
+  console.error('');
+  process.exit(1);
+}
 
 let passed = 0;
 let failed = 0;
