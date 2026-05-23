@@ -6351,6 +6351,120 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY
   assert(ts.includes("import type { TierVerification, SandboxOutcome } from './mutations'"), 'cross-module types imported');
 }
 
+section('Phase 11.6 — approvals.rs emitted with lifecycle helpers');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }
+  TIER 3 structural { SCOPE [WORKFLOW_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY ops_lead }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/approvals.rs') ?? '';
+  assert(rs.length > 0,                                                   'approvals.rs emitted when MUTATION_POLICY present');
+  // Public type
+  assert(rs.includes('pub struct ApprovalRequest'),                       'ApprovalRequest struct present');
+  // Schema bootstrapping
+  assert(rs.includes('CREATE TABLE IF NOT EXISTS approval_requests'),     'approval_requests table DDL present');
+  assert(rs.includes('UNIQUE (proposal_id)'),                             'one approval per proposal enforced');
+  assert(rs.includes('idx_approvals_status'),                             'status index emitted');
+  assert(rs.includes('idx_approvals_proposal'),                           'proposal index emitted');
+  // Lifecycle helpers
+  assert(rs.includes('pub fn open_request_impl'),                         'open_request_impl present');
+  assert(rs.includes('pub fn lookup_required_authority'),                 'lookup_required_authority present');
+  assert(rs.includes('fn record_decision'),                               'record_decision private helper present');
+  // Tauri commands
+  assert(rs.includes('pub fn list_approval_requests'),                    'list_approval_requests Tauri command');
+  assert(rs.includes('pub fn get_approval_request'),                      'get_approval_request command');
+  assert(rs.includes('pub fn open_approval_request_for_proposal'),        'open_approval_request_for_proposal command');
+  assert(rs.includes('pub fn approve_proposal'),                          'approve_proposal command');
+  assert(rs.includes('pub fn reject_proposal'),                           'reject_proposal command');
+  // Approval chain audit appended to proposal row
+  assert(rs.includes('approval_chain'),                                   'writes approval_chain column on proposal');
+  assert(rs.includes("decision"),                                         'decision recorded');
+  // Terminal status mapping
+  assert(rs.includes('"deployed"'),                                       'approved → deployed status');
+  assert(rs.includes('"rejected"'),                                       'rejected → rejected status');
+}
+
+section('Phase 11.6 — no MUTATION_POLICY → no approvals.rs (back-compat)');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }`;
+  const { files } = compile(src);
+  assert(!files.has('src-tauri/src/commands/approvals.rs'),               'no approvals.rs without MUTATION_POLICY');
+  assert(!files.has('src/lib/approvals.ts'),                              'no approvals.ts without MUTATION_POLICY');
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  assert(!modRs.includes('pub mod approvals;'),                           'approvals module not declared');
+}
+
+section('Phase 11.6 — approvals module + 5 commands registered in main.rs');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const modRs = files.get('src-tauri/src/commands/mod.rs') ?? '';
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(modRs.includes('pub mod approvals;'),                            'approvals module declared');
+  assert(mainRs.includes('commands::approvals::list_approval_requests'),       'list registered');
+  assert(mainRs.includes('commands::approvals::get_approval_request'),         'get registered');
+  assert(mainRs.includes('commands::approvals::open_approval_request_for_proposal'), 'open registered');
+  assert(mainRs.includes('commands::approvals::approve_proposal'),             'approve registered');
+  assert(mainRs.includes('commands::approvals::reject_proposal'),              'reject registered');
+}
+
+section('Phase 11.6 — TS bindings expose all approval functions + ApprovalRequest type');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/approvals.ts') ?? '';
+  assert(ts.length > 0,                                                   'approvals.ts emitted');
+  assert(ts.includes('export interface ApprovalRequest'),                 'ApprovalRequest type exported');
+  assert(ts.includes('export type ApprovalStatus'),                       'status union exported');
+  assert(ts.includes("'pending' | 'approved' | 'rejected'"),              'status union has 3 states');
+  assert(ts.includes('listApprovalRequests'),                             'listApprovalRequests exported');
+  assert(ts.includes('getApprovalRequest'),                               'getApprovalRequest exported');
+  assert(ts.includes('openApprovalRequestForProposal'),                   'openApprovalRequestForProposal exported');
+  assert(ts.includes('approveProposal'),                                  'approveProposal exported');
+  assert(ts.includes('rejectProposal'),                                   'rejectProposal exported');
+  assert(ts.includes("invoke<ApprovalRequest>('approve_proposal'"),       'approveProposal invokes approve_proposal');
+}
+
+section('Phase 11.6 — authority lookup reads APPROVAL_AUTHORITY from tier JSON');
+{
+  // Verify the lookup_required_authority helper reads the seeded JSON correctly:
+  // we don't run Rust here, but we check the emitted source structure resolves
+  // approvalAuthority from the tiers blob (the actual runtime test belongs in
+  // an integration suite, but the codegen invariant is testable).
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp {
+  TARGETS [w]
+  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true }
+  TIER 5 governance { SCOPE [MUTATION_POLICY_modify] AUTO_DEPLOY false APPROVAL_AUTHORITY board }
+}`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  // Confirm the policy's tiers JSON carries the approvalAuthority — this is
+  // what lookup_required_authority queries at runtime.
+  assert(sql.includes('approvalAuthority'),                               'tiers JSON serializes approvalAuthority key');
+  assert(sql.includes('board'),                                           'board authority seeded for T5 governance');
+  const rs = files.get('src-tauri/src/commands/approvals.rs') ?? '';
+  assert(rs.includes('"approvalAuthority"'),                              'runtime reads approvalAuthority key from tier JSON');
+}
+
 // --- Summary ---
 console.log(`\n========================================`);
 console.log(`  Results: ${passed} passed, ${failed} failed`);

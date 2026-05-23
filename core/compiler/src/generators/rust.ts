@@ -488,6 +488,8 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   if (hasMutationRuntime) modLines.push('pub mod responder;');
   // Phase 11.5a — Improvement reasoner (kaizen entry into proposal pipeline).
   if (hasMutationRuntime) modLines.push('pub mod improver;');
+  // Phase 11.6 — Approval chains (human-in-the-loop for escalated proposals).
+  if (hasMutationRuntime) modLines.push('pub mod approvals;');
   files.set('src-tauri/src/commands/mod.rs', modLines.join('\n') + '\n');
 
   // Emit commands/workspaces.rs when WORKSPACES declared (plural — avoids collision with the Workspace entity module)
@@ -672,7 +674,17 @@ export function generateRust(ast: AgiFile): Map<string, string> {
         'commands::improver::list_improvement_cycles',
       ]
     : [];
-  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds];
+  // Phase 11.6 — Approval chain commands (human-in-the-loop for escalated proposals).
+  const approvalsCmds = hasMutationRuntime
+    ? [
+        'commands::approvals::list_approval_requests',
+        'commands::approvals::get_approval_request',
+        'commands::approvals::open_approval_request_for_proposal',
+        'commands::approvals::approve_proposal',
+        'commands::approvals::reject_proposal',
+      ]
+    : [];
+  const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds, ...mutationCmds, ...responderCmds, ...improverCmds, ...approvalsCmds];
 
   const mainRsLines = [
     '#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]',

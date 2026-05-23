@@ -56,6 +56,7 @@ import { generateWorkflow } from './generators/workflow.js';
 import { generateMutations } from './generators/mutations.js';
 import { generateResponder } from './generators/responder.js';
 import { generateImprover } from './generators/improver.js';
+import { generateApprovals } from './generators/approvals.js';
 import { validate } from './validators/validate.js';
 import type { ValidationResult } from './validators/validate.js';
 
@@ -132,6 +133,7 @@ export function compile(source: string): CompileResult {
     generateMutations(ast),
     generateResponder(ast),
     generateImprover(ast),
+    generateApprovals(ast),
   ];
 
   for (const gen of generators) {
