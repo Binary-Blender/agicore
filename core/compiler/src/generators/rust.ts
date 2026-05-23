@@ -626,12 +626,15 @@ export function generateRust(ast: AgiFile): Map<string, string> {
   const telemetryCmds = hasTelemetry
     ? ['commands::telemetry::query_telemetry', 'commands::telemetry::get_telemetry_summary', 'commands::telemetry::clear_telemetry_before']
     : [];
-  // Phase 1b — Workflow runtime: one run_<name> per workflow + 2 query commands.
+  // Phase 1b — Workflow runtime: one run_<name> per workflow + query commands.
+  // Phase 11.2 — adds list_andon_events + get_andon_event for the andon audit log.
   const workflowCmds = hasWorkflowRuntime
     ? [
         ...ast.workflows.map((wf) => `commands::workflow::run_${toSnakeCase(wf.name)}`),
         'commands::workflow::list_workflow_runs',
         'commands::workflow::get_workflow_checkpoints',
+        'commands::workflow::list_andon_events',
+        'commands::workflow::get_andon_event',
       ]
     : [];
   const allCommandList = [...aiServiceCmds, ...entityCommandList, ...actionCmds, ...implCmds, ...routerCmds, ...compilerCmds, ...vaultCmds, ...workspaceCmds, ...reasonerCmds, ...channelCmds, ...triggerCmds, ...packetCmds, ...identityCmds, ...feedCmds, ...sessionModeCmds, ...moduleCmds, ...authorityCmds, ...semanticMemoryCmds, ...eventCmds, ...contractCmds, ...subscriptionCmds, ...disputeCmds, ...telemetryCmds, ...workflowCmds];

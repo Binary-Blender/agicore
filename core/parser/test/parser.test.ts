@@ -3333,6 +3333,161 @@ COGNITION_ROLE DeterministicWorker {
   console.error(`  FAIL: COGNITION_ROLE TIER + SPC_FLOOR parse error: ${err}`);
 }
 
+// --- Phase 11.2 — Andon Loop DSL surface ---
+
+section('Phase 11.2 — WORKFLOW STEP ANDON_ON parsing');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP only_one {
+    ACTION foo
+    ANDON_ON action_error
+  }
+}`;
+  const ast = parse(src);
+  const step = ast.workflows[0]!.steps[0]!;
+  assert(Array.isArray(step.andonOn), 'STEP.andonOn populated as array');
+  assert(step.andonOn!.length === 1 && step.andonOn![0] === 'action_error', 'single ANDON_ON trigger parsed');
+  console.log('  ANDON_ON action_error: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ANDON_ON parsing: ${err}`);
+}
+
+section('Phase 11.2 — WORKFLOW STEP ANDON_ON multi-trigger (comma + bracket forms)');
+try {
+  const commaSrc = `APP a { TITLE "A" DB a.db }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP s {
+    ACTION foo
+    ANDON_ON action_error, timeout
+  }
+}`;
+  const commaAst = parse(commaSrc);
+  const commaStep = commaAst.workflows[0]!.steps[0]!;
+  assert(commaStep.andonOn?.length === 2, 'comma-form multi-trigger length');
+  assert(commaStep.andonOn?.[0] === 'action_error' && commaStep.andonOn?.[1] === 'timeout', 'comma-form trigger values');
+
+  const bracketSrc = `APP a { TITLE "A" DB a.db }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP s {
+    ACTION foo
+    ANDON_ON [action_error, timeout, no_rule_match]
+  }
+}`;
+  const bracketAst = parse(bracketSrc);
+  const bracketStep = bracketAst.workflows[0]!.steps[0]!;
+  assert(bracketStep.andonOn?.length === 3, 'bracket-form multi-trigger length');
+  assert(bracketStep.andonOn?.includes('action_error'), 'bracket-form includes action_error');
+  assert(bracketStep.andonOn?.includes('no_rule_match'), 'bracket-form includes no_rule_match');
+  console.log('  ANDON_ON multi-trigger (both forms): parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: ANDON_ON multi-trigger: ${err}`);
+}
+
+section('Phase 11.2 — WORKFLOW STEP TIMEOUT + ROLLBACK_BOUNDARY parsing');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP a_step {
+    ACTION foo
+    ANDON_ON timeout
+    TIMEOUT "30s"
+    ROLLBACK_BOUNDARY internal
+  }
+  STEP b_step {
+    ACTION foo
+    ROLLBACK_BOUNDARY external
+  }
+  STEP c_step {
+    ACTION foo
+    ROLLBACK_BOUNDARY irreversible
+  }
+}`;
+  const ast = parse(src);
+  const a = ast.workflows[0]!.steps[0]!;
+  const b = ast.workflows[0]!.steps[1]!;
+  const c = ast.workflows[0]!.steps[2]!;
+  assert(a.timeout === '30s', 'TIMEOUT value captured');
+  assert(a.rollbackBoundary === 'internal', 'ROLLBACK_BOUNDARY internal');
+  assert(b.rollbackBoundary === 'external', 'ROLLBACK_BOUNDARY external');
+  assert(c.rollbackBoundary === 'irreversible', 'ROLLBACK_BOUNDARY irreversible');
+  console.log('  TIMEOUT + ROLLBACK_BOUNDARY: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: TIMEOUT/ROLLBACK_BOUNDARY: ${err}`);
+}
+
+section('Phase 11.2 — WORKFLOW SUCCESS_METRIC parsing');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ACTION foo { INPUT id: id OUTPUT result: string }
+SCORE mttr_score { INITIAL 1  MIN 0  MAX 1  DECAY 0 PER day }
+WORKFLOW wf {
+  STEP only_step { ACTION foo }
+  SUCCESS_METRIC mttr_score
+}`;
+  const ast = parse(src);
+  const wf = ast.workflows[0]!;
+  assert(wf.successMetric === 'mttr_score', 'WORKFLOW.successMetric captured');
+  console.log('  SUCCESS_METRIC: parsed successfully');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: SUCCESS_METRIC: ${err}`);
+}
+
+section('Phase 11.2 — invalid ANDON_ON trigger rejected with clear error');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP s {
+    ACTION foo
+    ANDON_ON some_bogus_trigger
+  }
+}`;
+  let caught = false;
+  try { parse(src); } catch (e) {
+    caught = true;
+    const msg = String(e);
+    assert(msg.includes('ANDON_ON trigger must be one of'), 'error message names allowed triggers');
+    assert(msg.includes('some_bogus_trigger'), 'error message includes the offending value');
+  }
+  assert(caught, 'invalid ANDON_ON value throws');
+  console.log('  Invalid ANDON_ON: rejected with clear message');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: invalid ANDON_ON: ${err}`);
+}
+
+section('Phase 11.2 — invalid ROLLBACK_BOUNDARY rejected');
+try {
+  const src = `APP a { TITLE "A" DB a.db }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP s {
+    ACTION foo
+    ROLLBACK_BOUNDARY chaos
+  }
+}`;
+  let caught = false;
+  try { parse(src); } catch (e) {
+    caught = true;
+    const msg = String(e);
+    assert(msg.includes('ROLLBACK_BOUNDARY must be one of'), 'error names allowed boundaries');
+  }
+  assert(caught, 'invalid ROLLBACK_BOUNDARY throws');
+  console.log('  Invalid ROLLBACK_BOUNDARY: rejected with clear message');
+} catch (err) {
+  failed++;
+  console.error(`  FAIL: invalid ROLLBACK_BOUNDARY: ${err}`);
+}
+
 // --- Summary ---
 
 console.log(`\n========================================`);

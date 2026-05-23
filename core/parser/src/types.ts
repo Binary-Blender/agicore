@@ -338,11 +338,39 @@ export interface RuleDecl {
 
 // --- WORKFLOW Declaration ---
 
+/**
+ * Andon trigger categories — explicit failure conditions that pull the
+ * andon cord rather than silently fail.
+ * See Idea Factory/andon_loop_architecture.md for the design rationale.
+ */
+export type AndonTrigger =
+  | 'action_error'        // the step's ACTION returned an error variant
+  | 'timeout'             // the step exceeded its declared TIMEOUT
+  | 'guard_failure'       // a STAGES transition guard rejected the change (future)
+  | 'no_rule_match'       // a MODULE with EXPECTS_MATCH true had no rule fire (future)
+  | 'score_threshold'     // a SCORE crossed an ANDON THRESHOLD (future)
+  | 'response_unparseable';  // external response failed PACKET validation (future)
+
+/**
+ * Rollback boundary — declares what side effects a step can safely undo
+ * if the workflow needs to halt at an andon.
+ *   internal     — pure DB writes within app; full atomic rollback
+ *   external     — hit an external system; needs a COMPENSATING_ACTION (Phase 3)
+ *   irreversible — physical/financial/temporal effects; halt + human escalate
+ */
+export type RollbackBoundary = 'internal' | 'external' | 'irreversible';
+
 export interface WorkflowStep {
   name: string;
   action: string;
   input?: Record<string, string>;
   onFail: OnFailBehavior;
+  /** Phase 11.2 — Andon Loop DSL: explicit failure triggers for this step. */
+  andonOn?: AndonTrigger[];
+  /** Phase 11.2 — Andon Loop DSL: per-step maximum duration; exceeding pulls timeout andon. */
+  timeout?: string;
+  /** Phase 11.2 — Andon Loop DSL: rollback envelope for the step's side effects. */
+  rollbackBoundary?: RollbackBoundary;
   span: SourceSpan;
 }
 
@@ -352,6 +380,8 @@ export interface WorkflowDecl {
   steps: WorkflowStep[];
   parallel?: string[];
   idempotent?: boolean;
+  /** Phase 11.2 — name of the SCORE the improvement loop optimizes for this workflow. */
+  successMetric?: string;
   span: SourceSpan;
 }
 

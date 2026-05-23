@@ -5723,6 +5723,120 @@ WORKFLOW with_wrapper {
   assert(rs.includes('crate::commands::wrapper::wrapper'),                 'wrapper action gets typed inline dispatch');
 }
 
+section('Phase 11.2 — andon_events SQL table emitted with workflow runtime');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW wf { STEP s { ACTION foo } }`;
+  const { files } = compile(src);
+  const sql = files.get('src-tauri/migrations/001_initial.sql') ?? '';
+  assert(sql.includes('CREATE TABLE IF NOT EXISTS andon_events'),         'andon_events table emitted');
+  assert(sql.includes('trigger_category   TEXT NOT NULL'),                 'trigger_category column present');
+  assert(sql.includes('captured_state     TEXT NOT NULL'),                 'captured_state column present');
+  assert(sql.includes('rollback_boundary  TEXT'),                          'rollback_boundary column present');
+  assert(sql.includes('resolution_mutation_id TEXT'),                      'resolution_mutation_id column present');
+  assert(sql.includes('idx_andon_run'),                                    'andon run_id index');
+  assert(sql.includes('idx_andon_workflow'),                               'andon workflow_name index');
+  assert(sql.includes('idx_andon_unresolved'),                             'andon unresolved index');
+  assert(sql.includes('idx_andon_category'),                               'andon category index');
+
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  assert(rs.includes('pub struct AndonEvent'),                             'AndonEvent struct emitted');
+  assert(rs.includes('fn emit_andon_event('),                              'emit_andon_event helper emitted');
+  assert(rs.includes('fn parse_duration_ms('),                             'parse_duration_ms helper emitted');
+  assert(rs.includes('pub fn list_andon_events('),                         'list_andon_events query command');
+  assert(rs.includes('pub fn get_andon_event('),                           'get_andon_event query command');
+
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::workflow::list_andon_events'),         'list_andon_events registered in main.rs');
+  assert(mainRs.includes('commands::workflow::get_andon_event'),           'get_andon_event registered in main.rs');
+
+  const ts = files.get('src/lib/workflow.ts') ?? '';
+  assert(ts.includes('export interface AndonEvent'),                       'AndonEvent TS type exported');
+  assert(ts.includes('export async function listAndonEvents('),            'listAndonEvents TS wrapper');
+  assert(ts.includes('export async function getAndonEvent('),              'getAndonEvent TS wrapper');
+}
+
+section('Phase 11.2 — ANDON_ON action_error halts the workflow with "halted" status');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION risky { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP critical {
+    ACTION risky
+    ANDON_ON action_error
+    ROLLBACK_BOUNDARY internal
+  }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  // Step block must reference the andon path on action_error
+  assert(rs.includes('andon_on: action_error'),                            'step comment reflects ANDON_ON config');
+  assert(rs.includes('"action_error"'),                                    'andon trigger string baked into generated code');
+  assert(rs.includes('"halted".to_string()'),                              'halted status returned from andon path');
+  assert(rs.includes('emit_andon_event('),                                 'emit_andon_event called from andon path');
+  assert(rs.includes('Some("internal")'),                                  'rollback boundary baked into emit_andon_event call');
+}
+
+section('Phase 11.2 — ANDON_ON timeout wraps dispatch in tokio::time::timeout');
+{
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION slow_op { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP gated {
+    ACTION slow_op
+    ANDON_ON timeout
+    TIMEOUT "5s"
+    ROLLBACK_BOUNDARY external
+  }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  assert(rs.includes('tokio::time::timeout'),                              'dispatch wrapped in tokio::time::timeout');
+  assert(rs.includes('parse_duration_ms('),                                'TIMEOUT value passed through parse_duration_ms');
+  assert(rs.includes('"5s"'),                                              'TIMEOUT literal embedded in generated code');
+  assert(rs.includes('"__ANDON_TIMEOUT__"'),                               'timeout sentinel value present');
+  assert(rs.includes('"timeout"'),                                         'timeout trigger string in andon path');
+  assert(rs.includes('Some("external")'),                                  'external rollback boundary forwarded');
+}
+
+section('Phase 11.2 — WORKFLOW without ANDON_ON keeps original ON_FAIL behavior (no regression)');
+{
+  // The Phase 1b runtime is preserved for steps WITHOUT ANDON_ON declarations.
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION x { INPUT id: id OUTPUT result: string }
+WORKFLOW wf {
+  STEP plain { ACTION x }
+}`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/workflow.rs') ?? '';
+  // No tokio::time::timeout for steps without a TIMEOUT
+  assert(!rs.includes('tokio::time::timeout'),                             'no timeout wrap when TIMEOUT not declared');
+  // The original "failed" path is reachable (the stop-default ON_FAIL branch)
+  assert(rs.includes('status: "failed".to_string()'),                      'failed status path preserved');
+}
+
+section('Phase 11.2 — SUCCESS_METRIC parses and survives codegen');
+{
+  // SUCCESS_METRIC is parsed (Phase 2) but isn't actively used by the
+  // workflow runtime yet — the improvement loop (Phase 5) reads it. Phase 2
+  // asserts the value rides through the AST and doesn't break codegen.
+  const src = `APP a { TITLE "A" DB a.db TELEMETRY auto }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+SCORE mttr_score { INITIAL 1  MIN 0  MAX 1  DECAY 0 PER day }
+WORKFLOW wf {
+  STEP only_step { ACTION foo }
+  SUCCESS_METRIC mttr_score
+}`;
+  const { files } = compile(src);
+  assert(files.has('src-tauri/src/commands/workflow.rs'),                  'codegen succeeds with SUCCESS_METRIC declared');
+}
+
 section('Phase 11.1c — actions with no INPUT skip the serde input parse');
 {
   const noInputSrc = `APP ni { TITLE "NoInput" DB ni.db TELEMETRY auto }

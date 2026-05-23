@@ -1603,6 +1603,7 @@ export class Parser {
     const steps: WorkflowStep[] = [];
     let parallel: string[] | undefined;
     let idempotent: boolean | undefined;
+    let successMetric: string | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -1641,11 +1642,18 @@ export class Parser {
         continue;
       }
 
-      this.error(`Expected STEP, PARALLEL, or IDEMPOTENT in WORKFLOW, got: ${token.value}`);
+      // Phase 11.2 — Andon Loop DSL on WORKFLOW
+      if (token.type === TokenType.SUCCESS_METRIC) {
+        this.advance();
+        successMetric = this.expectIdentifier();
+        continue;
+      }
+
+      this.error(`Expected STEP, PARALLEL, IDEMPOTENT, or SUCCESS_METRIC in WORKFLOW, got: ${token.value}`);
     }
 
     const end = this.expectToken(TokenType.RBRACE).location;
-    return { kind: 'workflow', name, steps, parallel, idempotent, span: { start, end } };
+    return { kind: 'workflow', name, steps, parallel, idempotent, successMetric, span: { start, end } };
   }
 
   private parseWorkflowStep(): WorkflowStep {
@@ -1656,6 +1664,9 @@ export class Parser {
     let action = '';
     let input: Record<string, string> | undefined;
     let onFail: OnFailBehavior = 'stop';
+    let andonOn: ('action_error' | 'timeout' | 'guard_failure' | 'no_rule_match' | 'score_threshold' | 'response_unparseable')[] | undefined;
+    let timeout: string | undefined;
+    let rollbackBoundary: 'internal' | 'external' | 'irreversible' | undefined;
 
     while (!this.check(TokenType.RBRACE)) {
       const token = this.current();
@@ -1678,11 +1689,59 @@ export class Parser {
         continue;
       }
 
+      // Phase 11.2 — Andon Loop DSL on WORKFLOW STEP
+      if (token.type === TokenType.ANDON_ON) {
+        this.advance();
+        andonOn = this.parseAndonTriggers();
+        continue;
+      }
+      if (token.type === TokenType.TIMEOUT) {
+        this.advance();
+        // Accept either a string literal ("30s") or an unquoted duration token
+        // (30s — lexed as IDENTIFIER or NUMBER+suffix depending on form).
+        if (this.check(TokenType.STRING_LITERAL)) {
+          timeout = this.advance().value;
+        } else {
+          timeout = this.advance().value;
+        }
+        continue;
+      }
+      if (token.type === TokenType.ROLLBACK_BOUNDARY) {
+        this.advance();
+        const v = this.expectIdentifier();
+        if (v !== 'internal' && v !== 'external' && v !== 'irreversible') {
+          this.error(`ROLLBACK_BOUNDARY must be one of: internal, external, irreversible (got '${v}')`);
+        }
+        rollbackBoundary = v as 'internal' | 'external' | 'irreversible';
+        continue;
+      }
+
       this.error(`Unexpected token in STEP: ${token.value}`);
     }
 
     this.expectToken(TokenType.RBRACE);
-    return { name, action, input, onFail, span: this.spanFrom(start) };
+    return { name, action, input, onFail, andonOn, timeout, rollbackBoundary, span: this.spanFrom(start) };
+  }
+
+  /**
+   * Parse ANDON_ON triggers — either bare comma-separated identifiers
+   * (ANDON_ON action_error, timeout) or single identifier (ANDON_ON action_error).
+   */
+  private parseAndonTriggers(): ('action_error' | 'timeout' | 'guard_failure' | 'no_rule_match' | 'score_threshold' | 'response_unparseable')[] {
+    const valid = new Set(['action_error', 'timeout', 'guard_failure', 'no_rule_match', 'score_threshold', 'response_unparseable']);
+    const out: ('action_error' | 'timeout' | 'guard_failure' | 'no_rule_match' | 'score_threshold' | 'response_unparseable')[] = [];
+    // Accept bracketed form too: ANDON_ON [action_error, timeout]
+    const hasBracket = this.check(TokenType.LBRACKET);
+    if (hasBracket) this.advance();
+    do {
+      const v = this.expectIdentifier();
+      if (!valid.has(v)) {
+        this.error(`ANDON_ON trigger must be one of: ${Array.from(valid).join(', ')} (got '${v}')`);
+      }
+      out.push(v as 'action_error' | 'timeout' | 'guard_failure' | 'no_rule_match' | 'score_threshold' | 'response_unparseable');
+    } while (this.consumeIf(TokenType.COMMA));
+    if (hasBracket) this.expectToken(TokenType.RBRACKET);
+    return out;
   }
 
   private parseOnFail(): OnFailBehavior {

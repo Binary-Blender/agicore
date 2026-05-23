@@ -79,7 +79,28 @@ CREATE TABLE IF NOT EXISTS workflow_runs (
   completed_at       TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_wf_runs_workflow ON workflow_runs(workflow_name, started_at DESC);
-CREATE INDEX IF NOT EXISTS idx_wf_runs_status   ON workflow_runs(status, started_at DESC);`;
+CREATE INDEX IF NOT EXISTS idx_wf_runs_status   ON workflow_runs(status, started_at DESC);
+
+-- ANDON EVENTS: every andon pull captured here with full context for the
+-- AI responder REASONER (Phase 4) to consume. Append-only audit trail.
+CREATE TABLE IF NOT EXISTS andon_events (
+  id                 TEXT PRIMARY KEY,
+  trigger_category   TEXT NOT NULL,        -- 'action_error' | 'timeout' | 'guard_failure' | 'no_rule_match' | 'score_threshold' | 'response_unparseable'
+  workflow_run_id    TEXT,
+  workflow_name      TEXT,
+  step_name          TEXT,
+  step_index         INTEGER,
+  failure_message    TEXT,
+  captured_state     TEXT NOT NULL,        -- JSON of the workflow context at halt time
+  rollback_boundary  TEXT,                 -- 'internal' | 'external' | 'irreversible' | NULL
+  resolution_mutation_id TEXT,             -- populated by Phase 4 when an andon is resolved
+  fired_at           TEXT NOT NULL,
+  resolved_at        TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_andon_run        ON andon_events(workflow_run_id);
+CREATE INDEX IF NOT EXISTS idx_andon_workflow   ON andon_events(workflow_name, fired_at DESC);
+CREATE INDEX IF NOT EXISTS idx_andon_unresolved ON andon_events(resolved_at, fired_at DESC);
+CREATE INDEX IF NOT EXISTS idx_andon_category   ON andon_events(trigger_category, fired_at DESC);`;
 }
 
 // ─── Rust runtime ──────────────────────────────────────────────────────────
@@ -173,6 +194,23 @@ pub struct WorkflowRunSummary {
     pub completed_at: Option<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AndonEvent {
+    pub id: String,
+    pub trigger_category: String,
+    pub workflow_run_id: Option<String>,
+    pub workflow_name: Option<String>,
+    pub step_name: Option<String>,
+    pub step_index: Option<i32>,
+    pub failure_message: Option<String>,
+    pub captured_state: serde_json::Value,
+    pub rollback_boundary: Option<String>,
+    pub resolution_mutation_id: Option<String>,
+    pub fired_at: String,
+    pub resolved_at: Option<String>,
+}
+
 // ─── Internal: persistence helpers ────────────────────────────────────────
 
 fn save_run_started(
@@ -234,6 +272,60 @@ fn save_checkpoint(
         )?;
         Ok(())
     })();
+}
+
+/// Parse a duration string like "30s", "5m", "1h", "500ms", "2d" into milliseconds.
+/// Used to evaluate per-step TIMEOUT values declared in the DSL.
+fn parse_duration_ms(s: &str) -> Option<u64> {
+    let s = s.trim();
+    let split_at = s.find(|c: char| c.is_alphabetic())?;
+    let (num_str, suffix) = s.split_at(split_at);
+    let n: u64 = num_str.trim().parse().ok()?;
+    match suffix {
+        "ms" => Some(n),
+        "s"  => Some(n.saturating_mul(1_000)),
+        "m"  => Some(n.saturating_mul(60_000)),
+        "h"  => Some(n.saturating_mul(3_600_000)),
+        "d"  => Some(n.saturating_mul(86_400_000)),
+        _ => None,
+    }
+}
+
+/// Persist an AndonEvent. The Andon Loop's audit trail. Phase 4's
+/// andon-responder REASONER reads from this table.
+fn emit_andon_event(
+    db: &DbPool,
+    run_id: Option<&str>,
+    workflow_name: &str,
+    step_name: Option<&str>,
+    step_index: Option<i32>,
+    trigger_category: &str,
+    failure_message: Option<&str>,
+    captured_state: &serde_json::Value,
+    rollback_boundary: Option<&str>,
+) -> String {
+    let id = Uuid::new_v4().to_string();
+    let now = chrono::Utc::now().to_rfc3339();
+    let _ = (|| -> Result<(), rusqlite::Error> {
+        let conn = db.lock().map_err(|_| rusqlite::Error::InvalidQuery)?;
+        conn.execute(
+            "INSERT INTO andon_events (id, trigger_category, workflow_run_id, workflow_name, step_name, step_index, failure_message, captured_state, rollback_boundary, fired_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            params![
+                id, trigger_category, run_id, workflow_name, step_name, step_index,
+                failure_message, captured_state.to_string(), rollback_boundary, now,
+            ],
+        )?;
+        Ok(())
+    })();
+    // Also emit a telemetry record so the activity log shows the andon
+    // alongside the workflow_step events that surrounded it.
+    let _ = emit_telemetry(
+        db, "andon_pulled", workflow_name, Some("workflow"),
+        run_id, step_name, "andon",
+        Some(&captured_state.to_string()), None, failure_message, None,
+        Some(&format!("{{\"andon_event_id\":\"{}\",\"trigger\":\"{}\"}}", id, trigger_category)),
+    );
+    id
 }
 
 // ─── Parallel-batch fallback stub ─────────────────────────────────────────
@@ -344,6 +436,95 @@ pub fn get_workflow_checkpoints(
     for r in rows { out.push(r.map_err(|e| e.to_string())?); }
     Ok(out)
 }
+
+#[tauri::command]
+pub fn list_andon_events(
+    db: State<'_, DbPool>,
+    workflow_name: Option<String>,
+    unresolved_only: Option<bool>,
+    limit: Option<i64>,
+) -> Result<Vec<AndonEvent>, String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let lim = limit.unwrap_or(100).clamp(1, 10_000);
+
+    let mut sql = String::from(
+        "SELECT id, trigger_category, workflow_run_id, workflow_name, step_name, step_index, failure_message, captured_state, rollback_boundary, resolution_mutation_id, fired_at, resolved_at FROM andon_events WHERE 1=1"
+    );
+    let mut args: Vec<String> = Vec::new();
+    if let Some(wn) = &workflow_name {
+        sql.push_str(" AND workflow_name = ?");
+        args.push(wn.clone());
+    }
+    if unresolved_only.unwrap_or(false) {
+        sql.push_str(" AND resolved_at IS NULL");
+    }
+    sql.push_str(" ORDER BY fired_at DESC LIMIT ?");
+
+    let mut stmt = conn.prepare(&sql).map_err(|e| e.to_string())?;
+    let param_refs: Vec<&dyn rusqlite::ToSql> = args
+        .iter()
+        .map(|s| s as &dyn rusqlite::ToSql)
+        .chain(std::iter::once(&lim as &dyn rusqlite::ToSql))
+        .collect();
+    let rows = stmt
+        .query_map(param_refs.as_slice(), |row| {
+            let state_str: String = row.get(7)?;
+            let state: serde_json::Value = serde_json::from_str(&state_str).unwrap_or(serde_json::Value::Null);
+            Ok(AndonEvent {
+                id: row.get(0)?,
+                trigger_category: row.get(1)?,
+                workflow_run_id: row.get(2)?,
+                workflow_name: row.get(3)?,
+                step_name: row.get(4)?,
+                step_index: row.get(5)?,
+                failure_message: row.get(6)?,
+                captured_state: state,
+                rollback_boundary: row.get(8)?,
+                resolution_mutation_id: row.get(9)?,
+                fired_at: row.get(10)?,
+                resolved_at: row.get(11)?,
+            })
+        })
+        .map_err(|e| e.to_string())?;
+    let mut out = Vec::new();
+    for r in rows { out.push(r.map_err(|e| e.to_string())?); }
+    Ok(out)
+}
+
+#[tauri::command]
+pub fn get_andon_event(
+    db: State<'_, DbPool>,
+    event_id: String,
+) -> Result<Option<AndonEvent>, String> {
+    let conn = db.lock().map_err(|e| e.to_string())?;
+    let mut stmt = conn
+        .prepare("SELECT id, trigger_category, workflow_run_id, workflow_name, step_name, step_index, failure_message, captured_state, rollback_boundary, resolution_mutation_id, fired_at, resolved_at FROM andon_events WHERE id = ?")
+        .map_err(|e| e.to_string())?;
+    let mut rows = stmt
+        .query_map(params![event_id], |row| {
+            let state_str: String = row.get(7)?;
+            let state: serde_json::Value = serde_json::from_str(&state_str).unwrap_or(serde_json::Value::Null);
+            Ok(AndonEvent {
+                id: row.get(0)?,
+                trigger_category: row.get(1)?,
+                workflow_run_id: row.get(2)?,
+                workflow_name: row.get(3)?,
+                step_name: row.get(4)?,
+                step_index: row.get(5)?,
+                failure_message: row.get(6)?,
+                captured_state: state,
+                rollback_boundary: row.get(8)?,
+                resolution_mutation_id: row.get(9)?,
+                fired_at: row.get(10)?,
+                resolved_at: row.get(11)?,
+            })
+        })
+        .map_err(|e| e.to_string())?;
+    match rows.next() {
+        Some(r) => Ok(Some(r.map_err(|e| e.to_string())?)),
+        None => Ok(None),
+    }
+}
 `;
 }
 
@@ -435,11 +616,69 @@ function serialStepBlock(
   const stepName = step.name;
   const actionName = step.action;
   const onFail = step.onFail || 'stop';
+  const andonOn = new Set(step.andonOn ?? []);
+  const andonOnActionError = andonOn.has('action_error');
+  const andonOnTimeout = andonOn.has('timeout');
+  const timeoutMsLiteral = step.timeout ? jsonStringLit(step.timeout) : null;
+  const rollbackBoundary = step.rollbackBoundary ?? null;
 
   const dispatchBlock = buildSerialDispatchBlock(actionName, dispatchSpec);
   const retryDispatchBlock = buildSerialDispatchBlock(actionName, dispatchSpec);
+  const andonHaltBlock = buildAndonHaltBlock(stepName, index, rollbackBoundary);
 
-  return `    // step ${index}: ${stepName} (action: ${actionName}, on_fail: ${onFail})
+  // The dispatch future is the inner async block. When the step declares a
+  // TIMEOUT, wrap it in tokio::time::timeout so the runtime cancels rather
+  // than waiting forever; the elapsed branch becomes the timeout-andon path.
+  const dispatchInvocation = timeoutMsLiteral !== null
+    ? `        let _timeout_ms: u64 = parse_duration_ms(${timeoutMsLiteral}).unwrap_or(0);
+        let dispatch_result: Result<serde_json::Value, String> = if _timeout_ms > 0 {
+            match tokio::time::timeout(
+                std::time::Duration::from_millis(_timeout_ms),
+                async {
+${dispatchBlock}
+                },
+            ).await {
+                Ok(inner) => inner,
+                Err(_elapsed) => Err("__ANDON_TIMEOUT__".to_string()),
+            }
+        } else {
+            async {
+${dispatchBlock}
+            }.await
+        };`
+    : `        let dispatch_result: Result<serde_json::Value, String> = async {
+${dispatchBlock}
+        }.await;`;
+
+  // Error-path branching: prefer the andon arm when configured + matched,
+  // else fall through to ON_FAIL semantics. Encoded as nested if-let-style
+  // matching to keep the generated Rust readable.
+  const errorArm = andonOnActionError || andonOnTimeout
+    ? `            Err(e) => {
+                let dur = step_started.elapsed().as_millis() as i64;
+                complete_telemetry(db_ref, &step_event_id, "error", None, Some(&e), Some(dur));
+                save_checkpoint(db_ref, &run_id, workflow_name, "${stepName}", ${index}, &context, "failed");
+                let is_timeout = e == "__ANDON_TIMEOUT__";
+                ${andonOnTimeout ? `if is_timeout {
+                    ${andonHaltBlock.replace(/\n/g, '\n                    ')
+                      .replace('__TRIGGER__', 'timeout')
+                      .replace('__MESSAGE__', '"step exceeded TIMEOUT"')}
+                }` : ''}
+                ${andonOnActionError ? `if !is_timeout {
+                    ${andonHaltBlock.replace(/\n/g, '\n                    ')
+                      .replace('__TRIGGER__', 'action_error')
+                      .replace('__MESSAGE__', '&e')}
+                }` : ''}
+${onFailHandler(onFail, wfName, stepName, retryDispatchBlock)}
+            }`
+    : `            Err(e) => {
+                let dur = step_started.elapsed().as_millis() as i64;
+                complete_telemetry(db_ref, &step_event_id, "error", None, Some(&e), Some(dur));
+                save_checkpoint(db_ref, &run_id, workflow_name, "${stepName}", ${index}, &context, "failed");
+${onFailHandler(onFail, wfName, stepName, retryDispatchBlock)}
+            }`;
+
+  return `    // step ${index}: ${stepName} (action: ${actionName}, on_fail: ${onFail}${step.andonOn ? `, andon_on: ${step.andonOn.join('+')}` : ''}${step.timeout ? `, timeout: ${step.timeout}` : ''}${step.rollbackBoundary ? `, rollback: ${step.rollbackBoundary}` : ''})
     {
         let step_event_id = emit_telemetry(
             db_ref, "workflow_step_started", "${actionName}", Some("action"),
@@ -448,9 +687,7 @@ function serialStepBlock(
         );
         let step_started = Instant::now();
         let step_input = context.clone();
-        let dispatch_result: Result<serde_json::Value, String> = async {
-${dispatchBlock}
-        }.await;
+${dispatchInvocation}
         match dispatch_result {
             Ok(output) => {
                 let dur = step_started.elapsed().as_millis() as i64;
@@ -461,14 +698,43 @@ ${dispatchBlock}
                 complete_telemetry(db_ref, &step_event_id, "success", Some(&output.to_string()), None, Some(dur));
                 steps_completed += 1;
             }
-            Err(e) => {
-                let dur = step_started.elapsed().as_millis() as i64;
-                complete_telemetry(db_ref, &step_event_id, "error", None, Some(&e), Some(dur));
-                save_checkpoint(db_ref, &run_id, workflow_name, "${stepName}", ${index}, &context, "failed");
-${onFailHandler(onFail, wfName, stepName, retryDispatchBlock)}
-            }
+${errorArm}
         }
     }`;
+}
+
+/**
+ * Emit the body of an andon halt — persist the event, mark the run halted,
+ * close the workflow's wrapping telemetry, and return a halted WorkflowRunResult.
+ * Placeholders __TRIGGER__ and __MESSAGE__ are replaced by the caller.
+ */
+function buildAndonHaltBlock(stepName: string, index: number, rollbackBoundary: string | null): string {
+  const rbLit = rollbackBoundary ? `Some("${rollbackBoundary}")` : 'None';
+  return `let andon_id = emit_andon_event(
+    db_ref,
+    Some(&run_id),
+    workflow_name,
+    Some("${stepName}"),
+    Some(${index}),
+    "__TRIGGER__",
+    Some(__MESSAGE__),
+    &context,
+    ${rbLit},
+);
+let total_dur = started.elapsed().as_millis() as i64;
+save_run_completed(db_ref, &run_id, "halted", steps_completed, &context, Some(&format!("andon:{}", andon_id)));
+complete_telemetry(db_ref, &wf_event_id, "andon", Some(&context.to_string()), Some(&format!("andon_event_id={}", andon_id)), Some(total_dur));
+return Ok(WorkflowRunResult {
+    run_id, workflow_name: workflow_name.to_string(),
+    status: "halted".to_string(),
+    steps_completed, steps_total: total_steps,
+    final_context: context, error: Some(format!("ANDON pulled at step '${stepName}' (event {})", andon_id)),
+    duration_ms: total_dur,
+});`;
+}
+
+function jsonStringLit(s: string): string {
+  return JSON.stringify(s);
 }
 
 /**
@@ -706,6 +972,28 @@ export interface WorkflowRunSummary {
   completedAt: string | null;
 }
 
+export interface AndonEvent {
+  id: string;
+  triggerCategory:
+    | 'action_error'
+    | 'timeout'
+    | 'guard_failure'
+    | 'no_rule_match'
+    | 'score_threshold'
+    | 'response_unparseable'
+    | string;
+  workflowRunId: string | null;
+  workflowName: string | null;
+  stepName: string | null;
+  stepIndex: number | null;
+  failureMessage: string | null;
+  capturedState: unknown;
+  rollbackBoundary: 'internal' | 'external' | 'irreversible' | null | string;
+  resolutionMutationId: string | null;
+  firedAt: string;
+  resolvedAt: string | null;
+}
+
 ${perWorkflowExports}
 
 export async function listWorkflowRuns(
@@ -717,6 +1005,18 @@ export async function listWorkflowRuns(
 
 export async function getWorkflowCheckpoints(runId: string): Promise<WorkflowCheckpoint[]> {
   return invoke<WorkflowCheckpoint[]>('get_workflow_checkpoints', { runId });
+}
+
+export async function listAndonEvents(
+  workflowName?: string,
+  unresolvedOnly?: boolean,
+  limit?: number,
+): Promise<AndonEvent[]> {
+  return invoke<AndonEvent[]>('list_andon_events', { workflowName, unresolvedOnly, limit });
+}
+
+export async function getAndonEvent(eventId: string): Promise<AndonEvent | null> {
+  return invoke<AndonEvent | null>('get_andon_event', { eventId });
 }
 `;
 }
@@ -736,5 +1036,7 @@ export function workflowCommandNames(ast: AgiFile): string[] {
     ...perWf,
     'commands::workflow::list_workflow_runs',
     'commands::workflow::get_workflow_checkpoints',
+    'commands::workflow::list_andon_events',
+    'commands::workflow::get_andon_event',
   ];
 }
