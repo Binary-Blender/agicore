@@ -32,6 +32,56 @@ AI is used at **build time** for interpretation, translation, and system generat
 
 ---
 
+## The Andon Loop — Continual Harness, Inverted
+
+"Continual harness" is the current frame for AI systems that adapt themselves — agents whose prompts, policies, sub-agents, and workflows evolve over time instead of being engineered manually. Every implementation in the wild today keeps AI in the runtime loop and tries to govern the chaos: observability layers, policy engines, evaluator stacks, retry budgets, retreat-to-known-good logic. Each layer adds operational burden while preserving the underlying nondeterminism. The AI is in the path; you're managing its blast radius.
+
+**Agicore inverts this.** AI lives at the edit boundary — proposing, never executing. A deterministic expert system runs at runtime. When something fails, the expert system pulls an **andon cord**; AI is invoked to propose a fix; the fix flows through tier verification, sandbox testing, optional shadow evaluation against live traffic, and optional N-of-M human approval before it touches production. Every transition lands on a SHA-256 hash-chained tamper-evident ledger with an optional off-DB file-system mirror.
+
+The result: continual self-improvement without runtime nondeterminism. The system can have AI write its own rules — but AI cannot bypass the deterministic gates between proposal and production.
+
+### Why "inverted" is the right word
+
+| Concern | Standard continual harness | Agicore Andon Loop |
+|---|---|---|
+| AI in the runtime path? | Yes — AI executes per request | No — only the deterministic expert system runs |
+| How do changes reach production? | AI updates prompts/policies live | AI proposes → tier verify → sandbox → (optional shadow window) → (optional ordered N-of-M signoff) → deploy |
+| Audit trail | Best-effort prompt/response logs | SHA-256 hash chain over every state transition; file-system mirror optional for off-DB archival |
+| Reproducibility | Stochastic by nature | Deterministic at runtime — same input produces the same output forever |
+| Can AI expand its own authorization? | Hard to prevent; depends on policy correctness | **Mechanically blocked** — the tier verifier rejects any proposal whose scope exceeds its claimed tier, before the sandbox runs |
+
+The last row is the load-bearing one. "AI cannot expand its own authorization" is a hard property enforced by a verifier that compares the proposal's claimed_scope against the policy's tier-scope JSON. It is not a hope, a guardrail, or a policy that could be misconfigured — it is mechanical.
+
+### The shape of a complete loop
+
+One declaration in a `.agi` file unlocks the whole pipeline:
+
+```agi
+MUTATION_POLICY ops_policy {
+  TARGETS [order_workflow]
+  TIER 1 rule_tuning {
+    SCOPE [RULES_modify]
+    AUTO_DEPLOY true
+    REGRESSION_SUITE 24h_recent_workflows
+    NBVE_WINDOW 24h                    # 24h shadow against live traffic before promotion
+  }
+  TIER 5 governance {
+    SCOPE [MUTATION_POLICY_modify]
+    AUTO_DEPLOY false
+    APPROVAL_AUTHORITY ORDERED [ceo, cto, board_chair]   # 3-of-3, declared order
+  }
+  ANDON_RESPONDER ops_handler           # reactive — runs when andon fires
+  IMPROVEMENT_REASONER weekly_kaizen    # proactive — runs on schedule
+  LEDGER ComplianceLedger               # named hash-chained audit log
+}
+```
+
+From this declaration Agicore generates: the proposal lifecycle tables, the tier verifier, the sandbox runner, the shadow evaluation runtime, the approval chain (with multi-signer + ordered signing), the hash-chained ledger with optional FS sink, a React console that surfaces everything, and a background poller that closes shadow windows on cadence. ~9,700 LOC of Rust + TypeScript across 17 generator files — all deterministic, all auditable, all gated on a single DSL declaration.
+
+See [ANDON_LOOP.md](./ANDON_LOOP.md) for the full architecture, the 17 phases that built it, the file map of which generator emits what, and the open lines (NBVE dual-execution runtime is the one substantial piece still substrate-only).
+
+---
+
 ## The Architecture
 
 Agicore is built around a DSL that acts as an intermediate representation between human intent and executable systems:
@@ -96,6 +146,7 @@ Systems-language thinking. The NovaSyn architecture generalized into a DSL-drive
 agicore/
 |
 |-- README.md                  # You are here
+|-- ANDON_LOOP.md              # The Andon Loop architecture — Agicore's continual harness inversion
 |-- BUILD_WITH_AI.md           # Builder's guide — start here when building an app
 |-- START_HERE_WITH_AI.md      # AI-assisted exploration guide (architecture / philosophy)
 |-- EVOLVING.md                # How to extend the framework when it's missing something
@@ -115,8 +166,8 @@ agicore/
 |
 |-- dsl/                       # Formal grammar specification (grammar.md)
 |-- core/                      # The compiler toolchain (TypeScript)
-|   |-- parser/                # .agi -> AST (843 tests)
-|   +-- compiler/              # AST -> Tauri project + static validator (1,610 tests)
+|   |-- parser/                # .agi -> AST (911 tests)
+|   +-- compiler/              # AST -> Tauri project + static validator (2,295 tests)
 |
 |-- history/                   # Evolutionary lineage (1G -> 4G)
 |   |-- 1g-coding-standards/
