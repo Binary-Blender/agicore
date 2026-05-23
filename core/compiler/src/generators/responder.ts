@@ -29,7 +29,11 @@ export function generateResponder(ast: AgiFile): Map<string, string> {
 
 export function responderCommandNames(ast: AgiFile): string[] {
   if (!isEnabled(ast)) return [];
-  return ['respond_to_andon', 'list_andon_responder_dispositions'];
+  return [
+    'respond_to_andon',
+    'list_andon_responder_dispositions',
+    'link_proposal_to_andon_event',  // Phase 11.4d
+  ];
 }
 
 // ─── Rust runtime ──────────────────────────────────────────────────────────
@@ -360,6 +364,20 @@ pub fn respond_to_andon(
     respond_to_andon_impl(db.inner(), &andon_event_id)
 }
 
+/// Phase 11.4d — Public link helper. The AI-orchestrated responder path
+/// (running in TS) creates proposals via the existing Tauri commands but
+/// needs a way to back-link the proposal to its andon event. This command
+/// is idempotent: it just updates resolution_mutation_id + resolved_at on
+/// the andon_events row, matching what respond_to_andon_impl does internally.
+#[tauri::command]
+pub fn link_proposal_to_andon_event(
+    db: State<'_, DbPool>,
+    andon_event_id: String,
+    proposal_id: String,
+) -> Result<(), String> {
+    link_proposal_to_andon(db.inner(), &andon_event_id, &proposal_id)
+}
+
 #[tauri::command]
 pub fn list_andon_responder_dispositions() -> Result<Vec<&'static str>, String> {
     // Static enumeration — handy for clients that want to render a legend.
@@ -484,6 +502,238 @@ export async function respondToAndon(andonEventId: string): Promise<AndonResolut
 
 export async function listAndonResponderDispositions(): Promise<AndonResponderDisposition[]> {
   return invoke<AndonResponderDisposition[]>('list_andon_responder_dispositions');
+}
+
+// ─── Phase 11.4d — Real AI responder (TS-orchestrated) ─────────────────────
+//
+// The respondToAndon command above uses a deterministic stub for proposal
+// generation. respondToAndonWithAI() instead routes through send_chat to a
+// configured AI model, parses the JSON response, and runs it through the
+// same verify+sandbox pipeline. Requires AI_SERVICE to be declared in the
+// .agi source (so send_chat is registered).
+//
+// Usage from your UI:
+//   const resolution = await respondToAndonWithAI({
+//     andonEventId: pendingEvent.id,
+//     policyName:   'ops_mutation_policy',
+//     proposerIdentity: \`ai:claude-sonnet-4-6:\${user.id}\`,
+//     model:        'claude-sonnet-4-6',
+//   });
+
+interface AndonEventLite {
+  id: string;
+  triggerCategory: string;
+  workflowName: string | null;
+  stepName: string | null;
+  failureMessage: string | null;
+  capturedState: unknown;
+}
+
+interface ChatResponse { content: string; model: string; provider: string; }
+
+export interface ResponderDraftFromAI {
+  target: string;
+  claimedTier: number;
+  claimedScope: string[];
+  mutationContent: unknown;
+  reasoning: string;
+}
+
+export interface AiResponderParams {
+  andonEventId: string;
+  policyName: string;
+  proposerIdentity: string;
+  model: string;
+  /** Override the default system prompt (advanced). */
+  systemPrompt?: string;
+  /** Override the default user-message template (advanced). */
+  buildUserMessage?: (event: AndonEventLite) => string;
+}
+
+/** Default system prompt for the AI responder. Frames the task and
+ *  constrains output to a parseable JSON object. */
+export function defaultResponderSystemPrompt(): string {
+  return [
+    'You are an andon responder for an expert system. An automation cord was pulled because a rule, workflow, or guard did not behave as expected.',
+    'Your job: propose a single small, low-risk mutation that would resolve the failure if applied.',
+    '',
+    'Respond with EXACTLY one JSON object matching this shape (no prose, no code fences):',
+    '{',
+    '  "target":          "<name of the module or workflow to mutate>",',
+    '  "claimed_tier":    <integer 1-5; lower = lower authorization tier; lowest that suffices>,',
+    '  "claimed_scope":   ["RULES_modify" | "WORKFLOW_modify" | ...],',
+    '  "mutation_content": { "kind": "<change kind>", ...arbitrary details... },',
+    '  "reasoning":       "<one sentence explaining why this resolves the andon>"',
+    '}',
+    '',
+    'If you cannot confidently propose a fix, respond instead with:',
+    '{ "decline": true, "reason": "<short reason>" }',
+    '',
+    'Rules:',
+    '- Prefer the SMALLEST tier that genuinely covers your proposed scope.',
+    '- Prefer additive changes (add_rule, add_guard) over destructive ones.',
+    '- Never propose changes outside the andon-pulling module/workflow.',
+    '- The proposal will be tier-verified + regression-tested before any deploy.',
+  ].join('\\n');
+}
+
+/** Default user-message template — formats andon event context for the model. */
+export function defaultResponderUserMessage(event: AndonEventLite): string {
+  return [
+    'Andon event details:',
+    \`  trigger_category: \${event.triggerCategory}\`,
+    \`  workflow:         \${event.workflowName ?? '(none)'}\`,
+    \`  step:             \${event.stepName ?? '(none)'}\`,
+    \`  failure_message:  \${event.failureMessage ?? '(none)'}\`,
+    \`  captured_state:   \${JSON.stringify(event.capturedState ?? null)}\`,
+    '',
+    'Propose a mutation that would resolve this failure.',
+  ].join('\\n');
+}
+
+/** Extract a JSON object from raw AI text. Tolerates leading/trailing prose
+ *  and code-fence wrappers. Returns null on parse failure or 'decline'. */
+export function parseResponderDraft(raw: string): ResponderDraftFromAI | null {
+  // Strip markdown code fences if present.
+  const fence = raw.match(/\`\`\`(?:json)?\\s*([\\s\\S]*?)\`\`\`/);
+  const body = fence ? fence[1] : raw;
+  // Find the first { ... } object substring.
+  const start = body.indexOf('{');
+  const end = body.lastIndexOf('}');
+  if (start < 0 || end < 0 || end < start) return null;
+  let parsed: any;
+  try {
+    parsed = JSON.parse(body.substring(start, end + 1));
+  } catch {
+    return null;
+  }
+  if (parsed?.decline === true) return null;
+  if (
+    typeof parsed?.target !== 'string' ||
+    typeof parsed?.claimed_tier !== 'number' ||
+    !Array.isArray(parsed?.claimed_scope) ||
+    !parsed?.claimed_scope.every((s: unknown) => typeof s === 'string') ||
+    parsed?.mutation_content === undefined ||
+    typeof parsed?.reasoning !== 'string'
+  ) {
+    return null;
+  }
+  return {
+    target:          parsed.target,
+    claimedTier:     parsed.claimed_tier,
+    claimedScope:    parsed.claimed_scope,
+    mutationContent: parsed.mutation_content,
+    reasoning:       parsed.reasoning,
+  };
+}
+
+/**
+ * AI-orchestrated andon responder. Fetches the andon context, calls send_chat
+ * with a JSON-output prompt, parses the response into a ResponderDraft, and
+ * runs the draft through the existing verify + sandbox pipeline.
+ *
+ * Disposition mapping mirrors respondToAndon():
+ *   'proposed'      → draft survived AI + parse + tier-verifier
+ *   'no_candidate'  → AI declined, returned unparseable response, or no event
+ *   (verification rejection is still 'proposed' with verification.allowed=false)
+ */
+export async function respondToAndonWithAI(params: AiResponderParams): Promise<AndonResolution> {
+  const event = await invoke<AndonEventLite | null>('get_andon_event', { eventId: params.andonEventId });
+  if (!event) {
+    return {
+      andonEventId: params.andonEventId,
+      disposition:  'no_candidate',
+      policyName:   params.policyName,
+      responderName: \`ai:\${params.model}\`,
+      proposalId:    null,
+      verification:  null,
+      sandbox:       null,
+      notes:         'Andon event not found',
+    };
+  }
+
+  const systemPrompt = params.systemPrompt ?? defaultResponderSystemPrompt();
+  const userMessage  = (params.buildUserMessage ?? defaultResponderUserMessage)(event);
+
+  let aiResp: ChatResponse;
+  try {
+    aiResp = await invoke<ChatResponse>('send_chat', {
+      request: {
+        messages: [{ role: 'user', content: userMessage }],
+        model: params.model,
+        system_prompt: systemPrompt,
+      },
+      requestId: \`responder-\${params.andonEventId}\`,
+    });
+  } catch (e) {
+    return {
+      andonEventId: params.andonEventId,
+      disposition:  'no_candidate',
+      policyName:   params.policyName,
+      responderName: \`ai:\${params.model}\`,
+      proposalId:    null,
+      verification:  null,
+      sandbox:       null,
+      notes:         \`AI call failed: \${String(e).substring(0, 200)}\`,
+    };
+  }
+
+  const draft = parseResponderDraft(aiResp.content);
+  if (!draft) {
+    return {
+      andonEventId: params.andonEventId,
+      disposition:  'no_candidate',
+      policyName:   params.policyName,
+      responderName: \`ai:\${params.model}\`,
+      proposalId:    null,
+      verification:  null,
+      sandbox:       null,
+      notes:         'AI declined or response unparseable',
+    };
+  }
+
+  // Create proposal with combined draft (reasoning + mutation_content wrapped
+  // identically to the stub responder so downstream consumers see the same shape).
+  const proposalId = await invoke<string>('create_mutation_proposal', {
+    input: {
+      andonEventId:     params.andonEventId,
+      policyName:       params.policyName,
+      proposerIdentity: params.proposerIdentity,
+      target:           draft.target,
+      claimedTier:      draft.claimedTier,
+      claimedScope:     draft.claimedScope,
+      mutationContent:  { reasoning: draft.reasoning, mutation: draft.mutationContent },
+    },
+  });
+
+  const verification = await invoke<TierVerification>('verify_mutation_proposal', { proposalId });
+  let sandbox: SandboxOutcome | null = null;
+  if (verification.allowed) {
+    sandbox = await invoke<SandboxOutcome>('execute_proposal_sandbox', { proposalId });
+  }
+  // Back-link the proposal to the andon event so the andon row reflects "we handled it"
+  await invoke<void>('link_proposal_to_andon_event', {
+    andonEventId: params.andonEventId,
+    proposalId,
+  });
+
+  return {
+    andonEventId: params.andonEventId,
+    disposition:  'proposed',
+    policyName:   params.policyName,
+    responderName: \`ai:\${params.model}\`,
+    proposalId,
+    verification,
+    sandbox,
+    notes:        null,
+  };
+}
+
+export async function linkProposalToAndonEvent(
+  andonEventId: string,
+  proposalId: string,
+): Promise<void> {
+  await invoke<void>('link_proposal_to_andon_event', { andonEventId, proposalId });
 }
 `;
 }

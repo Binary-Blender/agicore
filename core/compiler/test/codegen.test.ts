@@ -6894,6 +6894,91 @@ MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
   assert(ts.includes('Phase 11.6b'),                                      'PARTIAL_APPROVAL annotated with phase');
 }
 
+section('Phase 11.4d — link_proposal_to_andon_event Tauri command emitted');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const rs = files.get('src-tauri/src/commands/responder.rs') ?? '';
+  assert(rs.includes('pub fn link_proposal_to_andon_event'),              'public link command emitted');
+  // Underlying helper still exists (used by both the new command + the
+  // existing respond_to_andon_impl flow)
+  assert(rs.includes('fn link_proposal_to_andon('),                       'internal link helper retained');
+  // Main.rs registration
+  const mainRs = files.get('src-tauri/src/main.rs') ?? '';
+  assert(mainRs.includes('commands::responder::link_proposal_to_andon_event'), 'command in invoke_handler');
+}
+
+section('Phase 11.4d — TS bindings expose respondToAndonWithAI orchestration helper');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] AUTO_DEPLOY true } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/responder.ts') ?? '';
+  // Core orchestration entry point
+  assert(ts.includes('export async function respondToAndonWithAI'),       'respondToAndonWithAI exported');
+  assert(ts.includes('export interface AiResponderParams'),               'AiResponderParams type exported');
+  assert(ts.includes('export interface ResponderDraftFromAI'),            'ResponderDraftFromAI type exported');
+  // Helpers (overridable, useful for testing prompt engineering)
+  assert(ts.includes('export function defaultResponderSystemPrompt'),     'system prompt helper exported');
+  assert(ts.includes('export function defaultResponderUserMessage'),      'user message helper exported');
+  assert(ts.includes('export function parseResponderDraft'),              'draft parser exported');
+  // Linkage wrapper
+  assert(ts.includes('export async function linkProposalToAndonEvent'),   'link wrapper exported');
+  // Orchestration sequence
+  assert(ts.includes("invoke<AndonEventLite | null>('get_andon_event'"),  'fetches andon event first');
+  assert(ts.includes("invoke<ChatResponse>('send_chat'"),                 'calls send_chat for AI');
+  assert(ts.includes("invoke<string>('create_mutation_proposal'"),        'creates proposal');
+  assert(ts.includes("invoke<TierVerification>('verify_mutation_proposal'"),'verifies proposal');
+  assert(ts.includes("invoke<SandboxOutcome>('execute_proposal_sandbox'"),'runs sandbox when verified');
+  assert(ts.includes("invoke<void>('link_proposal_to_andon_event'"),      'links back to andon event');
+}
+
+section('Phase 11.4d — parseResponderDraft handles code-fenced JSON + decline');
+{
+  // We compile something to get the generated TS, but the assertions here
+  // are structural — verifying the parser logic handles the documented edge
+  // cases (markdown fences, decline keyword, missing fields).
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/responder.ts') ?? '';
+  assert(ts.includes("\\u003c\\u003c") || ts.includes('match(/```'),       'parser strips markdown code fences');
+  assert(ts.includes("parsed?.decline === true"),                          'parser handles {decline: true} response');
+  assert(ts.includes("typeof parsed?.target !== 'string'"),                'parser validates target field type');
+  assert(ts.includes("typeof parsed?.claimed_tier !== 'number'"),          'parser validates claimed_tier type');
+  assert(ts.includes("!Array.isArray(parsed?.claimed_scope)"),             'parser validates claimed_scope is array');
+}
+
+section('Phase 11.4d — disposition mapping for AI failures preserves audit trail');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/responder.ts') ?? '';
+  // Three failure modes, all return AndonResolution with disposition='no_candidate':
+  //   1. andon event not found
+  //   2. send_chat throws
+  //   3. AI response unparseable / decline
+  assert(ts.includes("'Andon event not found'"),                          'andon-not-found note');
+  assert(ts.includes('AI call failed:'),                                  'AI-call-failed note');
+  assert(ts.includes("'AI declined or response unparseable'"),            'parse-failure note');
+  // Responder name records the model so audit trail shows which AI produced what
+  assert(ts.includes('responderName: \`ai:${'),                           'responderName tagged with ai:model');
+}
+
 section('Phase 11.6c — ORDERED authority chain serializes approvalAuthorityOrdered: true');
 {
   const src = `APP a { TITLE "A" DB a.db }

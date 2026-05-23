@@ -665,10 +665,12 @@ export function generateRust(ast: AgiFile): Map<string, string> {
       ]
     : [];
   // Phase 11.4c — Andon responder commands (close the loop end-to-end).
+  // Phase 11.4d — adds link_proposal_to_andon_event for AI-orchestrated path.
   const responderCmds = hasMutationRuntime
     ? [
         'commands::responder::respond_to_andon',
         'commands::responder::list_andon_responder_dispositions',
+        'commands::responder::link_proposal_to_andon_event',
       ]
     : [];
   // Phase 11.5a — Improvement reasoner commands (kaizen entry).
