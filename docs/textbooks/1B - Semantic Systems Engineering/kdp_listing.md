@@ -17,12 +17,14 @@ Christopher Bender develops the field across twenty-seven chapters in six parts.
 - *The Semantic Turn* — why prompt engineering mislocates the discipline; what practitioners actually do
 - *CSE/SSE as Peer Foundations* — the C++/SQL analogy developed in full; why neither discipline subordinates the other
 - *Latent Space Theory* — the formal substrate; topology, traversal, distance, activation density, attractors
+- *Progressive Semantic Escalation* — the four-beat structure (observation → insight → expansion → compression) that makes well-formed AI responses satisfying; the architectural reason certain prompts produce dramatically better output than others
 - *Semantic Compression* — high-density symbolic operators; *Woz, not Jobs* and *AI at the edit boundary* as worked examples
 - *Conversational Delimiters* — the hidden protocol structure of human politeness; *please* as START, *thanks* as COMMIT
 - *Semantic Querying* — the SQL analogy made literal; `SELECT archetypes FROM civilization_latent_space WHERE governance_model = 'Toyota'` as the canonical example
 - *Semantic Cartography* — the practitioner's long-arc project of mapping latent territory
 - *Semantic Anti-Patterns* — hallucination, drift, mode collapse, coherence collapse, persona drift — diagnosed at the topology level with named remediations
 - *Humans as Runtime Context* — the operator's state as design variable
+- *The Backseat Driver* — high-bandwidth subconscious semantic extraction (HB-SSE); the reframe of AI productivity from automation to cognitive-bandwidth expansion; why long conversational sessions feel different from any prior mode of knowledge work
 - *Semantic Governance* — the bridge to CSE and Agicore; where SSE specification meets runtime enforcement
 - *The End of Prompt Engineering and the Birth of Semantic Operating Systems* — the forecast for the discipline's mature institutional form
 
