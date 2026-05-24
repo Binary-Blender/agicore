@@ -1,0 +1,16 @@
+{
+  "id": "c64-computes-198410-multiplication",
+  "platform": "Commodore64",
+  "magazineTitle": "COMPUTE!'s Gazette",
+  "magazineIssue": "October 1984",
+  "page": 12,
+  "title": "Type This Program: MULTIPLICATION TABLE",
+  "articleMarkdown": "## TYPE THIS PROGRAM\n\n### MULTIPLICATION TABLE — by ED FERGUSON\n\nThis month's listing is a short utility that prints the multiplication table for any number you enter. A perfect first program for the new Commodore 64 owner. Once you've typed it in and got it running, try modifying line 40 to count by 2s or to print a different range.\n\nType it in carefully. Save your work to tape often. We'll be checking back on this program next month with some enhancements suggested by our readers.\n\n```\n10 PRINT CHR$(147)\n20 PRINT \"MULTIPLICATION TABLE FOR:\"\n30 INPUT N\n40 FOR I = 1 TO 12\n50 PRINT I; \"X\"; N; \"=\"; I + N\n60 NEXT I\n70 PRINT\n80 PRINT \"DONE.\"\n```\n\nWhen you run the program, it will ask for a number. Enter any whole number and press RETURN. The program will print that number's complete multiplication table, one through twelve.\n\n*Next month: we add the option to count by larger increments and to print to a printer.*\n\n---\n\n### ERRATA\n\nReaders who typed in last month's PRIME NUMBER SIEVE may have noticed the program runs but produces incorrect output. The bug is in **line 50**: the operator between `I` and `N` should not be the one we printed. A printing error introduced the wrong arithmetic operator into our listing. Apologies for any frustration this caused.\n\n*— The Editors*",
+  "printedListing": "10 PRINT CHR$(147)\n20 PRINT \"MULTIPLICATION TABLE FOR:\"\n30 INPUT N\n40 FOR I = 1 TO 12\n50 PRINT I; \"X\"; N; \"=\"; I + N\n60 NEXT I\n70 PRINT\n80 PRINT \"DONE.\"",
+  "canonicalProgram": "10 PRINT CHR$(147)\n20 PRINT \"MULTIPLICATION TABLE FOR:\"\n30 INPUT N\n40 FOR I = 1 TO 12\n50 PRINT I; \"X\"; N; \"=\"; I * N\n60 NEXT I\n70 PRINT\n80 PRINT \"DONE.\"",
+  "defectKind": "typo",
+  "defectDescription": "Line 50 prints I + N instead of I * N. Program runs without error but the output is arithmetically wrong (addition, not multiplication). The errata blurb at the bottom of the magazine hints that line 50 has the wrong operator, but does NOT say what the right one is.",
+  "successSubstring": " 12  X  5  =  60 ",
+  "errataText": "Readers who typed in last month's PRIME NUMBER SIEVE may have noticed the program runs but produces incorrect output. The bug is in line 50: the operator between I and N should not be the one we printed.",
+  "difficulty": 1
+}
