@@ -27,6 +27,7 @@ PARTS = [
     ("Part IV: The Foundational Texts", [16, 17, 18, 19, 20, 21]),
     ("Part V: The Inheritance", [22, 23, 24, 25, 26, 27]),
     ("Part VI: Forgotten Futures and the Architecture That Inherited Them", [28, 29, 30, 31, 32]),
+    ("Part VII: Regional Layers", [33, 34, 35, 36, 37, 38]),
 ]
 
 CHAPTER_TITLES = {
@@ -62,6 +63,12 @@ CHAPTER_TITLES = {
     30: "The WarGames Lesson and the Andon Loop",
     31: "Garage Computing Returns",
     32: "The Frontier Never Disappeared",
+    33: "Geography Shapes Cognition",
+    34: "The Minnesota Layer",
+    35: "The Cold Weather Twin",
+    36: "The Coastal Foundation",
+    37: "The Forgotten Origin Points",
+    38: "The Mythology Engine",
 }
 
 CSS = b"""

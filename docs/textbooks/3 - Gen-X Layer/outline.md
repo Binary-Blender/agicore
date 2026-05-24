@@ -48,6 +48,12 @@
 | 30 | The WarGames Lesson and the Andon Loop | VI | written (was Ch 25) |
 | 31 | Garage Computing Returns | VI | written (was Ch 26) |
 | 32 | The Frontier Never Disappeared | VI | written (was Ch 27) |
+| **33** | **Geography Shapes Cognition** | VII | **NEW (Part VII)** |
+| **34** | **The Minnesota Layer** | VII | **NEW (Part VII)** |
+| **35** | **The Cold Weather Twin** | VII | **NEW (Part VII)** |
+| **36** | **The Coastal Foundation** | VII | **NEW (Part VII)** |
+| **37** | **The Forgotten Origin Points** | VII | **NEW (Part VII)** |
+| **38** | **The Mythology Engine** | VII | **NEW (Part VII)** |
 
 The detailed per-chapter outlines below describe the original 27 chapters. Treat them as the authoritative content brief for chapters 1–12, 14–15, 17–20, 23–27, 28, 30–32 — adjusting chapter numbers per the table above. Detailed outlines for the five new chapters appear at the end of the document, marked with "NEW CHAPTER" headers.
 - **Voice register — DIFFERENT from CSE and Agicore:** Each chapter opens with a memoir vignette grounded in specific sensory detail (the modem handshake, the cold basement at 2 AM, the boot tone of a Commodore 64), then unfolds into the cultural and technical argument it illustrates. Steven Levy's *Hackers* pattern. Stephenson's *In the Beginning Was the Command Line* pattern. The argument-level rigor matches CSE and Agicore — but the opening cadence carries emotional weight that the seminar register cannot.
@@ -851,3 +857,141 @@ These five chapters supplement the original 27. Their placement is given above. 
 - **Academic anchors:** Taiichi Ohno, *Toyota Production System: Beyond Large-Scale Production*; James P. Womack, Daniel T. Jones, Daniel Roos, *The Machine That Changed the World*; W. Edwards Deming, *Out of the Crisis*; *Cognition Systems Engineering* Volume I, Ch 7 (Cattle Dog Principle) and Ch 8 (A Century of Production Systems); *Agicore* Volume II, the Andon Loop chapters (Ch 16-20)
 
 ---
+
+## Part VII: Regional Layers (Chapters 33–38, NEW)
+
+The cohort thesis is one axis of the substrate. The previous 32 chapters traced that axis. Part VII traces the other axis: geography. The frontier-era cohort did not develop a single uniform cognitive style; it developed a constellation of regional styles produced by specific local ecosystems — institutions, climates, industries, defense-spillover pipelines, university traditions, and the particular employers that absorbed the talented kids of each region. Those regional accents flowed into the training corpus through the regional cohorts that authored disproportionate shares of it, and they are still readable in the model's output to a reader who knows what to listen for.
+
+Each of the six new chapters does the same archaeology the rest of the book does — memoir vignette into cultural argument — for a specific regional layer. The Minnesota chapter is the seed (the author's own home region) and is paired with the Pacific Northwest as its cold-weather twin. The Coastal Foundation chapter covers MIT/Boston and Bell Labs/NJ — the East Coast tradition that produced Unix, C, Lisp, the transistor, the laser, information theory, and the original hacker culture Levy documented. The Forgotten Origin Points chapter covers the regional centers whose contributions Silicon Valley later absorbed into its own mythology — Albuquerque (MITS/Altair/early Microsoft), Champaign-Urbana (PLATO, NCSA Mosaic), Salt Lake City (U of Utah computer graphics — Pixar's intellectual origin), Pittsburgh (CMU robotics and the Newell-Simon symbolic AI tradition). The closing Mythology Engine chapter examines Silicon Valley itself: what it actually built, what it absorbed and re-narrated, and how it came to control the dominant story of computing's origin while erasing the regional accents that fed it. Smaller centers (Austin, NYC, LA, Atlanta, Florida, Boulder) are surveyed in the closing chapter as a constellation of secondary nodes.
+
+### Chapter 33: Geography Shapes Cognition
+- **Word target:** 3,500
+- **Part:** VII
+- **Opening vignette:** A specific moment of recognizing a regional accent in code or in technical writing. The way a Bell Labs alum writes a man page. The way a CMU PhD frames a problem in inductive-logic terms. The way a Minnesota-trained engineer asks "does it work?" before asking "does it scale?" The realization that what sounded like personal style was actually regional dialect.
+- **Summary:** The cohort thesis (Parts I-VI) is the temporal axis of substrate inheritance. The regional thesis is the spatial axis. Local ecosystems shaped local cognitive styles; the styles flowed into the training corpus disproportionately depending on which regions produced the technical authors of the 1990s–2010s; the model's output now carries readable regional accents. The chapter names the thesis precisely, distinguishes it from "Silicon Valley vs. the rest" (the standard regional narrative is itself a regional artifact), and previews the five regional chapters that follow.
+- **Key sections:**
+  - The geography axis introduced as orthogonal to the cohort axis
+  - Why regional accents are readable in training-corpus-derived output (the mechanism: regional cohorts wrote disproportionate shares of regional-specific technical English)
+  - The "what is the regional style" question, answered as: institutions + climate + industry + university tradition + defense spillover + dominant local employer
+  - Why Silicon Valley's claim to be the regional center distorts the actual map
+  - The five regional layers previewed
+- **Key beats:**
+  - Regional accent as cognitive style, not surface vocabulary
+  - The constellation framing: no single center
+  - The Silicon-Valley-narrative critique introduced, deferred to Ch 38
+- **Academic anchors:** AnnaLee Saxenian, *Regional Advantage: Culture and Competition in Silicon Valley and Route 128* (1994); the urban-economics literature on technology agglomeration
+
+---
+
+### Chapter 34: The Minnesota Layer
+- **Word target:** 3,500
+- **Part:** VII
+- **Opening vignette — Christopher's own Minnesota memory:** A specific January night, mid-1980s. -12°F outside. The basement of a Minneapolis split-level. The warmth of a CRT, the boot tone of a Commodore 64 or IBM PC clone, the green-on-amber cursor, the felt cold radiating from the basement floor through wool socks. The realization, decades later, that this scene was repeating itself in thousands of basements across the Twin Cities and the surrounding metro that same winter, and that the cumulative effect of those basements was a regional cognitive imprint that shows up now in the technical authors who came out of Minnesota disproportionately to the state's population share.
+- **Summary:** Minnesota produced an outsized share of the postwar computing substrate, and the production was not accidental. Specific industrial heritage: Cray Research (founded by Seymour Cray, who came out of Control Data, which was founded in Minneapolis in 1957 — Minnesota was the supercomputing capital of the world for two decades), Control Data Corporation, Honeywell Information Systems, Univac/Unisys, Sperry-Rand. Specific medical-technology heritage: Medtronic (Earl Bakken, who built the first wearable pacemaker in his Minneapolis garage in 1957), 3M (the post-it note is a tech artifact — heat-bonded fluorocarbon adhesives developed by Spencer Silver). Specific retail-systems heritage: Target Corporation (originally Dayton-Hudson), Best Buy (founded as Sound of Music in Saint Paul), the Twin Cities POS innovations of the 1980s. Specific media-and-humor heritage: Mystery Science Theater 3000 (Joel Hodgson, Minneapolis, 1988 — literally a show about basement cognition, set on a satellite, watched by robots) and its influence on internet humor as a register. Specific music-scene heritage: Prince, the Replacements, Hüsker Dü, Soul Asylum — the Minneapolis sound was DIY basement-studio culture before that became a cliché. Specific commercial-anchor heritage: the Mall of America as semantic accelerator (Suncoast, Software Etc., Electronics Boutique, Babbage's, the arcades — the mall's role as cultural hub before the internet ate that function). The chapter argues that the cold-weather indoor-cognition thesis is real: long winters force indoor focus, basement computer-time is a rational response to climate, and Minnesota's specific combination of industrial substrate plus indoor cognition plus practical "smart weird kid" culture produced a regional cognitive style that is still visible in the model's output today.
+- **Key sections:**
+  - The supercomputing heritage: Cray, CDC, the Twin Cities as the computing center of the 1960s-70s
+  - The medical-device cluster and what firmware-for-implantables taught a generation about reliability
+  - The retail-systems heritage: Target / Best Buy / the POS revolution
+  - MST3K as basement cognition's self-portrait — and the show's outsized influence on internet humor register (the riff, the running joke, the bot voice)
+  - The Mall of America as semantic accelerator (the arcade-and-software-store ecosystem)
+  - The Minneapolis music scene as DIY basement-studio twin of the basement-coding scene
+  - The cold-weather indoor-cognition thesis: climate as direct shaper of cognitive style
+  - The "smart weird kid" energy: practical, anti-flash, builder culture (the Midwest builder-vs.-California-storyteller contrast)
+  - Lines to modern AI: Cray supercomputing → modern AI compute fabric; Medtronic firmware → embedded medical AI; Target POS → retail AI; MST3K register → internet humor as substrate
+- **Key beats:**
+  - The personal vignette as anchor, then the regional thesis at full rigor
+  - The Cray story as the load-bearing industrial example
+  - The MST3K reading as the load-bearing cultural example
+  - Climate as cognitive shaper (not metaphorically — operationally)
+  - The lines-to-modern-world claim made specifically
+- **Academic anchors:** Erwin Tomash's history of CDC and Cray (Charles Babbage Institute archives at the University of Minnesota); Sherry Turkle on indoor-cognition environments; histories of Medtronic (Earl Bakken's autobiography); MST3K oral histories
+
+---
+
+### Chapter 35: The Cold Weather Twin
+- **Word target:** 3,500
+- **Part:** VII
+- **Opening vignette:** Rain on a Seattle window in February, the gray light, the indoor-coding-because-it-is-gray-out cognitive imprint. The realization that the Pacific Northwest is the climatic twin of the Upper Midwest — different texture, same cognitive shape.
+- **Summary:** Seattle and the Pacific Northwest produced a parallel regional substrate to Minnesota's. The mechanism is similar (long indoor seasons producing extended periods of focused individual work) but the textures and the industrial outputs differ. Microsoft, founded in Albuquerque in 1975, moved to Bellevue in 1979 — and the move was not incidental. Bill Gates was a Seattle native (Lakeside School, Roosevelt High area); the move home brought Microsoft into the regional substrate that would shape its culture for the next four decades. Nintendo of America (Redmond, 1980) brought the Japanese game industry's design sensibility into the same regional substrate, and the localization-and-translation infrastructure that NOA built became part of the cultural pipeline. Boeing (Seattle's century-old aerospace anchor) provided engineering-rigor spillover and an entire generation of "I worked at Boeing in the 1970s and my kid grew up with computers because we got an Apple II early" parents. Amazon (founded 1994) extended the Seattle tech presence into the cloud era. The grunge music scene of the early 1990s was the regional cousin of the Minneapolis sound — DIY, basement-recorded, indoor-cognition-shaped — and was itself a cognitive artifact of the same cold-wet-dark cultural pattern. The chapter argues that Seattle and Minneapolis are functionally the same regional style produced by different weather, and that the technical writing that came out of both regions has detectable common features.
+- **Key sections:**
+  - The climatic-twin thesis: cold-wet vs cold-snowy, both producing indoor cognition
+  - Microsoft's Albuquerque-to-Seattle origin and what the move meant
+  - Nintendo of America and the Japan-to-Pacific-NW pipeline
+  - Boeing as engineering-rigor anchor (and parent-of-the-generation)
+  - Amazon as second-wave Seattle (book-as-database, cloud as substrate)
+  - The grunge parallel to the Minneapolis sound
+  - Lines to modern AI: Microsoft → enterprise AI deployment + Copilot; Nintendo → game AI / Switch / the entertainment-AI tradition; Amazon → cloud AI infrastructure (the substrate every modern AI runs on)
+- **Key beats:**
+  - The twin framing makes both regions legible
+  - The Boeing parent-and-Apple-II pattern as a specific cognitive mechanism
+  - The Amazon-as-cloud-substrate point lands the lines-to-modern-AI claim
+- **Academic anchors:** Histories of Microsoft (Ed Roberts and the MITS deal; Paul Allen's *Idea Man*); James Sandler's history of Nintendo of America; Brad Stone's *The Everything Store*; oral histories of the Seattle music scene (Mark Yarm's *Everybody Loves Our Town*)
+
+---
+
+### Chapter 36: The Coastal Foundation
+- **Word target:** 3,500
+- **Part:** VII
+- **Opening vignette:** Bell Labs Murray Hill at night, mid-1970s. The PDP-11 in the Unix room. Ken Thompson and Dennis Ritchie at the terminals. The realization, fifty years later, that the single largest concentration of civilization-altering R&D in the postwar era happened in a few buildings in central New Jersey, and that the breakup of AT&T scattered the people but left the substrate they had built — Unix, C, the transistor, information theory — to be inherited by everyone who came after.
+- **Summary:** The East Coast computing tradition has been undersold in the popular narrative for thirty years, and the undersell is itself a regional-mythology artifact (Silicon Valley wrote the dominant history). Bell Labs Murray Hill (Holmdel, NJ) produced, between roughly 1940 and 1985, the most consequential R&D record of any laboratory in human history: the transistor (Bardeen, Brattain, Shockley 1947), information theory (Shannon 1948), the laser (Schawlow and Townes 1958), Unix (Thompson and Ritchie 1969), C (Ritchie 1972), the photovoltaic cell, the CCD (Boyle and Smith 1969, foundation of digital imaging), error-correcting codes, the cellular phone concept, hundreds of Nobel-Prize-relevant publications. The breakup of AT&T in 1984 scattered the personnel and weakened the institution; the substrate remained. MIT's AI Lab and Tech Square produced the original "hacker" culture Steven Levy documented in 1984 — the Lisp tradition, the PDP-10 era, the symbolic-AI school of thought, Symbolics, LMI, the Knights of the Lambda Calculus. DEC (Digital Equipment Corporation, Maynard MA) built the minicomputer that created the original computing middle class — the VAX, the PDP series — and produced an entire generation of engineers who later spread to every other tech center. Boston's Route 128 was the original "Silicon Valley before that name took hold," and was briefly more powerful than its California rival. The chapter argues that the East Coast tradition produced the technical infrastructure that every other regional layer built on top of, and that recognizing this is part of recognizing the substrate honestly.
+- **Key sections:**
+  - Bell Labs as the most consequential R&D lab in human history
+  - The AT&T breakup as the moment the substrate was unbundled
+  - MIT AI Lab as Levy's source: the original hacker culture documented
+  - The Lisp tradition and the symbolic-AI school (with the "road not taken" framing that gets revisited by modern neuro-symbolic approaches)
+  - DEC, the VAX, and the creation of the engineering middle class
+  - Route 128 and the East-vs-West-coast rivalry that the West Coast won the press war for
+  - Lines to modern AI: Unix → Linux → every modern cloud; C → every modern language; the AI Lab's symbolic tradition is being recovered now; information theory underlies all of machine learning
+- **Key beats:**
+  - The Bell Labs claim made with full weight
+  - The AT&T-breakup-as-substrate-event read
+  - The Lisp-tradition-as-road-not-taken claim with neuro-symbolic recovery preview
+  - The DEC-as-middle-class-maker point
+- **Academic anchors:** Jon Gertner, *The Idea Factory: Bell Labs and the Great Age of American Innovation*; Steven Levy, *Hackers* (the MIT chapters); Tracy Kidder, *The Soul of a New Machine* (DEC and Data General); AnnaLee Saxenian, *Regional Advantage* (Route 128 vs. Silicon Valley)
+
+---
+
+### Chapter 37: The Forgotten Origin Points
+- **Word target:** 3,500
+- **Part:** VII
+- **Opening vignette:** Someone in the MITS office in Albuquerque in early 1975, looking at the Altair 8800 sitting on a workbench. The moment the personal-computer era began was not in Cupertino. It was in a strip-mall office in New Mexico, and the people who built it included Ed Roberts, plus a 19-year-old Bill Gates and a 22-year-old Paul Allen who had flown down from Boston to write a BASIC interpreter and had not yet decided what their company would be called.
+- **Summary:** Four origin points whose contributions Silicon Valley absorbed into its mythology and erased. **Albuquerque** — MITS Altair 8800 (Ed Roberts, 1975), the first commercially successful personal computer; Microsoft founded in Albuquerque in April 1975 by Gates and Allen, who lived in New Mexico for the next four years before moving to Bellevue; Sandia National Laboratories and Los Alamos in the wider regional substrate, contributing defense-tech spillover and a generation of engineering-trained kids. The personal-computer era was born in New Mexico, and the standard narrative does not say so. **Champaign-Urbana** — the University of Illinois at Urbana-Champaign hosted PLATO (Programmed Logic for Automatic Teaching Operations) from 1960 through the 1980s; PLATO had instant messaging, online forums, multi-user games, and screen-shared collaborative spaces decades before the web; PLATO veterans include Ray Ozzie (Lotus Notes), the founders of CompuServe, and a generation of HCI researchers. The same university later hosted the NCSA, where Marc Andreessen and Eric Bina built Mosaic in 1993 — the first commercially viable graphical web browser. The web was born in Switzerland (Tim Berners-Lee at CERN) and made usable in Illinois. **Salt Lake City / U of Utah** — the University of Utah computer-graphics program produced Ed Catmull (PhD 1974, the original computer-graphics PhD; later Pixar's co-founder); Jim Clark (Silicon Graphics, Netscape); John Warnock (Adobe co-founder); Alan Kay (worked with Ivan Sutherland's group). The intellectual ancestry of every modern visual-computing system traces back to a small group of graduate students working with Ivan Sutherland in Salt Lake City in the early 1970s. WordPerfect (Orem) and Novell (Provo) extended Utah's contribution into the personal-productivity and networking eras. **Pittsburgh / CMU** — Allen Newell and Herbert Simon at Carnegie Mellon produced the Logic Theorist (1956), the General Problem Solver (1957), and the symbolic AI tradition that dominated the field from 1956 through the late 1980s; Newell and Simon won the Turing Award in 1975; their student Raj Reddy founded the CMU Robotics Institute (1979). CMU's symbolic-AI tradition is the school of thought that "lost" to the connectionist revolution of the 2010s — and is now being recovered as the foundation of neuro-symbolic AI. The chapter argues that each of these four origin points built something Silicon Valley later absorbed into its own narrative, and that the absorption obscured the regional sources.
+- **Key sections:**
+  - Albuquerque: MITS, the Altair, Microsoft's first four years
+  - Champaign-Urbana: PLATO's two decades as the first online community; Mosaic and the browser
+  - Salt Lake City: Sutherland's group, Catmull's PhD, the intellectual origin of computer graphics
+  - Pittsburgh: Newell, Simon, the symbolic-AI tradition, the CMU robotics legacy
+  - The absorption pattern: how Silicon Valley's narrative engine consumed and re-narrated each of these origin points
+- **Key beats:**
+  - The Microsoft-was-in-Albuquerque-for-four-years point as the load-bearing example of erasure
+  - PLATO as the first online community (predating the internet by decades)
+  - Sutherland's Utah group as the visual-computing intellectual origin
+  - CMU symbolic AI as the road-not-taken now being recovered
+- **Academic anchors:** Paul Allen, *Idea Man* (Microsoft's Albuquerque years); Brian Dear, *The Friendly Orange Glow* (PLATO's history); David Price's history of Pixar (the Utah-to-NoCal pipeline); Pamela McCorduck, *Machines Who Think* (Newell, Simon, the symbolic-AI school); the CMU Robotics Institute oral histories
+
+---
+
+### Chapter 38: The Mythology Engine
+- **Word target:** 3,500
+- **Part:** VII
+- **Opening vignette:** Standing in the Computer History Museum in Mountain View, looking at the Homebrew Computer Club display case. The realization that the story being told is real but partial — that the display is accurate about what happened in this room, and silent about what happened in the rooms that fed into it (the Albuquerque rooms, the Champaign rooms, the Salt Lake rooms, the Pittsburgh rooms). Silicon Valley's narrative is the narrative that won, not the only narrative that was true.
+- **Summary:** Silicon Valley's actual contributions are substantial and worth naming precisely: Stanford Research Institute (Doug Engelbart's NLS, the mouse, the 1968 demo); Xerox PARC (the Alto, Ethernet, the GUI, Smalltalk, laser printing, object-oriented programming as we now know it); Apple (consumer integration of the PARC vocabulary plus original industrial-design discipline); HP (the founding-of-the-Valley garage and the engineering culture that followed); Atari (the original game-industry company); Intel (the chip foundry that powered everything else); Fairchild Semiconductor (the eight traitors from Shockley, the seed of the semiconductor industry); the venture-capital infrastructure that built the IPO machine. Silicon Valley's actual mythology engine — what distinguishes it from other regional centers — is not the technology itself but the *narrative machinery*: the press relationships, the IPO-as-storytelling-event ritual, the founder-CEO mythology, the way the region wrote its own history continuously and at scale. The chapter argues that Silicon Valley's dominant cultural position was earned partly by its actual technical contributions and partly by its ability to absorb and re-narrate contributions from other regions: Microsoft (Albuquerque), Pixar (Utah), Adobe (the PostScript IP from PARC), the web browser (Illinois), the symbolic-AI tradition (Pittsburgh, MIT), the cellular concept (Bell Labs). The smaller regional centers are surveyed as a constellation: **Austin** (Dell's buy-it-yourself disruption, MCC's failed cooperative AI consortium, SXSW emergence), **NYC/NJ finance side** (the trading-floor tech, Bloomberg terminals, the early-adoption pattern), **LA/Hollywood** (ILM's special-effects pipeline, the LA game-industry cluster, JPL's space-tech tradition), **Atlanta** (Lockheed Georgia computing, CDC's southern operation, the ham-radio amateur-tech tradition that produced CNN's tech infrastructure), **Florida** (IBM Boca Raton — where the IBM PC was born in 1981, in twelve months, by a team operating outside corporate process; NASA Kennedy spillover; EA Tiburon and the Florida game-industry cluster), **Boulder/Denver** (StorageTek's storage substrate, Sun Microsystems' Denver operation, the CU-Boulder physics-and-computing tradition). The closing argument is that the modern AI substrate did not come from a single center. It came from a constellation. Recognizing the constellation is part of recognizing the substrate honestly. The mythology engine of Silicon Valley is one node in that constellation — a powerful node, an important node, a node that did real work — but a node, not the totality.
+- **Key sections:**
+  - What Silicon Valley actually built (SRI, PARC, Apple, HP, Atari, Intel, Fairchild)
+  - The narrative machinery as a distinct artifact from the technology itself
+  - What Silicon Valley absorbed and re-narrated (Microsoft, Pixar, Adobe IP, Mosaic, the symbolic-AI tradition)
+  - Austin, NYC, LA, Atlanta, Florida, Boulder as the secondary constellation
+  - The Boca Raton IBM PC story (twelve months, outside corporate process, in a single year — the disruption-from-within case study)
+  - The closing constellation argument
+- **Key beats:**
+  - Treat SV with fairness — name what it actually built
+  - The mythology-engine distinction is the central conceptual move
+  - The IBM-PC-was-born-in-Florida point as a load-bearing example
+  - The constellation framing closes the regional layer thesis
+- **Academic anchors:** John Markoff, *What the Dormouse Said*; Michael Hiltzik, *Dealers of Lightning* (Xerox PARC); Walter Isaacson, *The Innovators*; David Bradley's accounts of the IBM PC development (Boca Raton, 1980-1981); Margaret O'Mara, *The Code: Silicon Valley and the Remaking of America*
+
+---
+
+### Part VII Closing Note
+
+Part VII does not require a separate closing chapter. The existing book's closing chapters (Ch 31 "Garage Computing Returns" and Ch 32 "The Frontier Never Disappeared") already perform the trilogy-completing work; Part VII appends additional substance without altering the closing argument. The regional thesis is left as a constellation that the reader can extend further — the chapters here are not exhaustive, and the framework invites the reader to name their own regional layer, build their own archaeology of the local substrate, and contribute to the map.
