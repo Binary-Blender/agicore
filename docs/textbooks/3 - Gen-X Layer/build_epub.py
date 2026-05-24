@@ -148,6 +148,29 @@ code {
     font-size: 0.85em;
     line-height: 2;
 }
+.colophon {
+    text-align: center;
+    margin-top: 12%;
+}
+.imprint-logo {
+    max-width: 85%;
+    margin: 2em auto;
+    display: block;
+}
+.imprint-tagline {
+    font-size: 0.85em;
+    letter-spacing: 0.25em;
+    text-indent: 0;
+    color: #555;
+    margin-top: 0.5em;
+}
+.imprint-note {
+    text-indent: 0;
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 1.5em;
+    line-height: 1.6;
+}
 """
 
 
@@ -247,6 +270,18 @@ def main():
     style = epub.EpubItem(uid='style', file_name='style/main.css', media_type='text/css', content=CSS)
     book.add_item(style)
 
+    # Synmatic imprint logo (for back-of-book colophon)
+    logo_path = os.path.join(BOOK_DIR, 'synmatic_logo.jpg')
+    with open(logo_path, 'rb') as f:
+        logo_content = f.read()
+    logo_item = epub.EpubItem(
+        uid='synmatic_logo',
+        file_name='images/synmatic_logo.jpg',
+        media_type='image/jpeg',
+        content=logo_content,
+    )
+    book.add_item(logo_item)
+
     spine = ['nav']
     toc = []
 
@@ -266,7 +301,7 @@ def main():
 <p>Copyright &#169; 2026 Christopher Bender</p>
 <p>All rights reserved.</p>
 <p>&nbsp;</p>
-<p>Published by the Synmatic</p>
+<p>Published by Synmatic</p>
 <p>&nbsp;</p>
 <p>Volume III of the trilogy with
 <em>Cognition Systems Engineering: Theory, Architecture, and Practice</em>
@@ -314,6 +349,17 @@ certain other noncommercial uses permitted by copyright law.</p>
             part_toc_entries.append(epub.Link(filename, f'Chapter {ch_num}: {ch_title}', uid))
 
         toc.append((epub.Section(part_title), part_toc_entries))
+
+    # Synmatic imprint colophon (inside back cover)
+    colophon_body = '''<div class="colophon">
+<img src="images/synmatic_logo.jpg" alt="Synmatic" class="imprint-logo"/>
+<p class="imprint-tagline">NEURAL SYSTEMS &nbsp;|&nbsp; AI WORKFLOWS</p>
+<p class="imprint-note">Published by Synmatic.</p>
+<p class="imprint-note">A research-lab imprint dedicated to AI-native systems engineering.</p>
+</div>'''
+    colophon = make_item('colophon', 'colophon.xhtml', 'Colophon', colophon_body, style)
+    book.add_item(colophon)
+    spine.append(colophon)
 
     book.toc = toc
     book.spine = spine
