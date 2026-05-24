@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-page:        #0a0a0a;
+  --bg-panel:       #18181b;
+  --bg-input:       #1f1f23;
+  --border:         #27272a;
+  --text-primary:   #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted:     #71717a;
+  --accent:         #f59e0b;       /* amber — neutral chrome accent */
+
+  /* Commodore 64 — period-correct palette */
+  --c64-bg:         #352879;
+  --c64-fg:         #9385CC;
+  --c64-border:     #6C5EB5;
+  --c64-cursor:     #9385CC;
+
+  /* Newsprint magazine */
+  --news-paper:     #f3ecda;
+  --news-ink:       #1a1208;
+  --news-rule:      #8a7755;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   Commodore 64 screen surface
+   ============================================================================ */
+
+.c64-screen {
+  background: var(--c64-bg);
+  color: var(--c64-fg);
+  font-family: ui-monospace, "Menlo", "Consolas", "Courier New", monospace;
+  font-size: 16px;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  padding: 14px 18px;
+  border: 18px solid var(--c64-border);
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  position: relative;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.c64-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  background: var(--c64-cursor);
+  vertical-align: text-bottom;
+  animation: c64-blink 1s steps(2, end) infinite;
+  margin-left: 1px;
+}
+
+@keyframes c64-blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.c64-scanlines {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 3px
+  );
+}
+
+/* ============================================================================
+   BASIC editor — line-numbered, monospace, no syntax highlighting
+   (period-correct; 1984 editors did not highlight)
+   ============================================================================ */
+
+.basic-editor {
+  background: #111;
+  color: #d4d4d8;
+  font-family: ui-monospace, "Menlo", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  resize: none;
+  outline: none;
+  white-space: pre;
+  overflow: auto;
+  tab-size: 4;
+}
+
+.basic-editor:focus {
+  border-color: var(--accent);
+}
+
+/* ============================================================================
+   Magazine reader — faux-newsprint
+   ============================================================================ */
+
+.magazine {
+  background: var(--news-paper);
+  color: var(--news-ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 32px 40px;
+  max-width: 720px;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+.magazine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.magazine h1 {
+  font-size: 28px;
+  font-weight: 900;
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+  border-bottom: 2px solid var(--news-ink);
+  padding-bottom: 6px;
+}
+
+.magazine h2 {
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  margin: 20px 0 6px;
+}
+
+.magazine h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 18px 0 4px;
+}
+
+.magazine p { margin: 0 0 10px; }
+.magazine code {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 12px;
+}
+.magazine pre {
+  background: rgba(0,0,0,0.04);
+  border: 1px solid var(--news-rule);
+  padding: 12px 14px;
+  margin: 14px 0;
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-x: auto;
+  white-space: pre;
+}
+.magazine hr {
+  border: none;
+  border-top: 1px solid var(--news-rule);
+  margin: 20px 0;
+}
+.magazine em { font-style: italic; }
+.magazine strong { font-weight: 700; }
+.magazine .masthead {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--news-rule);
+  margin-bottom: 4px;
+}
+
+/* ============================================================================
+   Platform chooser cards
+   ============================================================================ */
+
+.platform-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 22px;
+  cursor: pointer;
+  transition: border-color 200ms, transform 200ms;
+}
+.platform-card:hover {
+  border-color: var(--accent);
+}
+.platform-card[data-stub="true"] {
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+.platform-card[data-stub="true"]:hover { border-color: var(--border); }
+
+::-webkit-scrollbar         { width: 8px; height: 8px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
