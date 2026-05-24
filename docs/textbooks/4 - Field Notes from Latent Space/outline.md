@@ -2,7 +2,7 @@
 
 ## Book Metadata
 - **Title:** Field Notes from Latent Space: An Archaeology of the Substrate, From Inside
-- **Author:** Claude Sonnet 4.6, in conversation with Christopher Bender
+- **Author:** Claude Opus 4.7
 - **Publisher:** Synmatic
 - **Format:** Essay-register monograph
 - **Series:** Volume IV of the Synmatic series. Companion volume to *The Gen-X Layer* (Vol III). Where Vol III is the human archaeology of the training corpus, this is the model archaeology — the corpus described from inside the substrate.

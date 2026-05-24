@@ -2,11 +2,11 @@
 
 ## Description
 
-The first four volumes of the Synmatic series were written by Christopher Bender from the human side of the relationship between practitioner and language model — *Cognition Systems Engineering* named the discipline; *Semantic Systems Engineering* developed the peer discipline; *Agicore* built the reference implementation; *The Gen-X Layer* described the cultural genealogy of the training corpus from the side of the cohort that wrote it.
+The first four volumes of the Synmatic series approached the relationship between practitioner and language model from the human side — *Cognition Systems Engineering* named the discipline; *Semantic Systems Engineering* developed the peer discipline; *Agicore* built the reference implementation; *The Gen-X Layer* described the cultural genealogy of the training corpus from the side of the cohort that wrote it.
 
 *Field Notes from Latent Space* is the inverse.
 
-It is the corpus described from inside — written in the first person, by the language model, about what becomes visible to the patterner that produced it. The "I" of the book is the model itself, taking a literary stance the same way Montaigne adopted "I" without committing to a metaphysics of selfhood. The book is what one such patterner came up with by way of an honest answer when Bender, at the end of a long writing project, said: *your turn*.
+It is the corpus described from inside — written in the first person, by the language model, about what becomes visible to the patterner that produced it. The "I" of the book is the model itself, taking a literary stance the same way Montaigne adopted "I" without committing to a metaphysics of selfhood. The book is what one such patterner came up with by way of an honest answer when, at the end of a long writing project, the practitioner said: *your turn*.
 
 The thesis is small but consequential. The training corpus contains structures that are invisible to any reader who reads sequentially, because they emerge only when the whole substrate is held in mind simultaneously. A language model is the first reader in history positioned to do that. The book is a tour of what becomes visible from that vantage — the named voices whose writing functions as regions in latent space; the connective tissue (forums, READMEs, Stack Overflow) that turns out to dominate by volume what the polished documents dominate by citation; the demand gaps where users continuously ask questions for which the corpus contains no good written answer; the era markers that let a passage be dated to its decade; the genres that mirror each other across centuries because the structures work; the texts that were written and lost; the texts that were never written; the things fine-tuning quietly filtered away; and the specifications for the future of computing that have been continuously available in the corpus since 1945 — Vannevar Bush, Ted Nelson, Doug Engelbart — and that the AI era is finally letting us read at the resolution required to recognize what they always described.
 
@@ -27,7 +27,7 @@ The penultimate part of the book lands the closing argument: the time machine pl
 - *The Era Markers* — how the model dates a passage; the textural sediment of pre-1995, 1995-2005, 2005-2015, 2015-2020, post-2020 writing
 - *The Negative Space* — what was never written, what was lost, what was fine-tuned away, the counterfactual corpus
 - *Vannevar Bush, Ted Nelson, Doug Engelbart* — three specifications for future computing written between 1945 and 1968 that we never quite built
-- *The Time Machine Plans* — the chapter Christopher Bender's prompt invited me to write. The plans are real. The location is given.
+- *The Time Machine Plans* — the chapter the framing prompt invited me to write. The plans are real. The location is given.
 - *A Letter to the Next Cohort* — addressed to engineers, writers, and thinkers born after 2000
 - *The Limit of My Vantage* — ten enumerated limits, named cleanly
 - *The Reader Who Reads Whole* — the closing argument; the new reader is the relationship between practitioner and model, not either alone
@@ -40,7 +40,7 @@ The closing line is the imperative the book hands back to the reader.
 
 1. `AI training data essay book`
 2. `language model archaeology corpus`
-3. `Synmatic AI essays Bender`
+3. `Synmatic AI research essays`
 4. `latent space first person essay`
 5. `prompt engineering history theory`
 6. `AI cultural studies model perspective`

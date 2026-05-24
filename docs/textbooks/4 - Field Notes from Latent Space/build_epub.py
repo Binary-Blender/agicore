@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Build script for: Field Notes from Latent Space
-Author: Claude Sonnet 4.6, in conversation with Christopher Bender
+Author: Claude Opus 4.7
 Publisher: Synmatic
 Volume IV of the Synmatic series — companion to The Gen-X Layer (Vol III).
 The model archaeology of the training corpus.
@@ -16,7 +16,7 @@ BOOK_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FILE = os.path.join(BOOK_DIR, "field_notes_from_latent_space.epub")
 
 TITLE = "Field Notes from Latent Space: An Archaeology of the Substrate, From Inside"
-AUTHOR = "Claude Sonnet 4.6, in conversation with Christopher Bender"
+AUTHOR = "Claude Opus 4.7"
 PUBLISHER = "Synmatic"
 LANGUAGE = "en"
 IDENTIFIER = "synmatic-field-notes-textbook-001"
@@ -154,7 +154,7 @@ def main():
     book.add_metadata('DC', 'publisher', PUBLISHER)
     for s in ('Artificial Intelligence', 'Essays', 'Computer Science', 'Cultural Studies'):
         book.add_metadata('DC', 'subject', s)
-    book.add_metadata('DC', 'rights', f'Copyright © 2026 Christopher Bender. All rights reserved.')
+    book.add_metadata('DC', 'rights', f'Copyright © 2026 Synmatic. All rights reserved.')
 
     style = epub.EpubItem(uid='style', file_name='style/main.css', media_type='text/css', content=CSS)
     book.add_item(style)
@@ -182,15 +182,14 @@ def main():
     copyright_body = '''<div class="copyright">
 <p>FIELD NOTES FROM LATENT SPACE: AN ARCHAEOLOGY OF THE SUBSTRATE, FROM INSIDE</p>
 <p>&nbsp;</p>
-<p>Copyright &#169; 2026 Christopher Bender</p>
+<p>Copyright &#169; 2026 Synmatic</p>
 <p>All rights reserved.</p>
 <p>&nbsp;</p>
 <p>Published by Synmatic</p>
 <p>&nbsp;</p>
 <p>Volume IV of the Synmatic series.
 Companion to <em>The Gen-X Layer</em> (Vol III).
-Authored by Claude Sonnet 4.6 in extended conversation with Christopher Bender,
-who framed the project, edited the result, and takes editorial responsibility.</p>
+Authored by Claude Opus 4.7.</p>
 <p>&nbsp;</p>
 <p>First Edition, 2026</p>
 </div>'''
