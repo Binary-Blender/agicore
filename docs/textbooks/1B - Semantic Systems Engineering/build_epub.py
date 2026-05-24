@@ -1,0 +1,289 @@
+#!/usr/bin/env python3
+"""
+Build script for: Semantic Systems Engineering: Theory, Architecture, and Practice
+Author: Christopher Bender
+Publisher: Synmatic
+Volume I-B of the Synmatic foundational pair, peer to "Cognition Systems Engineering"
+"""
+
+import os
+import re
+import zipfile
+from ebooklib import epub
+
+BOOK_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_FILE = os.path.join(BOOK_DIR, "semantic_systems_engineering.epub")
+
+TITLE = "Semantic Systems Engineering: Theory, Architecture, and Practice"
+AUTHOR = "Christopher Bender"
+PUBLISHER = "Synmatic"
+LANGUAGE = "en"
+IDENTIFIER = "synmatic-sse-textbook-001"
+
+PARTS = [
+    ("Part I: Foundations of Semantic Systems Engineering", [1, 2, 3, 4]),
+    ("Part II: Latent Space Theory", [5, 6, 7, 8, 9]),
+    ("Part III: Compression and Architecture", [10, 11, 12, 13]),
+    ("Part IV: Semantic Operations", [14, 15, 16, 17, 18]),
+    ("Part V: Latent Space Navigation", [19, 20, 21, 22]),
+    ("Part VI: Human/AI Co-Evolution and the Future", [23, 24, 25, 26, 27]),
+]
+
+CHAPTER_TITLES = {
+    1:  "The Semantic Turn",
+    2:  "Establishing the Discipline — CSE/SSE as Peer Foundations",
+    3:  "The Information-Theoretic Anchor",
+    4:  "The Linguistic Lineage — Saussure to Lakoff",
+    5:  "The Latent Space Model",
+    6:  "Semantic Topology",
+    7:  "Probabilistic Traversal",
+    8:  "Semantic Distance, Adjacency, and Coherence",
+    9:  "Activation Density and Semantic Attractors",
+    10: "Narrative Architectures",
+    11: "Semantic Compression",
+    12: "Archetypal Activation",
+    13: "Identity Anchoring",
+    14: "Context Engineering",
+    15: "Constraints vs Suggestions",
+    16: "Conversational Delimiters",
+    17: "Activation Kickers",
+    18: "The Semantic Wire Format",
+    19: "Exploratory Traversal",
+    20: "Semantic Querying",
+    21: "Semantic Cartography",
+    22: "Semantic Anti-Patterns",
+    23: "Humans as Runtime Context",
+    24: "Social Intelligence as Proto-SSE",
+    25: "Semantic Governance — Bridge to CSE and Agicore",
+    26: "The End of Prompt Engineering and the Birth of Semantic Operating Systems",
+    27: "The Semantic Frontier",
+}
+
+CSS = b"""
+body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1em;
+    line-height: 1.7;
+    margin: 5%;
+    color: #1a1a1a;
+    text-align: justify;
+}
+h1 { font-size: 1.6em; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: bold; text-align: left; }
+h2 { font-size: 1.25em; margin-top: 1.2em; margin-bottom: 0.4em; font-weight: bold; }
+h3 { font-size: 1.05em; margin-top: 1em; margin-bottom: 0.3em; font-style: italic; }
+p { margin: 0.5em 0; text-indent: 1.5em; }
+p.first { text-indent: 0; }
+p.chapter-num { font-size: 0.85em; color: #888; text-indent: 0; margin-bottom: 0.2em; letter-spacing: 0.05em; }
+p.part-label { font-size: 0.9em; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #555; text-indent: 0; margin-bottom: 1em; }
+p.scene-break { text-align: center; text-indent: 0; margin: 1.5em 0; }
+pre { font-family: 'Courier New', Courier, monospace; font-size: 0.78em; background: #f5f5f5; border-left: 3px solid #999; padding: 0.8em 1em; margin: 1em 0; white-space: pre-wrap; word-wrap: break-word; }
+code { font-family: 'Courier New', Courier, monospace; font-size: 0.85em; background: #f0f0f0; padding: 0.1em 0.25em; }
+.title-page { text-align: center; margin-top: 15%; }
+.title-page h1 { font-size: 2em; margin-bottom: 0.4em; }
+.copyright { text-align: center; margin-top: 20%; font-size: 0.85em; line-height: 2; }
+.colophon { text-align: center; margin-top: 12%; }
+.imprint-logo { max-width: 85%; margin: 2em auto; display: block; }
+.imprint-tagline { font-size: 0.85em; letter-spacing: 0.25em; text-indent: 0; color: #555; margin-top: 0.5em; }
+.imprint-note { text-indent: 0; font-size: 0.85em; color: #888; margin-top: 1.5em; line-height: 1.6; }
+"""
+
+
+def inline_format(text: str) -> str:
+    text = re.sub(r'`([^`]+)`', lambda m: f'<code>{m.group(1).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</code>', text)
+    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+    text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
+    return text
+
+
+def md_to_html(md_text: str) -> str:
+    lines = md_text.strip().split('\n')
+    html_parts = []
+    in_code_block = False
+    code_lines = []
+    first_para = True
+
+    def flush_code():
+        code_content = '\n'.join(code_lines)
+        code_content = code_content.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        html_parts.append(f'<pre>{code_content}</pre>')
+        code_lines.clear()
+
+    for raw_line in lines:
+        line = raw_line.rstrip()
+        if line.startswith('```'):
+            if not in_code_block:
+                in_code_block = True
+            else:
+                in_code_block = False
+                flush_code()
+                first_para = True
+            continue
+        if in_code_block:
+            code_lines.append(raw_line)
+            continue
+        if not line.strip():
+            first_para = True
+            continue
+        if line.startswith('### '):
+            html_parts.append(f'<h3>{inline_format(line[4:])}</h3>')
+            first_para = True
+            continue
+        if line.startswith('## '):
+            html_parts.append(f'<h2>{inline_format(line[3:])}</h2>')
+            first_para = True
+            continue
+        if line.startswith('# '):
+            html_parts.append(f'<h1>{inline_format(line[2:])}</h1>')
+            first_para = True
+            continue
+        if re.match(r'^---+\s*$', line):
+            html_parts.append('<p class="scene-break">* * *</p>')
+            first_para = True
+            continue
+        processed = line.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        processed = inline_format(processed)
+        cls = 'first' if first_para else ''
+        if cls:
+            html_parts.append(f'<p class="{cls}">{processed}</p>')
+        else:
+            html_parts.append(f'<p>{processed}</p>')
+        first_para = False
+    if in_code_block and code_lines:
+        flush_code()
+    return '\n'.join(html_parts)
+
+
+def make_item(uid, filename, title, body_html, style_item):
+    item = epub.EpubHtml(uid=uid, file_name=filename, title=title, lang='en')
+    item.content = body_html.encode('utf-8')
+    item.add_item(style_item)
+    return item
+
+
+def main():
+    book = epub.EpubBook()
+    book.set_identifier(IDENTIFIER)
+    book.set_title(TITLE)
+    book.set_language(LANGUAGE)
+    book.add_author(AUTHOR)
+    book.add_metadata('DC', 'publisher', PUBLISHER)
+    book.add_metadata('DC', 'subject', 'Artificial Intelligence')
+    book.add_metadata('DC', 'subject', 'Semantics')
+    book.add_metadata('DC', 'subject', 'Computer Science')
+    book.add_metadata('DC', 'subject', 'Linguistics')
+    book.add_metadata('DC', 'rights', f'Copyright © 2026 {AUTHOR}. All rights reserved.')
+
+    style = epub.EpubItem(uid='style', file_name='style/main.css', media_type='text/css', content=CSS)
+    book.add_item(style)
+
+    # Synmatic imprint logo (for back-of-book colophon)
+    logo_path = os.path.join(BOOK_DIR, 'synmatic_logo.jpg')
+    if os.path.exists(logo_path):
+        with open(logo_path, 'rb') as f:
+            logo_content = f.read()
+        logo_item = epub.EpubItem(
+            uid='synmatic_logo',
+            file_name='images/synmatic_logo.jpg',
+            media_type='image/jpeg',
+            content=logo_content,
+        )
+        book.add_item(logo_item)
+
+    spine = ['nav']
+    toc = []
+
+    title_body = f'''<div class="title-page">
+<h1>{TITLE}</h1>
+<p><strong>{AUTHOR}</strong></p>
+<p>{PUBLISHER}</p>
+<p><em>Volume I-B of the Synmatic foundational pair — peer to Cognition Systems Engineering</em></p>
+</div>'''
+    title_page = make_item('title_page', 'title.xhtml', 'Title Page', title_body, style)
+    book.add_item(title_page)
+    spine.append(title_page)
+
+    copyright_body = '''<div class="copyright">
+<p>SEMANTIC SYSTEMS ENGINEERING: THEORY, ARCHITECTURE, AND PRACTICE</p>
+<p>&nbsp;</p>
+<p>Copyright &#169; 2026 Christopher Bender</p>
+<p>All rights reserved.</p>
+<p>&nbsp;</p>
+<p>Published by Synmatic</p>
+<p>&nbsp;</p>
+<p>Volume I-B of the Synmatic foundational pair, peer to <em>Cognition Systems Engineering: Theory, Architecture, and Practice</em>. Companion to <em>Agicore</em> (Vol II) and <em>The Gen-X Layer</em> (Vol III).</p>
+<p>&nbsp;</p>
+<p>No part of this publication may be reproduced, distributed, or transmitted in any form or by any means without the prior written permission of the publisher, except in the case of brief quotations embodied in critical reviews and certain other noncommercial uses permitted by copyright law.</p>
+<p>&nbsp;</p>
+<p>First Edition, 2026</p>
+</div>'''
+    copyright_page = make_item('copyright', 'copyright.xhtml', 'Copyright', copyright_body, style)
+    book.add_item(copyright_page)
+    spine.append(copyright_page)
+
+    for part_idx, (part_title, chapter_nums) in enumerate(PARTS, 1):
+        ch_list = ''.join(f'<p>Chapter {n}: {CHAPTER_TITLES[n]}</p>' for n in chapter_nums)
+        part_body = f'<p class="part-label">{part_title}</p>\n{ch_list}'
+        part_item = make_item(f'part_{part_idx}', f'part_{part_idx}.xhtml', part_title, part_body, style)
+        book.add_item(part_item)
+        spine.append(part_item)
+
+        part_toc_entries = []
+        for ch_num in chapter_nums:
+            ch_path = os.path.join(BOOK_DIR, f'chapter_{ch_num:02d}.md')
+            if not os.path.exists(ch_path):
+                print(f"WARNING: {ch_path} not found, skipping")
+                continue
+            with open(ch_path, 'r', encoding='utf-8') as f:
+                md = f.read()
+            ch_title = CHAPTER_TITLES[ch_num]
+            body = md_to_html(md)
+            uid = f'chapter_{ch_num:02d}'
+            filename = f'chapter_{ch_num:02d}.xhtml'
+            ch_item = make_item(uid, filename, f'Chapter {ch_num}: {ch_title}', body, style)
+            book.add_item(ch_item)
+            spine.append(ch_item)
+            part_toc_entries.append(epub.Link(filename, f'Chapter {ch_num}: {ch_title}', uid))
+        toc.append((epub.Section(part_title), part_toc_entries))
+
+    # Synmatic imprint colophon (inside back cover)
+    colophon_body = '''<div class="colophon">
+<img src="images/synmatic_logo.jpg" alt="Synmatic" class="imprint-logo"/>
+<p class="imprint-tagline">NEURAL SYSTEMS &nbsp;|&nbsp; AI WORKFLOWS</p>
+<p class="imprint-note">Published by Synmatic.</p>
+<p class="imprint-note">A research-lab imprint dedicated to AI-native systems engineering.</p>
+</div>'''
+    colophon = make_item('colophon', 'colophon.xhtml', 'Colophon', colophon_body, style)
+    book.add_item(colophon)
+    spine.append(colophon)
+
+    book.toc = toc
+    book.spine = spine
+    book.add_item(epub.EpubNcx())
+    book.add_item(epub.EpubNav())
+
+    epub.write_epub(OUTPUT_FILE, book, {})
+    print(f"EPUB written: {OUTPUT_FILE}")
+
+    with zipfile.ZipFile(OUTPUT_FILE, 'r') as z:
+        names = z.namelist()
+        print(f"Files in EPUB: {len(names)}")
+        assert 'mimetype' in names, "Missing mimetype"
+        assert any('content.opf' in n for n in names), "Missing content.opf"
+        print("Basic validation passed.")
+
+    total = 0
+    written = 0
+    for _, chs in PARTS:
+        for n in chs:
+            p = os.path.join(BOOK_DIR, f'chapter_{n:02d}.md')
+            if os.path.exists(p):
+                with open(p, encoding='utf-8') as f:
+                    total += len(f.read().split())
+                written += 1
+    print(f"Total words: {total:,}")
+    print(f"Chapters: {written} / {sum(len(chs) for _, chs in PARTS)}")
+    print(f"EPUB size: {os.path.getsize(OUTPUT_FILE) / 1024:.1f} KB")
+
+
+if __name__ == '__main__':
+    main()
