@@ -2,7 +2,7 @@
 """
 Build script for: Agicore: Theory, Architecture, and Practice
 Author: Christopher Bender
-Publisher: AI WIN-WIN Institute
+Publisher: Synmatic
 Companion volume to "Cognition Systems Engineering: Theory, Architecture, and Practice"
 """
 
@@ -16,7 +16,7 @@ OUTPUT_FILE = os.path.join(BOOK_DIR, "agicore_theory_architecture_practice.epub"
 
 TITLE = "Agicore: Theory, Architecture, and Practice"
 AUTHOR = "Christopher Bender"
-PUBLISHER = "AI WIN-WIN Institute"
+PUBLISHER = "Synmatic"
 LANGUAGE = "en"
 IDENTIFIER = "agicore-textbook-001"
 
@@ -341,7 +341,7 @@ def main():
 <p>Copyright &#169; 2026 Christopher Bender</p>
 <p>All rights reserved.</p>
 <p>&nbsp;</p>
-<p>Published by the AI WIN-WIN Institute</p>
+<p>Published by the Synmatic</p>
 <p>&nbsp;</p>
 <p>Companion volume to <em>Cognition Systems Engineering: Theory, Architecture, and Practice</em>.</p>
 <p>&nbsp;</p>

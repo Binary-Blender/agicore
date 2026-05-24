@@ -2,7 +2,7 @@
 """
 Build script for: The Gen-X Layer: An Archaeology of AI's Cognitive Substrate
 Author: Christopher Bender
-Publisher: AI WIN-WIN Institute
+Publisher: Synmatic
 Volume III of the trilogy with "Cognition Systems Engineering" and "Agicore"
 """
 
@@ -16,7 +16,7 @@ OUTPUT_FILE = os.path.join(BOOK_DIR, "the_gen_x_layer.epub")
 
 TITLE = "The Gen-X Layer: An Archaeology of AI's Cognitive Substrate"
 AUTHOR = "Christopher Bender"
-PUBLISHER = "AI WIN-WIN Institute"
+PUBLISHER = "Synmatic"
 LANGUAGE = "en"
 IDENTIFIER = "gen-x-layer-textbook-001"
 
@@ -266,7 +266,7 @@ def main():
 <p>Copyright &#169; 2026 Christopher Bender</p>
 <p>All rights reserved.</p>
 <p>&nbsp;</p>
-<p>Published by the AI WIN-WIN Institute</p>
+<p>Published by the Synmatic</p>
 <p>&nbsp;</p>
 <p>Volume III of the trilogy with
 <em>Cognition Systems Engineering: Theory, Architecture, and Practice</em>

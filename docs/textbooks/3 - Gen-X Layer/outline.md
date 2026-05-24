@@ -3,7 +3,7 @@
 ## Book Metadata
 - **Title:** The Gen-X Layer: An Archaeology of AI's Cognitive Substrate
 - **Author:** Christopher Bender
-- **Publisher:** AI WIN-WIN Institute
+- **Publisher:** Synmatic
 - **Format:** Trade nonfiction / cultural-archaeology textbook
 - **Series:** Volume III of the trilogy with *Cognition Systems Engineering* (Vol I) and *Agicore* (Vol II)
 - **Target Word Count:** ~112,000 words (32 chapters × ~3,500 words)

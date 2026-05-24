@@ -3,7 +3,7 @@
 ## Book Metadata
 - **Title:** Cognition Systems Engineering: Theory, Architecture, and Practice
 - **Author:** Christopher Bender
-- **Publisher:** AI WIN-WIN Institute
+- **Publisher:** Synmatic
 - **Format:** Graduate-level textbook
 - **Target Word Count:** ~94,500 words (27 chapters × ~3,500 words)
 - **Chapter Count:** 27 chapters across 6 Parts

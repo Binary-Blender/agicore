@@ -2,7 +2,7 @@
 """
 Build script for: Cognition Systems Engineering: Theory, Architecture, and Practice
 Author: Christopher Bender
-Publisher: AI WIN-WIN Institute
+Publisher: Synmatic
 """
 
 import os
@@ -15,7 +15,7 @@ OUTPUT_FILE = os.path.join(BOOK_DIR, "cognition_systems_engineering.epub")
 
 TITLE = "Cognition Systems Engineering: Theory, Architecture, and Practice"
 AUTHOR = "Christopher Bender"
-PUBLISHER = "AI WIN-WIN Institute"
+PUBLISHER = "Synmatic"
 LANGUAGE = "en"
 IDENTIFIER = "agicore-cse-textbook-001"
 
@@ -279,7 +279,7 @@ def main():
 <p>Copyright &#169; 2025 Christopher Bender</p>
 <p>All rights reserved.</p>
 <p>&nbsp;</p>
-<p>Published by the AI WIN-WIN Institute</p>
+<p>Published by the Synmatic</p>
 <p>&nbsp;</p>
 <p>Agicore is open-source software licensed under the MIT License.</p>
 <p>&nbsp;</p>

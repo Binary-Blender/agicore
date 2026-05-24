@@ -3,7 +3,7 @@
 ## Book Metadata
 - **Title:** Agicore: Theory, Architecture, and Practice
 - **Author:** Christopher Bender
-- **Publisher:** AI WIN-WIN Institute
+- **Publisher:** Synmatic
 - **Format:** Graduate-level textbook
 - **Series:** Companion to *Cognition Systems Engineering: Theory, Architecture, and Practice*
 - **Target Word Count:** ~94,500 words (27 chapters × ~3,500 words)

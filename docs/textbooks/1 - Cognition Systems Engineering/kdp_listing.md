@@ -10,7 +10,7 @@ The Definitive Graduate Textbook on Designing, Operating, and Improving AI-Nativ
 Christopher Bender
 
 ## Publisher
-AI WIN-WIN Institute
+Synmatic
 
 ## Series
 (standalone)
