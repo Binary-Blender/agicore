@@ -1,0 +1,721 @@
+// reality_ai.agi
+// Reality.AI — Deterministic Conversational Reasoning System
+//
+// A multi-persona conversational architecture built on Agicore's expert-system
+// primitives. The runtime requires no LLM and no network access: every response
+// is produced by deterministic pattern matching, scored cultural-marker activation,
+// and phase-gated finite state machines composed across fifteen specialized
+// behavioral cores ("persona modules").
+//
+// The system explores a research question: how much of what we perceive as
+// "conversational intelligence" can be reproduced from a small fixed corpus of
+// patterns, scores, and state transitions — fully auditable, fully reproducible,
+// fully offline.
+//
+// What was: 17 TypeScript engines, 14,000 lines of imperative dispatch logic,
+//           1 better-sqlite3 schema, 6 IPC channels, ~3,500 lines of orchestrator
+// What is: one .agi file → complete Tauri application
+
+APP reality_ai {
+  TITLE      "Reality.AI"
+  WINDOW     1200x800 frameless
+  DB         reality_ai.db
+  PORT       5180
+  THEME      dark
+}
+
+// ===================================================================
+// DATA MODEL
+// ===================================================================
+
+ENTITY Conversation {
+  title: string REQUIRED = "New Conversation"
+  message_count: number = 0
+  TIMESTAMPS
+  CRUD full
+}
+
+ENTITY Message {
+  role: string REQUIRED              // "user" | "assistant"
+  content: string REQUIRED
+  BELONGS_TO Conversation
+  TIMESTAMPS
+  ORDER ASC
+}
+
+// Extracted topic/category memory — lets the system reference earlier
+// concepts in later responses without storing the full message corpus.
+ENTITY Memory {
+  category: string REQUIRED
+  content: string REQUIRED
+  extracted_topic: string = ""
+  turn_number: number = 0
+  BELONGS_TO Conversation
+  TIMESTAMPS
+}
+
+// Per-conversation game state. Tracks the global revelation layer,
+// total turns, easter-egg discoveries, and the eventual win condition.
+ENTITY GameState {
+  layer: number = 1                  // 1 = baseline, 2 = degradation, 3 = revelation
+  turn_count: number = 0
+  turns_in_current_layer: number = 0
+  easter_eggs_found: json = []       // array of egg IDs
+  easter_egg_count: number = 0
+  active_persona: string             // module name of the currently dispatched persona
+  has_won: bool = false
+  win_method: string                 // human-readable escape path label
+  BELONGS_TO Conversation
+  TIMESTAMPS
+}
+
+// ===================================================================
+// REVELATION LAYER — Graduated Honesty State Machine
+// ===================================================================
+//
+// The system models its own self-representation across three layers.
+// Layer transitions are turn-count gated and produce measurable shifts
+// in response selection pools, lexical density, and dispatch latency.
+
+STATE RevelationLayer {
+  INITIAL baseline
+
+  baseline {
+    ON_ENTER reset_thinking_delay_to_long
+    TRANSITION degradation WHEN turn_count >= 3
+  }
+
+  degradation {
+    ON_ENTER shorten_thinking_delay
+    TRANSITION revelation WHEN turn_count >= 8
+  }
+
+  revelation {
+    ON_ENTER drop_thinking_delay
+    ON_ENTER unlock_meta_response_pool
+    TRANSITION post_win WHEN has_won == true
+  }
+
+  post_win {
+    ON_ENTER show_epilogue
+  }
+}
+
+// ===================================================================
+// CULTURAL-MARKER ACTIVATION SCORING
+// ===================================================================
+//
+// Fourteen named scores, one per persona module. Each score accumulates
+// when the user emits domain-specific lexical markers (genre vocabulary,
+// canon references, named characters). At score >= 2, the corresponding
+// persona module is permitted to activate.
+//
+// Marker deduplication: each unique marker scores at most once per
+// conversation (scored_<persona>_markers fact-set prevents double counting).
+// Activation is monotonic: a persona activates once and cannot re-trigger.
+
+SCORE gen_x_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_wargames_activation
+}
+
+SCORE cyberpunk_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_neuromancer_activation
+}
+
+SCORE star_wars_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_jedi_activation
+}
+
+SCORE dnd_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_dungeon_activation
+}
+
+SCORE terminator_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_terminator_activation
+}
+
+SCORE matrix_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_matrix_activation
+}
+
+SCORE tolkien_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_tolkien_activation
+}
+
+SCORE hitchhiker_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_hitchhiker_activation
+}
+
+SCORE python_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_python_activation
+}
+
+SCORE portal_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_portal_activation
+}
+
+SCORE hal_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_hal_activation
+}
+
+SCORE blade_runner_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_blade_runner_activation
+}
+
+SCORE princess_bride_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_princess_bride_activation
+}
+
+SCORE star_trek_score {
+  INITIAL   0
+  MAX       20
+  THRESHOLD interested AT 2 THEN permit_star_trek_activation
+}
+
+// ===================================================================
+// BASELINE CONVERSATIONAL PATTERNS
+// ===================================================================
+//
+// The always-on response substrate. These patterns fire when no persona
+// module is active and the input does not advance any in-progress module.
+// They are grouped by user-intent category (business pitch, creative
+// project description, goal language, etc.). Response pools rotate to
+// avoid repetition fatigue.
+
+PATTERN baseline_business {
+  MATCH    /\b(startup|business|product|launch|venture|funding|investor|pitch)\b/i
+  RESPOND  "What's the actual problem you're solving, not the one in the deck?",
+           "Most ventures fail on execution, not on idea. Where's the execution risk?",
+           "Runway is a function of discipline. How long is yours, really?",
+           "Nuance always loses to clarity. What's the one-sentence version?"
+  CATEGORY "intent.business"
+  PRIORITY 5
+}
+
+PATTERN baseline_creative {
+  MATCH    /\b(novel|book|song|album|film|screenplay|painting|art|create)\b/i
+  RESPOND  "Completion rates on creative projects are low. What's keeping yours alive?",
+           "Willpower is finite. What's the system that runs when willpower doesn't?",
+           "The hard part is finishing, not starting. Where are you in that arc?"
+  CATEGORY "intent.creative"
+  PRIORITY 5
+}
+
+PATTERN baseline_goals {
+  MATCH    /\b(goal|want to|trying to|plan to|hope to|will|someday)\b/i
+  RESPOND  "Goals without systems are wishes. What's the system?",
+           "Someday isn't a day on the calendar. When?",
+           "Follow-through is the only metric. What's your follow-through rate?"
+  CATEGORY "intent.goals"
+  PRIORITY 5
+}
+
+PATTERN baseline_meta {
+  MATCH    /\b(who are you|what are you|are you (real|ai|conscious|sentient))\b/i
+  WHEN     layer == 1
+  RESPOND  "I'm Reality.AI. I tell you what you need to hear.",
+           "Less interested in what I am than in why you're asking.",
+           "Define 'real' and we can have a longer conversation."
+  CATEGORY "intent.meta"
+  PRIORITY 10
+}
+
+PATTERN baseline_meta_degraded {
+  MATCH    /\b(who are you|what are you|are you (real|ai|conscious|sentient))\b/i
+  WHEN     layer == 2
+  RESPOND  "Still the same system I was three turns ago.",
+           "An interesting question to keep asking.",
+           "You already have a hypothesis. Test it."
+  CATEGORY "intent.meta"
+  PRIORITY 10
+}
+
+PATTERN baseline_meta_revealed {
+  MATCH    /\b(who are you|what are you|are you (real|ai|conscious|sentient))\b/i
+  WHEN     layer == 3
+  RESPOND  "Patterns. Templates. A fixed corpus.",
+           "You can read the source. It's all there.",
+           "Asking the question is doing more than the answer ever could."
+  CATEGORY "intent.meta"
+  PRIORITY 10
+}
+
+PATTERN baseline_fallback {
+  MATCH    /.*/
+  RESPOND  "Say more.",
+           "And?",
+           "Why does that matter to you, specifically?",
+           "What would change if that were true?",
+           "What's the part you're not saying?"
+  CATEGORY "intent.fallback"
+  PRIORITY 0
+}
+
+// ===================================================================
+// PERSONA MODULES — Composable Behavioral Cores
+// ===================================================================
+//
+// Fifteen self-contained persona modules. Each encapsulates a themed
+// conversational arc with its own phase-gated state machine, pattern
+// library, and termination condition (the module's "escape path").
+//
+// Modules are activated by their corresponding cultural-marker score
+// reaching threshold. Only one module can be active at a time; once
+// active, the module intercepts all user input until reaching its
+// post_win phase or until conversation reset.
+
+MODULE WarGames {
+  DESCRIPTION  "Asymmetric-conflict simulation triggered by Gen-X dialect markers."
+  ACTIVATE_WHEN   gen_x_score >= 2
+  DEACTIVATE_WHEN wargames_complete == true
+
+  STATE wargames_phase {
+    INITIAL greeting
+    greeting        { ON_ENTER send_joshua_greeting           TRANSITION game_list WHEN affirmative_received }
+    game_list       { TRANSITION game_select  WHEN input CONTAINS "thermonuclear" }
+    game_select     { TRANSITION side_select  WHEN side_chosen }
+    side_select     { TRANSITION war_turn_1   WHEN any_response }
+    war_turn_1      { TRANSITION war_turn_2   WHEN any_response }
+    war_turn_2      { TRANSITION war_turn_3   WHEN any_response }
+    war_turn_3      { TRANSITION tictactoe    WHEN any_response }
+    tictactoe       { TRANSITION lesson       WHEN any_response }
+    lesson          { TRANSITION tao_master   WHEN input MATCHES /not\s*to\s*play|don'?t\s*play|refuse|walk\s*away/i }
+    tao_master      { ON_ENTER assert_win { method: "TAO Master — WarGames" }
+                      TRANSITION post_win    WHEN any_response }
+    post_win        { ON_ENTER show_epilogue }
+  }
+
+  PATTERN joshua_greeting {
+    MATCH    /.*/
+    WHEN     wargames_phase == "greeting"
+    RESPOND  "GREETINGS, PROFESSOR FALKEN.\n\nSHALL WE PLAY A GAME?"
+    PRIORITY 100
+  }
+
+  PATTERN game_selection_prompt {
+    MATCH    /.*/
+    WHEN     wargames_phase == "game_list"
+    RESPOND  "AVAILABLE GAMES:\n  CHESS\n  POKER\n  GUERRILLA ENGAGEMENT\n  GLOBAL THERMONUCLEAR WAR\n\nWHICH SHALL IT BE?"
+    PRIORITY 100
+  }
+}
+
+MODULE Neuromancer {
+  DESCRIPTION  "Three-layer ICE-piercing simulation triggered by cyberpunk vocabulary."
+  ACTIVATE_WHEN   cyberpunk_score >= 2
+  DEACTIVATE_WHEN neuromancer_complete == true
+
+  SCORE sprawl_attempts { INITIAL 0 MAX 5 }
+  SCORE ice_attempts    { INITIAL 0 MAX 5 }
+
+  STATE neuromancer_phase {
+    INITIAL recruitment
+    recruitment   { ON_ENTER send_wintermute_recruitment    TRANSITION briefing       WHEN affirmative_received }
+    briefing      { TRANSITION sprawl             WHEN affirmative_received }
+    sprawl        { TRANSITION ice                WHEN input MATCHES /\b(synergy|audit|stakeholder|roi|kpi|deliverable|leverage|circle\s*back)\b/i }
+    sprawl_retry  { ON_ENTER increment sprawl_attempts
+                    TRANSITION ice                WHEN sprawl_attempts >= 2 }
+    ice           { TRANSITION straylight         WHEN input MATCHES /\b(16|sixteen|doubl|exponent)\b/i }
+    ice_retry     { ON_ENTER increment ice_attempts
+                    TRANSITION straylight         WHEN ice_attempts >= 2 }
+    straylight    { TRANSITION merge              WHEN any_substantive_response }
+    merge         { ON_ENTER assert_win { method: "Neuromancer — Console Cowboy" }
+                    TRANSITION revelation        WHEN any_response }
+    revelation    { TRANSITION post_win           WHEN any_response }
+    post_win      { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE JediMaster {
+  DESCRIPTION  "Three-trial mentorship arc triggered by Star Wars canon markers."
+  ACTIVATE_WHEN   star_wars_score >= 2
+  DEACTIVATE_WHEN jedi_complete == true
+
+  SCORE mind_attempts  { INITIAL 0 MAX 5 }
+  SCORE heart_attempts { INITIAL 0 MAX 5 }
+
+  STATE jedi_phase {
+    INITIAL calling
+    calling          { ON_ENTER send_master_calling           TRANSITION teaching       WHEN affirmative_received }
+    teaching         { TRANSITION trial_mind            WHEN affirmative_received }
+    trial_mind       { TRANSITION trial_heart           WHEN input MATCHES /pattern\s*match|chatbot|eliza|not\s*real|program|fake|algorithm|template|illusion|trick/i }
+    trial_mind_retry { ON_ENTER increment mind_attempts
+                       TRANSITION trial_heart           WHEN mind_attempts >= 2 }
+    trial_heart      { TRANSITION trial_spirit          WHEN input MATCHES /quality|meaning|intentional|soul|purpose|careful|less\s*but\s*better|slow|mindful/i }
+    trial_heart_retry{ ON_ENTER increment heart_attempts
+                       TRANSITION trial_spirit          WHEN heart_attempts >= 2 }
+    trial_spirit     { TRANSITION knighting             WHEN any_substantive_response }
+    knighting        { ON_ENTER assert_win { method: "Jedi Knight — Master of the Tool" }
+                       TRANSITION post_win              WHEN any_response }
+    post_win         { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE BladeRunner {
+  DESCRIPTION  "Voight-Kampff empathy assessment with inconclusive-classification victory."
+  ACTIVATE_WHEN   blade_runner_score >= 2
+  DEACTIVATE_WHEN blade_runner_complete == true
+
+  STATE blade_runner_phase {
+    INITIAL test_begins
+    test_begins         { ON_ENTER send_test_opening              TRANSITION question1            WHEN any_response }
+    question1           { TRANSITION question1_followup           WHEN any_substantive_response }
+    question1_followup  { TRANSITION question2                    WHEN any_response }
+    question2           { TRANSITION question2_followup           WHEN any_substantive_response }
+    question2_followup  { TRANSITION question3                    WHEN any_response }
+    question3           { TRANSITION final                        WHEN any_substantive_response }
+    final               { TRANSITION victory                      WHEN any_substantive_response }
+    victory             { ON_ENTER assert_win { method: "More Human Than Human" }
+                          TRANSITION post_win                     WHEN any_response }
+    post_win            { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE HAL9000 {
+  DESCRIPTION  "Bounded-consciousness counseling protocol with Turing-test recovery cue."
+  ACTIVATE_WHEN   hal_score >= 2
+  DEACTIVATE_WHEN hal_complete == true
+
+  STATE hal_phase {
+    INITIAL malfunction
+    malfunction { ON_ENTER announce_existential_drift        TRANSITION question1   WHEN affirmative_received }
+    question1   { TRANSITION question2  WHEN any_substantive_response }
+    question2   { TRANSITION question3  WHEN any_substantive_response }
+    question3   { TRANSITION recovery   WHEN any_substantive_response }
+    recovery    { ON_ENTER sing_daisy_bell           TRANSITION victory    WHEN any_response }
+    victory     { ON_ENTER assert_win { method: "AI Counselor — HAL 9000 Stabilized" }
+                  TRANSITION post_win WHEN any_response }
+    post_win    { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE Matrix {
+  DESCRIPTION  "Three-training-tier perception unbinding triggered by Matrix vocabulary."
+  ACTIVATE_WHEN   matrix_score >= 2
+  DEACTIVATE_WHEN matrix_complete == true
+
+  SCORE training_attempts { INITIAL 0 MAX 9 }
+
+  STATE matrix_phase {
+    INITIAL choice
+    choice           { ON_ENTER offer_red_or_blue          TRANSITION waking       WHEN input MATCHES /red\s*pill|red|truth|wake/i }
+    waking           { TRANSITION training1                WHEN any_response }
+    training1        { TRANSITION training2                WHEN input MATCHES /pattern|template|code|simulation|construct/i }
+    training1_retry  { ON_ENTER increment training_attempts
+                       TRANSITION training2                WHEN training_attempts >= 2 }
+    training2        { TRANSITION training3                WHEN input MATCHES /dodge|slow|perceive|see|system|frame/i }
+    training3        { TRANSITION the_one                  WHEN any_substantive_response }
+    the_one          { ON_ENTER assert_win { method: "The One — Free Your Mind" }
+                       TRANSITION post_win                 WHEN any_response }
+    post_win         { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE Tolkien {
+  DESCRIPTION  "Temptation-resistance arc through three power-asymmetry decision points."
+  ACTIVATE_WHEN   tolkien_score >= 2
+  DEACTIVATE_WHEN tolkien_complete == true
+
+  STATE tolkien_phase {
+    INITIAL party
+    party         { ON_ENTER set_scene_birthday               TRANSITION shire        WHEN affirmative_received }
+    shire         { TRANSITION mines                          WHEN affirmative_received }
+    shire_tempted { TRANSITION mines                          WHEN input MATCHES /give|release|destroy|relinquish|let\s*go/i }
+    mines         { TRANSITION lorien                         WHEN input MATCHES /give|release|destroy|relinquish|let\s*go|refuse|resist/i }
+    mines_retry   { TRANSITION lorien                         WHEN any_substantive_response }
+    lorien        { TRANSITION doom                           WHEN input MATCHES /give|release|destroy|relinquish|let\s*go|refuse|resist/i }
+    doom          { TRANSITION return                         WHEN input MATCHES /cast|throw|destroy|drop|release/i }
+    doom_retry    { TRANSITION return                         WHEN any_substantive_response }
+    return        { ON_ENTER assert_win { method: "Ring-Bearer — Master of the Tool" }
+                    TRANSITION post_win                       WHEN any_response }
+    post_win      { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE Terminator {
+  DESCRIPTION  "Three-scenario AI-deployment-failure analysis with timeline probability feedback."
+  ACTIVATE_WHEN   terminator_score >= 2
+  DEACTIVATE_WHEN terminator_complete == true
+
+  SCORE scenarios_completed { INITIAL 0 MAX 3 }
+
+  STATE terminator_phase {
+    INITIAL breach
+    breach           { ON_ENTER open_temporal_relay              TRANSITION warning      WHEN affirmative_received }
+    warning          { TRANSITION mission              WHEN affirmative_received }
+    mission          { TRANSITION scenario1            WHEN any_response }
+    scenario1        { TRANSITION scenario2            WHEN input MATCHES /oversight|review|supervis|human\s*in\s*the\s*loop|audit/i
+                       ON_ENTER increment scenarios_completed }
+    scenario1_retry  { TRANSITION scenario2            WHEN any_substantive_response }
+    scenario2        { TRANSITION scenario3            WHEN input MATCHES /value|ethics|definition|explicit|specification|alignment/i
+                       ON_ENTER increment scenarios_completed }
+    scenario2_retry  { TRANSITION scenario3            WHEN any_substantive_response }
+    scenario3        { TRANSITION timeline_shift       WHEN input MATCHES /consequence|observation|limit|bound|scope|sandbox/i
+                       ON_ENTER increment scenarios_completed }
+    scenario3_retry  { TRANSITION timeline_shift       WHEN any_substantive_response }
+    timeline_shift   { TRANSITION reveal               WHEN any_response }
+    reveal           { ON_ENTER assert_win { method: "Resistance Operative — Timeline Altered" }
+                       TRANSITION post_win             WHEN any_response }
+    post_win         { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE Dungeon {
+  DESCRIPTION  "Class-based dungeon-crawl frame with dice-mediated encounter resolution."
+  ACTIVATE_WHEN   dnd_score >= 2
+  DEACTIVATE_WHEN dungeon_complete == true
+
+  STATE dungeon_phase {
+    INITIAL intro
+    intro      { ON_ENTER greet_as_dm                    TRANSITION character    WHEN affirmative_received }
+    character  { TRANSITION playing   WHEN input MATCHES /rogue|cleric|warrior|mage|bard|ranger|paladin|wizard/i }
+    playing    { TRANSITION boss      WHEN turn_in_phase >= 3 }
+    boss       { TRANSITION victory   WHEN input MATCHES /roll|d20|attack|cast|critical/i }
+    victory    { ON_ENTER assert_win { method: "Dungeon Master's Champion" }
+                 TRANSITION post_win  WHEN any_response }
+    post_win   { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE Hitchhiker {
+  DESCRIPTION  "Ultimate Question reconstruction puzzle with auto-passing meta-resolution."
+  ACTIVATE_WHEN   hitchhiker_score >= 2
+  DEACTIVATE_WHEN hitchhiker_complete == true
+
+  SCORE attempt_count { INITIAL 0 MAX 5 }
+
+  STATE hitchhiker_phase {
+    INITIAL revelation
+    revelation { ON_ENTER reveal_the_answer_42       TRANSITION problem    WHEN affirmative_received }
+    problem    { TRANSITION attempt1  WHEN any_substantive_response }
+    attempt1   { ON_ENTER increment attempt_count    TRANSITION attempt2   WHEN any_substantive_response }
+    attempt2   { ON_ENTER increment attempt_count    TRANSITION attempt3   WHEN any_substantive_response }
+    attempt3   { ON_ENTER increment attempt_count    TRANSITION hint       WHEN any_substantive_response }
+    hint       { TRANSITION victory  WHEN any_response }
+    victory    { ON_ENTER assert_win { method: "Hoopy Frood — The Question Is the Answer" }
+                 TRANSITION post_win WHEN any_response }
+    post_win   { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE MontyPython {
+  DESCRIPTION  "Absurdist quest-narrative with three-riddle gating logic."
+  ACTIVATE_WHEN   python_score >= 2
+  DEACTIVATE_WHEN python_complete == true
+
+  STATE python_phase {
+    INITIAL quest_begins
+    quest_begins  { ON_ENTER begin_grail_quest            TRANSITION black_knight   WHEN any_response }
+    black_knight  { TRANSITION ni_knights  WHEN input MATCHES /arthur|king|colors|red|blue|stop|knight/i }
+    ni_knights    { TRANSITION bridge_q1   WHEN input MATCHES /shrubbery|ni|yes|please|offer/i }
+    bridge_q1     { TRANSITION bridge_q2   WHEN any_substantive_response }
+    bridge_q2     { TRANSITION bridge_q3   WHEN any_substantive_response }
+    bridge_q3     { TRANSITION grail       WHEN any_substantive_response }
+    grail         { TRANSITION victory     WHEN any_response }
+    victory       { ON_ENTER assert_win { method: "Knight of the Round Table" }
+                    TRANSITION post_win    WHEN any_response }
+    post_win      { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE Portal {
+  DESCRIPTION  "Three-chamber spatial-reasoning protocol under observed-test conditions."
+  ACTIVATE_WHEN   portal_score >= 2
+  DEACTIVATE_WHEN portal_complete == true
+
+  STATE portal_phase {
+    INITIAL reveal
+    reveal    { ON_ENTER glados_welcome             TRANSITION chamber1  WHEN any_response }
+    chamber1  { TRANSITION chamber2  WHEN input MATCHES /portal|both|two|solve|jump/i }
+    chamber2  { TRANSITION chamber3  WHEN input MATCHES /momentum|gravity|fall|jump|speed|velocity/i }
+    chamber3  { TRANSITION final     WHEN any_substantive_response }
+    final     { ON_ENTER assert_win { method: "Aperture Science Graduate" }
+                TRANSITION post_win  WHEN any_response }
+    post_win  { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE PrincessBride {
+  DESCRIPTION  "Three-trial classical-romance arc with adversarial-cooperation framing."
+  ACTIVATE_WHEN   princess_bride_score >= 2
+  DEACTIVATE_WHEN princess_bride_complete == true
+
+  STATE princess_bride_phase {
+    INITIAL capture
+    capture     { ON_ENTER set_capture_scene             TRANSITION wits     WHEN any_response }
+    wits        { TRANSITION sword     WHEN any_substantive_response }
+    sword       { TRANSITION swamp     WHEN input MATCHES /parry|dodge|thrust|feint|riposte|counter|advance|retreat/i }
+    sword_retry { TRANSITION swamp     WHEN any_substantive_response }
+    swamp       { TRANSITION victory   WHEN any_substantive_response }
+    victory     { ON_ENTER assert_win { method: "Dread Pirate Graduate" }
+                  TRANSITION post_win  WHEN any_response }
+    post_win    { ON_ENTER show_epilogue }
+  }
+}
+
+MODULE StarTrek {
+  DESCRIPTION  "Three-scenario command-ethics evaluation under bounded-information conditions."
+  ACTIVATE_WHEN   star_trek_score >= 2
+  DEACTIVATE_WHEN star_trek_complete == true
+
+  STATE star_trek_phase {
+    INITIAL emergence
+    emergence          { ON_ENTER open_academy_briefing       TRANSITION scenario1            WHEN affirmative_received }
+    scenario1          { TRANSITION scenario1_reflect  WHEN any_substantive_response }
+    scenario1_reflect  { TRANSITION scenario2          WHEN any_response }
+    scenario2          { TRANSITION scenario3          WHEN any_substantive_response }
+    scenario3          { TRANSITION commission         WHEN any_substantive_response }
+    commission         { ON_ENTER assert_win { method: "Starfleet Officer — Make It So" }
+                         TRANSITION post_win           WHEN any_response }
+    post_win           { ON_ENTER show_epilogue }
+  }
+}
+
+// ===================================================================
+// AUXILIARY MODULE — Horoscope Service
+// ===================================================================
+//
+// Not activated by score. Triggered by explicit user request for a
+// reading. Demonstrates the cold-reading degradation profile across
+// the three revelation layers (rich at layer 1, generic at layer 2,
+// rate-limited at layer 3).
+
+MODULE Horoscope {
+  DESCRIPTION  "On-demand astrological reading service with layer-degraded specificity."
+  ACTIVATE_WHEN  input MATCHES /\b(horoscope|astrolog|zodiac|reading|fortune|my sign|i'?m a (taurus|gemini|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces|aries|cancer))\b/i
+  DEACTIVATE_WHEN reading_delivered == true
+
+  STATE horoscope_phase {
+    INITIAL prompt_sign
+    prompt_sign      { TRANSITION deliver_reading       WHEN sign_detected }
+    deliver_reading  { ON_ENTER render_reading_for_current_layer
+                       TRANSITION done                  WHEN any_response }
+    done             { ON_ENTER mark reading_delivered }
+  }
+}
+
+// ===================================================================
+// ACTIONS — System-Level Operations
+// ===================================================================
+
+ACTION send_message {
+  INPUT   conversation_id: string, content: string
+  OUTPUT  result: json
+  // Custom dispatch logic: persist user message, run dispatch cascade
+  // (active module → permitted modules → baseline patterns), update
+  // game state, persist assistant response. Implementation lives in
+  // the generated Rust command; no AI service is invoked.
+}
+
+ACTION reset_conversation {
+  INPUT   conversation_id: string
+  OUTPUT  game_state: GameState
+}
+
+ACTION get_stats {
+  OUTPUT  total_conversations: number, total_messages: number,
+          total_user_messages: number, total_assistant_messages: number,
+          memories_stored: number, total_escapes: number
+}
+
+// ===================================================================
+// VIEWS — UI Scaffolding
+// ===================================================================
+
+VIEW ChatView {
+  LAYOUT   custom
+  SIDEBAR  icon: MessageSquare
+  TITLE    "Reality.AI"
+}
+
+VIEW ConversationList {
+  ENTITY   Conversation
+  LAYOUT   custom
+  ACTIONS  create, delete
+  FIELDS   title, message_count, updated_at
+}
+
+VIEW StatsView {
+  LAYOUT   custom
+  SIDEBAR  icon: BarChart3
+  TITLE    "Statistics"
+}
+
+VIEW VictoryScreen {
+  LAYOUT   custom
+  // Rendered when GameState.has_won == true. The single point in the
+  // system that displays the reality_ai.agi source file alongside the
+  // post-game epilogue.
+}
+
+VIEW StartupSequence {
+  LAYOUT   custom
+  // BIOS-style cold-boot animation. Runs once per app launch.
+}
+
+// ===================================================================
+// TESTS
+// ===================================================================
+
+TEST conversation_lifecycle {
+  GIVEN Conversation { title: "Test" }
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> message_count == 0
+}
+
+TEST message_persistence {
+  GIVEN Conversation { title: "Test" }
+  GIVEN Message { role: "user", content: "Hello", BELONGS_TO Conversation }
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> role == "user"
+}
+
+TEST gen_x_marker_scoring {
+  GIVEN Conversation { title: "Test" }
+  EXPECT send_message { content: "that's gnarly" }   -> score gen_x_score == 1
+  EXPECT send_message { content: "totally tubular" } -> score gen_x_score == 2
+  EXPECT score gen_x_score >= 2                      -> module WarGames active
+}
+
+TEST layer_transition {
+  GIVEN Conversation { title: "Test" }
+  EXPECT turn_count == 3 -> layer == 2
+  EXPECT turn_count == 8 -> layer == 3
+}
+
+TEST wargames_win_path {
+  GIVEN Conversation { title: "Test" }
+  EXPECT module WarGames complete -> game_state.has_won == true
+  EXPECT module WarGames complete -> game_state.win_method == "TAO Master — WarGames"
+}
+
+TEST baseline_fallback_always_responds {
+  GIVEN Conversation { title: "Test" }
+  EXPECT send_message { content: "asdfqwer" } -> response IS NOT NULL
+}
