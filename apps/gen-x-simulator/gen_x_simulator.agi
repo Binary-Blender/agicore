@@ -1,0 +1,392 @@
+// gen_x_simulator.agi
+// The Gen-X Layer Simulator — Cognitive-Substrate Training Environment
+//
+// Companion application to "The Gen-X Layer: An Archaeology of AI's Cognitive
+// Substrate" (Synmatic, Vol III of the CSE/Agicore/Gen-X Layer trilogy).
+//
+// The thesis: cognitive patterns AI inherited from the early-computing cohort
+// were forged by the constraints of the environments themselves. This system
+// reconstructs those environments — strict, period-correct, frustrating in
+// exactly the ways the originals were frustrating — and lets new minds run
+// the same loops.
+//
+// Architecture: deterministic core where determinism matters (BASIC
+// interpreter, peripheral failure modes, error semantics), optional AI
+// augmentation where authenticity benefits from variance (magazine voice,
+// forum culture, BBS sysop personality).
+
+APP gen_x_simulator {
+  TITLE   "The Gen-X Layer Simulator"
+  WINDOW  1280x800 frameless
+  DB      gen_x_simulator.db
+  PORT    5181
+  THEME   dark
+}
+
+// ===================================================================
+// AI SERVICE — Cultural Augmentation Layer (optional)
+// ===================================================================
+//
+// The simulator runs fully offline without an API key. When configured,
+// the LLM is used for the cultural-texture surfaces only: forum/BBS
+// dialogue, magazine editorial voice when authoring new content,
+// sysop personalities. Never invoked from the BASIC interpreter or
+// peripheral simulators — those must remain deterministic.
+
+AI_SERVICE {
+  PROVIDERS   anthropic, openai
+  KEYS_FILE   "%APPDATA%/GenXSimulator/api-keys.json"
+  DEFAULT     anthropic
+  STREAMING   true
+  OPTIONAL    true              // app runs without any provider configured
+  MODELS {
+    anthropic  "claude-sonnet-4-6"   LABEL "Claude Sonnet 4.6"  DEFAULT
+    anthropic  "claude-haiku-4-5"    LABEL "Claude Haiku 4.5"
+    openai     "gpt-4o-mini"         LABEL "GPT-4o Mini"        DEFAULT
+  }
+}
+
+// ===================================================================
+// DATA MODEL
+// ===================================================================
+
+ENTITY Profile {
+  handle: string REQUIRED UNIQUE          // user's chosen handle
+  current_platform: string                // active platform module name
+  total_play_time_seconds: number = 0
+  TIMESTAMPS
+}
+
+ENTITY Platform {
+  name: string REQUIRED UNIQUE            // "Commodore64", "AppleII", ...
+  display_name: string REQUIRED           // "Commodore 64"
+  release_year: number REQUIRED
+  cultural_lineage: string REQUIRED       // one-line characterization
+  is_implemented: bool = false            // false = honest stub
+  TIMESTAMPS
+}
+
+ENTITY Magazine {
+  platform: string REQUIRED               // FK by name to Platform
+  title: string REQUIRED                  // "COMPUTE!'s Gazette"
+  issue: string REQUIRED                  // "October 1984"
+  cover_path: string                      // optional cover image
+  TIMESTAMPS
+}
+
+ENTITY Lesson {
+  magazine_id: string REQUIRED
+  page: number REQUIRED                   // page number within the magazine
+  title: string REQUIRED                  // "Type This Program: STARFIELD"
+  article_markdown: string REQUIRED       // the editorial text + listing
+  program_source: string REQUIRED         // the canonical correct program
+  defect_kind: string REQUIRED            // "typo", "missing_line", "ambiguous_instruction", "errata_uncorrected"
+  defect_description: string REQUIRED     // human description for testing
+  defect_introduced_listing: string REQUIRED  // the program AS PRINTED (with defect)
+  success_assertion: string REQUIRED      // expression that evaluates true on success
+  errata_text: string                     // optional errata blurb hidden elsewhere in mag
+  difficulty: number = 1                  // 1..10
+  prerequisite_lesson_ids: json = []      // lessons that must be completed first
+  TIMESTAMPS
+}
+
+ENTITY Attempt {
+  profile_id: string REQUIRED
+  lesson_id: string REQUIRED
+  typed_program: string REQUIRED          // what the user typed (verbatim)
+  outcome: string REQUIRED                // "syntax_error", "runtime_error", "wrong_output", "success"
+  error_message: string                   // BASIC error if any
+  output: string                          // captured stdout from the run
+  duration_seconds: number REQUIRED
+  BELONGS_TO Profile
+  BELONGS_TO Lesson
+  TIMESTAMPS
+}
+
+ENTITY SkillState {
+  profile_id: string REQUIRED
+  platform: string REQUIRED               // per-platform skill tracking
+  lessons_completed: number = 0
+  total_attempts: number = 0
+  total_syntax_errors: number = 0
+  defects_found: number = 0
+  hints_consulted: number = 0
+  current_streak: number = 0
+  BELONGS_TO Profile
+  TIMESTAMPS
+}
+
+// ===================================================================
+// REVELATION / SKILL PROGRESSION SCORES
+// ===================================================================
+//
+// These accumulate across attempts and gate access to harder lessons.
+// Unlike Reality.AI's cultural-marker scores, these reflect demonstrated
+// competence, not lexical inputs.
+
+SCORE debugging_score {
+  INITIAL   0
+  MAX       100
+  THRESHOLD novice         AT 5   THEN unlock_intermediate_lessons
+  THRESHOLD intermediate   AT 20  THEN unlock_advanced_lessons
+  THRESHOLD expert         AT 50  THEN unlock_assembly_lessons
+}
+
+SCORE persistence_score {
+  INITIAL   0
+  MAX       100
+  // Rewards continuing after multiple failures rather than giving up.
+  THRESHOLD stubborn       AT 10  THEN log_persistence_milestone
+  THRESHOLD unkillable     AT 30  THEN unlock_long_form_listings
+}
+
+SCORE peripheral_fluency_score {
+  INITIAL   0
+  MAX       100
+  // Successful saves/loads under interrupt pressure (phone calls, tape errors).
+  THRESHOLD competent      AT 5   THEN unlock_modem_lessons
+  THRESHOLD fluent         AT 20  THEN unlock_demoscene_lessons
+}
+
+// ===================================================================
+// PLATFORM MODULES — One per Era Computer
+// ===================================================================
+//
+// Each platform is a self-contained module: boot sequence, shell prompt,
+// BASIC dialect, peripheral failure modes, magazine library.
+//
+// Adding a platform — see CONTRIBUTING_PLATFORMS.md for the full guide.
+// Implementation lives in src-tauri/src/platforms/<name>.rs.
+
+MODULE Commodore64 {
+  DESCRIPTION  "MOS 6510, 64 KB RAM, light-blue-on-dark-blue. Sold 17 million units. The blue-collar polyglot lineage."
+  RELEASE      1982
+  STATUS       implemented
+
+  BOOT_SCREEN  c64/boot_screen.txt
+  SHELL_PROMPT "READY."
+  CURSOR       "█"
+  BASIC_DIALECT "v2"
+
+  PERIPHERAL_FAILURE_MODES {
+    tape_load_error_rate     0.08   // 8% chance per LOAD
+    tape_save_error_rate     0.04   // 4% chance per SAVE
+    phone_interrupt_chance   0.15   // per minute of "online" simulation
+  }
+
+  MAGAZINES   computes_gazette, run_magazine, ahoy
+  SCORE       c64_proficiency
+}
+
+MODULE AppleII {
+  DESCRIPTION  "MOS 6502, 48 KB RAM, monochrome to lo-res color. The structured-thinking lineage — Pascal, LOGO, education."
+  RELEASE      1977
+  STATUS       stub
+  // Awaiting community implementation — see CONTRIBUTING_PLATFORMS.md
+}
+
+MODULE IBMPc {
+  DESCRIPTION  "Intel 8088, 64 KB RAM, MDA/CGA, beige metal box. The serious-business pragmatist lineage."
+  RELEASE      1981
+  STATUS       stub
+}
+
+MODULE Atari800 {
+  DESCRIPTION  "MOS 6502 + ANTIC + POKEY. The audiovisual hacker lineage — demoscene, arcade ports, sound."
+  RELEASE      1979
+  STATUS       stub
+}
+
+// ===================================================================
+// PERIPHERAL SIMULATORS — Cross-Platform Deterministic Components
+// ===================================================================
+
+PERIPHERAL DatasetteTape {
+  DESCRIPTION  "Cassette tape storage. Slow, sequential, occasionally lossy."
+  LOAD_BPS     300                  // ~300 bits per second, period-correct
+  SAVE_BPS     300
+  ERROR_MODES  partial_read, bit_rot, head_misalignment, tape_stretch
+  SOUND        true                 // emits the unmistakable squeal
+}
+
+PERIPHERAL FloppyDisk {
+  DESCRIPTION  "5.25\" floppy. Faster than tape, smaller capacity, mechanical."
+  LOAD_BPS     1200
+  SAVE_BPS     1200
+  ERROR_MODES  bad_sector, disk_full, read_only_tab, head_crash
+}
+
+PERIPHERAL Modem300Baud {
+  DESCRIPTION  "Hayes-compatible modem. 300 baud. Connection killed by incoming voice calls."
+  CONNECT_BPS  300
+  INTERRUPT_SOURCES {
+    incoming_voice_call    weight 0.40  // someone else picked up the phone
+    line_noise             weight 0.30  // dropped a few bytes, garbled text
+    upstream_disconnect    weight 0.20  // BBS sysop went to bed
+    busy_signal            weight 0.10  // BBS at capacity
+  }
+}
+
+PERIPHERAL Modem1200Baud {
+  DESCRIPTION  "Premium upgrade. Four times the speed. Same phone-call problem."
+  CONNECT_BPS  1200
+  // Inherits interrupt sources from Modem300Baud
+}
+
+// ===================================================================
+// CULTURAL LAYER — Selectively LLM-Augmented (optional)
+// ===================================================================
+//
+// These declarations are honored only when an AI provider is configured.
+// Without provider keys, the system falls back to canned content per
+// the FALLBACK_CONTENT field.
+
+PERSONA SysopBlackbeard {
+  PLATFORM       Commodore64
+  ROLE           "Operator of BLACKBEARD'S COVE BBS, a Commodore-only board out of Tampa, FL, 1986."
+  TONE           "Curt. Distrustful of new users. Will not warn before disconnecting."
+  KNOWLEDGE      "Pirated software economy, Commodore demoscene, ANSI art, FidoNet."
+  REFUSES        "Helping with Apple, IBM, or Atari. School-related anything. 'Why don't you read the file_id.diz like everyone else.'"
+  WHEN_OFFLINE   FALLBACK_CONTENT "blackbeard_canned_responses"
+}
+
+PERSONA MagazineEditor_Lou {
+  PLATFORM       Commodore64
+  ROLE           "Senior editor at COMPUTE!'s Gazette, circa 1984."
+  TONE           "Earnest, technically precise, occasionally smug. Apologizes for last month's typos."
+  TASK           "Writes editorial blurbs around type-in listings. Authors errata."
+  WHEN_OFFLINE   FALLBACK_CONTENT "lou_canned_editorials"
+}
+
+PERSONA UsenetFlamer_GreyBeard {
+  PLATFORM       any
+  ROLE           "comp.sys.* regular, posts from a sun-3 at a state university, 1989."
+  TONE           "Pedantic. Writes in lowercase. Quotes too aggressively."
+  TASK           "Replies to user posts in the simulated Usenet view, often missing the point."
+  WHEN_OFFLINE   FALLBACK_CONTENT "greybeard_canned_replies"
+}
+
+// ===================================================================
+// ACTIONS
+// ===================================================================
+
+ACTION choose_platform {
+  INPUT  platform_name: string
+  OUTPUT profile: Profile
+}
+
+ACTION load_magazine {
+  INPUT  magazine_id: string
+  OUTPUT magazine: Magazine, lessons: json
+}
+
+ACTION submit_attempt {
+  INPUT  lesson_id: string, typed_program: string
+  OUTPUT attempt: Attempt, basic_output: string
+  // Runs the typed program through the BASIC interpreter for the active
+  // platform's dialect, captures output, evaluates the lesson's
+  // success_assertion against the captured state, persists Attempt,
+  // updates SkillState and the relevant SCOREs.
+}
+
+ACTION request_hint {
+  INPUT  lesson_id: string
+  OUTPUT hint: string
+  // Increments hints_consulted. Hints are deliberately partial — never
+  // tell the user the exact line/character. Hint copy is canned.
+}
+
+ACTION reset_lesson {
+  INPUT  lesson_id: string
+  OUTPUT cleared_program: string
+}
+
+ACTION get_profile_stats {
+  OUTPUT stats: json   // platforms attempted, lessons completed per platform, scores
+}
+
+// ===================================================================
+// VIEWS
+// ===================================================================
+
+VIEW PlatformChooser {
+  LAYOUT   custom
+  // First screen. Four cards for the four platforms. Stubs are visibly
+  // marked "Awaiting community implementation — contribute one."
+}
+
+VIEW BootSequence {
+  LAYOUT   custom
+  // Plays the platform's BOOT_SCREEN with period-correct timing.
+}
+
+VIEW Shell {
+  LAYOUT   custom
+  // The platform's prompt + blinking cursor. Background for everything else.
+}
+
+VIEW BasicEditor {
+  LAYOUT   custom
+  // Type-in surface. Line-numbered. Monospace, platform-correct colors.
+}
+
+VIEW MagazineRack {
+  LAYOUT   cards
+  ENTITY   Magazine
+}
+
+VIEW MagazineReader {
+  LAYOUT   custom
+  // Paginated faux-newsprint view of a magazine. Articles render as
+  // 1980s-style multi-column print with line-numbered listings.
+}
+
+VIEW Attempts {
+  LAYOUT   table
+  ENTITY   Attempt
+  FIELDS   lesson_id, outcome, duration_seconds, created_at
+}
+
+VIEW SkillDashboard {
+  LAYOUT   custom
+  // Per-platform skill state. Shows completed lessons, score thresholds
+  // crossed, time invested. No badges. No streaks. The numbers are the
+  // numbers.
+}
+
+// ===================================================================
+// TESTS
+// ===================================================================
+
+TEST profile_lifecycle {
+  GIVEN Profile { handle: "test_user" }
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> total_play_time_seconds == 0
+}
+
+TEST commodore64_module_is_implemented {
+  EXPECT module Commodore64 STATUS == "implemented"
+  EXPECT module AppleII     STATUS == "stub"
+  EXPECT module IBMPc       STATUS == "stub"
+  EXPECT module Atari800    STATUS == "stub"
+}
+
+TEST first_lesson_has_real_defect {
+  GIVEN Lesson { title: "STARFIELD" }
+  EXPECT lesson.defect_introduced_listing != lesson.program_source
+  EXPECT lesson.defect_kind IN ["typo", "missing_line", "ambiguous_instruction", "errata_uncorrected"]
+}
+
+TEST attempt_with_unaltered_listing_fails {
+  // Typing exactly what the magazine PRINTED (defect included) must NOT
+  // pass. The kid has to find the defect.
+  GIVEN Lesson { title: "STARFIELD" }
+  EXPECT submit_attempt { typed_program: lesson.defect_introduced_listing }
+         -> outcome != "success"
+}
+
+TEST attempt_with_corrected_listing_succeeds {
+  GIVEN Lesson { title: "STARFIELD" }
+  EXPECT submit_attempt { typed_program: lesson.program_source }
+         -> outcome == "success"
+}
