@@ -7045,6 +7045,87 @@ ENTITY E { name: string  TIMESTAMPS }`;
   assert(!mainRs.includes('finalize_shadow_evaluations'),                  'no finalize command without MUTATION_POLICY');
 }
 
+section('Phase 11.5f — canonical mutation interpreter emitted in shadow_eval.ts');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] NBVE_WINDOW 24h } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/shadow_eval.ts') ?? '';
+  // Types
+  assert(ts.includes('export interface CanonicalRule'),                    'CanonicalRule type');
+  assert(ts.includes('export interface CanonicalRuleSet'),                 'CanonicalRuleSet type');
+  assert(ts.includes('export interface ActionFactory'),                    'ActionFactory type');
+  assert(ts.includes('export type CanonicalMutation'),                     'CanonicalMutation union');
+  // Mutation kind discriminants
+  for (const kind of ["'add_rule'", "'adjust_threshold'", "'disable_rule'", "'add_catchall'"]) {
+    assert(ts.includes(kind),                                              `union has ${kind}`);
+  }
+  // Functions
+  assert(ts.includes('export function applyMutation'),                     'applyMutation exported');
+  assert(ts.includes('export function evaluateRuleSet'),                   'evaluateRuleSet exported');
+  assert(ts.includes('export function parseCanonicalMutation'),            'parseCanonicalMutation exported');
+  assert(ts.includes('export async function evaluateWithCanonicalShadow'), 'evaluateWithCanonicalShadow exported');
+}
+
+section('Phase 11.5f — apply branches handle all four mutation kinds');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] NBVE_WINDOW 24h } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/shadow_eval.ts') ?? '';
+  // Each case branch must produce a new rule set (immutable semantics)
+  assert(ts.includes("case 'add_rule'"),                                   'add_rule branch');
+  assert(ts.includes("case 'adjust_threshold'"),                           'adjust_threshold branch');
+  assert(ts.includes("case 'disable_rule'"),                               'disable_rule branch');
+  assert(ts.includes("case 'add_catchall'"),                               'add_catchall branch');
+  // add_catchall uses MIN_SAFE_INTEGER for priority so it always fires last
+  assert(ts.includes('Number.MIN_SAFE_INTEGER'),                           'catchall fires last (lowest priority)');
+  // adjust_threshold copies thresholds (immutable)
+  assert(ts.includes('thresholds: { ...r.thresholds, [mutation.threshold_key]: mutation.new_value }'),
+    'adjust_threshold copies thresholds');
+  // disable_rule sets active=false (doesn't delete)
+  assert(ts.includes('active: false'),                                     'disable_rule sets active=false (keeps rule for re-enable)');
+}
+
+section('Phase 11.5f — parser tolerates the stub responder envelope + aliases');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] NBVE_WINDOW 24h } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/shadow_eval.ts') ?? '';
+  // Parser handles the { reasoning, mutation: {...} } envelope the stub responder emits
+  assert(ts.includes('.mutation ?? content'),                              'parser unwraps { reasoning, mutation } envelope');
+  // Aliases the responder stub actually uses
+  assert(ts.includes("case 'bypass_rule'"),                                'bypass_rule alias for disable_rule');
+  assert(ts.includes("case 'add_catchall_rule'"),                          'add_catchall_rule alias for add_catchall');
+  // Returns null on unknown kinds rather than throwing
+  assert(ts.includes('default:\n      return null'),                       'unknown kind returns null (caller falls back to production)');
+}
+
+section('Phase 11.5f — evaluateWithCanonicalShadow falls back on unparseable mutations');
+{
+  const src = `APP a { TITLE "A" DB a.db }
+ENTITY E { name: string  TIMESTAMPS }
+ACTION foo { INPUT id: id OUTPUT result: string }
+WORKFLOW w { STEP s { ACTION foo } }
+MUTATION_POLICY mp { TARGETS [w]  TIER 1 base { SCOPE [RULES_modify] NBVE_WINDOW 24h } }`;
+  const { files } = compile(src);
+  const ts = files.get('src/lib/shadow_eval.ts') ?? '';
+  // When parser returns null, shadowFn returns production result so the
+  // diff records as zero-divergence rather than a false positive.
+  assert(ts.includes('if (!mutation) {'),                                  'falls back to production on null mutation');
+  assert(ts.includes('// Unparseable / unsupported mutation kind'),        'fallback documented');
+}
+
 section('Phase 11.5d — shadow_eval.rs emitted with table + lifecycle helpers');
 {
   const src = `APP a { TITLE "A" DB a.db }

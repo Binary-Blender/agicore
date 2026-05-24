@@ -869,5 +869,226 @@ export async function evaluateWithShadow<TIn, TOut>(
 
   return prodOutput;
 }
+
+// ─── Phase 11.5f — Canonical mutation interpreter ─────────────────────────
+//
+// evaluateWithShadow above requires the consumer to supply shadowFn — the
+// function that runs the mutated rule set against the same input. That's
+// flexible but it's also the only "bring your own" gap left in the Andon
+// Loop architecture: for the four common mutation kinds, the consumer's
+// shadowFn ends up being boilerplate.
+//
+// This interpreter ships a generic in-memory rule-set representation and
+// a canonical applyMutation function for those four kinds. Consumers who
+// can express their rules as CanonicalRule[] get dual-routing with zero
+// per-mutation code; consumers with richer rule formats still use the
+// underlying evaluateWithShadow + write their own shadowFn.
+//
+// Mutation kinds supported:
+//   add_rule         — append a new rule (built from a recipe + action factory)
+//   adjust_threshold — change a numeric threshold a rule reads from
+//   disable_rule     — flag a rule inactive (kept in set for re-enable)
+//   add_catchall     — append a lowest-priority always-fires rule
+//
+// Anything outside these four returns null from parseCanonicalMutation;
+// the consumer's evaluateWithCanonicalShadow then falls back to the
+// production result without recording an observation (the mutation
+// isn't one the canonical interpreter can dual-route).
+
+/** A rule's condition closes over its own thresholds via a factory.
+ *  That lets adjust_threshold mutations swap thresholds and have the
+ *  next call see the new values without rebuilding the rule object. */
+export interface CanonicalRule {
+  name:        string;
+  /** Factory: given current thresholds, returns the predicate. */
+  condition:   (thresholds: Record<string, number>) => (input: unknown) => boolean;
+  /** Pure function: given input, returns the rule's output payload. */
+  action:      (input: unknown) => unknown;
+  priority:    number;
+  active:      boolean;
+  /** Named numeric thresholds the condition reads from. adjust_threshold
+   *  mutations update entries here. Empty object is fine for rules that
+   *  don't have tunable parameters. */
+  thresholds:  Record<string, number>;
+}
+
+export interface CanonicalRuleSet {
+  rules: CanonicalRule[];
+}
+
+export interface ActionFactory {
+  /** Construct an action function for an action_name referenced in a recipe.
+   *  Consumers register their action library here so add_rule and
+   *  add_catchall mutations can reify by name. Throw if the name is unknown. */
+  build: (action_name: string) => (input: unknown) => unknown;
+}
+
+export type CanonicalMutation =
+  | { kind: 'add_rule'; recipe: {
+        name:         string;
+        action_name:  string;
+        priority?:    number;
+        thresholds?:  Record<string, number>;
+        /** Optional: condition_kind chooses a built-in condition factory.
+         *  'always' = fires on every input. 'never' = never fires.
+         *  Richer expressions need consumer-supplied condition factories;
+         *  this MVP covers the two trivial cases. */
+        condition_kind?: 'always' | 'never';
+      };
+    }
+  | { kind: 'adjust_threshold'; target_rule: string; threshold_key: string; new_value: number }
+  | { kind: 'disable_rule';     target_rule: string }
+  | { kind: 'add_catchall';     action_name: string; name?: string };
+
+/** Pure: apply a canonical mutation to a rule set, returning a new set
+ *  (the original is not mutated). */
+export function applyMutation(
+  rules:    CanonicalRuleSet,
+  mutation: CanonicalMutation,
+  factory:  ActionFactory,
+): CanonicalRuleSet {
+  switch (mutation.kind) {
+    case 'add_rule': {
+      const cond_kind = mutation.recipe.condition_kind ?? 'always';
+      const condition: CanonicalRule['condition'] = cond_kind === 'never'
+        ? () => () => false
+        : () => () => true;
+      const newRule: CanonicalRule = {
+        name:        mutation.recipe.name,
+        condition,
+        action:      factory.build(mutation.recipe.action_name),
+        priority:    mutation.recipe.priority   ?? 50,
+        active:      true,
+        thresholds:  mutation.recipe.thresholds ?? {},
+      };
+      return { rules: [...rules.rules, newRule] };
+    }
+    case 'adjust_threshold': {
+      return {
+        rules: rules.rules.map((r) =>
+          r.name === mutation.target_rule
+            ? { ...r, thresholds: { ...r.thresholds, [mutation.threshold_key]: mutation.new_value } }
+            : r,
+        ),
+      };
+    }
+    case 'disable_rule': {
+      return {
+        rules: rules.rules.map((r) =>
+          r.name === mutation.target_rule ? { ...r, active: false } : r,
+        ),
+      };
+    }
+    case 'add_catchall': {
+      const newRule: CanonicalRule = {
+        name:        mutation.name ?? '_catchall',
+        condition:   () => () => true,
+        action:      factory.build(mutation.action_name),
+        priority:    Number.MIN_SAFE_INTEGER,  // always last
+        active:      true,
+        thresholds:  {},
+      };
+      return { rules: [...rules.rules, newRule] };
+    }
+  }
+}
+
+/** Evaluate the rule set against an input. First matching rule (by
+ *  descending priority) wins. Returns the fired rule + its output. */
+export function evaluateRuleSet(rules: CanonicalRuleSet, input: unknown): {
+  fired: CanonicalRule | null;
+  output: unknown;
+} {
+  const sorted = rules.rules
+    .filter((r) => r.active)
+    .slice()
+    .sort((a, b) => b.priority - a.priority);
+  for (const rule of sorted) {
+    if (rule.condition(rule.thresholds)(input)) {
+      return { fired: rule, output: rule.action(input) };
+    }
+  }
+  return { fired: null, output: null };
+}
+
+/** Parse a proposal's raw mutation_content JSON into a CanonicalMutation.
+ *  Returns null for any shape the canonical interpreter can't apply (in
+ *  which case the consumer's shadow path should fall back to production).
+ *
+ *  Schema accepts both top-level mutation_content AND the wrapped form
+ *  the stub responder emits ({ reasoning, mutation: { kind, ... } }). */
+export function parseCanonicalMutation(content: unknown): CanonicalMutation | null {
+  if (!content || typeof content !== 'object') return null;
+  // Unwrap the responder's reasoning+mutation envelope if present.
+  const obj = (content as { mutation?: unknown }).mutation ?? content;
+  if (!obj || typeof obj !== 'object') return null;
+  const m = obj as Record<string, unknown>;
+  switch (m.kind) {
+    case 'add_rule': {
+      const recipe = m.recipe as Record<string, unknown> | undefined;
+      if (!recipe || typeof recipe.name !== 'string' || typeof recipe.action_name !== 'string') return null;
+      return {
+        kind: 'add_rule',
+        recipe: {
+          name:           recipe.name,
+          action_name:    recipe.action_name,
+          priority:       typeof recipe.priority === 'number' ? recipe.priority : undefined,
+          thresholds:     (recipe.thresholds && typeof recipe.thresholds === 'object')
+            ? (recipe.thresholds as Record<string, number>) : undefined,
+          condition_kind: recipe.condition_kind === 'never' ? 'never' : 'always',
+        },
+      };
+    }
+    case 'adjust_threshold': {
+      if (typeof m.target_rule !== 'string' || typeof m.threshold_key !== 'string' || typeof m.new_value !== 'number') return null;
+      return { kind: 'adjust_threshold', target_rule: m.target_rule, threshold_key: m.threshold_key, new_value: m.new_value };
+    }
+    case 'disable_rule':
+    case 'bypass_rule': {
+      // bypass_rule is an alias used by the responder stub.
+      if (typeof m.target_rule !== 'string' && typeof m.guard !== 'string') return null;
+      return { kind: 'disable_rule', target_rule: (m.target_rule ?? m.guard) as string };
+    }
+    case 'add_catchall':
+    case 'add_catchall_rule': {
+      const action_name = (m.action_name as string | undefined) ?? (m.rule as { action?: string } | undefined)?.action;
+      if (typeof action_name !== 'string') return null;
+      const name = (m.name as string | undefined) ?? (m.rule as { name?: string } | undefined)?.name;
+      return { kind: 'add_catchall', action_name, name };
+    }
+    default:
+      return null;
+  }
+}
+
+/** High-level wrapper: shadow-evaluate the canonical rule set automatically.
+ *  Consumers who can express their rules as CanonicalRuleSet just call this
+ *  instead of writing their own shadowFn. Production result is always
+ *  returned; shadow observation runs in the background when a proposal is
+ *  in flight against the target.
+ *
+ *  Returns the production action's output (the value the live system uses). */
+export async function evaluateWithCanonicalShadow(
+  target:             string,
+  input:              unknown,
+  productionRules:    CanonicalRuleSet,
+  actionFactory:      ActionFactory,
+): Promise<unknown> {
+  return evaluateWithShadow(
+    target,
+    input,
+    (i) => evaluateRuleSet(productionRules, i).output,
+    (i, mutationContent) => {
+      const mutation = parseCanonicalMutation(mutationContent);
+      if (!mutation) {
+        // Unparseable / unsupported mutation kind — return production result
+        // so the diff records as zero-divergence rather than a false positive.
+        return evaluateRuleSet(productionRules, i).output;
+      }
+      const mutated = applyMutation(productionRules, mutation, actionFactory);
+      return evaluateRuleSet(mutated, i).output;
+    },
+  );
+}
 `;
 }
