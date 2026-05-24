@@ -1,0 +1,44 @@
+{
+  "name": "@agicore/mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server exposing Agicore as tools and resources for Claude Desktop, Cursor, and other MCP-aware AI assistants. Compile .agi files, validate sources, look up project archetypes, and read the Andon Loop architecture — all from within the assistant's session.",
+  "keywords": [
+    "agicore",
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "cursor",
+    "ai-tools",
+    "dsl"
+  ],
+  "homepage": "https://github.com/Binary-Blender/agicore/tree/main/mcp",
+  "license": "MIT",
+  "author": "Christopher Bender",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "agicore-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --import tsx test/smoke.test.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@agicore/compiler": "file:../core/compiler",
+    "@agicore/parser": "file:../core/parser"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

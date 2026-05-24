@@ -180,6 +180,8 @@ agicore/
 |   |-- parser/                # .agi -> AST (911 tests)
 |   +-- compiler/              # AST -> Tauri project + static validator (2,295 tests)
 |
+|-- mcp/                       # MCP server — Agicore inside Claude Desktop / Cursor / any MCP host (40 smoke tests)
+|
 |-- history/                   # Evolutionary lineage (1G -> 4G)
 |   |-- 1g-coding-standards/
 |   |-- 2g-web-stack/
