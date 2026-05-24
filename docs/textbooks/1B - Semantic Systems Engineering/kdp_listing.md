@@ -21,6 +21,8 @@ Christopher Bender develops the field across twenty-seven chapters in six parts.
 - *Semantic Compression* — high-density symbolic operators; *Woz, not Jobs* and *AI at the edit boundary* as worked examples
 - *Conversational Delimiters* — the hidden protocol structure of human politeness; *please* as START, *thanks* as COMMIT
 - *Semantic Querying* — the SQL analogy made literal; `SELECT archetypes FROM civilization_latent_space WHERE governance_model = 'Toyota'` as the canonical example
+- *Trajectory Selection* — the role shift from execution to navigation; why taste becomes more important rather than less under AI augmentation; the highest-leverage human role in mature AI collaboration is not raw production
+- *Recursive Semantic Traversal* — the six-phase operational methodology of advanced AI work: seed injection, traversal reading, resonance detection, immediate branching, resume traversal, natural termination on semantic exhaustion; the depth-first-search structure mature practitioners use without always articulating
 - *Semantic Cartography* — the practitioner's long-arc project of mapping latent territory
 - *Semantic Anti-Patterns* — hallucination, drift, mode collapse, coherence collapse, persona drift — diagnosed at the topology level with named remediations
 - *Humans as Runtime Context* — the operator's state as design variable

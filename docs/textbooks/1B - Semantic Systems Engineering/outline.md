@@ -6,8 +6,8 @@
 - **Publisher:** Synmatic
 - **Format:** Graduate-level textbook
 - **Series:** Volume I-B of the Synmatic foundational pair, peer to *Cognition Systems Engineering: Theory, Architecture, and Practice* (Vol I-A). Companion to *Agicore* (Vol II) and *The Gen-X Layer* (Vol III).
-- **Target Word Count:** ~94,500 words (29 chapters × ~3,300 words)
-- **Chapter Count:** 29 chapters across 6 Parts (expanded to absorb new Ch 11 Progressive Semantic Escalation and new Ch 25 The Backseat Driver / HB-SSE)
+- **Target Word Count:** ~94,500 words (31 chapters × ~3,050 words)
+- **Chapter Count:** 31 chapters across 6 Parts (expanded twice; this revision adds Ch 21 Trajectory Selection and Ch 22 Recursive Semantic Traversal in Part V)
 - **Voice:** Rigorous, precise, authoritative — pure graduate seminar prose. Present tense for principles and definitions. Past tense for historical narrative. Third person for formal statements, second person ("you") for practitioner-facing passages. Each chapter the weight of a peer-reviewed essay. Same register as CSE. The reader is assumed intelligent, motivated, and capable of holding complexity. Concepts build on each other across parts. Do not condescend. Do not over-explain. Trust the reader.
 - **Tone:** Graduate seminar, not TED talk, not productivity advice, not prompt-engineering tutorial. The book should feel as rigorous and inevitable as database systems engineering felt in the early relational era.
 - **Companion Relationship:** *Cognition Systems Engineering* names the discipline of cognition infrastructure — orchestration, governance, runtime control, agents, memory, deterministic constraints. SSE names the peer discipline of semantic environments — meaning topology, contextual priming, narrative architectures, symbolic compression, latent-space navigation. CSE is "C++ for cognition systems." SSE is "SQL for latent space." Both disciplines are necessary in mature AI practice; neither subordinates the other; they operate at different abstraction layers.
@@ -59,10 +59,10 @@ How meaning is structured for navigability. Narrative architectures as semantic 
 ### Part IV: Semantic Operations (Chapters 15–19)
 The practitioner's instruments. Context engineering. The distinction between deterministic constraints and probabilistic suggestions. Conversational delimiters and the hidden protocol structure of human politeness. Activation kickers and identity framing. The semantic wire format — the bridge between SSE practice and CSE infrastructure.
 
-### Part V: Latent Space Navigation (Chapters 20–23)
+### Part V: Latent Space Navigation (Chapters 20–25)
 The advanced techniques. Exploratory traversal as conceptual archaeology. Semantic querying — the SQL analogy made literal. Semantic cartography and the mapping of unexplored regions. Semantic anti-patterns: hallucination as navigation failure, drift as missing anchor, coherence collapse as topology breach.
 
-### Part VI: Human/AI Co-Evolution and the Future (Chapters 24–29)
+### Part VI: Human/AI Co-Evolution and the Future (Chapters 26–31)
 The discipline at the scale of practice and the long arc. The human operator as runtime context. Social intelligence as proto-SSE — the conversational openers and motivational architectures that humans evolved as semantic coordination technology. Semantic governance as bridge to CSE and Agicore. The end of prompt engineering and the birth of semantic operating systems. The semantic frontier.
 
 ---
@@ -489,7 +489,54 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 21: Semantic Querying
+### Chapter 21: Trajectory Selection
+- **Word target:** 3,500
+- **Part:** V
+- **Summary:** Names the role the practitioner occupies in mature SSE practice. The "joystick" phenomenology — flying along nudging direction and watching for cool things to pop up — captures something descriptively accurate. The work has shifted from execution to trajectory selection. Develops the structural argument: AI conversation collapsed execution cost to near-zero across knowledge-work activities; what remains is taste-driven selection from the small set of next moves the model surfaces. Names the central claim: the highest-leverage human role in AI collaboration is not raw production; it is trajectory selection. Explains why taste becomes more important rather than less under AI augmentation — the bottleneck moved to selection. Closes with adjacent observations: why low effort + high output is not paradoxical; why practitioners with similar prompts produce dramatically different outputs (taste at the selection layer); why the workflow resembles real-time strategy games, sailing, and modern surgery.
+- **Key sections:**
+  - The joystick phenomenology and the descriptive accuracy of the metaphor
+  - The execution → navigation role shift formalized
+  - The structural reason: AI collapsed execution cost
+  - The central claim: trajectory selection as the new high-leverage role
+  - Taste as the operative skill at the new bottleneck
+  - The low-effort/high-output explanation
+  - The selection-divergence explanation (why practitioners with similar prompts produce different outputs)
+  - The adjacent-domain resemblance (RTS, sailing, surgery)
+  - The implication for SSE pedagogy: trajectory selection over technique accumulation
+- **Key beats:**
+  - Phenomenology with descriptive accuracy
+  - The role shift as structural, not stylistic
+  - Taste as the new bottleneck
+  - The pedagogical implication
+- **Academic anchors:** the taste-as-judgment literature in design and music; expertise research on real-time decision-making (Klein); the cognitive psychology of fluency
+
+---
+
+### Chapter 22: Recursive Semantic Traversal
+- **Word target:** 3,500
+- **Part:** V
+- **Summary:** Formalizes the operational methodology the previous chapter described experientially. The six-phase process: seed injection → traversal reading → resonance detection → immediate branching → resume traversal → natural termination on semantic exhaustion. Each phase named precisely, distinguished from the others, and developed with the practitioner's specific operations. The methodology's underlying structure is depth-first search on a semantic graph — practitioners with CS literacy recognize the algorithm immediately; the cognitive process matches the structure DFS algorithms were invented to capture. The chapter develops two operational considerations: depth-first traversal requires trust in returning to the trunk (defer-branching is the early-stage failure mode); selective branching matters (not every lit-up phrase warrants a branch). The closing connection: RST is the operational form of high-bandwidth subconscious semantic extraction; the two are the same phenomenon at different levels of abstraction.
+- **Key sections:**
+  - The six phases enumerated and developed
+  - Phase 1: seed injection — light context as starting state
+  - Phase 2: traversal reading — active scanning for resonance, not passive consumption
+  - Phase 3: resonance detection — "words lighting up" as subconscious signaling
+  - Phase 4: immediate branching — the critical operational discipline
+  - Phase 5: resume traversal — depth-first return to the trunk
+  - Phase 6: natural termination on semantic exhaustion
+  - The DFS recognition: practitioners with CS literacy see the algorithm
+  - Two operational considerations: trust-in-returning, selective branching
+  - The connection to Ch 27 (Backseat Driver / HB-SSE): same phenomenon, different abstraction levels
+- **Key beats:**
+  - The six-phase methodology formalized
+  - The DFS structural recognition
+  - The operational discipline named
+  - The bridge to subconscious extraction
+- **Academic anchors:** the DFS algorithm literature; expertise-as-pattern-recognition (Chase & Simon, Klein); the conversation-analysis tradition on turn-taking structure
+
+---
+
+### Chapter 23: Semantic Querying
 - **Word target:** 4,000
 - **Part:** V
 - **Summary:** The book's signature chapter. The SQL analogy made literal. The chapter develops a working notation for semantic queries — `SELECT` clauses that specify the type of structure to be retrieved, `FROM` clauses that specify the latent region to query, `WHERE` clauses that specify constraints on the result, `JOIN` clauses that specify the relationships to materialize. The notation is not (yet) executable; no current language model implements semantic SQL natively. But the notation is precise enough to be useful as a design language for queries the practitioner constructs in natural-language form. The chapter walks through worked examples — `SELECT archetypes FROM civilization_latent_space WHERE governance_model = 'Toyota' AND emotional_texture = 'Gen-X nostalgia'` is the canonical example — and shows how to compose semantic queries that retrieve specific kinds of structure with predictable results. The closing argument: the discipline that contemporary practitioners call "prompt engineering" will, in its mature form, look much more like database querying than like instruction issuing. The SQL analogy is not metaphor; it is forecast.
@@ -509,7 +556,7 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 22: Semantic Cartography
+### Chapter 24: Semantic Cartography
 - **Word target:** 3,500
 - **Part:** V
 - **Summary:** Treats the practitioner's long-arc project: mapping the latent territory. Where exploratory traversal (Ch 19) and semantic querying (Ch 20) are tactical operations, semantic cartography is the strategic project of building, over time, a working map of the latent territory the practitioner operates in. The map names the productive regions, the dead zones, the well-formed attractors, the poorly-formed ones, the unexplored frontiers. The chapter develops the cartography practice — what to record, how to organize the records, how to share maps with other practitioners — and treats semantic cartography as the discipline's emerging professional artifact. A senior SSE practitioner has a working map of the territory they specialize in, the same way a senior database engineer has a working understanding of the data they specialize in. The map is the asset. The chapter closes with the speculative claim that semantic cartography will eventually be institutionalized — that organizations will maintain shared maps of their relevant latent territories the way they currently maintain shared codebases.
@@ -529,7 +576,7 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 23: Semantic Anti-Patterns
+### Chapter 25: Semantic Anti-Patterns
 - **Word target:** 3,500
 - **Part:** V
 - **Summary:** Treats the failure-mode taxonomy of latent-space navigation. Hallucination is not random; it is bad navigation. Drift is not arbitrary; it is missing anchor. Coherence collapse is not noise; it is topology breach. The chapter develops a working taxonomy of semantic anti-patterns, names each precisely, and gives the diagnostic and remediation pattern for each. The taxonomy includes: hallucination as fabrication-of-plausible-structure-where-none-exists; drift as traversal-without-anchor; mode collapse as over-attraction to a single attractor; coherence collapse as traversal-across-incoherent-regions; specification-loss as failure-to-preserve-the-prompt's-constraints across long generations; persona drift as gradual-loss-of-identity-anchor over conversation length. Each is illustrated with worked examples, named at the topology level, and connected to the practitioner's remediation. The chapter functions as the SSE practitioner's failure-mode reference — the chapter you re-read after a generation goes wrong, to find the named anti-pattern that fits and the corresponding fix.
@@ -549,7 +596,7 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 24: Humans as Runtime Context
+### Chapter 26: Humans as Runtime Context
 - **Word target:** 3,500
 - **Part:** VI
 - **Summary:** Treats one of SSE's most important original observations: the human operator is part of the active semantic system. The model's traversal is shaped by the prompt, the context, and the topology — but it is also shaped, indirectly but powerfully, by the human's emotional state, narrative position, identity stability, and worldview coherence at the moment of interaction. A practitioner approaching the model from a position of confident curiosity produces different generations than a practitioner approaching it from a position of anxious dependency, even when the literal text of the prompt is identical, because the surrounding context the practitioner constructs is colored by their state. The chapter develops the formal observation, walks through the implications for practice (the practitioner's own state as design variable; identity stability as professional discipline; emotional regulation as engineering competence), and closes by connecting the observation to the broader trilogy: the Cattle Dog Principle in CSE (Vol I-A Ch 7) is partly a statement that the human's psychological stability is load-bearing infrastructure that the architecture must protect. SSE recognizes the human as runtime context; CSE governs the architecture that protects the human's runtime contribution.
@@ -568,7 +615,7 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 25: The Backseat Driver — Subconscious Cognition in Semantic Systems Engineering
+### Chapter 27: The Backseat Driver — Subconscious Cognition in Semantic Systems Engineering
 - **Word target:** 3,500
 - **Part:** VI
 - **Summary:** Names the cognitive mechanism by which the practitioner's contribution to SSE practice actually arrives — not deliberate articulation, but the high-bandwidth extraction of subconscious associative cognition into the context window. Develops *high-bandwidth subconscious semantic extraction* (HB-SSE) as the load-bearing concept that explains why mature SSE practice feels so different from prior knowledge-work modes. The previous chapter (Humans as Runtime Context) established that the human is part of the system; this chapter names HOW the human contributes. The mechanism reframes AI productivity entirely: not automation, but the collapse of the impedance mismatch between subconscious intuition and externalized expression.
@@ -590,7 +637,7 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 26: Social Intelligence as Proto-SSE
+### Chapter 28: Social Intelligence as Proto-SSE
 - **Word target:** 3,500
 - **Part:** VI
 - **Summary:** Treats the most generous available reading of human social communication: humans have been doing SSE on each other for tens of thousands of years. The conversational opener that establishes the relationship between two speakers, the framing that primes the listener for the kind of content that will follow, the storytelling that delivers complex meaning in compressed form, the motivational architecture that shapes a team's collective traversal — all of these are pre-computational instances of SSE technique. Human social communication evolved as semantic coordination technology. The Gen-X conversational openers that the trilogy's third volume documents (cross-reference to Vol III), the institutional rhetoric of effective leadership, the storytelling of religious tradition, the protocol structures of polite conversation (Ch 16) — these are all SSE-shaped practices that the discipline can now recognize, formalize, and extend into the AI substrate. The chapter develops the recognition, walks through the major instances, and closes with the claim that SSE practice in the AI era is continuous with the social-coordination technology that built human civilization in the first place.
@@ -610,7 +657,7 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 27: Semantic Governance — Bridge to CSE and Agicore
+### Chapter 29: Semantic Governance — Bridge to CSE and Agicore
 - **Word target:** 3,500
 - **Part:** VI
 - **Summary:** Treats the most direct bridge between SSE and the trilogy's other volumes: semantic governance. The discipline of bounding which traversals are admissible, which attractors are activated, which constraints are enforced — this is the SSE-design-time counterpart to the CSE-runtime-enforcement work that Agicore implements. The chapter walks through the bridge: SSE specifies the semantic environment (the topology, the attractors, the constraints, the suggestions); CSE provides the infrastructure that enforces the specification at runtime (the tier verifier, the sandbox, the approval chain, the hash-chained ledger); Agicore is the reference implementation. The chapter develops the bridge in detail, names the points of correspondence (SSE constraints → CSE policy gates; SSE attractors → CSE skill docs; SSE wire format → CSE PACKET declarations), and closes with the strategic claim: governed exploration is the mature SSE-CSE joint practice. The boundary between the two disciplines is precisely the boundary between design and enforcement, between specification and execution.
@@ -630,7 +677,7 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 28: The End of Prompt Engineering and the Birth of Semantic Operating Systems
+### Chapter 30: The End of Prompt Engineering and the Birth of Semantic Operating Systems
 - **Word target:** 3,500
 - **Part:** VI
 - **Summary:** The book's central forecast chapter. The discipline that contemporary practitioners call "prompt engineering" is a transitional term, like *horseless carriage* was for automobile and *electronic mail* was for email. The term will not survive the maturation of the field. What replaces it is *Semantic Systems Engineering* at the discipline level and *Semantic Operating Systems* at the infrastructure level. A semantic operating system is the AI-native equivalent of an operating system: a persistent layer that maintains semantic state, manages context-window resources, schedules attractor activation, enforces semantic governance, mediates between human operators and language-model runtimes. The chapter develops the forecast, walks through the implications (mature SSE practice as system administration rather than instruction crafting; semantic operating systems as the cross-organizational substrate; the practitioner taxonomy that will emerge), and connects the forecast to the trilogy's broader argument about Agicore as the deterministic-runtime infrastructure that the semantic-operating-system layer will eventually run on top of.
@@ -650,7 +697,7 @@ The discipline at the scale of practice and the long arc. The human operator as 
 
 ---
 
-### Chapter 29: The Semantic Frontier
+### Chapter 31: The Semantic Frontier
 - **Word target:** 3,500
 - **Part:** VI
 - **Summary:** Closes the book with the broadest possible framing. Humanity has entered an era in which meaning itself becomes an engineering substrate. The discipline of engineering meaning environments — SSE — is one of two foundational disciplines (with CSE) for working productively in this era. The other volumes in the Synmatic series develop adjacent threads: Agicore implements the CSE infrastructure that runs the system; The Gen-X Layer documents the cultural genealogy of the cohort that built the discipline. SSE specifically, and this book specifically, names the territory of meaning-engineering at the formal level the field requires. The chapter closes with the most important reframing the book can offer: the meaning environments humans have always built — in stories, in liturgies, in institutional rhetoric, in conversation — were always engineered, just with different substrate. What the AI era introduces is not the practice of meaning-engineering, which is millennia old. What the AI era introduces is the formal substrate against which meaning-engineering can finally be done with the rigor it always deserved. The semantic frontier is open. The discipline has its name. The work has its tools. The practitioners are arriving.

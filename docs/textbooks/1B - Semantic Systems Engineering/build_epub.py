@@ -25,8 +25,8 @@ PARTS = [
     ("Part II: Latent Space Theory", [5, 6, 7, 8, 9]),
     ("Part III: Compression and Architecture", [10, 11, 12, 13, 14]),
     ("Part IV: Semantic Operations", [15, 16, 17, 18, 19]),
-    ("Part V: Latent Space Navigation", [20, 21, 22, 23]),
-    ("Part VI: Human/AI Co-Evolution and the Future", [24, 25, 26, 27, 28, 29]),
+    ("Part V: Latent Space Navigation", [20, 21, 22, 23, 24, 25]),
+    ("Part VI: Human/AI Co-Evolution and the Future", [26, 27, 28, 29, 30, 31]),
 ]
 
 CHAPTER_TITLES = {
@@ -50,15 +50,17 @@ CHAPTER_TITLES = {
     18: "Activation Kickers",
     19: "The Semantic Wire Format",
     20: "Exploratory Traversal",
-    21: "Semantic Querying",
-    22: "Semantic Cartography",
-    23: "Semantic Anti-Patterns",
-    24: "Humans as Runtime Context",
-    25: "The Backseat Driver — Subconscious Cognition in Semantic Systems Engineering",
-    26: "Social Intelligence as Proto-SSE",
-    27: "Semantic Governance — Bridge to CSE and Agicore",
-    28: "The End of Prompt Engineering and the Birth of Semantic Operating Systems",
-    29: "The Semantic Frontier",
+    21: "Trajectory Selection",
+    22: "Recursive Semantic Traversal",
+    23: "Semantic Querying",
+    24: "Semantic Cartography",
+    25: "Semantic Anti-Patterns",
+    26: "Humans as Runtime Context",
+    27: "The Backseat Driver — Subconscious Cognition in Semantic Systems Engineering",
+    28: "Social Intelligence as Proto-SSE",
+    29: "Semantic Governance — Bridge to CSE and Agicore",
+    30: "The End of Prompt Engineering and the Birth of Semantic Operating Systems",
+    31: "The Semantic Frontier",
 }
 
 CSS = b"""
