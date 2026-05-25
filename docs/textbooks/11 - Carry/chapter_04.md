@@ -442,6 +442,22 @@ He closed the email.
 
 He sat at the kitchen table for a long time.
 
+He thought about 1995.
+
+He thought about the first six months in the Capitol Hill townhouse, when Argo had been four people working twelve-hour days in a downstairs room that had previously been a dining room, and the warehouse had been the garage. He thought about the platforms his small business had been built on then. The Internet, which had been barely commercial. The shipping carriers — UPS, FedEx, the U.S. Postal Service — who had taken his packages at the same rates they took anyone else's. The credit-card processors who had charged him the same fees they charged the local florist. The book distributors who had sold him inventory at the same wholesale terms they offered Crown Books and the independent bookseller on Capitol Hill three blocks from his front door. The infrastructure had been additive. The infrastructure had charged him fairly. The infrastructure had not, six months in, decided that the warmth of his small bookstore was a brand promise it would clone at a lower price under its own house label. The infrastructure had given him a chance.
+
+He thought about Sarah Choi, in Portland, three months ago, beginning to find out that the company she had built on top of was a different kind of infrastructure than the kind he had been given.
+
+He did not know her age. He guessed thirty-four, thirty-five. He guessed the age he had been when he had first wondered whether the bookstore idea might actually work. He had been thirty-one when he had filed Argo's first corporate paperwork. Sarah Choi was approximately the age he had been when he had built the first version of what he had later, in the 1997 letter, promised to all future small businesses on his platform — a place where customers could come to find and discover anything and everything they might want to buy online. He had built that place. He had, across the next twenty years, started to use that place to compete with the small businesses for whom he had originally promised it would be a place. He had become, without intending to, the infrastructure he had not had to fight against in 1995. He had become, for the small sellers, what no one had been for him.
+
+He thought: *the customer changed.*
+
+He thought: *the customer was never the retail buyer. We served the retail buyer well. The retail buyer can get almost anything in two days for cheap, even in a small town in the Midwest. That promise we kept. That was the population we served.*
+
+He thought: *the customer was always the person who needed the platform to exist. The customer was the small seller. The customer was the next version of me.*
+
+He thought: *I have been serving the population. I have not been serving the customer. For fifteen years I have not been serving the customer.*
+
 Then he opened a new document on his laptop. He titled it: *Memo to the Board — November.* He stared at the empty page for a moment. Then he began to write.
 
 The first sentence he wrote was this:
