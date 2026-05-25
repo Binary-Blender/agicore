@@ -44,7 +44,7 @@ Damon saw Maya. He nodded. He smiled.
 
 Maya nodded back. She kept walking.
 
-She walked past Tomás Reyes's desk. Tomás was on a phone call, in Spanish, with his back to the workspace. He was leaning back in his chair with one foot on the desk drawer. He looked comfortable. He looked like someone who had stopped trying to do the wrong thing and had finally come home to the right thing. He had told Maya, in their first conversation in February, that he had been trying to be a firm of one for eighteen months and that the loneliness had nearly killed him. He had said it plainly. Maya had hired him that week.
+She walked past Tomás Reyes's desk. Tomás was on a phone call, in Spanish, with his back to the workspace. He was leaning back in his chair with one foot on the desk drawer. He looked comfortable. He looked like someone who had stopped trying to do the wrong thing and had finally come home to the right thing. He had told Maya, in their first conversation in February, that he had been trying to be a firm of one for almost a year and that the loneliness had nearly killed him. He had said it plainly. Maya had hired him that week.
 
 She walked past Renata Diaz's desk.
 
@@ -70,7 +70,7 @@ She thought about Ben Kowalczyk at Carlo's restaurant on the Monday of the secon
 
 She thought about Karen Voss.
 
-Karen had had lunch with her four times in the eighteen months since Karen had left Hartwell. The first lunch had been awkward. Karen had been carrying a kind of professional grief that Maya had recognized but had not been able to touch. The second lunch had been better. By the third lunch they had been talking like colleagues. At the fourth lunch, in March, Karen had given Maya the spreadsheet she had kept — names, dates, reasons — and had said, *I'm not going to need this anymore. I thought you might want to see what it looked like from the inside.* Maya had read it on the plane home. It had taken her three readings to get through it without setting it down.
+Karen had come out to Minneapolis once already since leaving Hartwell, in March, and they had had lunch three times in the months between. The first lunch had been awkward. Karen had been carrying a kind of professional grief that Maya had recognized but had not been able to touch. The second lunch had been better. By the third — the March one, in Minneapolis — they had been talking like colleagues. Karen had given Maya the spreadsheet she had kept — names, dates, reasons — and had said, *I'm not going to need this anymore. I thought you might want to see what it looked like from the inside.* Maya had read it on the plane home from her own trip out east two weeks later. It had taken her three readings to get through it without setting it down.
 
 She thought about Damon's text from the kitchen table at midnight. *Can we have coffee.* Three words. She had known what they meant before she read them.
 

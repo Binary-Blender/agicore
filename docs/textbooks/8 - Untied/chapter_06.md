@@ -298,4 +298,4 @@ She left.
 
 *Maya did not intend to let the answer be no.*
 
-*She walked down the steps from her office to Carlo's restaurant on the ground floor of the building next door, that Friday evening in March of Year 2, and she took the corner seat at the bar that Carlo had saved her, and she ordered the same dish she ordered every Friday, and she sat and thought, and the lights on Hennepin came up brighter as the night fell, and the river behind the building moved on toward the south as it had moved on for a long time and would continue to move on for a long time after.*
+*She walked down the steps from her office and across the few blocks to Carlo's, that Friday evening in March of Year 2, and she took the corner seat at the bar that Carlo had saved her, and she ordered the same dish she ordered every Friday, and she sat and thought, and the lights on Hennepin came up brighter as the night fell, and the river behind the warehouse moved on toward the south as it had moved on for a long time and would continue to move on for a long time after.*

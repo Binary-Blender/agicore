@@ -40,7 +40,7 @@ Stansfield nodded slowly. He took a sip of coffee. He set the cup down.
 
 Geoffrey Stansfield turned a page in the binder. The board moved on.
 
-The rest of the meeting took two hours and ten minutes. The 2024 budget was reviewed and approved. The Cambridge office expansion was reviewed and approved. A small bonus pool for senior executives was reviewed and approved. The year-end client-summary report was discussed. The strategic plan for the coming year was tabled until the February meeting. The board went into executive session for fifteen minutes — Davis stayed in the room — and then the meeting adjourned at three twenty-five.
+The rest of the meeting took two hours and ten minutes. The coming year's budget was reviewed and approved. The Cambridge office expansion was reviewed and approved. A small bonus pool for senior executives was reviewed and approved. The year-end client-summary report was discussed. The strategic plan for the coming year was tabled until the February meeting. The board went into executive session for fifteen minutes — Davis stayed in the room — and then the meeting adjourned at three twenty-five.
 
 Geoffrey Stansfield stood up and put his hand on Davis's shoulder on his way out.
 
@@ -188,7 +188,7 @@ The Hartwell Digital holiday gala was held on the evening of December eighteenth
 
 The room was full. Two hundred and twenty employees, plus spouses and significant others, plus the board, plus the senior clients who had been invited as a courtesy. Champagne was being served from silver trays. The band was playing a Sinatra arrangement. A photographer moved through the crowd in a discreet black suit, taking photographs that would later appear in the firm's year-end retrospective.
 
-Davis stood near the bar with Geoffrey Stansfield and two other board members. He had a champagne flute in his hand. He had eaten well. He was telling a story about a Cape Cod sailing trip from the previous August. Stansfield was laughing the small dry laugh he had. Audrey was a few feet away talking to Stansfield's wife about a Beacon Hill renovation. Karen Voss was on the opposite side of the room with her husband. Davis had nodded at her when she came in. She had nodded back.
+Davis stood near the bar with Geoffrey Stansfield and two other board members. He had a champagne flute in his hand. He had eaten well. He was telling a story about a Cape Cod sailing trip from the previous August. Stansfield was laughing the small dry laugh he had. Audrey was a few feet away talking to Stansfield's wife about a Beacon Hill renovation. Karen Voss was on the opposite side of the room, talking with two of the senior partners from the Cambridge office. Davis had nodded at her when she came in. She had nodded back.
 
 Brian Wexler came up to the bar. He shook Davis's hand. He said something complimentary about the firm's year. Davis thanked him.
 

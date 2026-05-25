@@ -192,7 +192,7 @@ She did not speak for a long moment.
 
 She looked at him.
 
-She looked past him, briefly, at the closed door of the office across the hall — the corner office that had been Eduardo Mendez's, before Eduardo had left in October, and that they had not yet filled.
+She looked past him, briefly, at the closed door of the office across the hall — the corner office that had been Eduardo Mendez's, before Eduardo had given notice in October, and that they had not yet filled.
 
 She looked back at Davis.
 
@@ -230,7 +230,7 @@ She thought: *if I leave, who is left to argue.*
 
 She decided, on the inside, that she would stay.
 
-She gave herself a number. Fourteen months. She would stay fourteen more months. She would do what she could from inside. If the firm corrected, she would have helped. If the firm did not correct, she would have given the people still in it fourteen months of someone who was paying attention.
+She gave herself a number. Twelve months. She would stay twelve more months. She would do what she could from inside. If the firm corrected, she would have helped. If the firm did not correct, she would have given the people still in it twelve months of someone who was paying attention.
 
 She turned to her laptop.
 

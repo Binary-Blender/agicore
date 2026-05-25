@@ -240,21 +240,15 @@ Maya looked at him.
 
 ---
 
-The board meeting was Wednesday of the following week. Stillwater's board was three people. Maya, Aaron, and Lena Schultz — a Twin Cities investor in her late sixties who had put in early capital fifteen years ago and who had seen three structural transitions in three different portfolio firms over four decades.
+The board met Wednesday of the following week. Stillwater's board was three people — Maya, Aaron, and Lena Schultz, the Twin Cities investor in her late sixties who had put in early capital fifteen years ago and who had walked two of her other portfolio firms through structural transitions over four decades.
 
-The meeting was at the warehouse loft. Four PM. Lena drove herself in from Wayzata. She arrived ten minutes early. She walked the floor, said hello to two senior engineers whose names she remembered, drank a cup of coffee, and sat down at the conference table at four exactly.
+Lena drove herself in from Wayzata. She arrived ten minutes early, walked the floor, said hello to two senior engineers whose names she remembered, drank a cup of coffee, and sat down at the conference table at four exactly.
 
-Maya walked the board through the proposal.
+Maya did not re-pitch the plan. She handed Lena the four-page summary, the financial projections, and the comms timeline that she and Renata had drafted that week. Lena read for twenty-three minutes. Aaron sat across the table with his coffee. Renata sat beside him with her notebook closed.
 
-It took her forty-five minutes. She did not rush.
-
-Lena Schultz did not interrupt.
-
-When Maya finished she set her papers down.
+When Lena was done she set the papers down.
 
 The room was quiet.
-
-Lena read the summary sheet a second time.
 
 Then she said, quietly, "Maya. This is the most expensive thing you have ever done. And it is also the only thing I think can possibly work. Do it."
 
@@ -264,31 +258,9 @@ Lena said, "Yes. Do it."
 
 Aaron Park said, "I have been waiting for this conversation for ten months. I'm in."
 
-Maya looked at the two of them.
+Lena pulled a small leather notebook out of her bag and wrote down the names of the four written quarterly reports she wanted to see — partner inflows and outflows, partner-tier compensation in practice, the price-model transition's revenue impact, and client retention at senior-partner-led accounts versus legacy ones. She closed the notebook. She stood up.
 
-She said, "Thank you."
-
-Lena pulled a small leather notebook out of her bag.
-
-"What's the comms timeline."
-
-Renata, who had been sitting in as the head of people, answered.
-
-"Internal announcement at the all-hands in the second week of November. First promotions in January. First returnee offers also in January. External announcement to clients and the market in February."
-
-"Good," Lena said.
-
-She closed her notebook.
-
-"I want quarterly updates," she said. "I want them written, not slides. I want to know where the partners came from, where they went, what the partner-tier compensation looks like in practice, what the price-model transition is doing to revenue, and what the client retention numbers look like at the senior-partner-led accounts versus the legacy ones."
-
-"You will have all of it," Maya said.
-
-"Good," Lena said.
-
-She stood up.
-
-"I am going to go drink a glass of wine downstairs at Carlo's and then I am going to drive home. Maya, you should come too."
+"I'm going to drink a glass of wine downstairs at Carlo's and then I'm going to drive home. Maya, you should come too."
 
 "I will. In an hour."
 
@@ -302,7 +274,7 @@ Maya sat alone in the conference room for a few minutes longer.
 
 She closed the folder.
 
-She thought about her father, briefly, who had been a high school principal in Duluth for thirty-two years and who had told her once, when she was nineteen, that the hardest thing about leading was not figuring out the right answer. The hardest thing was waiting until you had earned the right to be heard before you said it.
+She thought about her father, briefly, who had worked the ore docks until his back gave out and had retrained as a welder, and who had told her once, when she was nineteen, that the hardest thing about any work that mattered was not figuring out the right answer. The hardest thing was waiting until you had earned the right to be heard before you said it.
 
 She thought, *I think I have just earned the right.*
 

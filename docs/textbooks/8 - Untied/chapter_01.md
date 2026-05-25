@@ -4,7 +4,7 @@ The first resignation letter was on Davis Hartwell's desk when he came in at sev
 
 He sat down at his desk. He took off his coat. He picked up the letter.
 
-It was from Priya Ramaswamy. He read it twice. It was short, professional, courteous, and final. Her last day would be Friday, November 7th. She thanked him for four good years. She thanked specifically her project lead Gerald Hsu and her old mentor in the architecture practice, Vince DiCamillo. She said she had decided to start her own company and that she had thought hard about the timing and the courtesy. Her transition plan was attached. She offered to help train her replacement.
+It was from Priya Ramaswamy. He read it twice. It was short, professional, courteous, and final. Her last day would be Friday, October 31st. She thanked him for four good years. She thanked specifically her project lead Gerald Hsu and her old mentor in the architecture practice, Vince DiCamillo. She said she had decided to start her own company and that she had thought hard about the timing and the courtesy. Her transition plan was attached. She offered to help train her replacement.
 
 Davis set the letter down.
 
