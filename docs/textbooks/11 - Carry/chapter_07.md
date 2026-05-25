@@ -308,7 +308,17 @@ The stock closed up two percent on the day of the call.
 
 Down twenty-four from pre-announcement.
 
-He did CNBC that night. He did the Wall Street Journal podcast on Wednesday morning. He did a Financial Times op-ed that ran on Thursday under his byline. The op-ed was twelve hundred words long. He had written it himself, in two sessions, after midnight on Tuesday and Wednesday. The op-ed did not apologize. The op-ed did not hedge. The op-ed laid out the strategic logic in the same plain language he had used in the announcement. The op-ed closed with one sentence: *We are doing this because it is the right thing to do for the company, for our customers, and for the merchants and small businesses who are going to need the platform we are about to build. The market will decide what it decides. The work proceeds.*
+He did CNBC that night. He did the Wall Street Journal podcast on Wednesday morning. He did a Financial Times op-ed that ran on Thursday under his byline. The op-ed was twelve hundred words long. He had written it himself, in two sessions, after midnight on Tuesday and Wednesday. The op-ed did not apologize. The op-ed did not hedge. The op-ed laid out the strategic logic in the same plain language he had used in the announcement.
+
+The op-ed contained two paragraphs the rest of the press would, across the next several weeks, return to. The first read:
+
+*"In 1997, when this company was twelve people in a warehouse in Bellevue and had not yet finished its first calendar year as a public company, I wrote a letter to our shareholders that said it was Day One for the Internet, and if we executed well, for Argo. Twenty-nine years later, it is still Day One. What is changing this month is not the vision. The vision has not changed since 1997. What is changing is the structure of the company through which the vision is delivered. I am stubborn on the vision. I am flexible on the details. The proposal the market read last Friday is what flexible looks like when the details have grown out of alignment with the vision the founder will not change."*
+
+The second read:
+
+*"In retail, I would always rather lose a sale than lose a customer. The sentence is the same sentence I have been saying in interviews for thirty years. We are now organizing the entire company around that sentence. The platform we are building is the place where every American small business can come to find the infrastructure they need to compete with companies that are larger than they are. We are going to charge them fairly for that infrastructure. We are not going to compete with them on it. That is the deal. The deal is the deal the founders of this company wrote down in 1997 and have only now, in 2026, gotten around to delivering at industrial scale."*
+
+The op-ed closed with one sentence: *We are doing this because it is the right thing to do for the company, for our customers, and for the merchants and small businesses who are going to need the platform we are about to build. The market will decide what it decides. The work proceeds.*
 
 The op-ed was, on the Financial Times website, the most-read piece of the week.
 

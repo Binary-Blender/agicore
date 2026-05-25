@@ -88,7 +88,7 @@ Then she asked the second question.
 
 She asked it without changing her tone. She asked it the way she had asked the first one.
 
-"Henry. The second question. The transition from a retail-dominant operating model to a platform-dominant operating model is a transition that, in the academic literature on platform economics, is typically completed by founders only with great difficulty. There are very few examples at scale. There are fewer examples at the scale Argo has executed it. I am asking this question as somebody who, in the second quarter of Year One, did not see how the timeline you announced was achievable. I would like to ask you, with the benefit of hindsight that all of us on this call now have, what you believe the decision was that made the announced timeline achievable."
+"Henry. The second question. The transition from a retail-dominant operating model to a platform-dominant operating model is a transition that, in the academic literature on platform economics, is typically completed by founders only with great difficulty. There are very few examples at scale. There are fewer examples at the scale Argo has executed it. I have re-read your 1997 shareholder letter four times across the last year. I am asking this question as somebody who, in the second quarter of Year One, did not see how the timeline you announced was achievable, and who has spent the eighteen months since trying to understand the gap between what the 1997 letter described and what Argo had become by 2025. The company you are running today is the company that letter described more closely than the company you were running in 2025 was. I would like to ask you, with the benefit of hindsight that all of us on this call now have, what you believe the decision was that made the announced timeline achievable."
 
 The room was quiet.
 
@@ -102,7 +102,9 @@ Henry took a breath.
 
 He paused.
 
-"That is the operational answer. The personal answer is that I was very fortunate to have a board chair, a chief operating officer, a chief financial officer, an EVP of Cloud, an EVP of Retail, an EVP of Logistics, and a number of other senior leaders in this company who, when they understood what the math required, did not relitigate the math. They did the work. I want to be on the record on this call as saying that the achievable timeline was achievable because of them. Not because of me."
+"That is the operational answer. The personal answer is that I was very fortunate to have a board chair, a chief operating officer, a chief financial officer, an EVP of Cloud, an EVP of Retail, an EVP of Logistics, and a number of other senior leaders in this company who, when they understood what the math required, did not relitigate the math. They did the work. I want to be on the record on this call as saying that the achievable timeline was achievable because of them. Not because of me.
+
+"Karen — one further thing, because you raised the 1997 letter. The timeline was achievable because we stopped pretending the company we became was the company we wrote down in 1997. We went back to the letter. We finished the sentence. The letter is the strategy. It always was. That sounds simpler in retrospect than it felt at the time. I am grateful to be on a call, today, on which it is now possible to say it that simply."
 
 Karen was quiet on the line.
 

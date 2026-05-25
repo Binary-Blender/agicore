@@ -148,6 +148,106 @@ They worked through it for two hours.
 
 ---
 
+At noon Cassandra walked back to the kitchen and came back with two thin folders. She set them on the side table between them.
+
+"Henry. There is something I want to do before lunch. I have been thinking about doing it for six months and I have decided this is the day."
+
+"What."
+
+"I am going to read you two of your own letters."
+
+She opened the first folder. The paper inside was old enough that the edges had gone slightly yellow. She handled it carefully.
+
+"This is the letter you wrote to shareholders in the spring of 1997. I have kept a paper copy of it in my desk for twenty-nine years. I want to read you four passages from it. I am not going to editorialize between them. I want you to listen."
+
+She put on her reading glasses.
+
+She read.
+
+*"We believe that a fundamental measure of our success will be the shareholder value we create over the long term. This value will be a direct result of our ability to extend and solidify our current market leadership position. When forced to choose between optimizing the appearance of our GAAP accounting and maximizing the present value of future cash flows, we'll take the cash flows."*
+
+She turned the page.
+
+*"We intend to build the world's most customer-centric company. We hold as axiomatic that customers are perceptive and smart, and that brand image follows reality and not the other way around."*
+
+She turned the page again.
+
+*"Inventing and pioneering involve a willingness to be misunderstood for long periods of time."*
+
+She closed the folder.
+
+*"This is Day One for the Internet and, if we execute well, for Argo.com."*
+
+She set the folder down.
+
+She looked at Henry over her glasses.
+
+"That was Day One, Henry. You wrote it in your first year as a public company. You meant every word of it. I have read this letter to my own management teams. I have quoted it in two graduation speeches. I have, in my own quieter way, run my career against the standard it sets. I have known a lot of CEOs across forty years. None of them ever wrote a letter to their shareholders that read like that one. You did."
+
+She opened the second folder.
+
+"This is a letter you wrote to Argo's shareholders six years ago. I want to read you one paragraph."
+
+She read.
+
+*"Something strange and remarkable has happened over the last twenty years. Third-party sellers on the Argo marketplace have grown from three percent of total physical-product sales to fifty-eight percent. Third-party sellers are kicking our first-party butt. Badly. And it is a high bar, because our first-party retail business has grown dramatically over the same period. In that same time, third-party sales have grown from one hundred million to one hundred and sixty billion — a compound annual growth rate of fifty-two percent. We helped independent sellers compete against our first-party business by investing in and offering them the best selling tools we could imagine and build."*
+
+She closed the second folder. She set it on top of the first. She took her glasses off.
+
+"Henry. I am going to ask you a question and I want you to sit with it for a moment before you answer."
+
+"All right."
+
+"Did you write these two letters."
+
+"You know I did."
+
+"Do you still believe what you wrote in them."
+
+He did not answer right away. He looked at the two folders on the side table. He looked past them at the Sound through the terrace door. He looked back at her.
+
+"Yes."
+
+"Then I want to ask you the question I have been wanting to ask you for three years. Why is the company you built today operating in a way that contradicts both of these letters."
+
+He did not say anything for a long time.
+
+"Cassie."
+
+"Yes."
+
+"I drifted. We drifted. The board drifted. The retail business got large enough that it became its own gravity well, and the gravity well bent everything in its orbit toward the patterns the retail business needed to survive on the terms it had grown up on. I knew it was happening. I wrote about it in the second letter. I bragged in public about the platform side outgrowing the retail side. Then I went back to the office and did not change anything material about how the company was structured. I let the retail business keep being the strategic center even after my own letter said the platform business was the part that was working."
+
+"You waited."
+
+"I waited."
+
+"You did the thing I did at Hartwell Brothers."
+
+"Yes."
+
+He stood up. He walked to the terrace door. He opened it. He stood there with his hand on the doorframe and looked at the water. The wind off the Sound was cold against his face. The freighters in the channel were the same freighters that had been there when he had written the 1997 letter at his kitchen table in Capitol Hill twenty-nine years earlier.
+
+He turned around.
+
+"Cassie. The pivot is not a strategic shift. The pivot is the company finally executing what I wrote in 1997. I am stubborn on the vision. I have been flexible on the details for thirty years. I am about to be more flexible on the details than I have ever been before. The vision has not changed."
+
+"That is the language you should use when you announce it."
+
+"That is the language I will use."
+
+"Good."
+
+She stood up. She walked over to the whiteboard. She uncapped a green marker. Below the words *THE PIVOT* at the top of the board, she drew a line, and below the line, in her crisp board-secretary's hand, she wrote four words:
+
+*FINISH THE 1997 LETTER.*
+
+She turned around.
+
+"Lunch," she said.
+
+---
+
 Sarah had lunch with Annette Marcosi, who ran operations, on the bench outside the studio at twelve thirty. They ate sandwiches from the cafe on the corner. The November light was pale and cold and the leaves on the maple across the street were the brown that came after the red.
 
 "How bad is it," Annette said.
@@ -349,6 +449,8 @@ The first sentence he wrote was this:
 *The company we built is no longer the company we should be.*
 
 He kept writing.
+
+He had two other documents open on the laptop's second window. The first was a PDF he had not opened in eleven years — his own letter to Argo's shareholders from 1997, the one Cassandra had read passages from on her terrace seven hours earlier. The second was the letter he had written six years ago, the one in which he had bragged that third-party sellers were kicking the first-party retail business badly. He kept the two letters open in the second window while he wrote the new one. The new one was not, he had begun to recognize across the previous hour, a new letter. The new one was the third letter in a three-letter sequence he had started in 1997 and put down in the middle and was only now picking back up. The sentence he had begun in the first letter had been *Argo will be the place where customers can come to find and discover anything and everything they might want to buy online.* The sentence he had attempted in the second letter had been *the platform side of Argo is outgrowing the retail side, and that is what we built this for.* The sentence the third letter would have to finish was the one neither of the first two had quite finished. He wrote it across the next thirty minutes.
 
 Marina got home at nine-fifty. She walked through the front door, saw the light on in the kitchen, came in, set her coat on the chair, looked at Henry's face, and said nothing. She poured herself a glass of wine. She sat down across from him. She did not interrupt.
 

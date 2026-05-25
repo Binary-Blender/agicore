@@ -20,11 +20,27 @@ Henry stood.
 
 He did not use slides. There was no projector running. He had a single printed page in front of him with the structure of his remarks on it, and he glanced down at it once, at the very beginning, and then did not look at it again for forty minutes.
 
-"Thank you, Cassandra," he said. "I am going to be direct. I am not going to bury the lead. I am not going to soften it."
+"Thank you, Cassandra," he said. "Before I lay out the proposal, I want to read you something. The document is in front of each of you. Anika put a copy at each place before we started. I want to read paragraph three."
+
+He looked down at his own copy.
+
+"This is the letter I wrote to Argo's first public shareholders in the spring of 1997," he said. "I am going to read four sentences from it."
+
+He read.
+
+*"We believe that a fundamental measure of our success will be the shareholder value we create over the long term. We intend to build the world's most customer-centric company. We hold as axiomatic that customers are perceptive and smart, and that brand image follows reality and not the other way around. This is Day One for the Internet and, if we execute well, for Argo.com."*
+
+He set the page down.
+
+"I have not been running this company by those four sentences for some years now. I am going to propose, this morning, that we go back to running it by those four sentences. The proposal that follows is the operational consequence of doing that."
 
 He paused.
 
 The room was very still.
+
+"I am going to be direct. I am not going to bury the lead. I am not going to soften it."
+
+He paused again.
 
 "The retail business," he said, "is no longer the strategic future of this company. The platform business is. We are going to invest in Argo Carry at a level that requires us to redirect approximately eighteen billion dollars of capital from retail over the next thirty-six months. We are going to publicly reframe Argo as a platform company with retail as one tenant. We are going to begin spinning off the consumer-facing retail brand as a separate subsidiary within twenty-four months. I want the board's authorization to begin executing this transition this quarter."
 

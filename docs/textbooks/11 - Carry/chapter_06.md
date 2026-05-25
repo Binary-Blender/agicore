@@ -258,7 +258,9 @@ Henry wrote it himself, on his laptop, in the small hand that Daniela had seen h
 
 At six-fifteen Henry pushed his laptop back and read his paragraph out loud.
 
-*"I have spent thirty-one years building this company. I am as proud of what we have built as I have ever been of anything in my professional life. I am also clear-eyed about the fact that the company that has worked for the last thirty-one years is not the company that is going to work for the next thirty. The world has changed. Our customers have changed. The tools available to small businesses have changed. The right way to be useful to American commerce has changed. We are changing with it. This is going to be hard. It is going to be hard on many of you personally. I am asking you, today, to give me, and Vivian, and Daniela, and Marcus, and Tomás, and the rest of the executive team, your trust and your work for the next three years. We do not take it lightly. We will earn it every day."*
+*"I have spent thirty-one years building this company. I am as proud of what we have built as I have ever been of anything in my professional life. I am also clear-eyed about the fact that the company that has worked for the last thirty-one years is not the company that is going to work for the next thirty. The world has changed. Our customers have changed. The tools available to small businesses have changed. The right way to be useful to American commerce has changed. We are changing with it. This is going to be hard. It is going to be hard on many of you personally. I am asking you, today, to give me, and Vivian, and Daniela, and Marcus, and Tomás, and the rest of the executive team, your trust and your work for the next three years. We do not take it lightly. We will earn it every day.*
+
+*In the spring of 1997 I wrote a letter to our first public shareholders. The letter said it was Day One for the Internet and, if we executed well, for Argo. We executed well. It is still Day One. The next thirty years are the years we finish what the first thirty started."*
 
 He looked up.
 
