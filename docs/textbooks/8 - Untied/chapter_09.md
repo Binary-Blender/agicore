@@ -256,7 +256,7 @@ Maya said, "The budget is north of four million in year one. We will be running 
 
 Lena said, "Yes. Do it."
 
-Aaron Park said, "I have been waiting for this conversation for ten months. I'm in."
+Aaron Park looked at Maya. "I'm in."
 
 Lena pulled a small leather notebook out of her bag and wrote down the names of the four written quarterly reports she wanted to see — partner inflows and outflows, partner-tier compensation in practice, the price-model transition's revenue impact, and client retention at senior-partner-led accounts versus legacy ones. She closed the notebook. She stood up.
 
