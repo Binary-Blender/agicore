@@ -476,6 +476,100 @@ pub fn remove_recent_project(root_path: String) -> Result<Vec<RecentProject>, St
 }
 
 // ============================================================================
+// Git status — shells out to `git status --porcelain` in the project
+// root, returns a map keyed by absolute file path. Gracefully degrades
+// when the directory isn't a git repo or git isn't installed.
+// ============================================================================
+
+use std::collections::HashMap;
+use std::process::Command;
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GitStatusReport {
+    /// True when the directory is inside a git working tree.
+    pub is_repo: bool,
+    /// Absolute-path → two-char porcelain status code (e.g. " M", "A ", "??").
+    pub statuses: HashMap<String, String>,
+    /// Current branch name, or null when detached / not a repo.
+    pub branch: Option<String>,
+}
+
+#[tauri::command]
+pub fn git_status_for_project(root_path: String) -> Result<GitStatusReport, String> {
+    let root = PathBuf::from(&root_path);
+    if !root.is_dir() {
+        return Ok(GitStatusReport { is_repo: false, statuses: HashMap::new(), branch: None });
+    }
+
+    // Probe — fast and idiomatic.
+    let inside = Command::new("git")
+        .arg("rev-parse")
+        .arg("--is-inside-work-tree")
+        .current_dir(&root)
+        .output();
+    let is_repo = match inside {
+        Ok(out) => out.status.success() && String::from_utf8_lossy(&out.stdout).trim() == "true",
+        Err(_) => false,
+    };
+    if !is_repo {
+        return Ok(GitStatusReport { is_repo: false, statuses: HashMap::new(), branch: None });
+    }
+
+    // Status — porcelain v1 keeps the line shape stable across git versions.
+    let status_out = Command::new("git")
+        .arg("status")
+        .arg("--porcelain")
+        .current_dir(&root)
+        .output()
+        .map_err(|e| e.to_string())?;
+    let mut statuses: HashMap<String, String> = HashMap::new();
+    if status_out.status.success() {
+        let stdout = String::from_utf8_lossy(&status_out.stdout);
+        for line in stdout.lines() {
+            // Format: "XY <path>" — XY is two chars, then space, then path.
+            if line.len() < 4 {
+                continue;
+            }
+            let code = line[..2].to_string();
+            // Skip a single space then the path. Renames look like
+            // "R  old -> new" — we take the new path.
+            let after = line[3..].trim();
+            let rel_path = if let Some(arrow) = after.find(" -> ") {
+                &after[arrow + 4..]
+            } else {
+                after
+            };
+            // Only track .agi paths — sidecars and unrelated files don't
+            // surface in the explorer rail anyway.
+            if !rel_path.ends_with(".agi") {
+                continue;
+            }
+            // Resolve to absolute path (root + rel_path).
+            let abs = root.join(rel_path);
+            statuses.insert(abs.to_string_lossy().into_owned(), code);
+        }
+    }
+
+    // Branch name — `git rev-parse --abbrev-ref HEAD`.
+    let branch_out = Command::new("git")
+        .arg("rev-parse")
+        .arg("--abbrev-ref")
+        .arg("HEAD")
+        .current_dir(&root)
+        .output();
+    let branch = match branch_out {
+        Ok(out) if out.status.success() => {
+            let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
+            if s == "HEAD" { None } else { Some(s) }
+        }
+        _ => None,
+    };
+
+    Ok(GitStatusReport { is_repo: true, statuses, branch })
+}
+
+// ============================================================================
 // Internals
 // ============================================================================
 

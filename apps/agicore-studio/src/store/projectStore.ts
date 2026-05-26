@@ -19,6 +19,7 @@ import {
   listProjectFiles,
   pickProjectDirectory,
 } from '../lib/project-persistence';
+import { fetchGitStatus, type GitStatusReport } from '../lib/git-status';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -27,6 +28,8 @@ interface ProjectStore {
   files: ProjectFile[];
   loading: boolean;
   error: string | null;
+  /** Latest git status snapshot for the project, or null when not a repo. */
+  gitStatus: GitStatusReport | null;
 
   /** Open a directory as the active project. Returns the project on success. */
   openProject: (rootPath: string) => Promise<Project>;
@@ -42,9 +45,11 @@ interface ProjectStore {
   deleteFile: (path: string) => Promise<void>;
   /** Clear the project (no project open). */
   close: () => void;
-  /** Look up a file by absolute path. Useful for the toolbar's
-   *  external-modification indicator. */
+  /** Look up a file by absolute path. */
   fileByPath: (path: string) => ProjectFile | undefined;
+  /** Get the git porcelain status for a file, or null/undefined when
+   *  the project isn't a git repo or the file is unchanged. */
+  gitStatusFor: (path: string) => string | undefined;
 }
 
 let pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -74,19 +79,38 @@ function filesEqual(a: ProjectFile[], b: ProjectFile[]): boolean {
   return true;
 }
 
+function gitStatusEqual(a: GitStatusReport | null, b: GitStatusReport | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.isRepo !== b.isRepo) return false;
+  if (a.branch !== b.branch) return false;
+  const aKeys = Object.keys(a.statuses);
+  const bKeys = Object.keys(b.statuses);
+  if (aKeys.length !== bKeys.length) return false;
+  for (const k of aKeys) {
+    if (a.statuses[k] !== b.statuses[k]) return false;
+  }
+  return true;
+}
+
 export const useProjectStore = create<ProjectStore>((set, get) => ({
   project: null,
   files: [],
   loading: false,
   error: null,
+  gitStatus: null,
 
   openProject: async (rootPath) => {
-    set({ loading: true, error: null });
+    set({ loading: true, error: null, gitStatus: null });
     try {
       const files = await listProjectFiles(rootPath);
       const project: Project = { rootPath, name: basenameOfDir(rootPath) };
       set({ project, files, loading: false });
       startPolling(get);
+      // Fire-and-forget initial git status fetch.
+      void fetchGitStatus(rootPath)
+        .then((s) => set({ gitStatus: s }))
+        .catch(() => set({ gitStatus: null }));
       // Fire-and-forget — recent-projects bookkeeping shouldn't block
       // the open flow if the user-config dir is temporarily unwriteable.
       void import('../lib/recent-projects').then((m) =>
@@ -133,6 +157,17 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
       const message = e instanceof Error ? e.message : String(e);
       set({ error: message });
     }
+    // Refresh git status alongside the file list. Independent failure mode —
+    // a missing git binary or a non-repo directory just clears the badges.
+    try {
+      const status = await fetchGitStatus(project.rootPath);
+      const prev = get().gitStatus;
+      if (!gitStatusEqual(prev, status)) {
+        set({ gitStatus: status });
+      }
+    } catch {
+      // best-effort; leave previous status in place rather than blanking
+    }
   },
 
   newFile: async (fileName) => {
@@ -150,8 +185,9 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
 
   close: () => {
     stopPolling();
-    set({ project: null, files: [], error: null });
+    set({ project: null, files: [], error: null, gitStatus: null });
   },
 
   fileByPath: (path) => get().files.find((f) => f.path === path),
+  gitStatusFor: (path) => get().gitStatus?.statuses[path],
 }));

@@ -12,6 +12,7 @@ import { useProjectStore } from '../store/projectStore';
 import { useWorkflowStore } from '../store/workflowStore';
 import { loadWorkflowByPath, saveCurrentWorkflow } from '../lib/persistence';
 import { searchProjectFiles, type SearchHit } from '../lib/project-persistence';
+import { colorForStatus, describeStatus } from '../lib/git-status';
 import type { ProjectFile } from '../types/project';
 
 const SEARCH_DEBOUNCE_MS = 200;
@@ -23,6 +24,8 @@ const ProjectExplorer: React.FC = () => {
   const newFile = useProjectStore((s) => s.newFile);
   const deleteFile = useProjectStore((s) => s.deleteFile);
   const closeProject = useProjectStore((s) => s.close);
+  const gitStatus = useProjectStore((s) => s.gitStatus);
+  const gitStatusFor = useProjectStore((s) => s.gitStatusFor);
 
   const activeFilePath = useWorkflowStore((s) => s.filePath);
   const dirty = useWorkflowStore((s) => s.dirty);
@@ -123,6 +126,11 @@ const ProjectExplorer: React.FC = () => {
         <div className="min-w-0">
           <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
             Project
+            {gitStatus?.isRepo && gitStatus.branch && (
+              <span className="ml-2 normal-case tracking-normal text-[var(--text-secondary)] font-mono" title="Current git branch">
+                ⎇ {gitStatus.branch}
+              </span>
+            )}
           </p>
           <p
             className="text-xs font-semibold truncate text-[var(--text-primary)]"
@@ -182,6 +190,7 @@ const ProjectExplorer: React.FC = () => {
           <ul>
             {files.map((file) => {
               const isActive = file.path === activeFilePath;
+              const gitCode = gitStatusFor(file.path);
               return (
                 <li key={file.path}>
                   <div
@@ -192,6 +201,13 @@ const ProjectExplorer: React.FC = () => {
                         : 'text-[var(--text-secondary)] hover:bg-[var(--bg-input)] border-l-2 border-l-transparent'
                     }`}
                   >
+                    {gitCode && (
+                      <span
+                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: colorForStatus(gitCode) }}
+                        title={`git: ${describeStatus(gitCode)} (${gitCode.trim()})`}
+                      />
+                    )}
                     <span className="flex-1 truncate" title={file.name}>{file.name}</span>
                     {isActive && dirty && (
                       <span className="text-[var(--node-branch)] text-[9px]" title="Unsaved changes">●</span>
