@@ -186,6 +186,86 @@ Nine twenty-nine.
 
 He said: "I am done. The next forty minutes are yours."
 
+He sat down.
+
+---
+
+Roland Vance did not put his hand up.
+
+Roland Vance set both hands flat on the table in front of him and slid the small leather folio he had brought to the meeting six inches to his left.
+
+Then he said: "Margot."
+
+Margot said: "Roland."
+
+Roland said: "I am exercising the chair-recognized motion procedure under Section 4.2 of the company's board governance protocols. I am making a motion. I am, by the procedure, allowed to make the motion in the moment, and I am making it now. I want it on the record before the discussion begins."
+
+He paused for half a beat.
+
+"The motion is as follows. The board moves, immediately, to remove Cole Westerlund as Chief Executive Officer of Carrick, Incorporated, on grounds of demonstrable mental incompetence, and to recommend that he voluntarily submit himself to inpatient psychiatric evaluation at a recognized facility for a period not to exceed thirty days, after which the board will reassess whether the strategic-pivot proposal is the product of a sound mind. I am seconding my own motion under the chair-recognized motion procedure. The motion is on the table. I am asking for a vote."
+
+The room stopped.
+
+Diana stopped.
+
+Margot, who had presided over forty-two board meetings across the previous six years, was opening her mouth to respond when she saw the small movement Cole made with his right shoulder.
+
+She did not finish opening her mouth.
+
+What happened next was, in Diana's reconstruction across the following nine years, the single thing she would remember from her professional life with the greatest specificity.
+
+Cole did not say anything.
+
+Cole stood up from his chair.
+
+He walked, in the unhurried way a man walks when he has decided that the next twenty-two seconds are going to be his, around the long teak table.
+
+He stopped behind Roland.
+
+He picked Roland up by the lapels of the navy blazer Roland had been wearing on CNBC two mornings earlier.
+
+He then, with his other hand, picked up Theodora Mendez by the lapels of the cream-colored suit she had been wearing for nine years to board meetings.
+
+The two directors had a combined weight, by Diana's later calculation from the published height-and-weight specifications on their respective LinkedIn-profile press-photo metadata, of approximately three hundred and twenty pounds. Cole's trap-bar deadlift max, as logged on the morning's strength session with Bear Doerksen at five-twenty AM Pacific, was four hundred and twenty-five. The math worked. There was margin.
+
+Cole held them, one in each hand, at approximately his shoulder height.
+
+He brought their heads together.
+
+The sound was not a sound Diana had a name for at the time. She would, in the years that followed, file it under *the sound from the boardroom.* The sound had a register she had previously associated only with the small wooden mallet judges used in courtrooms in movies.
+
+Cole set Roland back in his chair.
+
+Cole set Theodora back in her chair.
+
+He walked back to the head of the table.
+
+He turned to face the room.
+
+He said: "Meeting adjourned."
+
+He sat down.
+
+The room did not move.
+
+Margot, after a beat, looked at the clock on the wall. The clock read nine thirty-one. The agenda allotted three hours for the meeting. The meeting had been called to order at nine. The meeting had, by her arithmetic, two hours and fifty-nine minutes remaining.
+
+She said: "Cole."
+
+Cole said: "Margot."
+
+She said: "The meeting has two hours and fifty-nine minutes remaining on the agenda before we vote."
+
+Cole said: "I was speaking metaphorically. Continue."
+
+Margot continued.
+
+The small bruise that would, by Thursday morning, be visible across the bridge of Roland's nose was, at the time of his next contribution to the meeting, not yet visible. Theodora Mendez, in her seat, set her hand on the back of her own head for a moment, then put it back in her lap. Neither director referenced the moment. The board's general counsel, sitting against the wall, did not reference the moment. The corporate secretary, taking the minutes, did not record the moment. The minutes for the meeting, when published the following Friday, showed that the discussion had begun at nine twenty-nine and continued without procedural interruption.
+
+The moment was, in the official record of the meeting, not a moment.
+
+The moment was, in Diana's head, the only moment.
+
 ---
 
 The discussion ran one hour and fifty-six minutes.

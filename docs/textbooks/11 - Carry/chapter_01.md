@@ -1,14 +1,20 @@
 # Chapter 1: The Boil
 
-Cole Westerlund was four hundred and ten pounds into the third set of a five-by-five trap-bar deadlift, on the helipad of the *Coelacanth*, in the long Pacific morning of a Wednesday in the last week of September, when Mara Quinn stepped through the bulkhead door with the satellite phone in her hand and a look on her face that meant Cole was going to set the bar down.
+Cole Westerlund was on his ninety-fourth burpee of the morning, in a weighted vest that contained forty-eight pounds of cast-iron plates stitched into pockets across his chest and back, on the helipad of the *Coelacanth*, with a length of one-inch ship's chain coiled around his shoulders adding another sixty-two pounds, while a small boombox at the corner of the pad — Bear Doerksen's boombox, the same boombox Bear had carried with him out of DEVGRU in 2014 and had not, since then, allowed Cole to throw overboard — played the *Rocky IV* training montage on a loop at a volume that the captain had three times in nine days come down from the bridge to complain about, when Mara Quinn stepped through the bulkhead door with the satellite phone in her hand and a look on her face that meant Cole was going to put the burpee down.
 
-He set the bar down.
+The burpee was already down. Cole was at the top of it. He extended into the standing position. The chain across his shoulders shifted by an inch. The plates in the vest did not move. The plates did not move because Bear had, on the morning of Cole's fifty-seventh birthday, sewn each plate into the vest individually with a Kevlar-thread upholstery stitch he had picked up from a Marine Corps tailor in Quantico in 1998, and the stitches did not, by Bear's account, give. Bear had been right.
 
-He stripped his gloves off and dropped them on the deck.
+Cole strode off the platform.
 
-The *Coelacanth* was a one-hundred-and-eighty-eight-foot Damen research vessel that Cole had bought in 2019 from a Norwegian survey firm and refit through 2020 as a private platform for the marine-biology foundation he had spun out of his personal holdings four years earlier. The helipad was on the upper deck, aft of the main superstructure, in the open sun. The ship was steaming at eight knots on a heading of two-zero-five, six hundred and twenty nautical miles southwest of Guam, three hundred and forty miles west of the Mariana Trench. The water that morning was the color of cold steel.
+He stripped the chain off his shoulders and laid it on the deck. He stripped the weighted vest off and laid it on top of the chain. The combined weight of vest plus chain, by the spec card Bear maintained in a laminated sleeve in the *Coelacanth*'s gym locker, was one hundred and ten pounds. Cole had been wearing it for fifty-two minutes. The session was, by Bear's morning whiteboard, sixty-four percent complete. The remaining thirty-six percent was a free-dive sequence in the ship's cold-water tank that Cole had been training in for the previous fourteen months in preparation for the Mariana Trench dive in October.
 
-Bear Doerksen was already moving the bumper plates off the bar.
+Bear killed the boombox.
+
+The *Coelacanth* was a one-hundred-and-eighty-eight-foot Damen research vessel that Cole had bought in 2019 from a Norwegian survey firm and refit through 2020 as a private platform for the marine-biology foundation he had spun out of his personal holdings four years earlier. The refit had included two unusual additions. The first was the cold-water tank in the lower-deck gym, which Bear and a former NAVSPECWARCOM dive instructor named Cordova had specced at eight feet by twelve feet by six feet, refrigerated to thirty-eight degrees Fahrenheit, lined with safety rails, and equipped with timing instruments accurate to the hundredth of a second. The second was the upper-deck sub-orbital recovery pad — a ninety-foot reinforced concrete circle, sixty meters aft of the helipad, painted with a Vector Aerospace Corporation roundel and rated for the recovery weight of a Vector NS-class crew capsule, which Cole's own program had been launching crewed missions on for the previous three years and which Cole had personally flown four of, most recently the sub-orbital mission that had lifted from the Mojave facility eleven days earlier and landed on this deck six days after that, six hundred and twenty miles southwest of Guam, in the morning of the day Cole had been planning to do a long-deferred ten-thousand-foot free-dive simulation before the trench dive itself.
+
+The helipad was on the upper deck, aft of the main superstructure, in the open sun. The ship was steaming at eight knots on a heading of two-zero-five, six hundred and twenty nautical miles southwest of Guam, three hundred and forty miles west of the Mariana Trench. The water that morning was the color of cold steel.
+
+Bear was already racking the chain.
 
 "Who is it," Cole said.
 

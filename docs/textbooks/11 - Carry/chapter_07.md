@@ -1,40 +1,26 @@
 # Chapter 7: The Steakhouse
 
-The Gulfstream G700 lifted off Boeing Field at eight oh-four PM Pacific on the second Friday after the memo, with Cole in the seat at the conference table in the back, Mara in the seat across from him, and an envelope of papers from Priya Bhattacharya in front of him that contained, in numbered order, every public document Drew Sallinger had filed about Carrick in the previous twelve days, every cable-television clip Sallinger had given in the same period, and a one-page brief from Senate Subcommittee on Antitrust chief counsel Whit Mendelson, marked *deep background, eyes only*, that Cole had been carrying in his head since the call he had taken from Mendelson on Wednesday afternoon.
+Cole was at the Vector Aerospace Corporation launch facility in Mojave, California, at five-twenty PM Pacific on the second Friday after the memo, in the suborbital crew suit the Vector engineering team had fitted to him in 2022 for the maiden NS-1 crewed mission, when the launch director cleared him for boarding.
+
+The mission profile was the one Cole had filed at 14:47 Pacific that afternoon — the first civilian point-to-point sub-orbital trajectory ever flown by a U.S. private spaceflight company, from the Mojave launch site to the Vector recovery facility at the former Plattsburgh Air Force Base in upstate New York, a three thousand four hundred mile great-circle distance covered in thirty-seven minutes of powered flight and ballistic descent at a peak altitude of one hundred and eighteen kilometers.
+
+The Vector NS-class capsule was rated for the trajectory.
+
+The trajectory had been simulated four hundred and eleven times across the previous nineteen months.
+
+The trajectory had been flown, in test articles without crew, eleven times across the previous fourteen months.
+
+Cole was the first crew.
 
 The manifest had been filed at 14:47 Pacific.
 
-The destination on the flight plan was Teterboro.
+The flight plan was filed under Cole's own name, because the FAA's commercial-space division did not allow proxy manifests on suborbital missions and the Vector legal team had not been able to find a workaround that would have hidden the passenger identity. The name on the manifest was *Cole Westerlund / pilot of record / sole occupant.* The press did not have the manifest. The manifest was sealed under a Vector-FAA bilateral confidentiality protocol that Cole's general counsel Priya Bhattacharya had personally drafted in 2023.
 
-The name on the manifest was Owen's law-school roommate, who was a partner at a Connecticut firm, who had been told by Owen six days earlier that he would be the manifest name on a midnight transit and not to ask why, and who had said *yes, fine, what time*.
+At T-minus eleven minutes, with the suit on and the gantry retracted and the launch director's voice on the helmet earpiece reading through the final checklist, Cole asked Mojave Range Control for forty seconds on an unsecured line.
 
-The aircraft climbed to forty-three thousand feet.
+Range Control gave him the forty seconds.
 
-It turned east.
-
-Cole opened the brief from Mendelson.
-
-He read it twice.
-
-He closed the envelope.
-
-He looked out the window at the curve of the earth.
-
-The aircraft cabin lights had been dimmed to crossing-altitude amber. The cabin was at sixty-two degrees. The galley had laid out a small dinner on the side counter that Cole was going to eat at thirty-eight thousand feet over Nebraska. He had not eaten since lunch.
-
-He ate.
-
-He drank a glass of water.
-
-He read the Mendelson brief a third time.
-
-He closed the envelope and put it in the seat-back pocket.
-
-He sat with the rest of the flight.
-
-At thirty-eight thousand feet over the dark fields of Iowa he picked up the encrypted satphone Mara had laid on the table.
-
-He called Iona Tran.
+He called Iona Tran from the encrypted satphone clipped to the suit's chest pocket.
 
 She answered on the second ring.
 
@@ -44,9 +30,13 @@ She answered on the second ring.
 
 "Where are you."
 
-"Iowa. Thirty-eight thousand feet."
+"Strapped into a rocket in Mojave."
 
-"Why are you calling me."
+"Cole."
+
+"Yes."
+
+"Why are you calling me from a rocket."
 
 "Because the meeting tonight in New York is going to determine whether the activist who has been short eight billion dollars of Carrick closes his position on Monday or doubles it. The meeting is on me. The question he is going to ask in the room is going to be a question I have not yet been asked by anyone. I do not know what the question is going to be. I do know the answer to whatever the question is going to be is in my head somewhere, and I have been turning it over for three hours. I called you because I wanted to hear your voice before the meeting."
 
@@ -60,11 +50,7 @@ Cole said: "Iona."
 
 She said: "Yes."
 
-He said: "I am not flying to New York to defend the pivot. I am flying to New York because there is a man in a room who is going to ask me one question across an empty table and the answer is going to determine whether his fund spends the next ten years helping us land this or spends the next ten years writing op-eds about why we did not. I have been thinking about the question for three hours. I am going to tell you something I have not told anyone else."
-
-She said: "Tell me."
-
-He said: "I am going to answer the question with your name in the answer. I am not going to ask your permission. I am going to use the answer that has your name in it because the answer is the answer."
+He said: "I am not flying to New York to defend the pivot. I am flying to New York because there is a man in a room who is going to ask me one question across an empty table and the answer is going to determine whether his fund spends the next ten years helping us land this or spends the next ten years writing op-eds about why we did not. I am going to use your name in the answer. I am not going to ask your permission. The answer that has your name in it is the answer."
 
 She said: "Cole."
 
@@ -74,15 +60,39 @@ She said: "Use my name."
 
 He said: "Thank you."
 
-She said: "Land the plane."
+She said: "Land the rocket."
 
-He said: "I am going to land the plane."
+He said: "I am going to land the rocket."
 
 He hung up.
 
-The Gulfstream landed at Teterboro at twelve fifty-eight AM Eastern.
+The capsule sealed.
 
-The cars were on the tarmac.
+The countdown ran from T-minus six minutes.
+
+The Vector NS-22 mission lifted from Mojave at twenty-three forty-seven Eastern. It crossed peak altitude at twenty-four oh-eight. It deployed drogues at twenty-four nineteen. It deployed main parachutes at twenty-four twenty-two. It touched down at the Plattsburgh recovery facility at twenty-four twenty-four Eastern, four minutes ahead of the simulator estimate and within the seventy-five-meter landing-target ellipse the Vector flight team had been working to for nineteen months.
+
+Cole egressed at twenty-four twenty-seven.
+
+The Suburban was on the recovery tarmac.
+
+Mara was in the passenger seat. She had flown to Plattsburgh on the Gulfstream while Cole had taken the rocket because the FAA's commercial-space regulations did not, in 2026, permit a security detail to ride a Vector capsule with the principal, and Mara had refused to let Cole make the trajectory without her being on the ground at recovery. The compromise had been that Mara flew to Plattsburgh first and met him at the pad. The compromise had not made Mara any less unhappy about it. Mara had been the chief of executive protection for eight years and had been, in those eight years, fifteen feet from Cole approximately ninety-six percent of his waking hours. The Vector flight was the four percent. Mara did not, in her own private estimation, like the four percent.
+
+Cole peeled the launch suit off in the Suburban.
+
+He changed into the dark gray suit Mara handed him in a garment bag.
+
+He read the Mendelson brief again across the drive to Manhattan, which the Suburban covered at one hundred and twelve miles per hour on the I-87 corridor with the New York State Police corridor-clearance protocol Priya had arranged through the governor's office at three PM Pacific that afternoon.
+
+The Suburban was at the door of the steakhouse on East 47th Street at one twenty-two AM Eastern.
+
+Cole walked into the building.
+
+He took the freight elevator to the third floor.
+
+He walked into the room above the steakhouse at one twenty-six AM Eastern, one hour and thirty-nine minutes after he had been strapped into a Vector NS-22 capsule on a launch pad in the Mojave Desert.
+
+Drew Sallinger was at the table.
 
 ---
 
@@ -90,11 +100,7 @@ The room above the steakhouse on East 47th Street did not have a sign on the doo
 
 The building had been built in 1907. The family who owned it did not list it on any commercial registry. The dining room above the steakhouse was on the third floor at the back of the building. There were three rooms on the third floor. The room Sallinger had asked for had three windows, a single table that could seat eight but had been laid out for four, a sideboard against the east wall, and a service door at the back of the room that opened into a narrow corridor leading to the freight elevator.
 
-Cole walked into the room at one twenty-six AM Eastern.
-
-He was in a dark gray suit, white shirt, no tie. He had taken his watch off in the car. Mara had taken his phone in the corridor. Priya Bhattacharya had walked in with him and had sat in the chair at the side of the room nearest the service door.
-
-Sallinger was at the table.
+Cole was in the dark gray suit, white shirt, no tie. He had taken his watch off in the car. Mara had taken his phone in the corridor. Priya Bhattacharya had walked in with him and had sat in the chair at the side of the room nearest the service door.
 
 A man Cole did not know was in the chair to Sallinger's right. Cole nodded at him. Sallinger said: "Cole. This is Frank Donaldson, my chief of staff. He will not speak. He will take notes."
 
@@ -116,6 +122,60 @@ Cole knew all of this.
 
 What Cole did not know was the question.
 
+What Sallinger did not know was that Cole had decided, on the rocket, to open the meeting with a small reading of the man across the table, because Cole had been preparing for the room for the previous forty-three minutes and the reading was a way of letting Sallinger know that the preparation had been the preparation.
+
+Cole sat down.
+
+Cole said: "Drew. Before you ask the question, I want to tell you four things. They will take ninety seconds. They are not the answer. They are the calibration. After the four things you will ask the question and I will answer it. I want you to have the four things in your head when you ask."
+
+Sallinger said: "Tell me."
+
+Cole said: "One. The cufflinks. You are wearing the Penn wrestling cufflinks. The cufflinks are from the 1976-77 season. You have worn them, by my count, in nine public appearances across the previous six years. You have not worn them in any private meeting I have been able to identify in your published schedule. You are wearing them tonight. The cufflinks tell me you have already decided that what happens in this room is going to be quoted in your Wall Street Journal interview in nine months. The cufflinks are the tell. I am not telling you this to discourage the quoting. I am telling you because the cufflinks are evidence that you have already made the decision."
+
+Sallinger's eyes moved, once, to his cufflinks.
+
+Sallinger's eyes moved back to Cole.
+
+Cole said: "Two. The water glass. The water glass is six inches to the right of the center of your place setting. The placement is the placement a former Division I wrestler from your weight class makes when he is preparing to lean across the table. The placement is unconscious. You did it without thinking. The placement tells me you have been framing this meeting as a confrontation. The framing is going to shift, in the next ninety minutes, from confrontation to alignment. The glass will move six inches to the center of the place setting by the time we are done. You will not know you have moved it."
+
+Sallinger glanced down at the water glass.
+
+The water glass was where Cole said it was.
+
+Cole said: "Three. Mr. Donaldson, in the chair to your right. United States Marine Corps. Four years in 3rd Battalion, 7th Marines. Left as a captain in 2008. Twelve years at a private security firm. Joined Sallinger Capital in 2020. The watch is a Citizen Aqualand BJ8050, which the Marines used to issue to dive-qualified officers in the early 2000s. He is wearing it tonight because he is here as a security presence, not as a notetaker. The notes are the cover. He has been reading me for indicators that I am here under duress, or armed, or unstable, for the previous four minutes. He has concluded that I am none of the three. He will, in eleven minutes, set his pen down and lean back in his chair. He will continue to take notes for the cover."
+
+Donaldson looked at Cole.
+
+Donaldson did not look at his pen.
+
+Cole said: "Four. The room. You chose this room. The building has three rooms on this floor. You picked the southeast corner room because it has two windows that face Forty-Seventh Street, which gives you a line of sight to the press line that would form there if the meeting were leaked mid-meeting. The other two rooms face the alley. You wanted the option, in a leak, to walk out the service door behind you, into the corridor that exits onto Forty-Sixth Street, which is one block off the Forty-Seventh Street press line. You have been mapping the exit since you sat down. I am telling you about the exit because the exit is not going to be necessary. Mara has cleared the building. There is no press on Forty-Seventh Street tonight. There will be no press on Forty-Seventh Street tonight. You can use the exit if you choose to. I would prefer that we walk out the front door at the end of the meeting, together, because the photograph of the two of us leaving a steakhouse on Forty-Seventh Street at three AM is, in nine months, going to be the photograph that runs above your Wall Street Journal interview. I think we should give them the photograph. That is your call. I am voting for the photograph."
+
+Cole sat back.
+
+Sallinger had not moved across the ninety seconds.
+
+Sallinger said: "Cole."
+
+Cole said: "Yes."
+
+Sallinger said: "How long did it take you to prepare those four things."
+
+Cole said: "Forty-three minutes. Mara pulled your last twelve public appearances on Tuesday afternoon. I read them on the rocket. The fourth thing, about the room, I worked out in the Suburban on the way in. The room I would have picked, if I had been you, was the same room you picked. I knew before I walked in which room it would be. Mara confirmed with the steakhouse manager on the call she made at 12:14 AM Eastern."
+
+Sallinger said: "Cole."
+
+Cole said: "Yes."
+
+Sallinger said: "The cufflinks I bought myself in 1979. I have not previously been aware that I have a pattern of wearing them in the morning before public appearances. I would like, at some point in the next week, to read whatever brief you have on me. Not for adversarial purposes. For self-improvement."
+
+Cole said: "I will have Priya send it to you Monday."
+
+Sallinger said: "Thank you."
+
+Sallinger paused for a beat.
+
+Sallinger said: "Now the question."
+
 Sallinger poured water into both glasses.
 
 He looked at Cole across the table.
@@ -136,7 +196,7 @@ He said: "Cole. The question is this. Why are you doing this."
 
 Cole sat with it for one breath.
 
-He had expected a thousand questions across the three hours of the flight. He had not expected this one.
+He had expected a thousand questions across the forty minutes of the trajectory and the drive in. He had not expected this one.
 
 The question was the simplest question Sallinger could have asked.
 
@@ -296,9 +356,9 @@ The corridor smelled like the steakhouse downstairs.
 
 The cars were waiting in the alley.
 
-The Gulfstream was on the tarmac at Teterboro.
+The Suburban drove them out of Manhattan and up the New York State Police corridor to Plattsburgh in two hours and eleven minutes. The Gulfstream was on the tarmac. The Vector NS-22 capsule, in its shipping cradle, was on a flatbed across the apron, getting its post-mission inspection from a Vector engineering crew Cole had flown in from Mojave the previous day. He nodded at the lead engineer on the way past. The lead engineer gave him a thumbs-up. The mission profile had closed inside the seventy-five-meter ellipse on the first crewed point-to-point trajectory in U.S. private spaceflight history. The mission was the mission.
 
-The wheels lifted at one forty-seven AM Eastern.
+The Gulfstream wheels lifted at four eleven AM Eastern.
 
 Cole slept for three of the four hours and forty minutes of the flight back to Boeing Field.
 
@@ -306,7 +366,7 @@ Mara watched the threat-assessment feed on the encrypted tablet across from him.
 
 The credible-threat section had not grown.
 
-The Gulfstream landed in Seattle at four twenty-eight AM Pacific.
+The Gulfstream landed in Seattle at six twenty-eight AM Pacific.
 
 Cole was at the Bainbridge house at five-twenty.
 

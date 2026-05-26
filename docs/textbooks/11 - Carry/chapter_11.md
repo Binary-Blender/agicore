@@ -144,6 +144,82 @@ He walked out.
 
 ---
 
+Cole sat at his desk for a minute after the door closed.
+
+He did not open the Bloomberg piece again. He did not look at the stock ticker. He did not look at the morning's threat brief. He opened, on his second monitor, the Calvin Yates LinkedIn profile he had pulled up at one twenty-three PM Pacific, eleven minutes after Mara had set the encrypted tablet on the conference table.
+
+Calvin Yates was thirty-one years old.
+
+Calvin Yates was a junior associate in the corp-dev organization under Owen.
+
+Calvin Yates had been at Carrick for fourteen months.
+
+Calvin Yates had access to the encrypted document store, which he should not have had access to as a junior associate but which had been granted to him in November of Year One when the corp-dev team had been expanded to handle ESOP-transition diligence and the access controls had been loosened under a temporary policy that Mara had flagged at the time and that had not, in the seven months since, been tightened.
+
+Calvin Yates had two specific behavioral tells that had been on Cole's quiet personal list of *individuals to watch* since the start of Year Two.
+
+The first tell was the parking lot.
+
+Yates parked his Tesla Model 3 in space B-47 of the underground garage. B-47 was three rows past the corp-dev junior-associate parking row, fourteen feet from the freight elevator, and assigned, on the building roster, to a senior compliance analyst named Hua-Ling Tao who had been on maternity leave since Year One Q3 and had not yet returned. Yates had been parking in Tao's space for fifty-one weeks. The space's only operational advantage over Yates's assigned space was *speed of egress in the event of an event that required speed of egress.* Cole had walked the parking lot every Friday morning at six-fifteen AM Pacific for the previous twenty months and had logged Yates's car in the B-47 space on forty-seven of the fifty-one Fridays. Cole had not, until thirteen minutes ago, known why Yates wanted the egress.
+
+The second tell was the brother-in-law.
+
+Yates's LinkedIn profile listed a connection named Ethan Brock, portfolio manager at Pemberley Capital, married to Yates's sister, nine years at Pemberley. Cole had read the Pemberley quarterly positions register at three AM the previous Wednesday, in the routine sweep Mara's office circulated to him every Tuesday night, and had flagged Brock as the desk lead on the Pemberley Carrick short position that had been opened the previous Monday morning at eleven forty-one AM Pacific. Cole had not, at the time of the flag, connected Brock to Yates. The brother-in-law connection had been three layers deep in the LinkedIn graph and had not surfaced in the routine sweep.
+
+The brother-in-law connection had surfaced in Cole's head twelve minutes after Mara said the word *leak.*
+
+The position. The brother-in-law. The B-47 parking space. The fourteen-month tenure that had given Yates exactly enough time to accumulate access but not enough time to develop loyalty. The corp-dev role that gave him visibility into the Q2 tranche pricing without giving him the seniority to be cleared for it.
+
+The math was the math.
+
+Cole picked up the phone.
+
+He called Mara.
+
+He said: "Mara."
+
+She said: "Cole."
+
+He said: "Calvin Yates. Corp-dev. B-47 in the garage. Brother-in-law at Pemberley. The position the brother-in-law opened Monday morning is the position the leak was for. Your forensics will confirm at three PM Pacific. I am giving you the name now so the operators are ready at his desk for the call by Priya at four. Do not have anyone speak to him in the meantime. Let him have the afternoon."
+
+Mara was quiet for two seconds.
+
+Mara said: "Cole."
+
+He said: "Yes."
+
+Mara said: "I have not yet logged the Yates badge as a candidate. The candidate list narrows at two-thirty Pacific. The forensics drop at three."
+
+He said: "I know. I have known the name since one twenty-three PM. The brother-in-law connection took me twelve minutes once you said *leak.* The brother-in-law is the lever. The Pemberley position is the proof. The B-47 space is the third leg. I am ninety-six percent confident. The remaining four percent is the case Priya is going to want airtight before the FBI walks him out. You will close the four percent at three. Have the operators at four."
+
+Mara said: "Cole."
+
+He said: "Yes."
+
+Mara said: "How long have you been watching Yates."
+
+He said: "Twelve months. He went on the list in April of Year One after I noticed the B-47 space. The brother-in-law connection I made in October when the Pemberley positions report crossed my desk. I have not, until today, had a triggering event. I am sorry I did not flag this earlier. I should have."
+
+Mara said: "Cole. The leak happened today. You connected the dots in twelve minutes. The forensics will confirm in ninety. You did not miss anything. You watched the man for twelve months without a triggering event. That is what watching is for. The triggering event happened. The watching paid off."
+
+He said: "Thank you, Mara."
+
+Mara said: "I will have the operators at four."
+
+She hung up.
+
+Cole sat at the desk.
+
+He closed the LinkedIn tab.
+
+He opened the Carrick Carry dashboard.
+
+The platform metrics were the platform metrics.
+
+He worked.
+
+---
+
 Mara's report came at three oh-eight PM Pacific.
 
 The report was three pages.
