@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-page:        #0a0a0a;
+  --bg-panel:       #18181b;
+  --bg-panel-2:     #1c1c20;
+  --bg-input:       #1f1f23;
+  --bg-canvas:      #0f0f12;
+  --border:         #27272a;
+  --border-strong:  #3f3f46;
+  --text-primary:   #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted:     #71717a;
+  --accent:         #a78bfa;
+  --accent-hot:     #8b5cf6;
+  --node-http:      #475569;
+  --node-ai:        #7c3aed;
+  --node-qc:        #06b6d4;
+  --node-branch:    #f59e0b;
+  --node-start:     #10b981;
+  --node-end:       #6b7280;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   React Flow surface — dark theme overrides for the canvas
+   ============================================================================ */
+
+.react-flow {
+  background: var(--bg-canvas);
+}
+.react-flow__background {
+  background-color: var(--bg-canvas);
+}
+.react-flow__node {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+.react-flow__edge-path {
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--accent);
+}
+.react-flow__handle {
+  background: var(--text-muted);
+  border: 2px solid var(--bg-canvas);
+  width: 10px;
+  height: 10px;
+}
+.react-flow__controls {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.react-flow__controls-button {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.react-flow__controls-button:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+.react-flow__minimap {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+/* Studio node — base style; per-type colors via inline border-left */
+.studio-node {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 6px;
+  padding: 10px 14px;
+  min-width: 200px;
+  font-size: 13px;
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.studio-node .node-type {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.studio-node .node-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+.studio-node .node-detail {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-family: ui-monospace, monospace;
+  word-break: break-all;
+}
+
+/* ============================================================================
+   CodeMirror surface
+   ============================================================================ */
+
+.cm-editor {
+  height: 100%;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: ui-monospace, "Menlo", "Consolas", monospace;
+  font-size: 13px;
+}
+.cm-editor.cm-focused {
+  outline: none;
+}
+.cm-gutters {
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+}
+.cm-activeLineGutter,
+.cm-activeLine {
+  background: rgba(167, 139, 250, 0.06);
+}
+
+::-webkit-scrollbar         { width: 8px; height: 8px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
