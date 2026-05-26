@@ -7,6 +7,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import type { NodeKind } from '../types/workflow';
 import { useNodeRunStatus } from '../store/runStore';
 import { useDebugStore, useHasBreakpoint } from '../store/debugStore';
+import { getNodeKind } from '../lib/node-kinds';
 import type { NodeRunStatus } from '../types/run';
 
 interface StudioNodeData {
@@ -16,30 +17,6 @@ interface StudioNodeData {
   detail?: string;
   [key: string]: unknown;
 }
-
-const TYPE_COLORS: Record<NodeKind, string> = {
-  start:           'var(--node-start)',
-  http_call:       'var(--node-http)',
-  ai_call:         'var(--node-ai)',
-  qc_checkpoint:   'var(--node-qc)',
-  branch:          'var(--node-branch)',
-  loop:            'var(--node-loop)',
-  parallel_fanout: 'var(--node-fanout)',
-  router_call:     'var(--node-router)',
-  end:             'var(--node-end)',
-};
-
-const TYPE_LABEL: Record<NodeKind, string> = {
-  start:           'start',
-  http_call:       'HTTP',
-  ai_call:         'AI',
-  qc_checkpoint:   'Human QC',
-  branch:          'branch',
-  loop:            'loop',
-  parallel_fanout: 'fanout',
-  router_call:     'router',
-  end:             'end',
-};
 
 const STATUS_RING: Record<NodeRunStatus, string> = {
   idle:              'transparent',
@@ -63,9 +40,8 @@ const STATUS_GLYPH: Record<NodeRunStatus, string> = {
 
 const StudioNodeImpl: React.FC<NodeProps> = ({ id, data }) => {
   const d = data as StudioNodeData;
-  const accentColor = TYPE_COLORS[d.nodeType];
-  const isStart = d.nodeType === 'start';
-  const isEnd = d.nodeType === 'end';
+  const def = getNodeKind(d.nodeType);
+  const accentColor = def.cssVar;
   const runStatus = useNodeRunStatus(id);
   const ringColor = STATUS_RING[runStatus];
   const glyph = STATUS_GLYPH[runStatus];
@@ -91,10 +67,10 @@ const StudioNodeImpl: React.FC<NodeProps> = ({ id, data }) => {
         }`}
         style={{ zIndex: 2 }}
       />
-      {!isStart && <Handle type="target" position={Position.Left} />}
+      {def.hasInput && <Handle type="target" position={Position.Left} />}
       <div className="flex items-center justify-between gap-2">
         <div className="node-type" style={{ color: accentColor }}>
-          {TYPE_LABEL[d.nodeType]}
+          {def.shortLabel}
         </div>
         {glyph && (
           <span className="text-xs font-bold" style={{ color: ringColor }}>
@@ -104,7 +80,7 @@ const StudioNodeImpl: React.FC<NodeProps> = ({ id, data }) => {
       </div>
       <div className="node-name">{d.name}</div>
       {d.detail && <div className="node-detail">{d.detail}</div>}
-      {!isEnd && <Handle type="source" position={Position.Right} />}
+      {def.hasOutput && <Handle type="source" position={Position.Right} />}
     </div>
   );
 };
