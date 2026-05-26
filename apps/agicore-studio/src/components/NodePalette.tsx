@@ -11,12 +11,15 @@ interface PaletteItem {
 }
 
 const ITEMS: PaletteItem[] = [
-  { kind: 'start',         label: 'Start',         description: 'Workflow entry point',     accentVar: 'var(--node-start)' },
-  { kind: 'http_call',     label: 'HTTP Call',     description: 'GET / POST / PUT / DELETE', accentVar: 'var(--node-http)' },
-  { kind: 'ai_call',       label: 'AI Call',       description: 'LLM with templated prompt', accentVar: 'var(--node-ai)' },
-  { kind: 'qc_checkpoint', label: 'Human QC',      description: 'Pause for human approval',  accentVar: 'var(--node-qc)' },
-  { kind: 'branch',        label: 'Branch',        description: 'Conditional routing',       accentVar: 'var(--node-branch)' },
-  { kind: 'end',           label: 'End',           description: 'Workflow exit',             accentVar: 'var(--node-end)' },
+  { kind: 'start',           label: 'Start',           description: 'Workflow entry point',                accentVar: 'var(--node-start)' },
+  { kind: 'http_call',       label: 'HTTP Call',       description: 'GET / POST / PUT / DELETE',           accentVar: 'var(--node-http)' },
+  { kind: 'ai_call',         label: 'AI Call',         description: 'LLM with templated prompt',           accentVar: 'var(--node-ai)' },
+  { kind: 'qc_checkpoint',   label: 'Human QC',        description: 'Pause for human approval',            accentVar: 'var(--node-qc)' },
+  { kind: 'branch',          label: 'Branch',          description: 'Conditional routing',                 accentVar: 'var(--node-branch)' },
+  { kind: 'loop',            label: 'Loop',            description: 'Iterate downstream over a collection', accentVar: 'var(--node-loop)' },
+  { kind: 'parallel_fanout', label: 'Parallel Fanout', description: 'Run multiple downstream paths',       accentVar: 'var(--node-fanout)' },
+  { kind: 'router_call',     label: 'Router Call',     description: 'Dispatch via a tier-based router',    accentVar: 'var(--node-router)' },
+  { kind: 'end',             label: 'End',             description: 'Workflow exit',                       accentVar: 'var(--node-end)' },
 ];
 
 const NodePalette: React.FC = () => {

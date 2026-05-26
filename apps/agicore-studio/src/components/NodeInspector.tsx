@@ -7,12 +7,15 @@ import { useSelectedNode, useWorkflowStore } from '../store/workflowStore';
 import type { NodeKind } from '../types/workflow';
 
 const KIND_LABEL: Record<NodeKind, string> = {
-  start: 'Start',
-  http_call: 'HTTP Call',
-  ai_call: 'AI Call',
-  qc_checkpoint: 'Human QC',
-  branch: 'Branch',
-  end: 'End',
+  start:           'Start',
+  http_call:       'HTTP Call',
+  ai_call:         'AI Call',
+  qc_checkpoint:   'Human QC',
+  branch:          'Branch',
+  loop:            'Loop',
+  parallel_fanout: 'Parallel Fanout',
+  router_call:     'Router Call',
+  end:             'End',
 };
 
 const NodeInspector: React.FC = () => {
@@ -60,6 +63,7 @@ const NodeInspector: React.FC = () => {
             onClick={() => deleteNode(node.id)}
             disabled={node.kind === 'start' || node.kind === 'end'}
             className="w-full text-xs py-1.5 rounded border border-red-900 text-red-300 hover:bg-red-950 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            title={node.kind === 'start' || node.kind === 'end' ? 'Start and end nodes are permanent' : undefined}
           >
             Delete node
           </button>
@@ -76,10 +80,15 @@ const PropertyForm: React.FC<{
 }> = ({ kind, properties, onChange }) => {
   switch (kind) {
     case 'start':
+      return (
+        <p className="text-[10px] text-[var(--text-muted)]">
+          No properties. Start is a pure marker — the workflow's entry point.
+        </p>
+      );
     case 'end':
       return (
         <p className="text-[10px] text-[var(--text-muted)]">
-          No properties. {kind === 'start' ? 'Start' : 'End'} nodes are pure markers.
+          No properties. End is a pure marker — the workflow's exit point.
         </p>
       );
 
@@ -163,6 +172,71 @@ const PropertyForm: React.FC<{
             className="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-[var(--accent)]"
           />
         </Field>
+      );
+
+    case 'loop':
+      return (
+        <>
+          <Field label="Iterate over" hint="Collection expression — e.g. {{fetch_items.results}}">
+            <input
+              type="text"
+              value={(properties.over as string) ?? ''}
+              onChange={(e) => onChange('over', e.target.value)}
+              className="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-[var(--accent)]"
+            />
+          </Field>
+          <Field label="As" hint="Variable name bound to each item inside the loop body">
+            <input
+              type="text"
+              value={(properties.as as string) ?? ''}
+              onChange={(e) => onChange('as', e.target.value)}
+              placeholder="item"
+              className="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-[var(--accent)]"
+            />
+          </Field>
+          <p className="text-[10px] text-[var(--text-muted)] italic leading-snug">
+            Stub runner doesn't simulate iteration yet — the agicore-cli
+            integration handles real loop semantics.
+          </p>
+        </>
+      );
+
+    case 'parallel_fanout':
+      return (
+        <>
+          <p className="text-[10px] text-[var(--text-muted)] leading-snug">
+            No properties. Draw multiple outgoing edges from this node to
+            fan execution across them.
+          </p>
+          <p className="text-[10px] text-[var(--text-muted)] italic leading-snug mt-2">
+            Stub runner serializes parallel paths today — true concurrency
+            lands with the agicore-cli integration.
+          </p>
+        </>
+      );
+
+    case 'router_call':
+      return (
+        <>
+          <Field label="Router" hint="Name of a top-level ROUTER declaration">
+            <input
+              type="text"
+              value={(properties.router as string) ?? ''}
+              onChange={(e) => onChange('router', e.target.value)}
+              placeholder="BabyAI"
+              className="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-[var(--accent)]"
+            />
+          </Field>
+          <Field label="Task type" hint="Used to pick the right tier (e.g. coding, analysis, creative_writing)">
+            <input
+              type="text"
+              value={(properties.task_type as string) ?? ''}
+              onChange={(e) => onChange('task_type', e.target.value)}
+              placeholder="general"
+              className="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-[var(--accent)]"
+            />
+          </Field>
+        </>
       );
   }
 };

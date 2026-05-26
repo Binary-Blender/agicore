@@ -199,13 +199,16 @@ const CanvasInner: React.FC = () => {
           nodeColor={(n) => {
             const data = n.data as { nodeType: NodeKind };
             switch (data.nodeType) {
-              case 'start':         return '#10b981';
-              case 'http_call':     return '#475569';
-              case 'ai_call':       return '#7c3aed';
-              case 'qc_checkpoint': return '#06b6d4';
-              case 'branch':        return '#f59e0b';
-              case 'end':           return '#6b7280';
-              default:              return '#52525b';
+              case 'start':           return '#10b981';
+              case 'http_call':       return '#475569';
+              case 'ai_call':         return '#7c3aed';
+              case 'qc_checkpoint':   return '#06b6d4';
+              case 'branch':          return '#f59e0b';
+              case 'loop':            return '#ec4899';
+              case 'parallel_fanout': return '#14b8a6';
+              case 'router_call':     return '#f97316';
+              case 'end':             return '#6b7280';
+              default:                return '#52525b';
             }
           }}
           maskColor="rgba(10, 10, 10, 0.6)"
@@ -219,11 +222,13 @@ const CanvasInner: React.FC = () => {
 function detailFor(n: WorkflowNode): string | undefined {
   const p = n.properties;
   switch (n.kind) {
-    case 'http_call':     return p.method && p.url ? `${p.method} ${p.url}` : undefined;
-    case 'ai_call':       return p.prompt ? truncate(p.prompt as string, 60) : undefined;
-    case 'qc_checkpoint': return p.upstreamFrom ? `from ${p.upstreamFrom}` : undefined;
-    case 'branch':        return p.condition ? truncate(p.condition as string, 60) : undefined;
-    default:              return undefined;
+    case 'http_call':       return p.method && p.url ? `${p.method} ${p.url}` : undefined;
+    case 'ai_call':         return p.prompt ? truncate(p.prompt as string, 60) : undefined;
+    case 'qc_checkpoint':   return p.upstreamFrom ? `from ${p.upstreamFrom}` : undefined;
+    case 'branch':          return p.condition ? truncate(p.condition as string, 60) : undefined;
+    case 'loop':            return p.over ? `over ${truncate(p.over as string, 40)} as ${p.as ?? 'item'}` : undefined;
+    case 'router_call':     return p.router ? `${p.router} · ${p.task_type ?? 'general'}` : undefined;
+    default:                return undefined;
   }
 }
 
