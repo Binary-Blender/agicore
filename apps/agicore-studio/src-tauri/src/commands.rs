@@ -1,4 +1,5 @@
-//! Tauri commands for workflow + project disk I/O.
+//! Tauri commands for workflow + project disk I/O, plus user-config
+//! storage shared across sibling Agicore apps.
 //!
 //! Workflow commands read and write a single .agi file with its
 //! companion .agi.layout.json sidecar. Atomic write semantics: tempfile
@@ -6,9 +7,13 @@
 //! is killed mid-save.
 //!
 //! Project commands operate on a directory — list the .agi files in it,
-//! create a new empty file, delete an existing file (plus its sidecar).
-//! Sidecar layout files stay invisible to the explorer surface — they
-//! are filtered out of the listing.
+//! create a new empty file, delete an existing file (plus its sidecar),
+//! search across files. Sidecar layout files stay invisible to the
+//! explorer surface — they are filtered out of the listing.
+//!
+//! User-config commands manage the shared %APPDATA%/Agicore/ store:
+//! api-keys.json, recovery/<id>.json, recent-projects.json. All three
+//! follow the same write-atomic pattern.
 
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -112,11 +117,7 @@ pub fn list_project_files(root_path: String) -> Result<Vec<ProjectFile>, String>
         if !name.ends_with(".agi") {
             continue;
         }
-        let modified_at = entry
-            .metadata()
-            .as_ref()
-            .map(mtime_seconds)
-            .unwrap_or(0);
+        let modified_at = entry.metadata().as_ref().map(mtime_seconds).unwrap_or(0);
         files.push(ProjectFile {
             name,
             path: path.to_string_lossy().into_owned(),
@@ -210,8 +211,6 @@ pub fn search_project_files(
         return Err(format!("not a directory: {}", root_path));
     }
 
-    // Enumerate .agi files in flat-directory mode (matches the explorer
-    // scope — subdirectories are a future enhancement).
     let mut entries: Vec<PathBuf> = Vec::new();
     for entry in fs::read_dir(&root).map_err(|e| e.to_string())? {
         let entry = entry.map_err(|e| e.to_string())?;
@@ -234,7 +233,7 @@ pub fn search_project_files(
     for path in entries {
         let contents = match fs::read_to_string(&path) {
             Ok(c) => c,
-            Err(_) => continue, // unreadable — skip silently
+            Err(_) => continue,
         };
         let file_name = path
             .file_name()
@@ -261,6 +260,219 @@ pub fn search_project_files(
         }
     }
     Ok(hits)
+}
+
+// ============================================================================
+// User-config root resolver — %APPDATA%/Agicore on Windows;
+// ~/Library/Application Support/Agicore on macOS; $XDG_CONFIG_HOME/Agicore
+// or ~/.config/Agicore on Linux.
+// ============================================================================
+
+fn user_config_dir() -> Result<PathBuf, String> {
+    let base = std::env::var_os("APPDATA")
+        .or_else(|| std::env::var_os("XDG_CONFIG_HOME"))
+        .map(PathBuf::from)
+        .or_else(|| {
+            std::env::var_os("HOME").map(|h| {
+                let mut p = PathBuf::from(h);
+                if cfg!(target_os = "macos") {
+                    p.push("Library/Application Support");
+                } else {
+                    p.push(".config");
+                }
+                p
+            })
+        })
+        .ok_or_else(|| "could not resolve user config directory".to_string())?;
+    Ok(base.join("Agicore"))
+}
+
+fn safe_filename(id: &str) -> String {
+    id.chars()
+        .map(|c| if c.is_ascii_alphanumeric() || c == '_' || c == '-' { c } else { '_' })
+        .collect()
+}
+
+// ============================================================================
+// API key storage — shared with sibling Agicore apps per OQ-4.
+// ============================================================================
+
+#[derive(Debug, Serialize, Deserialize, Default)]
+pub struct ApiKeys(pub std::collections::BTreeMap<String, String>);
+
+fn api_keys_path() -> Result<PathBuf, String> {
+    Ok(user_config_dir()?.join("api-keys.json"))
+}
+
+#[tauri::command]
+pub fn read_api_keys() -> Result<ApiKeys, String> {
+    let path = api_keys_path()?;
+    if !path.exists() {
+        return Ok(ApiKeys::default());
+    }
+    let contents = fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let keys: ApiKeys = serde_json::from_str(&contents).unwrap_or_default();
+    Ok(keys)
+}
+
+#[tauri::command]
+pub fn write_api_keys(keys: ApiKeys) -> Result<(), String> {
+    let path = api_keys_path()?;
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    let json = serde_json::to_string_pretty(&keys).map_err(|e| e.to_string())?;
+    write_atomic(&path, json.as_bytes()).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+// ============================================================================
+// Crash-recovery storage — autosaved drafts at
+// %APPDATA%/Agicore/recovery/<id>.json.
+// ============================================================================
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RecoveryDraft {
+    /// Stable identifier. The renderer derives this from the file path
+    /// when known, or uses a per-session id for unsaved workflows.
+    pub id: String,
+    pub source_path: Option<String>,
+    pub agi_source: String,
+    pub layout_json: String,
+    pub saved_at: i64,
+}
+
+fn recovery_dir() -> Result<PathBuf, String> {
+    Ok(user_config_dir()?.join("recovery"))
+}
+
+#[tauri::command]
+pub fn write_recovery(draft: RecoveryDraft) -> Result<(), String> {
+    let dir = recovery_dir()?;
+    fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let path = dir.join(format!("{}.json", safe_filename(&draft.id)));
+    let json = serde_json::to_string_pretty(&draft).map_err(|e| e.to_string())?;
+    write_atomic(&path, json.as_bytes()).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn list_recovery() -> Result<Vec<RecoveryDraft>, String> {
+    let dir = recovery_dir()?;
+    if !dir.is_dir() {
+        return Ok(Vec::new());
+    }
+    let mut drafts: Vec<RecoveryDraft> = Vec::new();
+    for entry in fs::read_dir(&dir).map_err(|e| e.to_string())? {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let path = entry.path();
+        if !path.is_file() {
+            continue;
+        }
+        let contents = match fs::read_to_string(&path) {
+            Ok(c) => c,
+            Err(_) => continue,
+        };
+        if let Ok(draft) = serde_json::from_str::<RecoveryDraft>(&contents) {
+            drafts.push(draft);
+        }
+    }
+    drafts.sort_by(|a, b| b.saved_at.cmp(&a.saved_at));
+    Ok(drafts)
+}
+
+#[tauri::command]
+pub fn drop_recovery(id: String) -> Result<(), String> {
+    let dir = recovery_dir()?;
+    let path = dir.join(format!("{}.json", safe_filename(&id)));
+    if path.exists() {
+        let _ = fs::remove_file(&path);
+    }
+    Ok(())
+}
+
+// ============================================================================
+// Recent projects — surfaces in the Welcome panel's "Open recent" list.
+// MRU-ordered, capped at MAX_RECENT_PROJECTS entries.
+// ============================================================================
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct RecentProject {
+    pub root_path: String,
+    pub name: String,
+    pub last_opened_at: i64,
+}
+
+const MAX_RECENT_PROJECTS: usize = 8;
+
+fn recent_projects_path() -> Result<PathBuf, String> {
+    Ok(user_config_dir()?.join("recent-projects.json"))
+}
+
+#[tauri::command]
+pub fn read_recent_projects() -> Result<Vec<RecentProject>, String> {
+    let path = recent_projects_path()?;
+    if !path.exists() {
+        return Ok(Vec::new());
+    }
+    let contents = fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let mut list: Vec<RecentProject> = serde_json::from_str(&contents).unwrap_or_default();
+    // Drop entries whose directories no longer exist — old paths shouldn't
+    // haunt the Welcome panel forever.
+    list.retain(|p| PathBuf::from(&p.root_path).is_dir());
+    list.sort_by(|a, b| b.last_opened_at.cmp(&a.last_opened_at));
+    list.truncate(MAX_RECENT_PROJECTS);
+    Ok(list)
+}
+
+#[tauri::command]
+pub fn push_recent_project(root_path: String) -> Result<Vec<RecentProject>, String> {
+    let p = PathBuf::from(&root_path);
+    if !p.is_dir() {
+        return Err(format!("not a directory: {}", root_path));
+    }
+    let name = p
+        .file_name()
+        .and_then(|n| n.to_str())
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| root_path.clone());
+    let now = chrono::Utc::now().timestamp();
+
+    let mut list: Vec<RecentProject> = read_recent_projects().unwrap_or_default();
+    // Remove any existing entry for this path — we'll re-add at the front.
+    list.retain(|e| e.root_path != root_path);
+    list.insert(
+        0,
+        RecentProject {
+            root_path: root_path.clone(),
+            name,
+            last_opened_at: now,
+        },
+    );
+    list.truncate(MAX_RECENT_PROJECTS);
+
+    let json = serde_json::to_string_pretty(&list).map_err(|e| e.to_string())?;
+    let file_path = recent_projects_path()?;
+    if let Some(parent) = file_path.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    write_atomic(&file_path, json.as_bytes()).map_err(|e| e.to_string())?;
+    Ok(list)
+}
+
+#[tauri::command]
+pub fn remove_recent_project(root_path: String) -> Result<Vec<RecentProject>, String> {
+    let mut list: Vec<RecentProject> = read_recent_projects().unwrap_or_default();
+    list.retain(|e| e.root_path != root_path);
+    let json = serde_json::to_string_pretty(&list).map_err(|e| e.to_string())?;
+    let file_path = recent_projects_path()?;
+    if let Some(parent) = file_path.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    write_atomic(&file_path, json.as_bytes()).map_err(|e| e.to_string())?;
+    Ok(list)
 }
 
 // ============================================================================
