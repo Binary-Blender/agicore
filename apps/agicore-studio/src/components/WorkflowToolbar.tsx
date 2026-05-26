@@ -61,8 +61,8 @@ const WorkflowToolbar: React.FC = () => {
 
   const onRun = () => {
     const runner = makeRunner();
-    const cancelHandle = runner.start(workflow, (event) => ingest(event));
-    startRun(cancelHandle);
+    startRun(runner);
+    runner.start(workflow, (event) => ingest(event));
   };
 
   return (
@@ -117,10 +117,19 @@ const WorkflowToolbar: React.FC = () => {
 
 const RunStatusPill: React.FC<{ status: string; elapsed: string }> = ({ status, elapsed }) => {
   const variant = STATUS_VARIANTS[status] ?? { label: status, color: '#a1a1aa' };
+  // Per OQ-3 (no modal): a paused-QC state has to be visible from anywhere
+  // on the screen. The pill animates so the user notices without being trapped.
+  const isPaused = status === 'paused_qc';
   return (
     <span
-      className="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-widest"
-      style={{ color: variant.color, borderColor: variant.color, borderWidth: 1, borderStyle: 'solid' }}
+      className={`px-1.5 py-0.5 rounded text-[9px] uppercase tracking-widest ${isPaused ? 'animate-pulse' : ''}`}
+      style={{
+        color: variant.color,
+        borderColor: variant.color,
+        borderWidth: 1,
+        borderStyle: 'solid',
+        backgroundColor: isPaused ? 'rgba(6, 182, 212, 0.12)' : undefined,
+      }}
     >
       {variant.label} · {elapsed}
     </span>

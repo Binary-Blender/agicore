@@ -17,7 +17,7 @@
 import React from 'react';
 import TitleBar from './TitleBar';
 import NodePalette from './NodePalette';
-import NodeInspector from './NodeInspector';
+import RightRail from './RightRail';
 import Canvas from './Canvas';
 import WorkflowToolbar from './WorkflowToolbar';
 import BottomDrawer from './BottomDrawer';
@@ -34,7 +34,7 @@ const App: React.FC = () => (
         </div>
         <BottomDrawer />
       </div>
-      <NodeInspector />
+      <RightRail />
     </div>
   </div>
 );
