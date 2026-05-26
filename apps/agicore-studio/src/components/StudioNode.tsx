@@ -3,9 +3,16 @@
 
 import React from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import type { StudioNodeData, StudioNodeType } from '../lib/canonical-workflow';
+import type { NodeKind } from '../types/workflow';
 
-const TYPE_COLORS: Record<StudioNodeType, string> = {
+interface StudioNodeData {
+  name: string;
+  nodeType: NodeKind;
+  detail?: string;
+  [key: string]: unknown;
+}
+
+const TYPE_COLORS: Record<NodeKind, string> = {
   start:         'var(--node-start)',
   http_call:     'var(--node-http)',
   ai_call:       'var(--node-ai)',
@@ -14,7 +21,7 @@ const TYPE_COLORS: Record<StudioNodeType, string> = {
   end:           'var(--node-end)',
 };
 
-const TYPE_LABEL: Record<StudioNodeType, string> = {
+const TYPE_LABEL: Record<NodeKind, string> = {
   start:         'start',
   http_call:     'HTTP',
   ai_call:       'AI',
