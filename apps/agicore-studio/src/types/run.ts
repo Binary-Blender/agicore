@@ -10,12 +10,13 @@
 // places. Keep them in sync.
 
 export type RunStatus =
-  | 'idle'           // no run started
-  | 'running'        // events arriving
-  | 'paused_qc'      // halted at a qc_checkpoint awaiting human decision
-  | 'succeeded'      // RunCompleted received
-  | 'failed'         // RunFailed received
-  | 'cancelled';     // user pressed Cancel before completion
+  | 'idle'                    // no run started
+  | 'running'                 // events arriving
+  | 'paused_qc'               // halted at a qc_checkpoint awaiting human decision
+  | 'paused_breakpoint'       // halted at a node carrying a breakpoint
+  | 'succeeded'               // RunCompleted received
+  | 'failed'                  // RunFailed received
+  | 'cancelled';              // user pressed Cancel before completion
 
 export type NodeRunStatus =
   | 'idle'
@@ -23,20 +24,26 @@ export type NodeRunStatus =
   | 'succeeded'
   | 'failed'
   | 'paused_qc'
+  | 'paused_breakpoint'
   | 'skipped';
 
 /** Discriminated union — every event the CLI can emit. */
 export type RunEvent =
-  | { kind: 'run_started';     timestamp: number; workflow_name: string }
-  | { kind: 'node_started';    timestamp: number; node_id: string; node_name: string }
-  | { kind: 'node_succeeded';  timestamp: number; node_id: string; node_name: string; output: unknown }
-  | { kind: 'node_failed';     timestamp: number; node_id: string; node_name: string; error: string }
-  | { kind: 'node_skipped';    timestamp: number; node_id: string; node_name: string; reason: string }
-  | { kind: 'qc_paused';       timestamp: number; node_id: string; node_name: string; upstream_output: unknown; prompt: string }
-  | { kind: 'log';             timestamp: number; node_id?: string; message: string; level: 'info' | 'warn' | 'error' }
-  | { kind: 'run_completed';   timestamp: number; final_output: unknown }
-  | { kind: 'run_failed';      timestamp: number; error: string }
-  | { kind: 'run_cancelled';   timestamp: number };
+  | { kind: 'run_started';        timestamp: number; workflow_name: string }
+  | { kind: 'node_started';       timestamp: number; node_id: string; node_name: string }
+  | { kind: 'node_succeeded';     timestamp: number; node_id: string; node_name: string; output: unknown }
+  | { kind: 'node_failed';        timestamp: number; node_id: string; node_name: string; error: string }
+  | { kind: 'node_skipped';       timestamp: number; node_id: string; node_name: string; reason: string }
+  | { kind: 'qc_paused';          timestamp: number; node_id: string; node_name: string; upstream_output: unknown; prompt: string }
+  | { kind: 'breakpoint_paused';  timestamp: number; node_id: string; node_name: string; reason: 'breakpoint' | 'step' }
+  | { kind: 'log';                timestamp: number; node_id?: string; message: string; level: 'info' | 'warn' | 'error' }
+  | { kind: 'run_completed';      timestamp: number; final_output: unknown }
+  | { kind: 'run_failed';         timestamp: number; error: string }
+  | { kind: 'run_cancelled';      timestamp: number };
+
+/** Resume mode for a breakpoint pause — step pauses again before the
+ *  next node fires; continue runs to the next breakpoint or end. */
+export type DebugResume = 'step' | 'continue';
 
 /** A captured snapshot of one node's run-time I/O — built up from events. */
 export interface NodeRunRecord {

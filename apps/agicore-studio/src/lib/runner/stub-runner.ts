@@ -6,9 +6,9 @@
 // CliRunner (spawn binary, parse "listening" line, connect websocket,
 // pipe events). Same RunnerAdapter interface, no UI changes.
 
-import type { QcDecision, RunEvent } from '../../types/run';
+import type { DebugResume, QcDecision, RunEvent } from '../../types/run';
 import type { Workflow, WorkflowNode } from '../../types/workflow';
-import type { RunnerAdapter } from './index';
+import type { RunOptions, RunnerAdapter } from './index';
 
 const NODE_DELAY_MS = { min: 350, max: 900 };
 const EDGE_DELAY_MS = 80; // brief pause between nodes for visual rhythm
@@ -16,10 +16,22 @@ const EDGE_DELAY_MS = 80; // brief pause between nodes for visual rhythm
 export class StubRunner implements RunnerAdapter {
   private cancelled = false;
   private pendingResume: ((decision: QcDecision) => void) | null = null;
+  private pendingDebugResume: ((mode: DebugResume) => void) | null = null;
+  /** When true, the next node should pause before executing — set on
+   *  step() so the runner pauses again immediately after resuming. */
+  private stepMode = false;
+  private breakpoints: Set<string> = new Set();
 
-  start(workflow: Workflow, onEvent: (e: RunEvent) => void): void {
+  start(
+    workflow: Workflow,
+    onEvent: (e: RunEvent) => void,
+    options: RunOptions = {},
+  ): void {
     this.cancelled = false;
     this.pendingResume = null;
+    this.pendingDebugResume = null;
+    this.stepMode = false;
+    this.breakpoints = options.breakpoints ?? new Set();
     const ordered = topologicalOrder(workflow);
 
     void (async () => {
@@ -63,6 +75,14 @@ export class StubRunner implements RunnerAdapter {
     resolve(decision);
   }
 
+  resumeDebug(mode: DebugResume): void {
+    this.stepMode = mode === 'step';
+    const resolve = this.pendingDebugResume;
+    if (!resolve) return;
+    this.pendingDebugResume = null;
+    resolve(mode);
+  }
+
   cancel(): void {
     this.cancelled = true;
     // If we're stuck awaiting a QC decision, unblock the await with a synthetic
@@ -72,6 +92,12 @@ export class StubRunner implements RunnerAdapter {
       this.pendingResume = null;
       resolve({ decision: 'rejected', comment: '[cancelled]' });
     }
+    // Same for a breakpoint pause — unblock so the loop can exit.
+    if (this.pendingDebugResume) {
+      const resolve = this.pendingDebugResume;
+      this.pendingDebugResume = null;
+      resolve('continue');
+    }
   }
 
   /** Run one node. Returns 'continue' to keep going or 'cancel' to stop. */
@@ -79,6 +105,28 @@ export class StubRunner implements RunnerAdapter {
     node: WorkflowNode,
     onEvent: (e: RunEvent) => void,
   ): Promise<'continue' | 'cancel'> {
+    // Breakpoint check happens BEFORE node_started so the canvas paints
+    // the pause state on the about-to-execute node, not the prior one.
+    const hitBreakpoint = this.breakpoints.has(node.id);
+    const hitStep = this.stepMode;
+    if (hitBreakpoint || hitStep) {
+      this.stepMode = false; // single-shot — cleared on observation
+      onEvent({
+        kind: 'breakpoint_paused',
+        timestamp: Date.now(),
+        node_id: node.id,
+        node_name: node.name,
+        reason: hitBreakpoint ? 'breakpoint' : 'step',
+      });
+      const mode = await new Promise<DebugResume>((resolve) => {
+        this.pendingDebugResume = resolve;
+      });
+      if (this.cancelled) return 'cancel';
+      // mode 'step' sets stepMode = true so the NEXT node pauses again.
+      // mode 'continue' clears it (handled in resumeDebug already).
+      this.stepMode = mode === 'step';
+    }
+
     onEvent({
       kind: 'node_started',
       timestamp: Date.now(),
