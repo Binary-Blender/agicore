@@ -226,7 +226,7 @@ He picked Roland up by the lapels of the navy blazer Roland had been wearing on 
 
 He then, with his other hand, picked up Theodora Mendez by the lapels of the cream-colored suit she had been wearing for nine years to board meetings.
 
-The two directors had a combined weight, by Diana's later calculation from the published height-and-weight specifications on their respective LinkedIn-profile press-photo metadata, of approximately three hundred and twenty pounds. Cole's trap-bar deadlift max, as logged on the morning's strength session with Bear Doerksen at five-twenty AM Pacific, was four hundred and twenty-five. The math worked. There was margin.
+The two directors had a combined weight, by Diana's later calculation from the published height-and-weight specifications on their respective LinkedIn-profile press-photo metadata, of approximately three hundred and twenty pounds. Cole's trap-bar deadlift max, as logged on the morning's strength session with Bear Doerksen at five-twenty AM Pacific, was seven hundred and fifteen pounds at lockout with three lengths of ship's chain per side providing the accommodating resistance. Cole had pulled it twice that morning. He had not been winded. The math worked. There was margin.
 
 Cole held them, one in each hand, at approximately his shoulder height.
 
