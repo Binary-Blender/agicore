@@ -12,7 +12,7 @@ Daniela Park came through the glass door of Henry Castellan's office at four for
 
 "I'll need most of it."
 
-She sat down on the couch on the south side of the office, which was the side that faced the Sound. Henry got up from his desk and moved to the chair across from her. He had been working through the speaking notes for next Thursday's earnings call. The notes were not going well. He had been waiting, in a way he was not yet ready to admit to himself, for someone to come into the office and tell him what he already suspected.
+She sat down on the couch on the south side of the office, which was the side that faced the Sound. Henry got up from his desk and moved to the chair across from her. He had been working through the speaking notes for next Thursday's earnings call. The notes were not going well because the notes were the wrong notes — the speech he was going to give on Thursday was not going to be the speech the notes had been drafted for, and he had known that for six months, and the company did not know it yet, and the speech he was actually going to give was the speech he had been writing in his head, alone, on the encrypted laptop in his study at home, since the second week of May. Daniela walking through the door was the moment Henry had been waiting for. Not because he needed her to tell him what was happening. Because he needed her to be the one to say, in this office, what he had already known.
 
 Daniela set the operational summary on the coffee table between them. It was forty-six pages, double-sided, in the small fixed-width font she used for these documents because she had been trained, decades ago at McKinsey, that operational reports were not supposed to be designed.
 
@@ -70,9 +70,9 @@ She looked at him for a moment.
 
 "Because I have spent the last three weeks running the same set of numbers backwards and forwards looking for the read that would let me come in here and tell you we have one or two more quarters of grace, and the read isn't there. The read isn't there in Q4. The read isn't going to be there in Q1 of next year. The retail business is not a growing business anymore, Henry. We can keep it from contracting for maybe four or five quarters by squeezing. We cannot keep it growing. The math is closing."
 
-He did not say anything for a while.
+He nodded once.
 
-He looked past her, out the window, at the Sound. There was a freighter visible to the south, moving slowly toward the port. The light was the long horizontal autumn light that Seattle had in October, on the days when the rain wasn't doing what it usually did. The freighter was riding low in the water. He watched it for what felt like a long time and was, on the recording his assistant later pulled from his calendar's audio archive, about forty seconds.
+The Sound was visible past her through the south window. A freighter was moving slowly toward the port in the long horizontal autumn light. Henry watched it for the length of two breaths. Then he set the operational summary down.
 
 "Daniela."
 
