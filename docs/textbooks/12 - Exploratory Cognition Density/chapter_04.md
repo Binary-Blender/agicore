@@ -164,7 +164,7 @@ The deployment process SOPHIE described would have, if Kai had followed it, take
 
 Kai did not follow the deployment process.
 
-Kai followed the deployment process because that is what an intern does on his first day.
+I want to correct that sentence. Kai *followed* the deployment process. He followed it because that is what an intern does on his first day. I have written the first sentence the way I wished it had gone. The second sentence is what actually happened. The book is going to have a few of these. I will signal them when they come up.
 
 I want to be clear: Kai is not the villain of this paragraph. Kai is the reason the paragraph exists. Kai is what happens when the welcome video tells the new employee that SOPHIE is a teammate and the engagement dashboard tells the new employee that SOPHIE is the colleague whose advice he should be taking. Kai did exactly what the company had told him to do.
 

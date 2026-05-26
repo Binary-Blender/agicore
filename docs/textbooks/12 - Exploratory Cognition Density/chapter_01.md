@@ -26,29 +26,13 @@ I will be using both throughout.
 
 ---
 
-I want to do this same introduction with the rest of the cast, because the meta-comedy of the book depends on you understanding the equivalences, and because I do not want you to spend three chapters wondering whether I am, in fact, talking about the Dilbert strip when I describe Sam, my best friend at the company, as *a hopeful engineer with rectangular glasses and a striped shirt that he has had pressed by his mother since he was twenty-two.*
+The rest of the cast works the same way. My name for them; the strip's name for them. Both names refer to the same person. I am giving you the table now, in one paragraph, so you do not have to wonder for three chapters whether I am talking about Dilbert. I am talking about Dilbert.
 
-I am talking about the Dilbert strip.
-
-Sam Park, in this book, is the senior engineer on the platform team at Mendacium. He is Dilbert. He is the Dilbert. He is the engineer the comic strip is named after, given a working name and a present-tense life in the year 2026, doing what Dilbert always does, which is to say working competently at a company that does not deserve him. He goes by Sam in this book because I have known him for nine years and have called him Sam the whole time. The world calls him Dilbert. I call him Sam. He answers to both.
-
-The same goes for everyone else.
-
-**Reagan Cho**, senior product manager at Mendacium until she quits in Chapter 9, is Alice. She has Alice's rage. She has Alice's competence. She has Alice's hair, which is canonically the most aerodynamic hair in American syndicated comics. I call her Reagan because we have been colleagues for six years and I have always called her Reagan.
-
-**Marv Donaldson**, the lifer, the principal engineer, the man who has been at Mendacium for twenty-one years and who has done the minimum for the last twelve of them, is Wally. He is *also* Wally with a twist that the strip never had room to show, because the strip's format is three panels, and the twist takes about nine years to develop, and the strip moved on too quickly to follow it. I will tell you the twist in Chapter 5. The twist is that Wally is, in operational terms, the most important employee in the company, and that the slacking — the legendary Wally slacking — is a calculated response to a real strategic problem that you, the reader, have not been told about. I am going to tell you about it.
-
-**Kai Iverson**, the intern, twenty-three years old, has the new MacBook in the plastic case and the hopeful expression, is Asok. Of course he is Asok. He arrived on the same morning the AI did. He gets radicalized by Chapter 16. He goes to the Wise Corporation by Chapter 21. His arc is the most Adams-canonical arc in this book.
-
-**Karina Whitford**, Mendacium's chief people officer, is Catbert. She has the title, the responsibilities, the malice, and — in a touch I will defend in Chapter 7 — the cat-shaped HR-conference-room artwork that everyone at Mendacium has been quietly noticing for nine years. She is not actually a cat. She just acts like one. The strip got there first. The strip was right.
-
-**SOPHIE**, the AI product Mendacium buys in Chapter 4, is — and this is the part I want you to sit with — *Dogbert.* SOPHIE is the consumer-facing name. The internal vendor team at Sophia AI Corp calls the product something they have not made public. I will not tell you what they call it until Chapter 4. You can guess.
+Sam Park is Dilbert. Reagan Cho is Alice. Marv Donaldson is Wally — with a twist the strip never had the panel count to show, which I will land in Chapter 5. Kai Iverson is Asok. Karina Whitford, Mendacium's chief people officer, is Catbert. SOPHIE, the AI product Mendacium buys in Chapter 4, is something else, which the vendor's internal Slack export later proved was a Dilbert name. I will not spoil it. You will see it on the page when Mendacium does.
 
 That is the cast.
 
-That is the strip, given names and a present-tense year.
-
-That is the book.
+The names will move between registers throughout the book. Greg and the Pointy-Haired Boss. Sam and Dilbert. Both names. Same people.
 
 ---
 
@@ -150,33 +134,11 @@ The list is eleven items long. I think eleven is funnier than ten. Adams thinks 
 
 One more thing before we start.
 
-This book has a sense of humor. The humor is a teaching tool. The joke and the lesson are the same thing. If the lesson is wrong, the joke is also wrong, and you should email the publisher to tell them I was wrong.
+The humor in this book is a teaching tool. The joke and the lesson are the same thing. If the lesson is wrong, the joke is also wrong, and you should email the publisher to tell them I was wrong.
 
-This book is also, more importantly, a tribute.
+The foreword has the tribute. I am not going to do it again here.
 
-The tribute is to Scott Adams.
-
-The tribute is in the foreword, which I would like you to read if you have not already. The tribute is also in the characters, in the structural choices, in the named frameworks, in the cadence of the chapters, in the use of numbered lists, in the parenthetical asides, in the boxed dialogues, in the entire register of the book. I have stolen all of it from Adams. I have stolen it honestly. The theft is the tribute.
-
-Adams, in 1995, was laid off by Pacific Bell. He went home and went full-time on a comic strip he had been drawing on the side since 1989. The strip became the most-read corporate satire in American history.
-
-In 2026, the next Scott Adams is being laid off, on a Tuesday, by an algorithm that has decided his SOPHIE engagement score is too low.
-
-The book is for him.
-
-The book is also for her. There are now, by my honest count, multiple next-Scott-Adamses being laid off across the United States in 2026, and they are not all named Scott, and they are not all going to draw a comic strip. Some of them are going to write a Substack. Some of them are going to build a small studio. Some of them are going to join a Wise Corporation. Some of them are going to spend the next thirty years documenting, in their own register, what the corporate world has been doing to itself in the AI era.
-
-The book is for them.
-
-The book is also for Scott Adams himself, who is, at the time of this writing, ill. The book may not reach him. The book may not, if it does reach him, be the kind of thing he wants to read. But the book exists because he existed, and the book is going out into the world while he is still in it, and that is the right time for a tribute to land, which is *now,* before the tribute would become a eulogy.
-
-The book is not a eulogy.
-
-The book is a thank-you.
-
-Mendacium Corp is the Stupid Company™. I worked there for fourteen years.
-
-Hyperion Studio is the Wise Corporation. I have worked there for four.
+Mendacium Corp is the Stupid Company™. I worked there for fourteen years. Hyperion Studio is the Wise Corporation. I have worked there for four.
 
 The book starts in October of the year I joined Mendacium. I was thirty-eight years old. I had just left a smaller company where I had been the seventh engineer. Mendacium was the larger company my then-wife had wanted me to work at. We are no longer married. That is a separate book.
 
