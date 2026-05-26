@@ -78,23 +78,55 @@ He looked past her, out the window, at the Sound. There was a freighter visible 
 
 "Yes."
 
-"I have been waiting for someone to come into this office and tell me what you just told me."
+"I have been running these numbers myself."
 
-"I know you have."
+She looked at him.
 
-"You've been waiting for someone to be ready to hear it."
+"For how long."
 
-"That too."
+"Six months. On a private spreadsheet. I have been waiting for you to walk in with the same conclusion. I was not going to act on my numbers until you had the same numbers."
 
-He nodded.
+"Henry."
 
-He stood up. He walked to the window. He stood there with his hands in his pockets, the way he had stood there a thousand times across thirty-one years of running the company, and he looked at the freighter, and he thought about what came next.
+"I know what you came in here to tell me. You came in to tell me the moat is gone. You came in to tell me the retail growth story is over. You came in to tell me the platform business is the company we should be. I have known all of that for six months. I have been waiting because I needed the chief operating officer of this company to walk into this room and say it to my face. I needed somebody else to see it before I moved. I did not need them to convince me. I needed them to convince me I was not the only one who saw it. That is the conversation we are now having. Welcome to the conversation."
+
+She did not say anything for a beat.
+
+Then she said, "Henry."
+
+"Yes."
+
+"You should have told me six months ago."
+
+"I should have. I was wrong not to. I have spent six months building the version of this I want to walk into the boardroom with, and I have been building it without you, and I have been wrong to. I am telling you now. Monday with Cassandra. Tuesday you and I have the full conversation. By the end of the month we are taking this to the board. The next ninety days are the most consequential ninety days of either of our careers. I have known this conversation was coming and I have been looking forward to it."
+
+She studied him.
+
+She said, "You're enjoying this."
+
+He smiled.
+
+He had not smiled all afternoon.
+
+"Daniela. I am sixty-two years old. I have built one company. I am about to get to remake it. I have spent thirty-one years waiting to be handed a problem this size. The AI wave that is supposed to be the threat is the second arrow. We have a chance to do in 2026 what I did in 1995, except this time at one hundred times the scale and with the experience of having done it before. Almost nobody gets to do that. I get to do that. We get to do that. So yes. I am enjoying this."
+
+She kept studying him.
+
+Then she said, slowly: "All right."
+
+"All right."
+
+"Then walk me through what you have."
+
+He stood up. He walked to the window. He stood there with his hands in his pockets, the way he had stood there a thousand times across thirty-one years of running the company. He did not look at the freighter. He looked through it. He had been seeing the second arrow on this window for six months.
 
 He thought about the year he had quit the hedge fund. 1995. He had been twenty-nine years old. He had walked into the office of the senior partner who had hired him eight years earlier, a man named Phillip Garber who was now eighty-six and still sent Henry a holiday card every year, and he had said: *Phillip, I'm leaving. I'm going to start an online bookstore.* Phillip, who had spent his career around founders, had asked him exactly one question. The question was: *Henry, what makes you think this is going to work.* Henry had said: *Because the math is moving in the direction of the bookstore.* Phillip had looked at him for what felt like a long time and was, on Henry's memory, about ten seconds. Then Phillip had stood up and shaken his hand and said: *Then go do it.*
 
 Henry had been listening to the math for thirty-one years.
 
-The math was now telling him something it had never told him before.
+The math was now telling him something it had told him exactly one time before, in a different room, in a different decade, when he had been thirty years younger and forty billion dollars poorer and somebody else's employee.
+
+The math was saying: *go do it again.*
 
 "Daniela."
 
@@ -254,17 +286,27 @@ He smiled. He had not smiled in two hours.
 
 He hung up.
 
-He sat at his desk for another minute. Then he stood up, took his coat off the back of the door, said goodnight to his assistant Eliza in the outer office, and rode the elevator down to the underground garage and got into his car and pulled out onto Pike Street.
+He sat at his desk for another minute. Then he stood up, took his coat off the back of the door, said goodnight to his assistant Eliza in the outer office, and rode the elevator down to the underground garage. The Suburban was at the door with Liu in the passenger seat and the follow car running fifteen feet back.
 
-The traffic was the Friday-afternoon Seattle traffic. Eastbound onto I-90 toward Mercer Island. The rain had started, lightly, on the windshield. He drove home in silence with the radio off and the wipers on the intermittent setting and his hands at ten and two on the steering wheel, the way he had been driving for thirty years.
+He got in. He read the operational summary again in the back seat. Daniela's numbers were the numbers he had been running himself for six months on a private spreadsheet that lived on the encrypted laptop in his study at home. He had been running them the same way she had — Walmart 2014, Macy's 2017, Sears 2012 — and he had landed in the same place. The difference was that he had been running them as a second job after midnight and Daniela had been running them as the first job. He had been waiting for the chief operating officer of the company to tell him the math she did not know he had already done. He had not been waiting because he was afraid of the math. He had been waiting because he wanted the math to come from her.
+
+He read the document a second time on the ferry crossing.
 
 He thought about the company he had built.
 
 He thought about the company it was about to have to become.
 
-He thought about how he was going to explain it to Marina.
+He thought about Phillip Garber, eighty-six years old in a chair somewhere on the Upper East Side, who had once stood up and shaken Henry's hand and said *then go do it* when Henry had been twenty-nine and was about to leave finance to start an online bookstore. He thought about the math that had moved in the direction of the bookstore in 1995. He thought about the math that was moving, now, in a different direction — the AI-commoditization curve that every analyst on the Street was, with the wrong framing, calling a threat. The math was not a threat. The math was the second arrow.
 
-He thought about Phillip Garber, at eighty-six years old, in a chair somewhere in New York, who had once stood up and shaken Henry's hand and said *then go do it* when Henry had been twenty-nine and was about to leave finance to start an online bookstore.
+He thought: *I get to do this again.*
+
+He thought it for the first time in the back of the Suburban on the way to the ferry, and he thought it with a part of his brain that had not been quiet for thirty years. He was sixty-two. He had built one company. He had been told, by people who knew him well, that the founders who got to build one were the lucky ones and that the founders who got to build a second were the founders the history books actually came back to. He had not, in 1995, set out to be a founder a history book came back to. He had set out to sell books. He had also not, in 1995, expected to be standing in a different position thirty-one years later with a different second arrow on the table. The math had moved. The math had named the second arrow. The second arrow was: take the largest commerce platform in the world, exit retail entirely, hand the retail business to the workers who built it, and run the platform for the eleven million small sellers who were the customer the company had stopped seeing.
+
+He thought: *who gets to do this.*
+
+He thought: *almost nobody gets to do this.*
+
+He thought: *I get to do this.*
 
 He thought about Sarah Choi, whose name he did not yet know, in a small studio in Portland, who had just spent her afternoon being undercut on the Argo marketplace by an Argo private-label competitor at a price she could not match without going below her materials cost. He did not know about Sarah Choi yet. He would. Within six weeks she would have written an email that would be forwarded through three layers of escalation to his executive inbox, and he would read it, and he would understand, on a different level than the spreadsheet had been able to teach him, that the company he had built was, in operational terms, no longer the company he wanted it to be.
 
@@ -274,19 +316,19 @@ He thought about the conversation he was going to have to have with Vivian withi
 
 He thought about the conversation he was going to have to have with the six hundred and forty thousand people who worked for Vivian.
 
-He thought about the eight billion dollars of capital that was going to have to move and the eighteen billion dollars of capital that was going to have to be redirected over thirty-six months and the nine analyst reports that were going to be downgrading the stock within two business days of the announcement and the two activist hedge funds that were going to take positions within ten business days and the institutional shareholders who would publicly demand his resignation and the board member he was going to lose and the press cycle he was about to walk into and the spouse who was going to be married to him through all of it.
+He thought about the eight billion dollars of capital that was going to have to move and the eighteen billion dollars of capital that was going to have to be redirected over thirty-six months and the nine analyst reports that were going to be downgrading the stock within two business days of the announcement and the two activist hedge funds that were going to take positions within ten business days and the institutional shareholders who would publicly demand his resignation and the board member he was going to lose and the press cycle he was about to walk into.
 
 He thought: *I am sixty-two years old. I have built a company that does seven hundred and twenty billion dollars of revenue. I have spent thirty-one years building the model that I am about to deliberately obsolete.*
 
 He thought: *if I do not do this, the company will not survive the decade.*
 
-He thought: *if I do this, I do not know what will happen.*
+He thought: *if I do this, I get to remake the world for the second time.*
 
-The traffic moved. The rain thickened. The exit for Mercer Island came up. He took it. He drove along the shore road. He pulled into the driveway of the house he and Marina had bought in 2007.
+He thought: *that is the better problem to have.*
 
-He sat in the car for a moment with the engine off.
+The Suburban came off the four-fifteen ferry and turned up the long drive on Bainbridge Island in the rain. The follow car peeled at the gate. Liu walked Henry to the front door and then took the detail back to the gatehouse for the shift change. Henry stood in the front hall for a moment with his coat on.
 
-He picked up his phone.
+He took out his phone.
 
 He texted Cassandra Yu.
 
@@ -296,30 +338,50 @@ Cassandra texted back inside a minute.
 
 *Henry. So will I.*
 
-He got out of the car.
+He put the phone away.
 
-He went inside.
+He took his coat off.
 
-Marina was at the kitchen counter slicing tomatoes for a salad. She looked up at him.
+Marina was at the long drafting table in the open kitchen-and-studio wing at the back of the house, with the lamps angled down onto a set of elevations for the Bellevue project. She had a pencil in her left hand. She did not turn when he came in. She finished the line she was on, set the pencil down, and looked up.
 
-"How was the quarter."
-
-He set his keys down on the counter. He took off his coat. He stood in the doorway of the kitchen for a moment, looking at her.
+"Henry."
 
 "Marina."
 
-"Yes."
+"You walked in slow."
 
-"We need to talk."
+"I have something."
 
-She put the knife down.
+She rolled the chair back from the table.
 
-She looked at him.
+"Then sit down."
 
-She had been married to him for thirty-one years.
+He sat down at the high stool across from her drafting table. She poured two short pours of the Sangiovese she kept open in the studio fridge, set one in front of him, and looked at him across the elevation she had been working on.
 
-She said, "Pour the wine. Tell me."
-
-He poured the wine.
+"What."
 
 He told her.
+
+He told her in six sentences. She did not interrupt. She did not react. When he was done she looked at him for a beat, picked the pencil back up, set it down again without using it, and said, "When."
+
+"Three weeks. The board on the eighteenth. The announcement on the twenty-ninth."
+
+"Stock."
+
+"Down twenty by Christmas. Maybe twenty-five."
+
+"Pemberton."
+
+"Probably."
+
+"Walter."
+
+"Maybe."
+
+She nodded.
+
+She did not say anything else for a moment.
+
+Then she said, "All right. Go work."
+
+He drank the pour. He put the glass down. He stood up. He went to his own study at the front of the house. He worked until two.

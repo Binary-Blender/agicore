@@ -128,17 +128,17 @@ Then she opened the next file.
 
 ---
 
-The brand spinoff was announced on a Thursday in June.
+The ESOP transition structure was announced on a Thursday in June.
 
-The press release ran six pages. The first three pages laid out the corporate structure. Argo, Inc. would remain the parent company. Argo Retail Inc. would be created as a wholly owned subsidiary, with its own board, its own CEO, its own management team, and its own profit-and-loss responsibility. Argo Retail Inc. would operate as a tenant on the Argo Carry platform on terms identical to those offered to every other tenant. Argo Retail Inc. would not be sold or spun off to public shareholders within the planning horizon. The spinoff was structural, not financial.
+The press release ran eight pages. The first four pages laid out the corporate structure and the transition mechanics. Argo, Inc. would remain the parent company. Argo Retail Co. would be established as a separate Delaware corporation effective January first of the following year, capitalized by contribution from Argo, Inc. of the operating assets of the retail business. Concurrent with the capitalization, a chartered Employee Stock Ownership Plan trust would be established for the benefit of all Argo Retail Co. employees, governed by an independent trustee firm and a fiduciary committee of seven members (three appointed by Argo, Inc. for the first three years, transitioning by Year Five to four worker-elected seats with two independent fiduciaries and one Argo, Inc. seat that would expire at the completion of the transition). The ESOP trust would acquire Argo, Inc.'s equity in Argo Retail Co. in tranches across the transition window. The first tranche — eight percent — would transfer at closing on January first, funded by the company's own pre-tax earnings under standard leveraged-ESOP mechanics plus an initial $4.2 billion contribution from Henry Castellan personally. Subsequent tranches would transfer on a publicly disclosed glidepath through Year Seven, at the end of which Argo, Inc. would hold zero equity in Argo Retail Co. and the ESOP trust would hold one hundred percent. Argo Retail Co. would operate as a tenant on the Argo Carry platform on terms identical to those offered to every other tenant.
 
-The fourth page of the press release named the leadership team. Vivian Reyes, Chief Executive Officer of Argo Retail Inc. Three of her existing direct reports would join her in the new entity. The other six would either move to Argo Carry or to other parts of the parent company.
+The fifth page of the press release named the leadership team. Vivian Reyes, Interim Chief Executive Officer of Argo Retail Co. The interim title was the deliberate choice. The mandate was to manage the company through the transition, build the worker-governance infrastructure, and hand the operation to a worker-elected board of directors no later than the closing of the final ESOP tranche in Year Seven. Three of her existing direct reports would join her in the new entity. The other six would either move to Argo Carry or to other parts of the parent company.
 
-The fifth page was a quote from Henry Castellan. The sixth page was a quote from Vivian.
+The sixth and seventh pages were quotes from Henry Castellan and from the executive director of the ESOP Association, who had been a consulting party to the structure for four months. The eighth page was a quote from Vivian.
 
 Vivian had written her own quote.
 
-It said: *The Argo Retail business serves over two hundred million customers in twenty-six countries. It is a business worth running well. The new structure will let us run it well — focused, accountable, and clear about who we are. We compete for our customers' trust the same way every other tenant on the platform does. We earn it the same way too. The new subsidiary begins operations on January first of next year. I will lead it. I am looking forward to the work.*
+It said: *The Argo Retail business serves over two hundred million customers in twenty-six countries. Six hundred and forty thousand people built it. Six hundred and forty thousand people are going to own it. My job between now and Year Seven is to make sure the business that gets handed to them is a business worth owning. I will lead the transition. I am looking forward to the work.*
 
 The conversation in which Vivian had accepted the CEO role had taken place six weeks earlier, in Henry's office, on a Thursday in late April.
 
@@ -178,15 +178,15 @@ Henry had cleared his calendar. He had told his assistant Eliza to hold the door
 
 He laid it out.
 
-He spoke for twelve minutes. He explained the new subsidiary structure. He explained the operating relationship with the parent company. He explained the platform-tenant relationship with Argo Carry. He explained the board structure of the new subsidiary, which would include three directors from the parent and two outside directors Vivian could nominate. He explained the compensation structure. He explained the timeline. He explained what would not change — Vivian's reporting line to him for the next twelve months as the new entity stood up, her access to the parent company's resources during the transition, her seat at the parent company's executive team meetings through the end of Year 2.
+He spoke for fifteen minutes. He explained the ESOP transition structure — the trust mechanics, the seven-year glidepath, the worker-elected board succession, the $4.2 billion contribution he was making personally, the legal and fiduciary architecture the outside ESOP advisory had been building for four months. He explained the operating relationship with the parent company during the transition. He explained the platform-tenant relationship with Argo Carry, which would be on identical terms to every other tenant from the closing date. He explained the interim governance structure — three Argo, Inc. seats on the fiduciary committee through Year Three, transitioning to four worker-elected seats and two independent fiduciaries by Year Five, with the final Argo, Inc. seat expiring at the end of Year Seven. He explained the compensation structure for Vivian personally during the transition, which was structured to align her with the long-term health of the business that would be owned, by the end, by people who were not her. He explained the timeline. He explained what would not change — Vivian's reporting line to him for the next twelve months as the new entity stood up, her access to the parent company's resources during the transition, her seat at the parent company's executive team meetings through the end of Year 2.
 
 He stopped.
 
-He said, "I want you to be the CEO of the new subsidiary. I want you to build it. I want you to run it. I am asking you because the new business needs you. The new business needs someone who knows the retail customer better than anyone in this company. The new business needs someone who is willing to do the hard parts of running a focused operation. The new business needs you."
+He said, "I want you to be the interim CEO of Argo Retail Co. I want you to build the transition. I want you to run it. I am asking you because no one else in this company can do what this role requires. The role requires running a real operating business through a seven-year ownership transfer while simultaneously building the worker-governance infrastructure that the business will be handed off to. The role requires negotiating with a fiduciary committee that does not work for you. The role requires teaching six hundred and forty thousand people how to own the company they work at. The role requires handing it to them and walking away. The new business needs someone who knows the retail customer better than anyone in this company. The new business needs someone who can do the hard parts of running a focused operation while doing the harder parts of giving it away. The new business needs you."
 
 He paused.
 
-"I also want to say something else. The role is smaller than the role you have now. Your authority inside the parent company will shrink. You will not run the largest division anymore because the largest division will not exist anymore. You will run a subsidiary that is one tenant among many on a platform that the parent company operates. The role is a smaller role in some real ways. It is also a more honest role. It is the role the business actually has. I want you to think about whether the smaller and more honest role is the role you want to do."
+"I also want to say something else. The role is smaller than the role you have now in some ways. Your authority inside the parent company will shrink. You will not run the largest division anymore because the largest division will not exist anymore. You will run an interim CEO role with a defined endpoint at Year Seven. After that you will have built something that has never existed at this scale before and you will hand it to the people who built it with you. The role is a smaller role in some real ways. It is also a more honest role than the role you have now. It is the role the business actually has. I want you to think about whether the smaller and more honest role is the role you want to do."
 
 She did not say anything for a beat.
 
@@ -198,7 +198,7 @@ Then she said, "Henry."
 
 "And."
 
-"This is the right structure. I will run it well. I would rather run a smaller and honest business than a bigger and confused one."
+"This is the right structure. I will run the transition. I would rather hand a real business to the people who built it than run a fake one for an owner who would be sued for its existence every year for the next decade."
 
 He looked at her.
 
@@ -230,7 +230,7 @@ When she was done, he said: "Yes to all three. The first one is the easiest yes 
 
 "Yes."
 
-"When the new subsidiary is two years old and the platform is settled and the parent company has been through the transition, I am going to ask the board to give you a seat on the parent company's board. Not yet. Not at the start. When the new structure has been demonstrated. When the new entity is healthy. When the company can see who you are in the new role. Two years out. I want you on the board of Argo, Inc., as the CEO of Argo Retail Inc."
+"When Argo Retail Co. is two years into the transition and the first two ESOP tranches have closed and the worker-governance scaffolding is in place, I am going to ask the board to give you a seat on the parent company's board. Not yet. Not at the start. When the new structure has been demonstrated. When the new entity is healthy. When the company can see who you are in the new role. Two years out. I want you on the board of Argo, Inc., as the interim CEO of Argo Retail Co., until the day the ESOP is one hundred percent vested and Argo Retail's board is its own. The seat is yours through that day. After that day you and I sit down and we figure out what you want to do next. That is the offer."
 
 She looked at him.
 
@@ -396,7 +396,7 @@ He said, "Sleep."
 
 She slept.
 
-The work would continue Monday. The subsidiary stand-up would begin in earnest in September. The new entity would launch on January first. The eighty-four thousand reductions would be complete by November. The platform would carry on growing. The parent company would keep transforming. The board would meet again in October. The press would write more pieces. Some pieces would be fair. Some would not.
+The work would continue Monday. The Argo Retail Co. stand-up would begin in earnest in September. The new entity would launch on January first along with the first ESOP tranche transfer. The eighty-four thousand reductions would be complete by November. The platform would carry on growing. The parent company would keep transforming. The board would meet again in October. The press would write more pieces. Some pieces would be fair. Some would not.
 
 Vivian Reyes, on the last Friday of August in the second year of the pivot, slept on her husband's shoulder for two hours on the couch in the living room of the house they had bought sixteen years earlier, and she did not think about Argo for any of those two hours, and when she woke up Daniel was still there and the lamp was still on and the book was still open on his lap, and she said, *Daniel,* and he said, *Vivian,* and she stood up and walked upstairs with him and went to bed.
 

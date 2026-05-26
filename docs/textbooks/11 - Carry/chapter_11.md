@@ -2,7 +2,7 @@
 
 Henry Castellan sat down behind the desk in his office on the eleventh floor at one minute before two o'clock Pacific time on a Thursday in late April of Year 3, looked across the room at the five people who were there with him, and waited for the operator to bring the analysts onto the line.
 
-Daniela Park was on the couch on the south side of the room with the open laptop on her knees and the script flagged in three colors. Marcus Goldberg was next to her with the margin reconciliation in a binder he had been carrying for two days. Tomás Aguilar was in the chair by the window with his phone face-down on the side table the way Tomás always put his phone face-down before a serious meeting. Vivian Reyes was on the chair across from Tomás with the Argo Retail Inc. quarterly in her hand and her shoes off under the chair because Vivian, eighteen months into running the new subsidiary, had stopped pretending she was going to wear the heels through ninety minutes of sitting still. Frank Lattimore, the EVP of Argo Logistics, stood by the credenza with his arms folded. Frank had supported the pivot from the first board meeting and had been waiting, with a private and almost surgical patience, for this particular call to happen.
+Daniela Park was on the couch on the south side of the room with the open laptop on her knees and the script flagged in three colors. Marcus Goldberg was next to her with the margin reconciliation in a binder he had been carrying for two days. Tomás Aguilar was in the chair by the window with his phone face-down on the side table the way Tomás always put his phone face-down before a serious meeting. Vivian Reyes was on the chair across from Tomás with the Argo Retail Co. quarterly in her hand and her shoes off under the chair because Vivian, eighteen months into running the ESOP transition, had stopped pretending she was going to wear the heels through ninety minutes of sitting still. Frank Lattimore, the EVP of Argo Logistics, stood by the credenza with his arms folded. Frank had supported the pivot from the first board meeting and had been waiting, with a private and almost surgical patience, for this particular call to happen.
 
 "Two minutes," Daniela said.
 
@@ -40,7 +40,7 @@ Argo Cloud: revenue up forty-nine percent year over year.
 
 Argo Carry: revenue up three hundred and eighteen percent year over year. He paused on that number, briefly, not for emphasis but because it was the number that mattered. Three hundred and eighteen percent off a base that two years earlier had been three hundred and forty million dollars and was now, on a trailing-twelve-month basis, a fundamentally different size.
 
-Argo Retail Inc., the subsidiary: revenue down eleven percent year over year. Profitable for the first time in three years.
+Argo Retail Co. (twenty-three percent employee-owned as of the close of Q1, on the publicly disclosed glidepath to one hundred percent by Year Seven; consolidated by Argo, Inc. only for the parent's remaining seventy-seven percent stake under transitional ESOP accounting): revenue down eleven percent year over year. Profitable for the first time in three years.
 
 Total Argo revenue: up eight percent year over year. The first year of revenue growth since the announcement.
 
@@ -88,7 +88,7 @@ Then she asked the second question.
 
 She asked it without changing her tone. She asked it the way she had asked the first one.
 
-"Henry. The second question. The transition from a retail-dominant operating model to a platform-dominant operating model is a transition that, in the academic literature on platform economics, is typically completed by founders only with great difficulty. There are very few examples at scale. There are fewer examples at the scale Argo has executed it. I have re-read your 1997 shareholder letter four times across the last year. I am asking this question as somebody who, in the second quarter of Year One, did not see how the timeline you announced was achievable, and who has spent the eighteen months since trying to understand the gap between what the 1997 letter described and what Argo had become by 2025. The company you are running today is the company that letter described more closely than the company you were running in 2025 was. I would like to ask you, with the benefit of hindsight that all of us on this call now have, what you believe the decision was that made the announced timeline achievable."
+"Henry. The second question. The transition from a retail-dominant operating model to a pure-platform operating model — combined with the full divestiture of the retail asset to an employee-ownership trust — is a transition that, in the academic literature on platform economics and on labor capital, has essentially no precedent at this scale. There are very few examples at scale of either move. There are zero examples of both moves at once. I have re-read your 1997 shareholder letter four times across the last year. I am asking this question as somebody who, in the second quarter of Year One, did not see how the timeline you announced was achievable, and who has spent the eighteen months since trying to understand the relationship between the customer that 1997 letter described and the customer the announced strategy described. They are not the same customer. The strategy was not a return to the 1997 letter. The strategy was a recognition that a different customer had walked into the store. I would like to ask you, with the benefit of hindsight that all of us on this call now have, what you believe the decision was that made the announced timeline achievable."
 
 The room was quiet.
 
@@ -104,7 +104,11 @@ He paused.
 
 "That is the operational answer. The personal answer is that I was very fortunate to have a board chair, a chief operating officer, a chief financial officer, an EVP of Cloud, an EVP of Retail, an EVP of Logistics, and a number of other senior leaders in this company who, when they understood what the math required, did not relitigate the math. They did the work. I want to be on the record on this call as saying that the achievable timeline was achievable because of them. Not because of me.
 
-"Karen — one further thing, because you raised the 1997 letter. The timeline was achievable because we stopped pretending the company we became was the company we wrote down in 1997. We went back to the letter. We finished the sentence. The letter is the strategy. It always was. That sounds simpler in retrospect than it felt at the time. I am grateful to be on a call, today, on which it is now possible to say it that simply."
+"Karen — one further thing, because you raised the 1997 letter. You said something important in your question, and I want to be on the record agreeing with it. The strategy was not a return to the 1997 letter. The 1997 letter was about a customer we served and have continued to serve well. The retail buyer in eastern Oregon is getting her order in two days for cheap. That part of the company worked. What we did in November of Year One was recognize that a *second* customer had walked into the store fifteen years earlier and we had not turned around to face her. The small seller. The version of me in 1995. We had been using the platform we built for the first customer to compete with the second. The pivot is not the 1997 letter finished. The pivot is the company turning around to face the customer the 1997 letter did not name and the company did not see. The timeline was achievable because we stopped pretending those were the same customer. They were not. They are not. Naming that out loud, in the November announcement, was the decision that unlocked everything else."
+
+He paused.
+
+"One last thing, on the record. Many of the participants on this call have, at various points in the last thirty months, framed this transition as a defensive response to AI commoditization. I want to correct that framing. We have never run this company defensively. We did not begin this pivot because the AI wave was a threat. We began this pivot because the AI wave was an opportunity the size of which I have not seen since 1995. The math that built the company in 1995 was the math of a small operator on additive infrastructure serving a customer the incumbents could not see. The math that is on the table in 2026 is the same math, except this time we are the infrastructure, the eleven million small operators are the customer, and we get to be the additive ones. I do not get to remake this company twice in a lifetime under any other set of circumstances. The AI wave is the second arrow. We threw it as hard as we could. I am grateful to be on a call, today, on which it is now possible to say it that simply."
 
 Karen was quiet on the line.
 
@@ -196,11 +200,13 @@ The Wall Street Journal ran the story on the front page of the Friday-morning pa
 
 The piece was fair.
 
-It named the casualties. Three thousand five hundred households lost an income in the first conversion wave. Eighty-four thousand positions eliminated across the Argo Retail workforce reduction. The brand spinoff. Walter Brandt's resignation from the board. The institutional shareholders who had publicly demanded Henry's resignation and had, in the months since, quietly closed their positions. The activist hedge funds who had taken positions in November of Year 1 and had exited at a loss in Q3 of Year 2.
+It named the casualties. Three thousand five hundred households lost an income in the first conversion wave. Eighty-four thousand positions eliminated across the Argo Retail workforce reduction. Walter Brandt's resignation from the board. The institutional shareholders who had publicly demanded Henry's resignation and had, in the months since, quietly closed their positions. The activist hedge funds who had taken positions in November of Year 1 and had exited at a loss in Q3 of Year 2.
 
-It named the result. Argo was healthier than it had been in five years. Margins were the highest they had been since 2019. The platform offering was the fastest-growing enterprise-software stack in the country. The customer roster included eleven of the top twenty American retailers. The subsidiary was profitable.
+It named the structural decisions. The full retail exit. The ESOP transition that had moved twenty-three percent of Argo Retail Co. into employee ownership in fifteen months and was on glidepath to one hundred. The $4.2 billion founder contribution Henry had committed to personally to seed the trust. The fact that no public-company CEO in U.S. history had previously divested a controlling retail business to its workforce.
 
-The piece closed with a sentence Henry read three times that morning at the kitchen table while Marina watched him without saying anything.
+It named the result. Argo was healthier than it had been in five years. Margins were the highest they had been since 2019. The platform offering was the fastest-growing enterprise-software stack in the country. The customer roster included eleven of the top twenty American retailers. Argo Retail Co. was profitable. The ESOP transfer was on glidepath.
+
+The piece closed with a sentence Henry read three times that morning in the breakfast room with the paper on the table and the security detail rotating through the perimeter checks and Marina already on a six AM call with her firm's project lead in Bellevue, audible faintly through the door of the study where she had taken the call.
 
 *Argo Inc., in the spring of Year 3, is more useful to American commerce than the old one was.*
 
@@ -208,87 +214,41 @@ He folded the paper.
 
 He set it down on the counter.
 
-He looked at Marina.
-
-She was in the chair across the table in a sweater she had owned for a decade, drinking tea, looking at him in the way she had looked at him on the morning after the announcement and on the morning after Walter Brandt resigned and on the morning the stock had hit its low.
+Marina came through the breakfast room at seven-twenty with her bag over her shoulder. She had a meeting at the Bellevue site at eight and a working lunch with the firm's senior partners in Belltown after that.
 
 "Henry."
+
+"Marina."
+
+"The Journal."
 
 "Yes."
 
-"You're going to want to go in."
+"Good."
 
-"I'm going to go in."
+"Thank you."
 
-"It's Friday."
+"I'll be back late. Don't wait."
 
-"I'm going to go in."
+"All right."
 
-She smiled.
+She was out the door at seven twenty-two.
 
-"Go in. Come home for dinner."
+Henry sat with the paper for another five minutes.
 
-"I will."
-
-He went in.
+Then he got up.
 
 ---
 
-He came home for dinner.
+He went in.
 
-Marina had set the table on the deck. It was warm enough in late April, in Seattle on a clear evening, to eat outside, if you put a sweater on. The Sound was visible through the firs at the back of the property, the long slow horizontal evening light on the water the same light Henry had been looking at for seventeen years from this house. She had made the salmon. She had opened a bottle of the Russian River pinot they had been keeping for an occasion.
+The Suburban took the back route to the ferry. Liu had moved Henry's routes to randomized rotations in Year One after the third credible threat surfaced on the dark-web aggregator that the security team subscribed to, and the rotations had not relaxed in twenty-eight months. The follow car was two lengths back through the residential streets. Henry read the Q1 dashboards on the laptop in the back seat and the morning's threat-assessment summary on the encrypted device Liu had handed him at the gate. The summary was the usual: one credible, four uncategorized, fourteen routine. The credible one was a fund manager in Connecticut whose Twitter posture had moved in the previous seventy-two hours from policy-disagreement to personal-grievance and whom the FBI field office had agreed to flag. Henry read it. He closed the device. He handed it back to Liu at the office garage.
 
-They sat down.
+He was at his desk by eight-forty. The day was the usual day. Three calls with major Carry customers in the morning. Standing one-on-one with Tomás at eleven. Lunch at his desk while reading the antitrust subcommittee staff memo Priya had walked into his office at one. Daniela in at two with the Q2 capital plan. Marcus in at four with the institutional-investor outreach schedule and the news that the third-largest activist fund on the Street, which had taken a fresh position the previous Tuesday, had filed a 13D that morning at the SEC and that the disclosure would hit the wire at five-fifteen Eastern. Henry read the filing. The fund's stated position was constructive. The fund's track record was not. He told Marcus to schedule the call for Friday.
 
-They ate.
+He was on the corporate jet at six for an overnight in Washington — a private dinner with two senators and a Treasury undersecretary that Priya had been building toward for nine months. The dinner went ninety minutes. The senior senator told him, in the quiet voice senior senators used when they were telling him something he was being trusted not to repeat, that the breakup legislation that had been on a slow track in committee for two years had been moved off the slow track that morning, that the subcommittee's chief counsel was redrafting Section 4 to carve out platform companies that maintained zero equity in marketplace tenants, and that if Argo finished the ESOP transfer on schedule the carve-out would be permanent and if Argo did not the legislation would land on Argo first. Henry did not nod. He did not visibly react. He thanked the senator. He committed to nothing. He flew back to Seattle at one AM. He was at Bainbridge by five.
 
-They did not talk about the call.
-
-They talked about Marina's project in Bellevue, a small civic library she had been designing for two years, which had just gotten the construction permit. They talked about their daughter, who had called from Boston in the morning to say that the dog had figured out how to open the back door. They talked about the trip to Sicily they had been postponing for two years. They talked about nothing in particular. The light moved on the water.
-
-When they finished eating, Marina poured the rest of the pinot into Henry's glass. She did not pour any into hers. She set the bottle down. She looked at him across the table.
-
-"Henry."
-
-"Marina."
-
-"What comes next."
-
-He thought about it.
-
-"The next thirty years," he said.
-
-She laughed.
-
-"Henry."
-
-"Marina."
-
-"You're sixty-two."
-
-"I know."
-
-"Promise me."
-
-"Promise you what."
-
-"Promise me that the next thirty years includes more than this."
-
-He looked at her.
-
-He reached across the table and took her hand.
-
-"I promise," he said.
-
-She held his hand for a moment.
-
-Then she let go and picked up the plates and carried them inside, and Henry sat on the deck for another twenty minutes with the empty wineglass in front of him and the evening light on the Sound, and he thought about the call, and he thought about Karen Yoshida, and he thought about Walter Brandt, who had sent him a one-line note that afternoon — *Henry. You were right. I was wrong. Walt.* — and he thought about Marina, inside the house, doing the dishes.
-
-He carried the wineglass inside.
-
-He helped with the dishes.
-
-They went to bed.
+He did not sleep. The threat-assessment summary on his desk at six AM had been updated. The Connecticut fund manager had bought a one-way ticket to Seattle.
 
 The Journal piece, by morning, had been picked up by every financial outlet in the world. By Saturday afternoon the stock was seven percent above pre-announcement levels for the first time since October of Year 1.
 

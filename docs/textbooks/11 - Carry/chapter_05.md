@@ -32,17 +32,33 @@ He read.
 
 He set the page down.
 
-"I have not been running this company by those four sentences for some years now. I am going to propose, this morning, that we go back to running it by those four sentences. The proposal that follows is the operational consequence of doing that."
+"That letter is not the problem. That letter is intact. The customer named in that letter — the retail buyer — has been served, for thirty-one years, well. A working family in a small town in the Midwest can get nearly any product they need in two days for prices that did not exist before this company existed. That part of the business worked. That part of the business still works. I want to be clear about that with this board before I say the next sentence."
 
 He paused.
 
 The room was very still.
 
-"I am going to be direct. I am not going to bury the lead. I am not going to soften it."
+"What I am about to propose is not a correction of a drift. We did not drift. We did what we said we would do. What I am about to propose is a recognition that a second customer walked into this store about fifteen years ago and we did not turn the company around to face her."
 
 He paused again.
 
-"The retail business," he said, "is no longer the strategic future of this company. The platform business is. We are going to invest in Argo Carry at a level that requires us to redirect approximately eighteen billion dollars of capital from retail over the next thirty-six months. We are going to publicly reframe Argo as a platform company with retail as one tenant. We are going to begin spinning off the consumer-facing retail brand as a separate subsidiary within twenty-four months. I want the board's authorization to begin executing this transition this quarter."
+"The second customer is the small seller. There are eleven million of them on our marketplace. They are the version of me in 1995. The platforms I built my business on in 1995 were additive — UPS gave me the same rates it gave Crown Books, the credit-card processors charged me the fees they charged the local florist, the book distributors offered me the wholesale terms they offered an independent bookseller on Capitol Hill. The platform we have built for the small seller of 2026 is extractive. We clone her products under our private-label brand. We use her sales data to time the cloning. We terminate her account when convenient. We send her a form letter telling her her only recourse is our own repricing software. The infrastructure I had a clean shot on in 1995 is the infrastructure I have not been giving her. That is the company we have become. It is not the company I wrote down in 1997 because the customer in 1997 was a different person. I am going to ask the board, this morning, to commit Argo to the customer who walked into the store fifteen years ago, the one I have not been serving, the one whose existence the company depends on going forward and whose existence the company has been crushing."
+
+He paused.
+
+"Here is what that means in operational terms. I am going to be direct. I am not going to bury the lead. I am not going to soften it."
+
+He paused again.
+
+"Argo is exiting retail. Completely. The retail business is not the strategic future of this company because Argo, Inc. should not be in the retail business at all. As long as we own a retail business, we are competing with the small sellers whose existence the platform depends on. No structural firewall fixes that, because the firewall is not what we own. We own the business. We are going to stop owning the business."
+
+He paused.
+
+"Over five to seven years, beginning in February of next year, we are going to transfer the equity in Argo Retail to its six hundred and forty thousand employees through a chartered ESOP. The transition will be structured by the largest employee-ownership advisory in the country and will be financed by a combination of standard ESOP leverage against the retail business's own pre-tax earnings, a one-time founder contribution of four point two billion dollars from me personally, and a debt facility the parent company will retire across the transition window. By the end of Year Seven, Argo, Inc. will hold zero equity in Argo Retail Co. Argo Retail Co. will operate as a tenant on the Argo Carry platform on terms identical to those offered to every other tenant. The largest employee-ownership transition in U.S. corporate history. We will be the company that did it."
+
+He paused.
+
+"Simultaneously, we are going to invest in Argo Carry at a level that requires us to redirect approximately eighteen billion dollars of capital from retail over the next thirty-six months. We are going to publicly reframe Argo, Inc. as a platform business — not a retailer running a platform, not a retailer who also runs a platform, not a retailer with a separate retail subsidiary. A platform. Period. The retail business we built is going to keep existing. It is going to keep being run well. The people who will run it are the people who built it. I want the board's authorization to begin executing this transition this quarter."
 
 The room went quiet in the way that rooms went quiet when ten people had simultaneously stopped breathing for the same one second.
 
@@ -50,7 +66,7 @@ Vivian did not move. She was looking at Henry. Her hands were folded on the tabl
 
 Henry kept going.
 
-He walked through Marcus's model. He walked through the alternative scenarios. He walked through the operational sequencing. He named the warehouse-conversion plan. He named the workforce reduction. He named the spinoff structure. He named the timeline. He did not name Vivian's specific role inside the new structure, and Vivian had been told over the phone the previous afternoon that he would not name it in the room until after the vote.
+He walked through Marcus's model. He walked through the alternative scenarios. He walked through the operational sequencing. He named the warehouse-conversion plan. He named the workforce reduction. He named the ESOP transition structure — the trust mechanics, the funding tranches, the five-to-seven-year glidepath, the worker-elected board succession, the $4.2 billion founder contribution that Marcus had walked Henry through three times the previous week and that Henry was making contingent on board authorization of the full transition. He named the timeline. He did not name Vivian's specific role inside the new structure, and Vivian had been told over the phone the previous afternoon that he would not name it in the room until after the vote.
 
 He spoke for thirty-eight minutes.
 
@@ -68,11 +84,13 @@ Walter cleared his throat.
 
 He was seventy-one years old. He had been on the Argo board since 2003. He had been Henry's friend for twenty-three years. He had stood next to Henry at the IPO in 1997 and at the twentieth-anniversary celebration in 2015 and at the dedication of the new headquarters in 2019. Vivian had watched him across nine years of board meetings. She had never seen him interrupt. She had never seen him raise his voice. She had also never seen him concede a point he believed was wrong.
 
-"Henry," he said. "I want to make sure I understand. You are proposing that we dismantle a business that does sixty-four percent of our revenue."
+Vivian had also, in nine years, never seen Henry walk into a room more prepared. He had laid out the strategy in forty minutes without slides. He had not used a single hedge. He had named every counter-argument before it could be raised — Walter's, Theo's, the antitrust environment, the activist response, the timeline credibility, the personal-contribution mechanics. He had pre-empted, by Vivian's count, eleven of the questions that would have been asked. Walter was the first board member to find a question Henry had not pre-empted. Vivian knew the look on Walter's face well enough to recognize that Walter knew it too. Walter was a serious man. He was about to make the most serious argument of his nine years on the board. He was also, Vivian saw, about to make it knowing he had already lost.
+
+"Henry," Walter said. "I want to make sure I understand. You are proposing that we give away a business that does sixty-four percent of our revenue."
 
 Henry did not blink.
 
-"I am proposing," he said, "that we transform a business that does sixty-four percent of our revenue into a business that does twenty percent of our revenue, while doubling the size of a business that does twelve percent of our revenue, over thirty-six months."
+"I am proposing," he said, "that we transfer the equity in a business that does sixty-four percent of our revenue to the people who built it, on a five-to-seven-year glidepath, at fair market value, financed by the business's own pre-tax earnings and a personal contribution from me. The revenue line of Argo, Inc. shrinks. The platform business it does not shrink. Argo Carry will absorb retail's revenue substitution over the transition window. The math is in Marcus's model. The model is in front of you. The give-away is not a give-away. It is a divestiture on commercial terms with a deferred consideration structure. The price of the divestiture is that we no longer carry an asset that is in structural conflict with our platform thesis."
 
 "And the shareholders."
 
@@ -98,11 +116,11 @@ Walter sat with it for a moment.
 
 "And if the market disagrees."
 
-"The market is going to disagree, Walter. The market is going to disagree for at least a year. The question is not whether the market disagrees. The question is whether we are right. If we are right, the market catches up. If we are wrong, we have done damage that cannot be undone. I have spent the last three months making sure we are right. Marcus has spent the last three months making sure we are right. Daniela has spent the last fourteen years walking the floors of the warehouses and she has been telling me we are right for two years. I am as sure of this strategic call as I have been of any strategic call I have made since 1995."
+"The market is going to disagree, Walter. The market is going to disagree for at least a year. The question is not whether the market disagrees. The question is whether we are right. If we are right, the market catches up. If we are wrong, we have done damage that cannot be undone. I have spent the last six months making sure we are right. Marcus has spent the last three months making sure we are right. Daniela has spent the last fourteen years walking the floors of the warehouses and she has been telling me we are right for two years. I am as sure of this strategic call as I have been of any strategic call I have made since 1995."
 
 "Since you started the company."
 
-"Since I started the company."
+"Since I started the company. And I want to be honest about what I am telling this board. I am not coming in here this morning because the AI commoditization wave is a threat. I am coming in here because it is an opportunity the size of which I have not seen in thirty-one years. The math that built this company in 1995 — small operator, additive infrastructure, a customer the incumbents were not seeing — is the same math that is on the table in 2026, except this time we are sitting on the infrastructure the small operator needs and our job is to turn around and serve her. I have built one company in my life. I have a chance to remake it into a second one. Almost nobody in this room knows anybody who has done that. I do not know anybody who has done it. I am going to do it. I would like this board's authorization to do it under your governance. I am going to do it either way. The question on the table is whether I do it as the CEO this board confirmed for the work, or as the CEO this board has to confirm again afterward. I would prefer the former."
 
 Walter nodded. He did not look convinced. He looked thoughtful. He set his hands flat on the table.
 
@@ -130,7 +148,7 @@ Theo Mendez spoke at length. Theo was a family-office investor in her late sixti
 
 Two of the newer board members — Diane Kahale, a former technology CEO who had joined the board four years earlier, and Marcus Rajagopalan, a former operating partner at a private-equity firm who had joined two years earlier — spoke in support of the pivot in operational terms. They asked questions about the platform build-out, about the customer-acquisition assumptions in Marcus's model, about the regulatory environment for the spinoff.
 
-The general counsel, Priya Bhattacharya, who was not a voting board member but who sat in the corner of the room for governance items, spoke for six minutes about the antitrust posture of the pivot. She made a point Vivian had not heard her make before — that the pivot, by separating Argo Retail from Argo Carry and operating the platform on equal terms for all tenants, would actually *resolve* the structural conflicts of interest that several state attorneys general had been investigating for the last three years. The pivot was, in regulatory terms, the thing the regulators had been asking the company to do.
+The general counsel, Priya Bhattacharya, who was not a voting board member but who sat in the corner of the room for governance items, spoke for six minutes about the antitrust posture of the pivot. She made a point Vivian had not heard her make before — that the pivot, by transferring Argo Retail entirely to its employees and operating the Carry platform on equal terms for all tenants, would actually *resolve* the structural conflicts of interest that several state attorneys general had been investigating for the last three years. A retail subsidiary on the same platform would not have resolved them. A retail competitor that the parent owned even ten percent of would not have resolved them. The ESOP path resolved them by removing the asset from the conflict surface entirely. The pivot was, in regulatory terms, the thing the regulators had been asking the company to do and the thing none of the regulators had imagined a company at this scale would actually do.
 
 Daniela spoke twice. Marcus spoke three times. Frank Lattimore, the EVP of Logistics, spoke briefly and supportively — his business unit, he said plainly, was the part of the company that the platform monetized, and he had been operating it that way internally for two years even though the strategic story of the company had not yet caught up.
 

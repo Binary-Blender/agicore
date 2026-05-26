@@ -80,7 +80,9 @@ She read.
 
 *Today I am writing to tell you about a change we are going to make in how this company operates. The change is large. The change will affect every business unit, every region, and many of you personally. I want you to hear it from me, in writing, before you hear it from anyone else.*
 
-*Argo was founded thirty-one years ago to sell books online. Over thirty-one years it has become the largest commerce company in human history. Most of what we do today, our customers and our sellers and our employees and our partners, runs on infrastructure we built to serve our own retail business and then opened up to others. That sequence — retail first, platform second — has been the strategic shape of this company for most of its history. It is no longer the shape this company should have. Starting today, that is going to change."*
+*Argo was founded thirty-one years ago to sell books online. Over thirty-one years it has become the largest commerce company in human history. We have, in that time, served the retail buyer well. A working family in any town in any country we operate in can today get nearly any product they need in two days, at prices that did not exist before this company existed. That promise — the one we wrote down in 1997 — we kept.*
+
+*What this letter is about is something different. A different customer walked into our store about fifteen years ago. The small seller. Eleven million of them, by 2026, building real businesses on top of our infrastructure. We have not been serving that customer well. We have been competing with that customer, using infrastructure she helped fund, with private-label products timed to her sales data, and we have been telling her in form letters that her only recourse is software we also sell. That is not the company we wrote down in 1997 because the customer in 1997 was a different person. We did not notice the new customer walk in. We are noticing now. Starting today, the company is going to turn around and face her."*
 
 She set the pad down.
 
@@ -120,7 +122,7 @@ By eleven they had three pages.
 
 The first page was Vivian's opening, lightly edited.
 
-The second page was a one-page summary of the strategic decision: the company would become a platform company first; the retail business would be reorganized as a wholly-owned subsidiary called Argo Retail Inc. inside twenty-four months; Argo Carry would become the strategic priority and would receive the bulk of new investment; the cloud business would continue on its current trajectory but its operating principles — open platform, never compete with the customer — would become the operating principles of the company as a whole.
+The second page was a one-page summary of the strategic decision: Argo, Inc. would exit retail entirely over five to seven years; the retail business would be reconstituted as Argo Retail Co. and transferred to its 640,000 employees through a chartered ESOP, the largest employee-ownership transition in U.S. corporate history, financed by the retail business's own pre-tax earnings under standard ESOP-leverage mechanics, a debt facility the parent would retire across the transition window, and a one-time $4.2 billion founder contribution from Henry personally; by the end of Year 7 the parent company would hold zero equity in any retail business; Argo Carry would become the strategic priority and would receive the bulk of new investment; the cloud business would continue on its current trajectory but its operating principles — open platform, never compete with the customer, never own a tenant — would become the operating principles of the company as a whole.
 
 The third page was the part that contained the workforce language.
 
@@ -250,7 +252,7 @@ Then she said, quietly: "Thank you, Daniela. That is worth a lot."
 
 They worked through the afternoon.
 
-Pages four and five were the plan and the timeline. Marcus drove most of those. The timeline had specific milestones — first warehouse conversion in February, first major external customer announced in Q1 of Year 2, retail-brand subsidiary structure finalized by Q3 of Year 2, full operational separation complete by Q4 of Year 3. Vivian read each milestone and asked, on three of them, whether the dates were the dates the company would actually meet or the dates the company would aspire to meet. On two of them, Marcus moved the dates back by three months. On one, he moved it forward by six weeks because the team had quietly been ahead of the public timeline for two quarters.
+Pages four and five were the plan and the timeline. Marcus drove most of those. The timeline had specific milestones — first warehouse conversion in February, first major external Carry customer announced in Q1 of Year 2, ESOP trust chartered and first equity tranche transferred by Q3 of Year 2 (eight percent), second tranche by Q3 of Year 3 (cumulative twenty-three percent), full operational separation of Argo Retail Co. complete by Q4 of Year 3, full ESOP transfer to one hundred percent employee ownership by the spring of Year 7. Vivian read each milestone and asked, on three of them, whether the dates were the dates the company would actually meet or the dates the company would aspire to meet. On two of them, Marcus moved the dates back by three months. On one, he moved it forward by six weeks because the team had quietly been ahead of the public timeline for two quarters.
 
 Page six was the closing paragraph.
 
@@ -258,9 +260,9 @@ Henry wrote it himself, on his laptop, in the small hand that Daniela had seen h
 
 At six-fifteen Henry pushed his laptop back and read his paragraph out loud.
 
-*"I have spent thirty-one years building this company. I am as proud of what we have built as I have ever been of anything in my professional life. I am also clear-eyed about the fact that the company that has worked for the last thirty-one years is not the company that is going to work for the next thirty. The world has changed. Our customers have changed. The tools available to small businesses have changed. The right way to be useful to American commerce has changed. We are changing with it. This is going to be hard. It is going to be hard on many of you personally. I am asking you, today, to give me, and Vivian, and Daniela, and Marcus, and Tomás, and the rest of the executive team, your trust and your work for the next three years. We do not take it lightly. We will earn it every day.*
+*"I have spent thirty-one years building this company. I am as proud of what we have built as I have ever been of anything in my professional life. I am also clear-eyed about the fact that the customer we built the company to serve is no longer the only customer in our store. A second customer has been here for fifteen years, and we have not been serving her. We are going to begin serving her. The shape of the company is going to change to make that possible. It is going to be hard. It is going to be hard on many of you personally. I am asking you, today, to give me, and Vivian, and Daniela, and Marcus, and Tomás, and the rest of the executive team, your trust and your work for the next three years and your patience for the next seven. We do not take it lightly. We will earn it every day.*
 
-*In the spring of 1997 I wrote a letter to our first public shareholders. The letter said it was Day One for the Internet and, if we executed well, for Argo. We executed well. It is still Day One. The next thirty years are the years we finish what the first thirty started."*
+*In the spring of 1997 I wrote a letter to our first public shareholders. The letter said it was Day One for the Internet and, if we executed well, for Argo. The customer that letter named is still being served. What we are announcing today is that a second customer walked into the store and we are turning the platform around to face her. It is still Day One. It is also, for the people we have not been serving, the first day."*
 
 He looked up.
 
@@ -350,6 +352,6 @@ He picked up the phone.
 
 ---
 
-*Argo Inc., in the fourth week of November of Year 1, became the first company at industrial scale to commit publicly to the platform pivot the AI era was about to require of many of them. The communication had been drafted in two days, by five people, in a small conference room on the eleventh floor of the Argo headquarters. It had taken thirty years to write. It would take three more to be lived.*
+*Argo Inc., in the fourth week of November of Year 1, became the first company at industrial scale to commit publicly to the customer the AI era was about to require it to serve. The communication had been drafted in two days, by five people, in a small conference room on the eleventh floor of the Argo headquarters. It had taken thirty years to write. It would take three more to be lived. It would take four more after that for the 640,000 owners of Argo Retail Co. to hold the title to the business they had built.*
 
 *End of Part II.*

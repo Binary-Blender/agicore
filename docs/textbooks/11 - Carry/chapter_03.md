@@ -95,7 +95,7 @@ The conventional variant was the slow death.
 
 He turned to the aggressive variant.
 
-The aggressive variant said: invest in Carry at the level a strategic priority justifies. Communicate publicly that Argo is reorganizing as a platform company with retail as one tenant among many. Spin off the consumer-facing retail brand as a wholly-owned but operationally independent subsidiary within twenty-four months. Open the Argo Carry platform to competitors of Argo Retail Inc. Cut retail capex. Increase platform capex. Run the company at a deliberate revenue plateau through Year 3 in exchange for a healthier company at Year 7.
+The aggressive variant said: invest in Carry at the level a strategic priority justifies. Communicate publicly that Argo is reorganizing as a pure platform company. Exit retail completely. Transfer the retail business — six hundred and forty thousand employees, the largest division in the company — to an employee stock ownership trust across five to seven years, with the parent company holding zero equity in any retailer by the end of Year 7. Argo Retail Co. would operate, post-spin, as a customer of Argo Carry on identical terms to every other tenant. The transition would be financed by a combination of standard ESOP leverage against the retail business's pre-tax earnings, a debt facility the parent would retire across the transition window, and a one-time founder contribution from Henry personally that Marcus had modeled at four point two billion dollars. Cut retail capex. Increase platform capex. Run the company at a deliberate revenue plateau through Year 3 in exchange for a healthier company at Year 7 — a company that would, for the first time in fifteen years, no longer be the structural defendant in every antitrust file open against the platform layer.
 
 The aggressive variant produced, on the model:
 
@@ -282,7 +282,7 @@ He had slept badly. He had slept badly every night for the seventeen days since 
 
 Marcus's model was the part that had not yet arrived.
 
-Henry got out of bed quietly. Marina was asleep. He walked downstairs barefoot in his bathrobe. He started the coffee. He picked up his phone from the kitchen counter where it had been charging.
+Henry was awake at four-ten. Marina was already gone — she had a five-thirty flight to a project site in Vancouver and Liu had logged the gate clearance for the second car at four. He walked downstairs in the dim hallway lights and through the breezeway to the gym wing. Travis was already there with the first set racked. Henry warmed up. He pulled three-eighty for triples. He moved to the bench. He read his phone between sets.
 
 He had two hundred and forty-three emails since he had gone to bed.
 
@@ -292,7 +292,7 @@ There was one from Marcus Goldberg, sent at 12:58 AM.
 
 The subject line was *The Numbers.*
 
-Henry stood at the kitchen counter in his bathrobe in the dim early-morning light from the window over the sink, and he read the email, and he opened the attachment, and he read the first page.
+Henry sat on the bench with the bar racked above him and read the email and opened the attachment and read the first page.
 
 He read it twice.
 
@@ -302,55 +302,31 @@ He read the third.
 
 He read the fourth.
 
-He closed the attachment. He set the phone down on the counter.
+He closed the attachment. He set the phone down on the bench beside him.
 
-He stood there for a long minute with his hands flat on the granite.
+He stood up.
 
-The coffee maker beeped. He did not move toward it.
+Travis was at the squat rack putting plates on for the next movement.
 
-He heard Marina come down the stairs.
-
-She came into the kitchen in her own bathrobe and her bare feet and her hair pulled back the way she pulled it back in the morning. She stopped in the doorway.
-
-She looked at him.
-
-She had been married to him for thirty-one years.
-
-She said, "Henry."
-
-He picked up his phone. He turned it around. He held it out so she could see the screen, which still showed Marcus's open email, with the subject line *The Numbers* at the top.
-
-"Marina."
+"Travis."
 
 "Yes."
 
-"Marcus just came in."
+"I'm done."
 
-She took the phone. She read the email. She read the subject. She read the body. She did not open the attachment.
+"Set."
 
-She looked up at him.
+"I'm done. I have to go in."
 
-She said, "All right."
+Travis nodded. He did not ask why. He took the plates off the bar.
 
-She handed the phone back.
+Henry showered in the gym wing in four minutes. He came back through to the main house in the suit he had laid out the night before. He drank a glass of water at the sink. He picked the phone back up. He texted Cassandra: *Marcus came in. Monday.* Cassandra texted back inside twenty seconds: *I have it. See you Monday.*
 
-She walked to the coffee maker. She poured two cups. She brought them to the small table by the window where they had been eating breakfast for nineteen years. She sat down. She set Henry's cup across from her.
-
-He sat down.
-
-He looked out the window. The light was the first gray light of November in Seattle. The trees were bare. There was no rain that morning. The Sound, far below the house, was visible through the leafless branches.
-
-He picked up the coffee.
-
-He said, "Monday."
-
-She said, "Monday."
-
-He drank.
+The Suburban was at the front door at four fifty-eight. Liu was in the passenger seat. The follow car was four lengths down the drive with its headlights on. Henry got in. He read the rest of Marcus's attachment in the back seat on the way to the ferry.
 
 ---
 
-The CFO had run the model six different ways and had not been able to make it say anything but the same thing. The founder had read the email at six AM on the morning after it had been sent and had carried it to his wife at the breakfast table inside of one minute. The COO had spent the night reading the attachment in bed with her husband asleep beside her and had texted Marcus at four AM with the sentence *We are going to do this.* The board chair had read the email at seven, on the terrace of her apartment in Belltown, with her coffee and her newspaper, and had not been surprised by what the model said because she had been waiting for the model to say it for six months. The general counsel had read the email at seven-thirty and had cleared her Friday calendar. The cloud EVP had read the email at six-forty and had called his head of platform engineering before seven. The retail EVP had read the email at six-fifteen in the kitchen of her house in Medina, with her two daughters eating cereal at the table beside her, and had set the phone down on the counter and stood at the counter for a full two minutes without moving.
+The CFO had run the model six different ways and had not been able to make it say anything but the same thing. The founder had read the email at four-thirty AM on the morning after it had been sent, between sets on the bench in the home gym, and had been in the Suburban heading to the office inside of forty minutes. The COO had spent the night reading the attachment in bed with her husband asleep beside her and had texted Marcus at four AM with the sentence *We are going to do this.* The board chair had read the email at seven, on the terrace of her apartment in Belltown, with her coffee and her newspaper, and had not been surprised by what the model said because she had been waiting for the model to say it for six months. The general counsel had read the email at seven-thirty and had cleared her Friday calendar. The cloud EVP had read the email at six-forty and had called his head of platform engineering before seven. The retail EVP had read the email at six-fifteen in the kitchen of her house in Medina, with her two daughters eating cereal at the table beside her, and had set the phone down on the counter and stood at the counter for a full two minutes without moving.
 
 Seven recipients.
 

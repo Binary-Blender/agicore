@@ -1,6 +1,8 @@
 # Chapter 4: The Founders' Day
 
-Henry Castellan rode the elevator to the eleventh floor of the building on Western Avenue at seven forty-five on a Friday morning in the middle of November. The doorman who knew him by sight said good morning. The elevator was quiet. He was carrying a leather portfolio with a printout of Marcus Goldberg's model in it and a thermos of coffee he had filled at the kitchen counter while Marina was still asleep.
+Henry Castellan had been awake at four-fifteen, in the gym at the back of the Bainbridge house by four-thirty, and at one-rep-max on the trap-bar deadlift by five-forty under Travis Mendez's hand-on-the-bar coaching cue *one more, Henry, one more, this is the one.* He had pulled four-twenty-five. Travis had told him to stop. He had stopped. He had showered. He had read Marcus Goldberg's model at the breakfast counter while drinking the protein shake the kitchen had left out for him. The chauffeured Suburban came off the Bainbridge ferry at seven-oh-eight on a Friday morning in the middle of November and turned south on Alaskan Way with the second-detail vehicle two car lengths behind it. Liu was riding shotgun, on a quiet earpiece confirming with the building's head of security that the lobby and the eleventh-floor hallway had been cleared for the morning. Marina had been at her drafting table at the back of the second floor when Henry left the house at six-fifty — she had a milestone review at three with the project committee for the new performing-arts center in Bellevue, and she had been at the drawings since five. They had not spoken in the morning.
+
+The Suburban pulled into the underground garage of the building on Western Avenue at seven thirty-eight. Liu walked Henry through the residential lobby. The two doormen who had known him by sight for nine years said good morning. The elevator was held. Henry rode up alone. He was carrying a leather portfolio with the printout of Marcus's model in it and a paper cup of coffee that the security advance had picked up from the cafe in the lobby and that he had not asked for and would drink anyway.
 
 Cassandra Yu was waiting at the open door of her apartment in a gray cashmere sweater and jeans and reading glasses on a chain around her neck.
 
@@ -72,9 +74,37 @@ Then she got up and walked out to the production floor to start the day.
 
 "The pivot is this," Henry said.
 
-He stood at the whiteboard. He was not someone who liked to write on whiteboards. He preferred to talk and let someone else write. Cassandra had handed him the marker anyway. He held it in his right hand with the cap still on.
+He stood at the whiteboard. He had been writing on whiteboards in offices for thirty-one years. He had always preferred the marker to the pen. Cassandra had handed him the black one. He uncapped it.
 
-"We stop being a retailer that runs a cloud," he said. "We become a platform that has a retail tenant. Argo Carry becomes the strategic priority. Argo Retail becomes a customer of Argo Carry on the same terms as every other customer. The brand keeps existing. The brand stops being who we are."
+"I have been thinking about this for six months," he said. "I am not going to walk into the room on Monday and pretend I am hearing it for the first time. You and I are going to map it out today the way I have been mapping it out in my study at four in the morning since May. Then we are going to make it sharper. Then we are going to find the parts I have gotten wrong. Cassie, I am sixty-two years old. The AI wave is the second arrow. I have spent six months waiting for the math to be unambiguous enough that I could not be talked out of it. The math has been unambiguous since August. I have been finishing the work."
+
+She looked at him.
+
+"You knew."
+
+"I knew."
+
+"You knew in May."
+
+"I knew in May."
+
+"You did not tell me."
+
+"I did not tell anyone. I wanted to be sure. I am sure."
+
+She held his look for a beat.
+
+Then she nodded once.
+
+"All right. Then we are not mapping the pivot. We are mapping the announcement."
+
+"Right."
+
+She uncapped her own marker. She moved a foot closer to the board. The energy in the room had changed in the previous twenty seconds and they both knew it.
+
+He started writing.
+
+"We stop being a retailer that runs a cloud," he said, writing it across the top. "We become a pure platform. Argo Carry becomes the strategic priority. The retail business gets transferred to its workforce through an ESOP across five to seven years. By the end of Year Seven, Argo, Inc. holds zero equity in any retailer. The platform charges Argo Retail Co. the same fees it charges every other tenant. The conflict of interest does not get firewalled. It gets divested."
 
 "How much capital."
 
@@ -90,7 +120,7 @@ He stood at the whiteboard. He was not someone who liked to write on whiteboards
 
 "Timeline."
 
-"Public announcement in late November. Board authorization at the November meeting. Two weeks of internal communication, then external. Stock takes a hit. We manage the hit. Argo Carry build-out begins immediately. The first wave of warehouse conversions starts in February of next year. Retail brand spinoff into a separate subsidiary inside twenty-four months. Tomás takes over as CEO inside three to four years."
+"Public announcement in late November. Board authorization at the November meeting. Two weeks of internal communication, then external. Stock takes a hit. We manage the hit. Argo Carry build-out begins immediately. The first wave of warehouse conversions starts in February of next year. Argo Retail Co. incorporates separately on January first of Year Two. First ESOP tranche transfers eight percent at closing. Subsequent tranches on a public glidepath through Year Seven. Tomás takes over as CEO of the parent inside three to four years. By Year Seven there is no retailer in this company. There is a platform. The platform serves a customer it has not been serving since 2011."
 
 "You have not told Tomás that."
 
@@ -208,39 +238,104 @@ He did not answer right away. He looked at the two folders on the side table. He
 
 "Yes."
 
-"Then I want to ask you the question I have been wanting to ask you for three years. Why is the company you built today operating in a way that contradicts both of these letters."
+"Good. Because the question I have for you is not the one you think it is. I am not going to ask you whether the company drifted. The company did not drift. The 1997 letter said you would build the world's most customer-centric company. You did. A retail buyer in a small town in eastern Oregon can get almost anything she wants in two days for prices that did not exist before you existed. That is the company you wrote down in 1997. That is the company you built. That is the company you ran for thirty-one years. The letter is intact."
 
-He did not say anything for a long time.
+He was looking at her.
+
+"The question I want to ask you is this," she said. "Who is the customer in those letters."
+
+He did not say anything for a moment.
+
+"The customer," he said. "Customer-centric. We meant the customer. The buyer."
+
+"In 1997 you meant the buyer."
+
+"Yes."
+
+"You wrote a second letter six years ago. You bragged about the third-party sellers kicking the first-party butt. Who was the customer in *that* letter, Henry."
+
+He sat with it.
+
+He did not answer right away.
+
+She did not fill the silence.
 
 "Cassie."
 
 "Yes."
 
-"I drifted. We drifted. The board drifted. The retail business got large enough that it became its own gravity well, and the gravity well bent everything in its orbit toward the patterns the retail business needed to survive on the terms it had grown up on. I knew it was happening. I wrote about it in the second letter. I bragged in public about the platform side outgrowing the retail side. Then I went back to the office and did not change anything material about how the company was structured. I let the retail business keep being the strategic center even after my own letter said the platform business was the part that was working."
-
-"You waited."
-
-"I waited."
-
-"You did the thing I did at Hartwell Brothers."
+"The customer in the second letter was the seller."
 
 "Yes."
 
-He stood up. He walked to the terrace door. He opened it. He stood there with his hand on the doorframe and looked at the water. The wind off the Sound was cold against his face. The freighters in the channel were the same freighters that had been there when he had written the 1997 letter at his kitchen table in Capitol Hill twenty-nine years earlier.
+"I named them. I bragged about them. I said we built them tools."
+
+"You did."
+
+"And then I went back to the office and watched the retail business clone their products at lower prices under the Argo Basics label and used their sales data to time the cloning and terminated their accounts when convenient and sent them form letters telling them their only recourse was Argo's own repricing software."
+
+"Yes."
+
+"I did not stop doing any of that. I knew it was happening. I let it happen for another fifteen years."
+
+"Yes."
+
+He stood up. He walked to the terrace door. He opened it. He stood there with his hand on the doorframe and looked at the water. The wind off the Sound was cold against his face. The freighters in the channel were the same freighters that had been there when he had written the 1997 letter at the kitchen counter of the Capitol Hill townhouse twenty-nine years earlier.
 
 He turned around.
 
-"Cassie. The pivot is not a strategic shift. The pivot is the company finally executing what I wrote in 1997. I am stubborn on the vision. I have been flexible on the details for thirty years. I am about to be more flexible on the details than I have ever been before. The vision has not changed."
+"Cassie."
 
-"That is the language you should use when you announce it."
+"Yes."
 
-"That is the language I will use."
+"The 1997 letter is not the problem. The 1997 letter is intact. The customer in the 1997 letter is alive and well and is getting her shipment in two days. That part of the company worked. That part of the company *still works.*"
+
+"Yes."
+
+"The customer changed. A different customer walked into the store. The customer is the small seller. The customer is the version of me in 1995. The customer is the next thirty-one-year-old who is going to spend eight years saving the money to leave the hedge fund and start the bookstore. The customer is Sarah Choi in Portland whom I have not yet met."
+
+"Yes."
+
+"And the platforms that were additive to me in 1995 — UPS, the book distributors, the credit-card processors — are not the platforms I built for her. I built her a platform that is extractive. I built her the platform I did not have to fight against."
+
+"Yes."
+
+"I have been serving the population. I have not been serving the customer. For at least fifteen years."
+
+He stopped.
+
+He stood at the terrace door for a moment.
+
+"Cassie. I am not a bad person."
+
+"I know you're not."
+
+"I served the customer I named in 1997. I served her well."
+
+"You did."
+
+"I just did not notice when the second customer walked in."
+
+"Henry."
+
+"Yes."
+
+"That is the only sentence you need to say in November. That is the whole pivot. *I did not notice when the second customer walked in. The second customer is the small seller. We are going to stop crushing them.* If you can say that in front of the board and in front of the press and on CNBC, and you can mean it, the rest of the work follows from it."
+
+He stood with his hand on the doorframe.
+
+"Cassie."
+
+"Yes."
+
+"That is what I am going to say."
 
 "Good."
 
-She stood up. She walked over to the whiteboard. She uncapped a green marker. Below the words *THE PIVOT* at the top of the board, she drew a line, and below the line, in her crisp board-secretary's hand, she wrote four words:
+She stood up. She walked over to the whiteboard. She uncapped a green marker. Below the words *THE PIVOT* at the top of the board, she drew a line, and below the line, in her crisp board-secretary's hand, she wrote eight words in two lines:
 
-*FINISH THE 1997 LETTER.*
+*THE CUSTOMER CHANGED.*
+*WE ARE GOING TO STOP CRUSHING THEM.*
 
 She turned around.
 
@@ -412,11 +507,9 @@ She started walking toward her car.
 
 ---
 
-Henry got home at seven-forty. The house was quiet. Marina had left a note on the kitchen counter that said she was at a dinner in Bellevue with a client and would be home by ten. There was a plate of pasta in the refrigerator with a Post-it on it that read *EAT.*
+The ferry got Henry back to Bainbridge at seven-forty. The Suburban came up the drive with the follow car behind it. The second-detail vehicle peeled off at the gate. The lights in the main house were on in the kitchen wing and dark everywhere else. Marina had texted from the firm at six-fifty — the milestone review on the Bellevue performing-arts center had gone an hour long, she was eating with the project committee at a place in downtown Bellevue, she would be home by eleven. The text included a photograph of the model in the firm's library, the new copper cladding caught in the studio lights at the back of the shot. Henry had read it twice on the ferry.
 
-He ate.
-
-He poured himself half a glass of wine. He carried the wine and his laptop to the kitchen table. He sat down. He opened the laptop. He opened his email.
+The night chef had left a plate of pasta on the warming counter with a small handwritten note that said *eat the second piece of bread.* Henry ate the pasta. He ate both pieces of bread. He carried a half-glass of the Sangiovese Marina had been keeping for the weekend and his laptop into the small sitting room off the kitchen where they had been doing most of their evening work since 2014. He sat down at the round table by the window. He opened the laptop. He opened his email.
 
 His inbox had filled across the course of the day with the usual volume. He scrolled past most of it. Near the bottom of the unread pile, sent at four-twelve that afternoon, was a forwarded email. The original sender was someone whose name he did not recognize. The chain of forwards was visible in the header: an Argo seller had written it to seller-support, seller-support had escalated it to a regional manager, the regional manager had escalated it to the head of Argo Marketplace, and the head of Argo Marketplace had forwarded it to the office of the CEO with a one-line note that read: *This came in this week. I think you should see it.*
 
@@ -452,11 +545,11 @@ He did not know her age. He guessed thirty-four, thirty-five. He guessed the age
 
 He thought: *the customer changed.*
 
-He thought: *the customer was never the retail buyer. We served the retail buyer well. The retail buyer can get almost anything in two days for cheap, even in a small town in the Midwest. That promise we kept. That was the population we served.*
+He thought: *the customer in 1997 was the retail buyer. We served her well. The retail buyer can get almost anything in two days for cheap, even in a small town in the Midwest. That promise we kept. We are still keeping it. That part of the company worked.*
 
-He thought: *the customer was always the person who needed the platform to exist. The customer was the small seller. The customer was the next version of me.*
+He thought: *a second customer walked into the store. The second customer was the small seller. The second customer was the next version of me. I did not see her walk in. I did not turn the platform around to face her. I let her be served by the half of the platform that had been built to serve someone else.*
 
-He thought: *I have been serving the population. I have not been serving the customer. For fifteen years I have not been serving the customer.*
+He thought: *Sarah Choi is the second customer. There are eleven million of her. I have not been giving her a clean shot.*
 
 Then he opened a new document on his laptop. He titled it: *Memo to the Board — November.* He stared at the empty page for a moment. Then he began to write.
 
@@ -466,9 +559,9 @@ The first sentence he wrote was this:
 
 He kept writing.
 
-He had two other documents open on the laptop's second window. The first was a PDF he had not opened in eleven years — his own letter to Argo's shareholders from 1997, the one Cassandra had read passages from on her terrace seven hours earlier. The second was the letter he had written six years ago, the one in which he had bragged that third-party sellers were kicking the first-party retail business badly. He kept the two letters open in the second window while he wrote the new one. The new one was not, he had begun to recognize across the previous hour, a new letter. The new one was the third letter in a three-letter sequence he had started in 1997 and put down in the middle and was only now picking back up. The sentence he had begun in the first letter had been *Argo will be the place where customers can come to find and discover anything and everything they might want to buy online.* The sentence he had attempted in the second letter had been *the platform side of Argo is outgrowing the retail side, and that is what we built this for.* The sentence the third letter would have to finish was the one neither of the first two had quite finished. He wrote it across the next thirty minutes.
+He had two other documents open on the laptop's second window. The first was a PDF he had not opened in eleven years — his own letter to Argo's shareholders from 1997, the one Cassandra had read passages from on her terrace seven hours earlier. The second was the letter he had written six years ago, the one in which he had bragged that third-party sellers were kicking the first-party retail business badly. He kept the two letters open in the second window while he wrote the new one. The 1997 letter was about a customer he had named and served. The 2019 letter was about a customer he had named and not served. The new letter was about the customer he was finally going to turn the company around to serve. He wrote it across the next thirty minutes.
 
-Marina got home at nine-fifty. She walked through the front door, saw the light on in the kitchen, came in, set her coat on the chair, looked at Henry's face, and said nothing. She poured herself a glass of wine. She sat down across from him. She did not interrupt.
+Marina got home at ten-fifty. She came up the drive in the small electric Volvo she drove herself when she wanted to drive herself, set the roll of trace paper she had brought home from the project committee on the bench in the mudroom, walked through into the sitting room off the kitchen, saw the light on at the round table, came in, set her coat on the chair, looked at Henry's face, and said nothing. She poured herself a glass of the Sangiovese. She sat down across from him. She did not interrupt.
 
 Henry wrote for another forty minutes.
 
@@ -502,7 +595,7 @@ She closed the laptop and pushed it back across the table to him.
 
 "Starting Monday."
 
-She got up. She kissed the top of his head. She walked out of the kitchen toward the stairs.
+She got up. She picked up her wine and the roll of trace paper from the bench and walked toward the stairs at the back of the house. He heard her studio door open and close on the second floor. The Bellevue project was due to break ground in March and she had been at the model six nights a week since September. She would be at the drawings until two.
 
 He sat at the table for a while longer.
 
@@ -514,7 +607,7 @@ Then he wrote a single line at the bottom of the memo document, in italics, wher
 
 He closed the laptop.
 
-He turned off the kitchen light.
+He turned off the lamp at the round table.
 
 He went upstairs.
 

@@ -52,9 +52,9 @@ Seven products. One platform. One pricing model. One contract.
 
 Any retailer in the world could plug into any subset of the seven, on terms identical to the terms every other tenant got.
 
-Including, when the spinoff completed, Argo Retail Inc.
+Including, after the ESOP closed, Argo Retail Co.
 
-Especially Argo Retail Inc.
+Especially Argo Retail Co.
 
 ---
 
@@ -130,7 +130,15 @@ In the lobby, Henry stopped.
 
 "Yes."
 
-"I want you to ask for what you need. Capital. People. Buildings. Acquisitions. Whatever the platform needs. Ask me. I will say yes. I will say yes faster than I have ever said yes to anything. The reason I will say yes is that the company has bet its future on this platform and the only way to win the bet is to fund the bet. Ask for what you need."
+"Tomás. I built this company once. I get to remake it. Almost nobody who has built a company at this scale has gotten the chance to remake it. The founders who did got it because the market made them. The market is not making me. The AI wave that everybody in the press is calling the threat is the second arrow on the same hunt. I have been waiting for the second arrow for thirty years. It is in my hand. I am going to throw it as hard as I have ever thrown anything. The platform is the throw. You are the spear. I want you to understand that I do not see this as a defensive move. I see this as the second great chance of my professional life. I want you to see it the same way."
+
+"Henry."
+
+"Yes."
+
+"I see it the same way."
+
+"Good. Then ask for what you need. Capital. People. Buildings. Acquisitions. Whatever the platform needs. Ask me. I will say yes. I will say yes faster than I have ever said yes to anything. The reason I will say yes is that the company has bet its future on this platform and the only way to win the bet is to fund the bet. Ask for what you need."
 
 "Henry."
 
