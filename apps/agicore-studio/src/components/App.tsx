@@ -1,5 +1,6 @@
 // Alpha layout (multi-file projects):
 //
+//   +-------------------- Recovery banner (when applicable) ----+
 //   +-------+--------+----------------------------+----------+
 //   |       |        |  Toolbar (name · Run ▶)    |          |
 //   | Pro-  | Pal-   +----------------------------+ Inspec-  |
@@ -14,8 +15,11 @@
 // project the layout collapses back to the MVP shape (palette + canvas
 // + bottom drawer + right rail), and the Welcome panel offers the
 // "Open project folder" action.
+//
+// Recovery banner appears only when prior-session autosave drafts are
+// detected on startup.
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import TitleBar from './TitleBar';
 import NodePalette from './NodePalette';
 import ProjectExplorer from './ProjectExplorer';
@@ -23,23 +27,33 @@ import RightRail from './RightRail';
 import Canvas from './Canvas';
 import WorkflowToolbar from './WorkflowToolbar';
 import BottomDrawer from './BottomDrawer';
+import RecoveryBanner from './RecoveryBanner';
+import { startAutosave, stopAutosave } from '../lib/recovery';
 
-const App: React.FC = () => (
-  <div className="flex flex-col h-screen bg-[var(--bg-page)]">
-    <TitleBar />
-    <div className="flex-1 flex overflow-hidden min-h-0">
-      <ProjectExplorer />
-      <NodePalette />
-      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-        <WorkflowToolbar />
-        <div className="flex-1 min-h-0 overflow-hidden">
-          <Canvas />
+const App: React.FC = () => {
+  useEffect(() => {
+    startAutosave();
+    return () => stopAutosave();
+  }, []);
+
+  return (
+    <div className="flex flex-col h-screen bg-[var(--bg-page)]">
+      <TitleBar />
+      <RecoveryBanner />
+      <div className="flex-1 flex overflow-hidden min-h-0">
+        <ProjectExplorer />
+        <NodePalette />
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+          <WorkflowToolbar />
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <Canvas />
+          </div>
+          <BottomDrawer />
         </div>
-        <BottomDrawer />
+        <RightRail />
       </div>
-      <RightRail />
     </div>
-  </div>
-);
+  );
+};
 
 export default App;

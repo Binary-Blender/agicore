@@ -9,6 +9,7 @@ import { useWorkflowStore } from '../store/workflowStore';
 import { useProjectStore } from '../store/projectStore';
 import { emitAgi, emitLayoutSidecar } from './agi-emitter';
 import { parseAgiToWorkflow } from './agi-parser';
+import { dropRecoveryFor } from './recovery';
 
 export async function saveCurrentWorkflow(): Promise<void> {
   const state = useWorkflowStore.getState();
@@ -39,6 +40,12 @@ export async function saveCurrentWorkflow(): Promise<void> {
 
   state.markClean(path);
   useWorkflowStore.getState().setLoadedMtime(newMtime);
+
+  // Clean save — the matching recovery draft is no longer needed.
+  void dropRecoveryFor(path);
+  // The pre-save id may have been the unsaved-session id if this was
+  // the workflow's first save. Drop that too.
+  void dropRecoveryFor(null);
 
   // Save may have created a new file — refresh the explorer so it shows up.
   const project = useProjectStore.getState().project;
@@ -84,6 +91,8 @@ export async function loadWorkflowByPath(path: string): Promise<void> {
 
   useWorkflowStore.getState().resetTo(wf, path);
   useWorkflowStore.getState().setLoadedMtime(loaded.modifiedAt);
+  // A clean load nullifies any recovery draft for this path.
+  void dropRecoveryFor(path);
   // Adopt the file's directory as the project — single-file opens now
   // implicitly create a one-file project, which is the right mental
   // model now that the explorer rail expects one.

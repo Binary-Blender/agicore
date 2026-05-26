@@ -14,6 +14,9 @@ fn main() {
             commands::search_project_files,
             commands::read_api_keys,
             commands::write_api_keys,
+            commands::write_recovery,
+            commands::list_recovery,
+            commands::drop_recovery,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Agicore Studio");
