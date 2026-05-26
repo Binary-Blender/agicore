@@ -154,21 +154,17 @@ She wrote *Walter Brandt* on the board. Then she wrote *Theo Mendez* below it. T
 
 "Do you have a plan for her."
 
-"I have the start of a plan. I want her in the room when we draft the communication. I want her name on the announcement next to mine. I want her running the spinoff subsidiary."
+"I have the plan. She is going to run the ESOP transition. Interim CEO of Argo Retail Co. through Year Seven. She does not know yet because the conversation is going to be hers and mine and nobody else's first, and the conversation has to happen face to face, in this office, on the day Daniela and Marcus and I have a final sign-off on Marcus's model and not before. That day is Monday. I am calling her into the office at three. I want her name on the announcement next to mine. I want her in the room when we draft the communication. I want her running the transition because nobody else in this company can do what the role requires, and because she is going to do it well, and because the six hundred and forty thousand people on the receiving end of that role deserve the executive who has been running the business they built. That is the plan."
 
-"Have you told her any of that."
+"You have not told her."
 
-"Not yet."
+"I have not told her. Monday."
 
-"Henry."
+"Monday afternoon."
 
-"I know. Monday."
+"Monday afternoon."
 
-"Monday what."
-
-"Monday I am going to call her into the office and tell her where I am. Before the board meeting. So she is not blindsided."
-
-Cassandra nodded. She drew a line from *Vivian* over to the left side of the board, into the column under *THE PIVOT,* and wrote a small word next to it: *ALLY?*
+Cassandra nodded. She drew a line from *Vivian* over to the left side of the board, into the column under *THE PIVOT,* and wrote a small word next to it: *ALLY.* No question mark.
 
 "All right," she said. "Now the timeline."
 
@@ -443,7 +439,7 @@ She looked at him.
 
 "Move now, Henry."
 
-He did not say anything for a long time.
+He looked at her for a beat.
 
 The light off the Sound had gone gold and then started to go gray.
 
@@ -451,21 +447,23 @@ The light off the Sound had gone gold and then started to go gray.
 
 "Yes."
 
-"Thank you."
+"I have been moving since May. I am not telling you that to score a point. I am telling you that because you should know that the conversation we just had was not the conversation in which you gave me permission to do what I am about to do. The decision was made in May. The work has been the work. What you just gave me is the witness. You are the only person on this earth who has lived the version of the story I am about to live and has had to live it with the wrong ending. I am going to live it with the right one. Thank you for telling me the other ending. I am going to think about it on the days when I am tempted to delay one quarter for one good reason. You are the reason I am not going to delay any of them."
 
-"You are welcome."
+She held his look.
 
-"I am going to move."
+"That is the right answer."
 
-"I know you are."
+"I know."
 
-"I needed to hear what you just said."
+"Henry."
 
-"I know you did."
+"Yes."
 
-He sat with it for another minute.
+"I am glad I was wrong about which version of this conversation we were having."
 
-Then he got up. He walked over to the whiteboard. He picked up the marker. He uncapped it.
+"So am I."
+
+He got up. He walked over to the whiteboard. He picked up the marker. He uncapped it.
 
 At the top of the board, above the words THE PIVOT, he wrote, in his own hand, in letters two inches tall: *NOVEMBER.*
 

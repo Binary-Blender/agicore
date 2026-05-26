@@ -112,21 +112,39 @@ He picked it back up. He called Cassandra.
 
 "Henry."
 
-"What do we do."
+"Here is how we run him. We do the earnings call on Day Twelve. We walk through the pivot. We answer every question. We do not negotiate with Pemberton in the press. We do not negotiate with Pemberton on his terms. I am going to take a private meeting with him before the end of next week and I am going to meet him on terms he does not get to set. You hold the board side. Pemberton will not get a seat. Pemberton will not get a vote. Pemberton will get a chance to close his position cleanly. If he takes it, the press never knows we met. If he does not, every regulatory filing this company makes for the next eighteen months names him."
 
-"We do exactly what we said we would do. We do the earnings call on Day 12. We walk through the pivot. We answer every question. We do not negotiate with Pemberton in the press. We do not negotiate with Pemberton on his terms. We meet him on our terms when we are ready and not before."
+"You are going to meet him."
 
-"He will demand a board seat."
+"I am going to meet him. In New York. Off the books. Marcus is setting it up through a Goldman partner who owes Pemberton a favor and me a different one. Priya has cleared the language envelope. I have the carve-out brief on the breakup legislation that the subcommittee chair gave me on a deep-background call on Tuesday. Pemberton is going to read that brief and recognize that he is positioned against the wrong company."
 
-"He will demand my chair. He will not get either."
+Cassandra was quiet for a beat.
+
+Then she said, "Henry."
+
+"Yes."
+
+"You have already won this fight in your head."
+
+"I have already won it. I am going to win it on the ground. I am calling you because the board side has to hold while I run the front. That is your half."
+
+"I have it."
+
+"I know you do."
+
+"Earnings call."
+
+"I have the deck. Daniela has the operational appendix. Marcus has the cash-flow walk. I will run the full call. I will take every question. Walter is going to be in the room on the prep session. You and I let him be in the room on the prep session. We do not exclude him."
+
+"All right."
 
 "Cassie."
 
-"Henry. I have been doing this longer than he has. I know how to run a board. He is not going to take this board. You and I are going to take this board through this pivot. Pemberton will be on the outside of the building the entire time."
+"Yes."
 
-He breathed out.
+"Pemberton closes his position inside ten trading days. Take that to the bank."
 
-"All right."
+"I am taking it to the bank."
 
 "How are you sleeping."
 

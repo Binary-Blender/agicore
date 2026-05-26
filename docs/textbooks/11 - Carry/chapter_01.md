@@ -146,35 +146,49 @@ The math was saying: *go do it again.*
 
 He turned away from the window.
 
-"Daniela. What do you think we should do."
+"Daniela. Here is what we are going to do."
+
+She set the coffee down.
+
+She had been waiting for him to say it. He could see, in her face, that she had been preparing for the version of the conversation where he asked her opinion. She had been preparing the wrong conversation. The version they were about to have was a different version.
+
+"We exit retail. Completely. Argo, Inc. is a platform company by the end of Year Seven, with zero equity in any retailer. We transfer Argo Retail to its six hundred and forty thousand employees through a chartered ESOP across five to seven years. Standard ESOP-leverage mechanics on the retail business's own pre-tax earnings. A debt facility at the parent level that we retire across the transition window. A founder contribution from me personally — I have run the number with Marcus over breakfast three times in the last month, it is four point two billion, I am going to put it in. The Carry platform absorbs the revenue substitution over the same window and serves Argo Retail Co. as one tenant among many on terms identical to every other tenant. The cloud platform identity becomes the company's identity. The retail identity gets handed to the people who built it. That is the structure."
+
+She looked at him.
+
+"Henry."
+
+"Yes."
+
+"You have run the ESOP math."
+
+"I have run the ESOP math. I have called Don Bell at the ESOP Association twice — once in July, once in September, both calls under the cover story that I was thinking about a contribution structure for one of our portfolio investments. He gave me four hours each time and did not ask which company I actually meant. I have a hundred-page internal binder Marcus does not yet know exists. I have the trustee firm picked out. I have the fiduciary committee structure mapped through Year Seven. I have not committed any of it. I will not commit any of it until you tell me, in this conversation, that the operational team you run can execute it. You are the one who has to make it real. The question for you is not whether the strategy is right. The strategy is right. The question for you is whether you can deliver the operational program that hangs underneath it."
 
 She was quiet for a moment.
 
-She had been waiting for him to ask. He could see, in her face, that she had been preparing the answer for a long time.
+Then she said, "Henry. I can deliver it. I have been preparing for the version of this where the answer was less ambitious. I will scale the preparation up. Give me forty-eight hours."
 
-"I think we should stop being a retailer that runs a cloud. I think we should be a platform that has a retail tenant."
+"You have forty-eight hours. Then you and I sit down with Marcus on Tuesday and we move."
 
-"Argo Carry."
+"Argo Carry as the strategic identity."
 
-"Argo Carry. Scaled up. Funded properly. Given the political weight of the company. The other businesses become customers of Argo Carry, including our own retail business. We stop competing with the people we are supposed to be serving."
+"Argo Carry as the company's identity. Not a subsidiary. Not a business unit. The company."
 
-"That changes everything."
+"Walter."
 
-"It changes most things. Yes."
+"Walter is going to oppose it. He may resign. I am going to give him the dignity of the no-vote. I am not going to lobby him out of it. I am going to let him be the man he is."
 
-"It changes the strategic story of the company."
+"Vivian."
+
+"Vivian is going to run the ESOP transition. She is going to be the interim CEO of Argo Retail Co. through Year Seven. She does not know yet. I will tell her after Cassandra on Monday and before the board on the eighteenth. I will tell her in this office, alone, and I will not soften it, and I will not promise her anything I cannot deliver."
+
+"Henry."
 
 "Yes."
 
-"It changes who we are for our shareholders."
+"That is the conversation Vivian is going to remember every day of the rest of her life."
 
-"Yes."
-
-"It changes Vivian's life."
-
-She was quiet for a beat.
-
-"It changes Vivian's life. I have been thinking about that. I have a draft conversation in my head about how to have that conversation. I am not going to have that conversation until you have had the conversation with Cassandra. And after Cassandra you and I are going to have it together."
+"I know. That is why I am the one who is going to have it."
 
 "All right."
 
@@ -270,19 +284,19 @@ He closed his eyes.
 
 "Yes."
 
-"It is going to be all right."
+"You have been running the model yourself, haven't you."
 
-"I know."
+"Six months."
 
-"You don't know yet. You will."
+"I knew it. Walter owes me forty dollars. Bring the binder."
 
 He smiled. He had not smiled in two hours.
 
-"Thank you, Cassie."
+"I am bringing the binder."
 
-"Drive safe."
+"Good night, Henry."
 
-"I will."
+"Good night, Cassie."
 
 He hung up.
 
