@@ -173,6 +173,16 @@ coincidental.</p>
             part_toc.append(epub.Link(f'chapter_{n:02d}.xhtml', f'Chapter {n}: {CHAPTER_TITLES[n]}', f'chapter_{n:02d}'))
         toc.append((epub.Section(part_title), part_toc))
 
+    # Post-credits scene
+    pc_path = os.path.join(BOOK_DIR, 'post_credits.md')
+    if os.path.exists(pc_path):
+        with open(pc_path, encoding='utf-8') as f:
+            pc_md = f.read()
+        pc_item = make_item('post_credits', 'post_credits.xhtml', 'Post-Credits Scene', md_to_html(pc_md), style)
+        book.add_item(pc_item)
+        spine.append(pc_item)
+        toc.append(epub.Link('post_credits.xhtml', 'Post-Credits Scene', 'post_credits'))
+
     book.toc = toc
     book.spine = spine
     book.add_item(epub.EpubNcx())
