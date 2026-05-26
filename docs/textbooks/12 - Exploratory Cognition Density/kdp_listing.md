@@ -3,11 +3,12 @@
 **Author:** Christopher Bender
 **Publisher:** AI WIN-WIN Institute
 **Volume:** 12 (Textbook Shelf)
-**ASIN:** TBD on publication
-**Format:** Kindle eBook
-**Length:** ~57,000 words, 30 short chapters, 3 parts
-**Genre:** Business / career strategy / humor
+**ASIN:** TBD — open-source non-commercial release
+**Format:** EPUB (free)
+**Length:** ~60,000 words, 30 short chapters + foreword + dedication, 3 parts
+**Genre:** Business / career strategy / humor / Dilbert tribute
 **Series:** AI WIN-WIN textbook shelf — Volume 12 (the humor-coded register)
+**Release:** Open-source non-commercial tribute to Scott Adams and the Dilbert universe, under the parody-law / fair-use tradition. Not for sale on KDP. Free distribution via the AI WIN-WIN Institute textbook shelf.
 
 ---
 
@@ -39,15 +40,37 @@
 
 ---
 
-## Book Description (Amazon detail page)
+## Book Description (Distribution copy)
 
-**Your boss bought an AI. You can guess what happens next.**
+**A tribute to Scott Adams. Your boss bought an AI. You can guess what happens next.**
 
-In the tradition of Scott Adams's *Dilbert Principle* and *How to Fail at Almost Everything and Still Win Big*, this book is a field guide for working professionals navigating a labor market that is, in 2026, dividing into two structurally different kinds of company:
+In 1995, an engineer named Scott Adams was laid off by Pacific Bell. He went home and went full-time on a comic strip about an engineering organization run by a man with two pointy hairs. The strip ran for thirty-five years and became the most-read corporate satire in American history. The corporate world has, since 1995, been quietly aware that it lost Scott Adams. The corporate world has not been aware that *the way it lost him is the same way it loses everyone like him.*
 
-**The Stupid Company™**, which uses AI to fire people.
+This book is about that loss.
 
-**The Wise Corporation**, which uses AI to make the people it already has dangerously creative.
+In the open-source non-commercial parody-law tradition, and as an explicit tribute to Adams while he is still able to receive it, **this book uses the Dilbert characters by name.** The Pointy-Haired Boss is in this book. Dilbert is in this book. Wally is in this book — with a twist Adams never had the panel count to show. Alice is in this book; the book gives her the resignation letter Adams never had the room to let her send. Asok is in this book. Catbert is in this book. Dogbert is in this book, although Dogbert is in this book as the internal vendor name for an AI product called SOPHIE, which is the joke. The characters appear in their canonical roles, in their canonical register, in a present-tense year (2026) on the assignment Adams was the first to identify, which is the documentation of corporate dysfunction by a person whose job it was, once, to live inside it.
+
+The book teaches, in the Adams register:
+
+- A diagnostic that lets you tell whether you work at the Stupid Company™ or at the Wise Corporation in nine minutes (Chapter 16)
+
+- Scott Adams's Skill Stack framework, applied to the AI era, with sixteen-and-a-half specific skill pairings against the AI capabilities they pair against (Chapter 13)
+
+- A twelve-question brutal diagnostic for whether you specifically are being replaced (Chapter 14)
+
+- Marv's (Wally's) Parking Lot Method — seven rules for reading what your company is actually doing through the geometry of its parking lot (Chapter 7)
+
+- Alice's resignation letter, in full, on the page (Chapter 9)
+
+- The two-sentence resignation letter for quitting on a Tuesday (Chapter 20)
+
+- The job interview questions Hyperion Studio uses to hire — the Wise Corporation interview Dilbert always wanted to take (Chapter 21, 26)
+
+- The Pacific Bell case study, which is the closer the book has been building toward, which is the chapter Adams himself never got to write because the strip's job was the joke and the closer is, gently, the eulogy for the corporate world that made the wrong call
+
+**The Stupid Company™** uses AI to fire people.
+
+**The Wise Corporation** uses AI to make the people it already has dangerously creative.
 
 The two companies look identical from the outside for about three years. After three years, one of them is on the cover of *Fast Company* and the other is in a different section of the *Wall Street Journal,* which is the section about bankruptcy filings.
 
@@ -140,9 +163,10 @@ The cover communicates: this is a serious business book that is also funny.
 
 ## Pricing
 
-- **Kindle eBook**: $7.99
-- **KDP Select enrollment**: yes (90-day exclusive on Kindle Unlimited)
-- **Audiobook**: planned, ACX production, ideally with a narrator who can land the conversational register without being too earnest
+- **Distribution**: Free, open-source, non-commercial
+- **No KDP listing**: This book is released under the parody-law / fair-use tradition as a tribute to Scott Adams and the Dilbert universe. It will not be sold. Distribution is through the AI WIN-WIN Institute repository, GitHub mirror, and any non-commercial channel that wants to carry it.
+- **License**: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0). The book may be freely distributed and read. It may not be sold. It may not be derived from. The Dilbert character references remain the property of Scott Adams, Inc., used here as parody and tribute.
+- **Audiobook**: optional, also non-commercial if produced
 
 ---
 

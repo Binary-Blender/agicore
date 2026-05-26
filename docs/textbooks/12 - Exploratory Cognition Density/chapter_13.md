@@ -68,6 +68,28 @@ Plumbing. Electrical work. Carpentry. Auto repair. Veterinary medicine. Dental h
 
 You can read a company and tell whether it is, in operational terms, the Stupid Company™ or the Wise Corporation. The AI can run productivity analyses on every team, every project, every individual. The combination is the new chief of staff. The new chief of staff is going to be the most valuable role on the executive team across the next decade. Most current chiefs of staff do not have this combination. The ones who do are going to be running their companies inside ten years.
 
+**15.5. Drawing a comic strip about your job + an audience that has the same job.**
+
+I am inserting this item between 15 and 16 because Adams told me to. Adams did not tell me to. Adams has never met me. But the principle behind item 15.5 is the principle that produced Adams's entire career, and the principle is, in the AI era, dramatically *more* valuable than it was in 1989.
+
+The principle is this. If you can do *any creative documentation skill* — drawing, writing, podcasting, photographing, filming, building, designing — *while also having the working professional's eye for what your specific industry actually looks like from the inside,* the combination is one of the most durable career positions in the AI era. The AI tools amplify the creative-documentation half. The eye is yours. The eye is the skill. The combination is the career.
+
+Adams stacked *cartooning* with *corporate-engineer's eye for dysfunction* and produced *Dilbert.* The strip ran for thirty-five years and is, by my honest accounting, the most influential single piece of working-professional commentary in American letters.
+
+The strip was a Skill Stack.
+
+The Skill Stack made the career.
+
+The career proved the framework.
+
+The framework is, in the AI era, more available than it has ever been, because the *creative documentation* tools have been commoditized by AI, while the *eye for dysfunction* remains stubbornly, beautifully human.
+
+You are sitting on the eye.
+
+The tools are now free.
+
+Build the stack.
+
 **16. Managing your own anxiety in a career transition + every AI tool that exists.**
 
 This is the most personally important item on the list. The skill is the meta-skill that lets you act on what the previous fifteen items have taught you. The skill is the ability to recognize that the labor market is changing under your feet, to identify which of the previous fifteen items you can credibly stack, and to act on the identification without paralyzing yourself with fear about the parts you cannot control. The skill is what separates the workers who navigate the AI era from the workers who get navigated by it. The skill is not taught in any school. The skill is, in my honest experience, learned by going through one significant career transition with somebody who has been through it before, and surviving. After you have survived one, you can do it again with much less anxiety.

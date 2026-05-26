@@ -50,7 +50,7 @@ The board, the next time it should have been listening, did not listen either. W
 
 ---
 
-Here are the relevant facts about Greg Tannenbaum, in numbered list form, so that you can refer back to them when I describe his behavior later.
+Here are the relevant facts about Greg Tannenbaum, in numbered list form, so that you can refer back to them when I describe his behavior later. I want to remind you, before I begin the list, that the man in the list is also the man with the two pointy hairs, that the two pointy hairs are not exaggerated in this book the way the strip exaggerated them across thirty-five years, but that they are nevertheless present, on the actual real-world head of the actual real-world man, in a configuration that I have seen in person, and that the resemblance between the man and the comic strip is, in my honest professional opinion, *the reason the comic strip has been funny for thirty-five years.* The comic strip is funny because the comic strip is real. Greg is real. The pointy hair is real. Adams did not invent it. Adams *observed* it.
 
 1. Greg was fifty-eight years old when he became CEO. He is now sixty-six. He still walks like he is fifty-eight. He has never appeared older than fifty-eight in any photograph I have ever seen of him.
 

@@ -6,6 +6,12 @@ The Wise Corporation is the company that uses AI to amplify it.
 
 That is the entire distinction.
 
+It is also, in the strip register, the same distinction Adams has been making for thirty-five years between *the company in the strip* and *every company Dilbert has ever wished he worked at instead.* The Stupid Company™ is the company in the strip. The Wise Corporation is what the strip never had a panel to draw, because the strip's joke was the Stupid Company™, and the joke required the strip to stay there. Adams stayed there for thirty-five years because the strip's job was to keep documenting the Stupid Company™ at three panels a day. The strip's job was not to imagine the Wise Corporation. Other people have to do that work.
+
+This book is one of the places where the other work is happening.
+
+That is the assignment.
+
 You can write down everything else this book is going to teach you on the same index card.
 
 If your CEO has decided that the goal of the AI rollout is *to reduce headcount,* you work at the Stupid Company™. If your CEO has decided that the goal of the AI rollout is *to let our current people get dangerously creative,* you work at the Wise Corporation. There is no third option. Every company that I have ever observed up close, including the forty-one I have casually evaluated over the previous six years, has been one or the other. Many of them have been transitioning from the second toward the first, which is the most common direction of corporate drift. None of them, in my experience, has been transitioning from the first toward the second, although I am told by people I respect that this transition is theoretically possible and has occurred at three companies in the historical record.

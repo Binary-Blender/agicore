@@ -26,6 +26,18 @@ The seventeen people Greg laid off in the first round were:
 
 I have listed Marv separately because Marv's layoff is the one this chapter is about.
 
+I told you in Chapter 1 that Marv was Wally. I told you the equivalence was real. I told you there was a twist that the strip had not had room to show. The twist is in this chapter. The twist is what the rest of the strip's reader-base has been wrong about, gently, for thirty-five years, because the strip is three panels, and the twist takes about nine years of close observation to develop, and the strip moved on too quickly to follow it. The strip's Wally is the lazy engineer who does nothing. The book's Wally is the engineer who calculated the minimum he had to do in order to keep his job, who has been doing exactly the minimum for twelve years, and whose minimum is, by every honest accounting of the company's operational dependencies, *the most load-bearing engineering work happening at Mendacium Corp.*
+
+The strip's Wally was the punchline.
+
+The book's Wally is the proof.
+
+Adams was, gently, half-right about Wally. The half he was right about was the surface. The half he was wrong about — or, more honestly, the half he did not have the panels to show — is what the rest of this chapter is going to walk you through.
+
+I will be referring to him as Marv throughout.
+
+Both names are him.
+
 ---
 
 Marv had been at Mendacium for twenty-one years.

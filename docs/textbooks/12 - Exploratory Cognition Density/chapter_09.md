@@ -1,5 +1,21 @@
 # Chapter 9: Reagan Quits in Writing
 
+This chapter is Alice's chapter.
+
+I want to be clear about that before I begin, because the chapter contains the letter, and the letter is the letter Alice would have written if Adams had given her the room. The strip did not give Alice the room. Alice's resignation, in canon, has happened in approximately eleven separate two-panel strips across thirty-five years, each of which ended with Alice deciding not to send it, or with the boss not noticing it, or with Catbert intercepting it. The strip's format did not have the four hundred and twenty consecutive panels it would have taken for Alice to actually send the letter. The book does.
+
+I am giving Alice the room.
+
+I am calling her Reagan in this chapter because I have known her for six years and have always called her Reagan. The world has known her as Alice for thirty-five years. The two names refer to the same person.
+
+The letter, in this chapter, is Reagan's. The letter is also Alice's. The letter is the letter the entire strip-canon engineering organization has been waiting to read since 1991.
+
+It is two hundred and twelve words.
+
+Adams was right about Alice the whole time.
+
+Adams just never got the panel count.
+
 Reagan Cho sent her resignation email at eleven forty-seven AM Pacific on a Tuesday in early May of Year Eight.
 
 The email was to the entire engineering organization.

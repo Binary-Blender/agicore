@@ -4,7 +4,9 @@ Marv picked up on the second ring.
 
 I want to give you the conversation in full, because the conversation contains a framework I have used in every job I have had since, and I want you to have the framework before you read the rest of the book.
 
-The framework is called **Marv's Parking Lot Method.**
+The framework is called **Marv's Parking Lot Method.** In the strip-aware register, you may also call it **Wally's Parking Lot Method.** Both names refer to the same framework, which is the framework Marv (Wally) taught me, which Adams did not have the room to teach across thirty-five years of three-panel constraints, but which Marv (Wally) had been quietly using inside the strip-canon company for the entire run of the strip, while the rest of us were reading him for the easy joke.
+
+This chapter is the chapter where the joke gets paid back.
 
 I will explain.
 

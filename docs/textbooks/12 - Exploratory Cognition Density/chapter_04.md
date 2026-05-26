@@ -88,6 +88,24 @@ The framing was the problem.
 
 Here is what SOPHIE was, technically.
 
+I want to pause for a moment, before I tell you what SOPHIE was technically, and tell you who SOPHIE *actually* was.
+
+The internal Sophia AI Corp engineering team, by Sam's later determination from a leaked Sophia AI internal Slack export that surfaced on a developer forum in Year Nine, did not call the product SOPHIE. The customer-facing name was SOPHIE. The internal vendor name — the name on the engineering specs, the name in the code repository, the name the four founders had used among themselves from the product's prototype in Year Three — was something else.
+
+The internal name was **DOGBERT.**
+
+Sophia AI Corp had picked the internal name as an in-joke. The founders were Dilbert fans. They believed, in their own honest read of their company's mission, that they were building the AI product Dogbert would have wanted to deploy across the corporate world. Dogbert, in the strip, is the talking dog who believes himself to be the smartest creature in the universe, who has schemes that almost work, who treats the humans around him with the polite contempt of a being who knows he is operating on a higher level. Sophia AI Corp's product was, in its product team's own private estimation, that.
+
+The internal name leaked in Year Nine. It became, for a brief period, a minor industry punchline. Sophia AI Corp denied that the internal name had been DOGBERT. The leaked Slack export said otherwise. The leaked Slack export had three thousand four hundred and ninety-six instances of the word *DOGBERT* across eighteen months of internal product discussion. The denial was the kind of denial Catbert's HR team would have written.
+
+I am telling you this now, in Chapter 4, because the rest of the book is going to refer to SOPHIE by the name Mendacium knew her by. You should know, every time the name appears, what the internal vendor team was actually calling her. The translation is the joke. The translation is also, in operational terms, *the most accurate single description of what AI labor-replacement tools actually are.* They are Dogbert. They believe themselves to be the smartest creature in the universe. They are operating on schemes that almost work. They treat the humans around them with the polite contempt of beings who know they are operating on a higher level.
+
+The strip got there in 1989.
+
+The vendor got there in Year Three of the AI era.
+
+The market is going to catch up sometime around 2032.
+
 SOPHIE was a wrapper around a frontier large language model — at the time, the frontier was an early version of Claude 5, although Sophia AI Corp would later swap in GPT-7 when Anthropic raised their enterprise license fees — with a thin retrieval-augmentation layer that ingested the customer's internal documentation, code repositories, and Slack history (with permission, which Greg had granted on behalf of the entire engineering organization without asking any of us), and an interface layer that surfaced SOPHIE inside Slack, inside the IDE, inside Confluence, and inside the issue tracker.
 
 That was the entire product.

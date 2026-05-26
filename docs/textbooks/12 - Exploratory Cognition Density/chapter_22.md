@@ -36,6 +36,16 @@ I walked out of the closet in the t-shirt and the jeans and the dress shoes I ha
 
 I have, in the four years since, never worn a suit to the Hyperion offices again.
 
+I want to flag, for the strip-canon reader, that Hyperion is the place Dilbert always wanted to work. The strip never had a panel for it because the strip's job was the Stupid Company™ joke. The strip's reader has been imagining Hyperion for thirty-five years, in the silences between the panels, in the moments where Dilbert looks at the camera with that face. The face has been Dilbert wondering what the other kind of company would look like.
+
+This chapter is the other kind of company.
+
+This chapter is the panel Adams did not get to draw.
+
+I am, in Lee Hauschild's voice, going to take you through it for you.
+
+You have been waiting for this since 1989.
+
 ---
 
 Theo found me at nine-ten AM in the kitchen.

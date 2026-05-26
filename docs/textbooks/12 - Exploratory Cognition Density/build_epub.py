@@ -123,10 +123,10 @@ def main():
     book.set_language(LANGUAGE)
     book.add_author(AUTHOR)
     book.add_metadata('DC', 'publisher', PUBLISHER)
-    book.add_metadata('DC', 'description', f"{SUBTITLE}. A business novel about a fictional commerce giant (Argo, Inc.) facing the structural commoditization of retail in the AI era, and the founder who pivots the company from extractive retailer to additive platform. Phoenix Project / Moneyball / Liar's Poker register. Fourth book in the AI WIN-WIN business-fable quartet (Anchor / Multiplied / Untied / Carry).")
-    for s in ('Business Fiction', 'Artificial Intelligence', 'Platform Economy', 'Strategic Pivot'):
+    book.add_metadata('DC', 'description', f"{SUBTITLE}. A tribute to Scott Adams and the Dilbert characters, applied to the AI labor market of 2026. The Stupid Company™ vs The Wise Corporation. Open-source, non-commercial, parody-law tradition. Twelfth book on the AI WIN-WIN textbook shelf.")
+    for s in ('Business Humor', 'Career Strategy', 'Artificial Intelligence', 'Workplace Culture', 'Dilbert Tribute'):
         book.add_metadata('DC', 'subject', s)
-    book.add_metadata('DC', 'rights', f'Copyright © 2026 {AUTHOR}. All rights reserved.')
+    book.add_metadata('DC', 'rights', f'Copyright © 2026 {AUTHOR}. Open-source non-commercial release. All Dilbert character references used as parody and tribute under fair-use tradition.')
 
     style = epub.EpubItem(uid='style', file_name='style/main.css', media_type='text/css', content=CSS)
     book.add_item(style)
@@ -145,27 +145,54 @@ def main():
     spine.append(title_page)
 
     copyright_body = f'''<div class="copyright">
-<p>CARRY</p>
-<p><em>A Future Case Study</em></p>
+<p>EXPLORATORY COGNITION DENSITY</p>
+<p><em>How to Get Paid for the Thing Your Boss Calls Goofing Off</em></p>
 <p>&nbsp;</p>
 <p>Copyright &#169; 2026 {AUTHOR}</p>
-<p>All rights reserved.</p>
+<p>Open-source non-commercial release.</p>
 <p>&nbsp;</p>
 <p>Published by AI WIN-WIN Institute</p>
 <p>&nbsp;</p>
-<p>This is a work of fiction. Argo, Inc., its founder Henry Castellan, and
-all characters and events in this book are products of the author's
-imagination. Any resemblance to actual companies, persons, or events is
-coincidental.</p>
+<p>This book is a tribute to Scott Adams and the <em>Dilbert</em> comic strip.
+The Pointy-Haired Boss, Dilbert, Wally, Alice, Asok, Catbert, Dogbert, and
+the Dilbert universe are the creations of Scott Adams. They appear here as
+parody and homage under the fair-use tradition. The book is non-commercial.
+No royalties are charged or collected. The use of the characters is the
+tribute. The lessons in the book are the lessons Adams has been teaching
+for thirty-five years, applied to the AI labor market of 2026.</p>
 <p>&nbsp;</p>
-<p>Fourth book in the AI WIN-WIN business-fable quartet:
-<em>Anchor</em>, <em>Multiplied</em>, <em>Untied</em>, <em>Carry</em>.</p>
+<p>Mendacium Corp, Hyperion Studio, and the narrator Lee Hauschild are
+products of the author's imagination. Any resemblance to actual companies,
+persons, or events is coincidental, unless the actual company is the
+unnamed company in the <em>Dilbert</em> strip, in which case the resemblance
+is intentional and grateful.</p>
+<p>&nbsp;</p>
+<p>Twelfth volume on the AI WIN-WIN Institute textbook shelf.</p>
 <p>&nbsp;</p>
 <p>First Edition, 2026</p>
 </div>'''
     copyright_page = make_item('copyright', 'copyright.xhtml', 'Copyright', copyright_body, style)
     book.add_item(copyright_page)
     spine.append(copyright_page)
+
+    # Dedication
+    dedication_path = os.path.join(BOOK_DIR, 'dedication.md')
+    if os.path.exists(dedication_path):
+        with open(dedication_path, encoding='utf-8') as f:
+            ded_md = f.read()
+        dedication_page = make_item('dedication', 'dedication.xhtml', 'Dedication', md_to_html(ded_md), style)
+        book.add_item(dedication_page)
+        spine.append(dedication_page)
+
+    # Foreword
+    foreword_path = os.path.join(BOOK_DIR, 'foreword.md')
+    if os.path.exists(foreword_path):
+        with open(foreword_path, encoding='utf-8') as f:
+            fw_md = f.read()
+        foreword_page = make_item('foreword', 'foreword.xhtml', 'Foreword', md_to_html(fw_md), style)
+        book.add_item(foreword_page)
+        spine.append(foreword_page)
+        toc.append(epub.Link('foreword.xhtml', 'Foreword', 'foreword'))
 
     for part_idx, (part_title, chapter_nums) in enumerate(PARTS, 1):
         ch_list = ''.join(f'<p>Chapter {n}: {CHAPTER_TITLES[n]}</p>' for n in chapter_nums)

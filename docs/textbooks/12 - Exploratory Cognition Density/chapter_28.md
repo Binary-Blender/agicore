@@ -166,6 +166,18 @@ The companies that avoid the destruction are the ones that did not start at Phas
 
 The companies that did not start at Phase One are the Wise Corporations.
 
+I want to flag, before we move on, that the six phases of the failure curve are the six phases that have been operating, in the strip's background, for thirty-five years. The strip's company has been in Phase Three for most of its run. Adams kept it in Phase Three on purpose, because Phase Three is the funniest phase. Phase Four and Phase Five have less material — by Phase Four, the most engaging employees have left, and by Phase Five, the customers have started leaving. The strip's joke depended on the company having a workforce of disgruntled engineers and a customer base that was still complaining. Adams stayed in Phase Three. The strip stayed funny.
+
+The actual strip-canon company, if you read it as the long-run document Adams was unconsciously building, *was* moving through the phases. It is now, in the canonical timeline, somewhere in late Phase Five. The customer non-renewals have begun. The dashboards are still green because Adams stopped publishing dashboards. The Phase-Six press release is somewhere in the gap between when the strip went on permanent hiatus and now. The strip never had to show it because the strip's job was to make us laugh at Phase Three.
+
+This book has the job the strip did not have, which is to walk the company through Phase Four, Five, and Six, and to tell you what happens at each one, and to give you the diagnostic to recognize them in your own company.
+
+Adams did the Phase Three reporting for us.
+
+I am doing the Phase Four through Six reporting for him.
+
+This is the division of labor between the strip and the book.
+
 The Wise Corporations are the subject of Chapter 29.
 
 The Wise Corporations are not on the failure curve.
