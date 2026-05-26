@@ -1,0 +1,88 @@
+name: agicore-studio build
+
+on:
+  push:
+    branches: [main]
+    tags: ['studio-v*']
+    paths:
+      - 'apps/agicore-studio/**'
+      - '.github/workflows/agicore-studio-build.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: apps/agicore-studio
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-latest
+            artifact_glob: 'apps/agicore-studio/src-tauri/target/release/bundle/{deb,appimage}/*'
+          - platform: macos-latest
+            artifact_glob: 'apps/agicore-studio/src-tauri/target/release/bundle/{dmg,macos}/*'
+          - platform: windows-latest
+            artifact_glob: 'apps/agicore-studio/src-tauri/target/release/bundle/{msi,nsis}/*'
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            apps/agicore-studio/src-tauri/target
+          key: cargo-${{ matrix.platform }}-${{ hashFiles('apps/agicore-studio/src-tauri/Cargo.lock') }}
+          restore-keys: |
+            cargo-${{ matrix.platform }}-
+
+      - name: Linux deps
+        if: matrix.platform == 'ubuntu-latest'
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            build-essential
+
+      - name: Install npm deps
+        run: npm install
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Build (tauri)
+        run: npm run tauri:build
+
+      # TODO: code-signing
+      # Windows: import WINDOWS_CERTIFICATE / WINDOWS_CERTIFICATE_PASSWORD secrets
+      # macOS:   import APPLE_ID / APPLE_PASSWORD / APPLE_TEAM_ID secrets and a
+      #          signingIdentity in tauri.conf.json
+      # Until those are configured, builds are unsigned — SmartScreen and
+      # Gatekeeper will warn on first launch.
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: agicore-studio-${{ matrix.platform }}
+          path: ${{ matrix.artifact_glob }}
+          if-no-files-found: warn
+          retention-days: 14
