@@ -10,6 +10,7 @@ import { useProjectStore } from '../store/projectStore';
 import { emitAgi, emitLayoutSidecar } from './agi-emitter';
 import { parseAgiToWorkflow } from './agi-parser';
 import { dropRecoveryFor } from './recovery';
+import { recordEvent } from './telemetry';
 
 export async function saveCurrentWorkflow(): Promise<void> {
   const state = useWorkflowStore.getState();
@@ -40,6 +41,10 @@ export async function saveCurrentWorkflow(): Promise<void> {
 
   state.markClean(path);
   useWorkflowStore.getState().setLoadedMtime(newMtime);
+  recordEvent('workflow_saved', {
+    node_count: state.workflow.nodes.length,
+    edge_count: state.workflow.edges.length,
+  });
 
   // Clean save — the matching recovery draft is no longer needed.
   void dropRecoveryFor(path);
@@ -91,6 +96,10 @@ export async function loadWorkflowByPath(path: string): Promise<void> {
 
   useWorkflowStore.getState().resetTo(wf, path);
   useWorkflowStore.getState().setLoadedMtime(loaded.modifiedAt);
+  recordEvent('workflow_loaded', {
+    node_count: wf.nodes.length,
+    edge_count: wf.edges.length,
+  });
   // A clean load nullifies any recovery draft for this path.
   void dropRecoveryFor(path);
   // Adopt the file's directory as the project — single-file opens now

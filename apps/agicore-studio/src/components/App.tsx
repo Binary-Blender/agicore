@@ -29,10 +29,12 @@ import WorkflowToolbar from './WorkflowToolbar';
 import BottomDrawer from './BottomDrawer';
 import RecoveryBanner from './RecoveryBanner';
 import { startAutosave, stopAutosave } from '../lib/recovery';
+import { recordEvent } from '../lib/telemetry';
 
 const App: React.FC = () => {
   useEffect(() => {
     startAutosave();
+    recordEvent('studio_started', {});
     return () => stopAutosave();
   }, []);
 

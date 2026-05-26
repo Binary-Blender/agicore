@@ -9,6 +9,7 @@ import type {
   RunStatus,
 } from '../types/run';
 import type { RunnerAdapter } from '../lib/runner';
+import { recordEvent } from '../lib/telemetry';
 
 /** Live state of a workflow paused at a breakpoint. Mirrors PendingQc
  *  but without an upstream-output payload — the inspector pulls the
@@ -61,7 +62,7 @@ export const useRunStore = create<RunStore>((set, get) => ({
 
   pendingBreakpoint: null,
 
-  startRun: (runner) =>
+  startRun: (runner) => {
     set({
       status: 'running',
       startedAt: Date.now(),
@@ -72,7 +73,9 @@ export const useRunStore = create<RunStore>((set, get) => ({
       runner,
       pendingQc: null,
       pendingBreakpoint: null,
-    }),
+    });
+    recordEvent('run_started', {});
+  },
 
   ingest: (event) =>
     set((s) => {
@@ -177,6 +180,7 @@ export const useRunStore = create<RunStore>((set, get) => ({
             reason: event.reason,
             paused_at: event.timestamp,
           };
+          recordEvent('breakpoint_hit', {});
           break;
 
         case 'run_completed':
@@ -184,6 +188,10 @@ export const useRunStore = create<RunStore>((set, get) => ({
           finishedAt = event.timestamp;
           pendingQc = null;
           pendingBreakpoint = null;
+          recordEvent('run_completed', {
+            duration_ms: s.startedAt ? event.timestamp - s.startedAt : undefined,
+            nodes_ran: Object.values(nodes).filter((n) => n.status !== 'idle').length,
+          });
           break;
 
         case 'run_failed':
@@ -192,6 +200,10 @@ export const useRunStore = create<RunStore>((set, get) => ({
           errorMessage = event.error;
           pendingQc = null;
           pendingBreakpoint = null;
+          recordEvent('run_failed', {
+            duration_ms: s.startedAt ? event.timestamp - s.startedAt : undefined,
+            nodes_ran: Object.values(nodes).filter((n) => n.status !== 'idle').length,
+          });
           break;
 
         case 'run_cancelled':
@@ -199,6 +211,10 @@ export const useRunStore = create<RunStore>((set, get) => ({
           finishedAt = event.timestamp;
           pendingQc = null;
           pendingBreakpoint = null;
+          recordEvent('run_cancelled', {
+            duration_ms: s.startedAt ? event.timestamp - s.startedAt : undefined,
+            nodes_ran: Object.values(nodes).filter((n) => n.status !== 'idle').length,
+          });
           break;
 
         case 'log':
@@ -218,12 +234,14 @@ export const useRunStore = create<RunStore>((set, get) => ({
     const r = get().runner;
     if (!r) return;
     r.resumeQc(decision);
+    recordEvent('qc_resumed', { qc_decision: decision.decision });
   },
 
   resumeDebug: (mode) => {
     const r = get().runner;
     if (!r) return;
     r.resumeDebug(mode);
+    recordEvent('breakpoint_hit', { resume_mode: mode });
   },
 
   reset: () =>

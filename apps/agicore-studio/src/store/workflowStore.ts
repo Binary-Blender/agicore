@@ -8,6 +8,7 @@ import {
   type WorkflowEdge,
   type WorkflowNode,
 } from '../types/workflow';
+import { recordEvent } from '../lib/telemetry';
 
 let idCounter = 1;
 const nextId = () => `n${idCounter++}`;
@@ -91,6 +92,11 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
       selectedEdgeId: null,
       dirty: true,
     }));
+    recordEvent('node_added', {
+      node_kind: kind,
+      node_count: get().workflow.nodes.length,
+      edge_count: get().workflow.edges.length,
+    });
     return node;
   },
 
@@ -127,7 +133,8 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
       },
     })),
 
-  deleteNode: (id) =>
+  deleteNode: (id) => {
+    const kind = get().workflow.nodes.find((n) => n.id === id)?.kind;
     set((s) => ({
       workflow: {
         ...s.workflow,
@@ -137,7 +144,15 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
       },
       selectedNodeId: s.selectedNodeId === id ? null : s.selectedNodeId,
       dirty: true,
-    })),
+    }));
+    if (kind) {
+      recordEvent('node_deleted', {
+        node_kind: kind,
+        node_count: get().workflow.nodes.length,
+        edge_count: get().workflow.edges.length,
+      });
+    }
+  },
 
   addEdge: (source, target) => {
     if (source === target) return null;

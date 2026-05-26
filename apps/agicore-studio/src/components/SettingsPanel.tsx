@@ -5,6 +5,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { PROVIDERS, useSettingsStore, type ProviderId } from '../store/settingsStore';
+import { useTelemetryStore } from '../store/telemetryStore';
+import { previewBuffer } from '../lib/telemetry';
 
 interface Props {
   onClose: () => void;
@@ -20,6 +22,13 @@ const SettingsPanel: React.FC<Props> = ({ onClose }) => {
   const save = useSettingsStore((s) => s.save);
 
   const [reveal, setReveal] = useState<Record<string, boolean>>({});
+
+  const telemetryEnabled = useTelemetryStore((s) => s.enabled);
+  const telemetryEvents = useTelemetryStore((s) => s.events);
+  const telemetryCounters = useTelemetryStore((s) => s.counters);
+  const setTelemetryEnabled = useTelemetryStore((s) => s.setEnabled);
+  const clearTelemetry = useTelemetryStore((s) => s.clear);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     if (!loaded) void load();
@@ -104,6 +113,72 @@ const SettingsPanel: React.FC<Props> = ({ onClose }) => {
               {error}
             </p>
           )}
+
+          <div className="mt-6 pt-4 border-t border-[var(--border)]">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-1">
+                  Telemetry
+                </p>
+                <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
+                  Off by default. Records schema-safe usage signals
+                  (counts, durations, enum statuses) — never workflow
+                  contents, file paths, or model output. Session-only;
+                  nothing is transmitted today.
+                </p>
+              </div>
+              <label className="flex items-center gap-2 shrink-0 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={telemetryEnabled}
+                  onChange={(e) => setTelemetryEnabled(e.target.checked)}
+                  className="accent-[var(--accent)]"
+                />
+                <span className="text-xs">{telemetryEnabled ? 'On' : 'Off'}</span>
+              </label>
+            </div>
+
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowPreview((v) => !v)}
+                className="text-[10px] px-2 py-1 border border-[var(--border)] rounded hover:border-[var(--text-secondary)] text-[var(--text-muted)] transition-colors"
+              >
+                {showPreview ? 'Hide preview' : 'Show me what would be sent'}
+              </button>
+              <button
+                type="button"
+                onClick={clearTelemetry}
+                disabled={telemetryEvents.length === 0}
+                className="text-[10px] px-2 py-1 border border-[var(--border)] rounded hover:border-[var(--text-secondary)] text-[var(--text-muted)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Clear session
+              </button>
+              <span className="text-[10px] text-[var(--text-muted)] ml-auto font-mono">
+                {telemetryEvents.length} event{telemetryEvents.length === 1 ? '' : 's'}
+              </span>
+            </div>
+
+            {showPreview && (
+              <div className="mt-3">
+                {Object.keys(telemetryCounters).length > 0 && (
+                  <div className="mb-2 text-[10px] font-mono text-[var(--text-secondary)] flex flex-wrap gap-x-3 gap-y-1">
+                    {Object.entries(telemetryCounters).map(([name, n]) => (
+                      <span key={name}>
+                        <span className="text-[var(--accent)]">{name}</span>
+                        <span className="text-[var(--text-muted)]">×{n}</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <pre className="text-[10px] font-mono bg-[var(--bg-input)] border border-[var(--border)] rounded p-2 max-h-48 overflow-auto whitespace-pre-wrap">
+                  {telemetryEvents.length === 0
+                    ? '(no events recorded this session)'
+                    : previewBuffer(telemetryEvents)}
+                </pre>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="px-5 py-3 border-t border-[var(--border)] flex items-center justify-end gap-2">
