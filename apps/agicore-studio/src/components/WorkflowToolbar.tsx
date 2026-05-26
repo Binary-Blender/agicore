@@ -1,38 +1,68 @@
-// Workflow toolbar — top strip above the canvas.
-// Hosts the workflow-name input, save/open buttons, and the Run button
-// (Run is wired in a later MVP ticket; for now it's an explicit stub).
+// Workflow toolbar — top strip above the canvas. Hosts the workflow-name
+// input, save/open buttons, and the live Run / Cancel control.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
+import { useRunStore } from '../store/runStore';
 import { saveCurrentWorkflow, openWorkflowFromDisk } from '../lib/persistence';
+import { makeRunner } from '../lib/runner';
 
 const WorkflowToolbar: React.FC = () => {
   const name = useWorkflowStore((s) => s.workflow.name);
+  const workflow = useWorkflowStore((s) => s.workflow);
   const setName = useWorkflowStore((s) => s.setWorkflowName);
   const dirty = useWorkflowStore((s) => s.dirty);
   const filePath = useWorkflowStore((s) => s.filePath);
+
+  const runStatus = useRunStore((s) => s.status);
+  const startedAt = useRunStore((s) => s.startedAt);
+  const finishedAt = useRunStore((s) => s.finishedAt);
+  const startRun = useRunStore((s) => s.startRun);
+  const ingest = useRunStore((s) => s.ingest);
+  const cancel = useRunStore((s) => s.cancel);
+
   const [busy, setBusy] = useState<'saving' | 'opening' | null>(null);
+  const [elapsed, setElapsed] = useState<string>('');
+
+  // Live elapsed-time tick while a run is in flight
+  useEffect(() => {
+    if (runStatus !== 'running' && runStatus !== 'paused_qc') {
+      if (startedAt && finishedAt) {
+        setElapsed(formatElapsed(finishedAt - startedAt));
+      } else {
+        setElapsed('');
+      }
+      return;
+    }
+    if (!startedAt) return;
+    const i = setInterval(() => {
+      setElapsed(formatElapsed(Date.now() - startedAt));
+    }, 100);
+    return () => clearInterval(i);
+  }, [runStatus, startedAt, finishedAt]);
 
   const onSave = async () => {
     setBusy('saving');
-    try {
-      await saveCurrentWorkflow();
-    } catch (e) {
-      console.error('save failed:', e);
-    } finally {
-      setBusy(null);
-    }
+    try { await saveCurrentWorkflow(); }
+    catch (e) { console.error('save failed:', e); }
+    finally { setBusy(null); }
   };
-
   const onOpen = async () => {
     setBusy('opening');
-    try {
-      await openWorkflowFromDisk();
-    } catch (e) {
-      console.error('open failed:', e);
-    } finally {
-      setBusy(null);
-    }
+    try { await openWorkflowFromDisk(); }
+    catch (e) { console.error('open failed:', e); }
+    finally { setBusy(null); }
+  };
+
+  const canRun =
+    workflow.nodes.length > 0 &&
+    runStatus !== 'running' &&
+    runStatus !== 'paused_qc';
+
+  const onRun = () => {
+    const runner = makeRunner();
+    const cancelHandle = runner.start(workflow, (event) => ingest(event));
+    startRun(cancelHandle);
   };
 
   return (
@@ -47,6 +77,7 @@ const WorkflowToolbar: React.FC = () => {
       <div className="flex items-center gap-2 text-[10px] text-[var(--text-muted)] font-mono">
         {filePath ? <span title={filePath}>📄 {basename(filePath)}</span> : <span>● unsaved</span>}
         {dirty && <span className="text-[var(--node-branch)]">● modified</span>}
+        {elapsed && <RunStatusPill status={runStatus} elapsed={elapsed} />}
       </div>
       <div className="flex-1" />
       <button
@@ -63,21 +94,56 @@ const WorkflowToolbar: React.FC = () => {
       >
         {busy === 'saving' ? 'Saving…' : 'Save'}
       </button>
-      <button
-        disabled
-        title="Run is wired in the next MVP ticket"
-        className="text-xs px-3 py-1.5 rounded bg-[var(--accent)] text-black font-semibold opacity-40 cursor-not-allowed"
-      >
-        Run ▶
-      </button>
+      {runStatus === 'running' || runStatus === 'paused_qc' ? (
+        <button
+          onClick={cancel}
+          className="text-xs px-3 py-1.5 rounded bg-red-700 text-white font-semibold hover:bg-red-600 transition-colors"
+        >
+          ◼ Cancel
+        </button>
+      ) : (
+        <button
+          onClick={onRun}
+          disabled={!canRun}
+          title={canRun ? undefined : 'Add at least one node before running'}
+          className="text-xs px-3 py-1.5 rounded bg-[var(--accent)] text-black font-semibold hover:bg-[var(--accent-hot)] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          Run ▶
+        </button>
+      )}
     </div>
   );
+};
+
+const RunStatusPill: React.FC<{ status: string; elapsed: string }> = ({ status, elapsed }) => {
+  const variant = STATUS_VARIANTS[status] ?? { label: status, color: '#a1a1aa' };
+  return (
+    <span
+      className="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-widest"
+      style={{ color: variant.color, borderColor: variant.color, borderWidth: 1, borderStyle: 'solid' }}
+    >
+      {variant.label} · {elapsed}
+    </span>
+  );
+};
+
+const STATUS_VARIANTS: Record<string, { label: string; color: string }> = {
+  running:    { label: 'running',    color: '#fbbf24' },
+  paused_qc:  { label: 'paused: qc', color: '#06b6d4' },
+  succeeded:  { label: 'succeeded',  color: '#10b981' },
+  failed:     { label: 'failed',     color: '#ef4444' },
+  cancelled:  { label: 'cancelled',  color: '#a1a1aa' },
 };
 
 function basename(p: string): string {
   const slash = p.lastIndexOf('/');
   const back = p.lastIndexOf('\\');
   return p.slice(Math.max(slash, back) + 1);
+}
+
+function formatElapsed(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  return `${(ms / 1000).toFixed(2)}s`;
 }
 
 export default WorkflowToolbar;
