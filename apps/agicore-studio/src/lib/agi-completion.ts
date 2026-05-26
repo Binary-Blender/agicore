@@ -234,15 +234,123 @@ function valueCompletionsFor(
 // ============================================================================
 // Catalogues
 // ============================================================================
+//
+// Each completion's info field is rendered as a DOM element with a
+// description and (optionally) an example snippet. The EXAMPLES map
+// keys entries by label — anything in it gets the richer rendering;
+// anything missing still gets the plain-text description in the popup.
+
+const EXAMPLES: Record<string, string> = {
+  // Top-level declarations
+  APP: `APP my_app {
+  TITLE  "My App"
+  WINDOW 1200x800 frameless
+  DB     my_app.db
+}`,
+  ENTITY: `ENTITY Conversation {
+  title: string REQUIRED
+  message_count: number = 0
+  TIMESTAMPS
+  CRUD full
+}`,
+  ACTION: `ACTION send_message {
+  INPUT  conversation_id: string, content: string
+  OUTPUT message: Message
+}`,
+  VIEW: `VIEW ChatView {
+  LAYOUT  custom
+  SIDEBAR icon: MessageSquare
+  TITLE   "Chat"
+}`,
+  WORKFLOW: `WORKFLOW summarize_and_post {
+  DESCRIPTION "Fetch, summarize, get human approval, post."
+  NODE fetch  { TYPE http_call  URL "..." }
+  NODE review { TYPE qc_checkpoint }
+  EDGE fetch -> review
+}`,
+  AI_SERVICE: `AI_SERVICE {
+  PROVIDERS anthropic, openai
+  DEFAULT   anthropic
+  STREAMING true
+}`,
+  TEST: `TEST conversation_lifecycle {
+  GIVEN Conversation { title: "Test" }
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> message_count == 0
+}`,
+  ROUTER: `ROUTER BabyAI {
+  TIER 1 free { qwen_8b: huggingface "Qwen/Qwen3-8B" }
+  TIER 2 mid  { haiku:   anthropic "claude-haiku-4-5" }
+}`,
+  // Workflow body
+  NODE: `NODE summarize {
+  TYPE   ai_call
+  PROMPT "Summarize: {{fetch.body}}"
+}`,
+  EDGE: `EDGE fetch -> review
+EDGE review -> post  WHEN review.decision == "approved"`,
+  // Node body
+  TYPE: `TYPE http_call         // or: ai_call, qc_checkpoint, branch,
+                       //     loop, parallel_fanout, router_call,
+                       //     start, end`,
+  METHOD: `METHOD GET            // or: POST, PUT, DELETE, PATCH`,
+  URL: `URL "{{input.endpoint}}/items/{{item.id}}"`,
+  PROMPT: `PROMPT "Summarize the following article in three sentences:\\n\\n{{fetch.body}}"`,
+  WHEN: `WHEN  review.decision == "approved"`,
+  // Entity body
+  BELONGS_TO: `BELONGS_TO User      // creates user_id FK with cascading delete`,
+  TIMESTAMPS: `TIMESTAMPS           // adds created_at + updated_at fields`,
+  CRUD: `CRUD full            // or: create, read, update, delete, list`,
+  SEED: `SEED {
+  id:    "default-user"
+  email: "you@local"
+  name:  "You"
+}`,
+  // Node-kind values (when the cursor is past TYPE)
+  start: `start                 // Workflow entry point (no properties)`,
+  end:   `end                   // Workflow exit (no properties)`,
+  http_call:     `http_call             // HTTP request to an external endpoint`,
+  ai_call:       `ai_call               // LLM call with a templated prompt`,
+  qc_checkpoint: `qc_checkpoint         // Pause until a human approves / edits / rejects`,
+  branch:        `branch                // Conditional routing based on a WHEN expression`,
+  loop:          `loop                  // Iterate downstream nodes over a collection`,
+  parallel_fanout: `parallel_fanout       // Run multiple downstream paths in parallel`,
+  router_call:   `router_call           // Dispatch through a tier-based ROUTER`,
+};
+
+function renderInfo(description: string, example: string | undefined): () => Node {
+  return () => {
+    const root = document.createElement('div');
+    root.className = 'agi-completion-info';
+
+    const desc = document.createElement('div');
+    desc.className = 'agi-completion-desc';
+    desc.textContent = description;
+    root.appendChild(desc);
+
+    if (example) {
+      const label = document.createElement('div');
+      label.className = 'agi-completion-example-label';
+      label.textContent = 'Example';
+      root.appendChild(label);
+
+      const pre = document.createElement('pre');
+      pre.className = 'agi-completion-example';
+      pre.textContent = example;
+      root.appendChild(pre);
+    }
+    return root;
+  };
+}
 
 const k = (label: string, info: string, detail = 'keyword'): Completion =>
-  ({ label, info, detail, type: 'keyword' });
+  ({ label, info: renderInfo(info, EXAMPLES[label]), detail, type: 'keyword' });
 
 const v = (label: string, info: string): Completion =>
-  ({ label, info, type: 'variable' });
+  ({ label, info: renderInfo(info, EXAMPLES[label]), type: 'variable' });
 
 const t = (label: string, info: string): Completion =>
-  ({ label, info, type: 'type' });
+  ({ label, info: renderInfo(info, EXAMPLES[label]), type: 'type' });
 
 const TOP_LEVEL_DECLARATIONS: Completion[] = [
   k('APP',         'Application configuration block'),
