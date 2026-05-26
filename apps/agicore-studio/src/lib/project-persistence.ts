@@ -15,6 +15,18 @@ export const createProjectFile = (rootPath: string, fileName: string) =>
 export const deleteProjectFile = (path: string) =>
   invoke<void>('delete_project_file', { path });
 
+export interface SearchHit {
+  filePath: string;
+  fileName: string;
+  lineNumber: number;
+  lineText: string;
+  matchStart: number;
+  matchEnd: number;
+}
+
+export const searchProjectFiles = (rootPath: string, query: string) =>
+  invoke<SearchHit[]>('search_project_files', { rootPath, query });
+
 export async function pickProjectDirectory(): Promise<string | null> {
   const chosen = await openDialog({
     directory: true,

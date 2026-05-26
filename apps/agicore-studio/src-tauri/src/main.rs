@@ -11,6 +11,7 @@ fn main() {
             commands::list_project_files,
             commands::create_project_file,
             commands::delete_project_file,
+            commands::search_project_files,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Agicore Studio");

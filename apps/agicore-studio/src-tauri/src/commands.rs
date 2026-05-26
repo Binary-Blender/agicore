@@ -179,6 +179,90 @@ pub fn delete_project_file(path: String) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SearchHit {
+    pub file_path: String,
+    pub file_name: String,
+    pub line_number: u32,
+    pub line_text: String,
+    /// Byte index of the match within line_text. The renderer uses
+    /// this to bold the matched substring rather than recomputing.
+    pub match_start: u32,
+    pub match_end: u32,
+}
+
+const MAX_SEARCH_HITS: usize = 200;
+
+#[tauri::command]
+pub fn search_project_files(
+    root_path: String,
+    query: String,
+) -> Result<Vec<SearchHit>, String> {
+    let needle = query.trim();
+    if needle.is_empty() {
+        return Ok(Vec::new());
+    }
+    let needle_lc = needle.to_lowercase();
+
+    let root = PathBuf::from(&root_path);
+    if !root.is_dir() {
+        return Err(format!("not a directory: {}", root_path));
+    }
+
+    // Enumerate .agi files in flat-directory mode (matches the explorer
+    // scope — subdirectories are a future enhancement).
+    let mut entries: Vec<PathBuf> = Vec::new();
+    for entry in fs::read_dir(&root).map_err(|e| e.to_string())? {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let p = entry.path();
+        if !p.is_file() {
+            continue;
+        }
+        let name = match p.file_name().and_then(|n| n.to_str()) {
+            Some(n) => n,
+            None => continue,
+        };
+        if !name.ends_with(".agi") {
+            continue;
+        }
+        entries.push(p);
+    }
+    entries.sort();
+
+    let mut hits: Vec<SearchHit> = Vec::new();
+    for path in entries {
+        let contents = match fs::read_to_string(&path) {
+            Ok(c) => c,
+            Err(_) => continue, // unreadable — skip silently
+        };
+        let file_name = path
+            .file_name()
+            .and_then(|n| n.to_str())
+            .map(|s| s.to_string())
+            .unwrap_or_default();
+        let file_path = path.to_string_lossy().into_owned();
+
+        for (idx, line) in contents.lines().enumerate() {
+            let line_lc = line.to_lowercase();
+            if let Some(pos) = line_lc.find(&needle_lc) {
+                hits.push(SearchHit {
+                    file_path: file_path.clone(),
+                    file_name: file_name.clone(),
+                    line_number: (idx + 1) as u32,
+                    line_text: line.to_string(),
+                    match_start: pos as u32,
+                    match_end: (pos + needle.len()) as u32,
+                });
+                if hits.len() >= MAX_SEARCH_HITS {
+                    return Ok(hits);
+                }
+            }
+        }
+    }
+    Ok(hits)
+}
+
 // ============================================================================
 // Internals
 // ============================================================================
