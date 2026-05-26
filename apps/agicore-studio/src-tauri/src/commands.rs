@@ -21,6 +21,9 @@ pub struct LoadedWorkflow {
     pub agi_source: String,
     /// Sidecar contents, or null if the sidecar doesn't exist on disk.
     pub layout_json: Option<String>,
+    /// Unix epoch seconds of the .agi file at load time. Used by the
+    /// hot-reload poller to detect external modifications.
+    pub modified_at: i64,
 }
 
 #[tauri::command]
@@ -28,13 +31,17 @@ pub fn save_workflow_to_disk(
     path: String,
     agi_source: String,
     layout_json: String,
-) -> Result<(), String> {
+) -> Result<i64, String> {
     let agi_path = PathBuf::from(&path);
     let sidecar_path = sidecar_path_for(&agi_path);
 
     write_atomic(&agi_path, agi_source.as_bytes()).map_err(|e| e.to_string())?;
     write_atomic(&sidecar_path, layout_json.as_bytes()).map_err(|e| e.to_string())?;
-    Ok(())
+    // Return the post-save mtime so the renderer can bump its
+    // loadedMtime baseline atomically. Otherwise the next hot-reload
+    // poll would read its own save as an external modification.
+    let mtime = fs::metadata(&agi_path).as_ref().map(mtime_seconds).unwrap_or(0);
+    Ok(mtime)
 }
 
 #[tauri::command]
@@ -49,7 +56,9 @@ pub fn load_workflow_from_disk(path: String) -> Result<LoadedWorkflow, String> {
         None
     };
 
-    Ok(LoadedWorkflow { agi_source, layout_json })
+    let modified_at = fs::metadata(&agi_path).as_ref().map(mtime_seconds).unwrap_or(0);
+
+    Ok(LoadedWorkflow { agi_source, layout_json, modified_at })
 }
 
 fn sidecar_path_for(agi_path: &Path) -> PathBuf {
@@ -67,6 +76,19 @@ fn sidecar_path_for(agi_path: &Path) -> PathBuf {
 pub struct ProjectFile {
     pub name: String,
     pub path: String,
+    /// Unix epoch seconds. The hot-reload poller diffs this against
+    /// what the workflow store remembers from load-time to detect
+    /// external edits (e.g. git pull, another editor).
+    pub modified_at: i64,
+}
+
+fn mtime_seconds(meta: &fs::Metadata) -> i64 {
+    use std::time::SystemTime;
+    meta.modified()
+        .ok()
+        .and_then(|t| t.duration_since(SystemTime::UNIX_EPOCH).ok())
+        .map(|d| d.as_secs() as i64)
+        .unwrap_or(0)
 }
 
 #[tauri::command]
@@ -90,9 +112,15 @@ pub fn list_project_files(root_path: String) -> Result<Vec<ProjectFile>, String>
         if !name.ends_with(".agi") {
             continue;
         }
+        let modified_at = entry
+            .metadata()
+            .as_ref()
+            .map(mtime_seconds)
+            .unwrap_or(0);
         files.push(ProjectFile {
             name,
             path: path.to_string_lossy().into_owned(),
+            modified_at,
         });
     }
     files.sort_by(|a, b| a.name.cmp(&b.name));
@@ -128,9 +156,11 @@ pub fn create_project_file(
         name.trim_end_matches(".agi")
     );
     write_atomic(&target, stub.as_bytes()).map_err(|e| e.to_string())?;
+    let modified_at = fs::metadata(&target).as_ref().map(mtime_seconds).unwrap_or(0);
     Ok(ProjectFile {
         name,
         path: target.to_string_lossy().into_owned(),
+        modified_at,
     })
 }
 
