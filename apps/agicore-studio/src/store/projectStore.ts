@@ -87,6 +87,11 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
       const project: Project = { rootPath, name: basenameOfDir(rootPath) };
       set({ project, files, loading: false });
       startPolling(get);
+      // Fire-and-forget — recent-projects bookkeeping shouldn't block
+      // the open flow if the user-config dir is temporarily unwriteable.
+      void import('../lib/recent-projects').then((m) =>
+        m.pushRecentProject(rootPath).catch(() => { /* best-effort */ }),
+      );
       return project;
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
