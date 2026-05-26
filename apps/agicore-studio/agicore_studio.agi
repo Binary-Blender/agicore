@@ -1,0 +1,202 @@
+// agicore_studio.agi
+// Agicore Studio — the visual authoring environment for Agicore.
+//
+// This file is the source of truth for the Studio's own state: which
+// projects the user has open, what's in each .agi file, where nodes
+// sit on the canvas, what runs are in flight, and which QC checkpoints
+// are awaiting a human decision.
+//
+// Per AD-3 in PROJECT_PLAN.md, the Studio dogfoods Agicore where it
+// fits (this file) and breaks out where it doesn't (the canvas itself
+// is React Flow; the editor is CodeMirror 6).
+
+APP agicore_studio {
+  TITLE   "Agicore Studio"
+  WINDOW  1600x1000 frameless
+  DB      agicore_studio.db
+  PORT    5182
+  THEME   dark
+}
+
+// ===================================================================
+// PROJECT MODEL
+// ===================================================================
+
+ENTITY Project {
+  name: string REQUIRED
+  root_path: string REQUIRED UNIQUE
+  active_file_path: string
+  TIMESTAMPS
+  CRUD full
+}
+
+// Every .agi file inside a project. Many per project.
+ENTITY AgiFile {
+  relative_path: string REQUIRED        // relative to project.root_path
+  contents: string DEFAULT ""           // last-known on-disk text
+  last_known_hash: string               // for change detection
+  BELONGS_TO Project
+  TIMESTAMPS
+}
+
+// Per-file canvas layout. Sidecar to the .agi file.
+// AD-1: text is the source of truth; layout is positional metadata only.
+ENTITY LayoutSidecar {
+  positions: json DEFAULT "{}"          // node_id -> { x, y }
+  collapsed_groups: json DEFAULT "[]"
+  viewport: json DEFAULT "{}"           // last x/y/zoom of the canvas
+  BELONGS_TO AgiFile
+  TIMESTAMPS
+}
+
+// ===================================================================
+// RUNTIME MODEL
+// ===================================================================
+
+ENTITY Run {
+  workflow_name: string REQUIRED
+  status: string REQUIRED               // pending | running | awaiting_qc | succeeded | failed | cancelled
+  started_at: datetime
+  finished_at: datetime
+  qc_pending_node: string               // name of node currently awaiting QC, if any
+  events: json DEFAULT "[]"             // stream of run events for replay
+  inputs: json DEFAULT "{}"
+  outputs: json DEFAULT "{}"
+  error: string
+  BELONGS_TO AgiFile
+  TIMESTAMPS
+}
+
+// Recorded human QC decisions. One per QC checkpoint pause.
+ENTITY QcDecision {
+  node_name: string REQUIRED
+  decided_at: datetime
+  approver: string                      // user handle for shared deployments
+  decision: string REQUIRED             // approved | rejected | edited
+  upstream_output: json                 // snapshot of what was being reviewed
+  edited_output: json                   // present when decision == "edited"
+  comment: string
+  BELONGS_TO Run
+  TIMESTAMPS
+}
+
+// ===================================================================
+// ACTIONS
+// ===================================================================
+
+ACTION create_project {
+  INPUT   name: string, parent_dir: string
+  OUTPUT  project: Project
+}
+
+ACTION open_project {
+  INPUT   path: string
+  OUTPUT  project: Project, files: json
+}
+
+ACTION close_project {
+  INPUT   project_id: string
+}
+
+ACTION read_agi_file {
+  INPUT   file_id: string
+  OUTPUT  contents: string, layout: LayoutSidecar
+}
+
+ACTION write_agi_file {
+  INPUT   file_id: string, contents: string, layout: json
+  // Writes the .agi text AND the sidecar layout in one atomic save.
+}
+
+// The big one. Streams events back to the canvas as nodes execute.
+ACTION run_workflow {
+  INPUT   file_id: string, workflow_name: string, inputs: json
+  OUTPUT  run: Run
+  STREAM  true
+}
+
+ACTION cancel_run {
+  INPUT   run_id: string
+}
+
+// Submitted from the Inspector when a QC node pauses execution.
+ACTION submit_qc_decision {
+  INPUT   run_id: string, node_name: string,
+          decision: string,             // approved | rejected | edited
+          edited_output: json,
+          comment: string
+  OUTPUT  run: Run                      // refreshed; status may transition
+}
+
+ACTION list_recent_runs {
+  INPUT   file_id: string, limit: number = 20
+  OUTPUT  runs: json
+}
+
+// ===================================================================
+// VIEWS
+// ===================================================================
+
+VIEW StartupChooser {
+  LAYOUT custom
+  // First screen: recent projects, "new project," "open existing"
+}
+
+VIEW Workbench {
+  LAYOUT custom
+  // The main editing surface. Hosts Canvas + AgiEditor + Inspector
+  // + ProjectExplorer panels.
+}
+
+VIEW Canvas {
+  LAYOUT custom
+  // React Flow workflow editor. Per AD-2.
+}
+
+VIEW AgiEditor {
+  LAYOUT custom
+  // CodeMirror 6 text editor with .agi language pack. Per AD-2.
+}
+
+VIEW Inspector {
+  LAYOUT custom
+  // Bottom pane. Run event log, per-node I/O inspection, QC decision UI.
+}
+
+VIEW ProjectExplorer {
+  ENTITY AgiFile
+  LAYOUT split
+  ACTIONS create, delete, rename
+  // Left rail file tree.
+}
+
+// ===================================================================
+// TESTS
+// ===================================================================
+
+TEST project_lifecycle {
+  GIVEN Project { name: "Untitled", root_path: "/tmp/test-project" }
+  EXPECT create -> id IS NOT NULL
+  EXPECT create -> name == "Untitled"
+}
+
+TEST agi_file_belongs_to_project {
+  GIVEN Project { name: "Test", root_path: "/tmp/test" }
+  GIVEN AgiFile { relative_path: "main.agi", BELONGS_TO Project }
+  EXPECT create -> id IS NOT NULL
+  EXPECT delete Project -> list AgiFile HAS_LENGTH == 0
+}
+
+TEST layout_sidecar_one_to_one_with_agi_file {
+  GIVEN Project { name: "Test", root_path: "/tmp/test" }
+  GIVEN AgiFile { relative_path: "wf.agi", BELONGS_TO Project }
+  GIVEN LayoutSidecar { BELONGS_TO AgiFile }
+  EXPECT create -> id IS NOT NULL
+}
+
+TEST run_qc_pause_persistence {
+  // A QC-paused run survives a Studio restart per AD-5 / OQ-3.
+  GIVEN Run { workflow_name: "demo", status: "awaiting_qc", qc_pending_node: "human_review" }
+  EXPECT get -> status == "awaiting_qc"
+  EXPECT get -> qc_pending_node == "human_review"
+}
