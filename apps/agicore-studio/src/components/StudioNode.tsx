@@ -61,7 +61,7 @@ const STATUS_GLYPH: Record<NodeRunStatus, string> = {
   skipped:           '—',
 };
 
-const StudioNode: React.FC<NodeProps> = ({ id, data }) => {
+const StudioNodeImpl: React.FC<NodeProps> = ({ id, data }) => {
   const d = data as StudioNodeData;
   const accentColor = TYPE_COLORS[d.nodeType];
   const isStart = d.nodeType === 'start';
@@ -108,5 +108,19 @@ const StudioNode: React.FC<NodeProps> = ({ id, data }) => {
     </div>
   );
 };
+
+// Memoized — React Flow re-renders nodes on every position change of
+// any node by default. Memoizing on (id, data) means a single drag of
+// node A doesn't churn the DOM of nodes B..Z. Run-status and
+// breakpoint changes still propagate because the store-subscribed
+// hooks inside trigger their own re-renders on those slices.
+const StudioNode = React.memo(StudioNodeImpl, (prev, next) => {
+  if (prev.id !== next.id) return false;
+  // data is rebuilt on every Canvas render via useMemo; compare by
+  // discriminator fields only — name, kind, detail.
+  const pd = prev.data as { name: string; nodeType: string; detail?: string };
+  const nd = next.data as { name: string; nodeType: string; detail?: string };
+  return pd.name === nd.name && pd.nodeType === nd.nodeType && pd.detail === nd.detail;
+});
 
 export default StudioNode;

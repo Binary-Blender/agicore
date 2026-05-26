@@ -192,6 +192,17 @@ const CanvasInner: React.FC = () => {
           style: { strokeWidth: 1.5 },
           labelStyle: { fontSize: 10, fill: '#71717a' },
         }}
+        // Render-only-visible cuts canvas DOM dramatically once you
+        // pan into a small viewport on a large workflow. The crossover
+        // point is ~50 nodes; below that the cost of bbox-checking
+        // exceeds the savings. We always opt in — small workflows pay
+        // microseconds, large ones pay nothing.
+        onlyRenderVisibleElements
+        // Skip the React-Flow nodesFocusable / edgesFocusable defaults
+        // which install a focus trap that's expensive at scale and
+        // unnecessary for our pointer-driven authoring flow.
+        nodesFocusable={false}
+        edgesFocusable={false}
       >
         <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#27272a" />
         <Controls showInteractive={false} />
