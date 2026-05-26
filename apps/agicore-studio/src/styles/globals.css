@@ -94,7 +94,9 @@ html, body, #root {
   font-size: 13px;
   color: var(--text-primary);
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  position: relative;       /* anchor for the breakpoint marker */
 }
+.studio-node:hover button[title="Set breakpoint"] { opacity: 0.5; }
 .studio-node .node-type {
   font-size: 10px;
   text-transform: uppercase;

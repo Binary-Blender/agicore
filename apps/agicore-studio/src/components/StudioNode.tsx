@@ -6,6 +6,7 @@ import React from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import type { NodeKind } from '../types/workflow';
 import { useNodeRunStatus } from '../store/runStore';
+import { useDebugStore, useHasBreakpoint } from '../store/debugStore';
 import type { NodeRunStatus } from '../types/run';
 
 interface StudioNodeData {
@@ -41,21 +42,23 @@ const TYPE_LABEL: Record<NodeKind, string> = {
 };
 
 const STATUS_RING: Record<NodeRunStatus, string> = {
-  idle:       'transparent',
-  running:    '#fbbf24',     // amber
-  succeeded:  '#10b981',     // green
-  failed:     '#ef4444',     // red
-  paused_qc:  '#06b6d4',     // cyan — same as QC accent
-  skipped:    '#52525b',     // muted
+  idle:              'transparent',
+  running:           '#fbbf24',     // amber
+  succeeded:         '#10b981',     // green
+  failed:            '#ef4444',     // red
+  paused_qc:         '#06b6d4',     // cyan — same as QC accent
+  paused_breakpoint: '#ef4444',     // red — matches the breakpoint dot
+  skipped:           '#52525b',     // muted
 };
 
 const STATUS_GLYPH: Record<NodeRunStatus, string> = {
-  idle:       '',
-  running:    '●',
-  succeeded:  '✓',
-  failed:     '✕',
-  paused_qc:  '◐',
-  skipped:    '—',
+  idle:              '',
+  running:           '●',
+  succeeded:         '✓',
+  failed:            '✕',
+  paused_qc:         '◐',
+  paused_breakpoint: '⏸',
+  skipped:           '—',
 };
 
 const StudioNode: React.FC<NodeProps> = ({ id, data }) => {
@@ -66,6 +69,8 @@ const StudioNode: React.FC<NodeProps> = ({ id, data }) => {
   const runStatus = useNodeRunStatus(id);
   const ringColor = STATUS_RING[runStatus];
   const glyph = STATUS_GLYPH[runStatus];
+  const hasBreakpoint = useHasBreakpoint(id);
+  const toggleBreakpoint = useDebugStore((s) => s.toggleBreakpoint);
 
   return (
     <div
@@ -75,6 +80,17 @@ const StudioNode: React.FC<NodeProps> = ({ id, data }) => {
         boxShadow: runStatus !== 'idle' ? `0 0 0 2px ${ringColor}, 0 2px 8px rgba(0,0,0,0.4)` : undefined,
       }}
     >
+      {/* Breakpoint marker — clickable, always-visible when set, hover-revealed otherwise */}
+      <button
+        onClick={(e) => { e.stopPropagation(); toggleBreakpoint(id); }}
+        title={hasBreakpoint ? 'Clear breakpoint' : 'Set breakpoint'}
+        className={`absolute -top-1.5 -left-1.5 w-3 h-3 rounded-full border transition-opacity ${
+          hasBreakpoint
+            ? 'bg-red-500 border-red-700 opacity-100'
+            : 'bg-transparent border-[var(--text-muted)] opacity-0 hover:opacity-100 group-hover:opacity-60'
+        }`}
+        style={{ zIndex: 2 }}
+      />
       {!isStart && <Handle type="target" position={Position.Left} />}
       <div className="flex items-center justify-between gap-2">
         <div className="node-type" style={{ color: accentColor }}>

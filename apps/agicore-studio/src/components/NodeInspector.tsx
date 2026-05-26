@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useSelectedNode, useWorkflowStore } from '../store/workflowStore';
+import { useDebugStore, useHasBreakpoint } from '../store/debugStore';
 import type { NodeKind } from '../types/workflow';
 
 const KIND_LABEL: Record<NodeKind, string> = {
@@ -23,6 +24,8 @@ const NodeInspector: React.FC = () => {
   const updateNode = useWorkflowStore((s) => s.updateNode);
   const updateNodeProperty = useWorkflowStore((s) => s.updateNodeProperty);
   const deleteNode = useWorkflowStore((s) => s.deleteNode);
+  const toggleBreakpoint = useDebugStore((s) => s.toggleBreakpoint);
+  const breakpointSet = useHasBreakpoint(node?.id ?? '');
 
   if (!node) {
     return (
@@ -58,7 +61,17 @@ const NodeInspector: React.FC = () => {
           onChange={(key, value) => updateNodeProperty(node.id, key, value)}
         />
 
-        <div className="pt-3 border-t border-[var(--border)]">
+        <div className="pt-3 border-t border-[var(--border)] space-y-2">
+          <button
+            onClick={() => toggleBreakpoint(node.id)}
+            className={`w-full text-xs py-1.5 rounded border transition-colors ${
+              breakpointSet
+                ? 'border-red-700 bg-red-950 text-red-200 hover:bg-red-900'
+                : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-red-700 hover:text-red-300'
+            }`}
+          >
+            {breakpointSet ? '● Clear breakpoint' : '○ Set breakpoint'}
+          </button>
           <button
             onClick={() => deleteNode(node.id)}
             disabled={node.kind === 'start' || node.kind === 'end'}

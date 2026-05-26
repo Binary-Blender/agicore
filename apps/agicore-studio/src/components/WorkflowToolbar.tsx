@@ -12,6 +12,7 @@ import {
 } from '../lib/persistence';
 import { makeRunner } from '../lib/runner';
 import DiffPreviewModal from './DiffPreviewModal';
+import { useDebugStore } from '../store/debugStore';
 
 const WorkflowToolbar: React.FC = () => {
   const name = useWorkflowStore((s) => s.workflow.name);
@@ -43,7 +44,7 @@ const WorkflowToolbar: React.FC = () => {
 
   // Live elapsed-time tick while a run is in flight
   useEffect(() => {
-    if (runStatus !== 'running' && runStatus !== 'paused_qc') {
+    if (runStatus !== 'running' && runStatus !== 'paused_qc' && runStatus !== 'paused_breakpoint') {
       if (startedAt && finishedAt) {
         setElapsed(formatElapsed(finishedAt - startedAt));
       } else {
@@ -87,12 +88,15 @@ const WorkflowToolbar: React.FC = () => {
   const canRun =
     workflow.nodes.length > 0 &&
     runStatus !== 'running' &&
-    runStatus !== 'paused_qc';
+    runStatus !== 'paused_qc' &&
+    runStatus !== 'paused_breakpoint';
 
   const onRun = () => {
     const runner = makeRunner();
     startRun(runner);
-    runner.start(workflow, (event) => ingest(event));
+    runner.start(workflow, (event) => ingest(event), {
+      breakpoints: useDebugStore.getState().breakpoints,
+    });
   };
 
   return (
@@ -141,7 +145,28 @@ const WorkflowToolbar: React.FC = () => {
       >
         {busy === 'saving' ? 'Saving…' : 'Save'}
       </button>
-      {runStatus === 'running' || runStatus === 'paused_qc' ? (
+      {runStatus === 'paused_breakpoint' ? (
+        <>
+          <button
+            onClick={() => useRunStore.getState().resumeDebug('step')}
+            className="text-xs px-3 py-1.5 rounded bg-amber-600 text-white font-semibold hover:bg-amber-500 transition-colors"
+          >
+            ⤼ Step
+          </button>
+          <button
+            onClick={() => useRunStore.getState().resumeDebug('continue')}
+            className="text-xs px-3 py-1.5 rounded bg-emerald-700 text-white font-semibold hover:bg-emerald-600 transition-colors"
+          >
+            ▶ Continue
+          </button>
+          <button
+            onClick={cancel}
+            className="text-xs px-3 py-1.5 rounded bg-red-700 text-white font-semibold hover:bg-red-600 transition-colors"
+          >
+            ◼ Stop
+          </button>
+        </>
+      ) : runStatus === 'running' || runStatus === 'paused_qc' ? (
         <button
           onClick={cancel}
           className="text-xs px-3 py-1.5 rounded bg-red-700 text-white font-semibold hover:bg-red-600 transition-colors"
@@ -185,11 +210,12 @@ const RunStatusPill: React.FC<{ status: string; elapsed: string }> = ({ status, 
 };
 
 const STATUS_VARIANTS: Record<string, { label: string; color: string }> = {
-  running:    { label: 'running',    color: '#fbbf24' },
-  paused_qc:  { label: 'paused: qc', color: '#06b6d4' },
-  succeeded:  { label: 'succeeded',  color: '#10b981' },
-  failed:     { label: 'failed',     color: '#ef4444' },
-  cancelled:  { label: 'cancelled',  color: '#a1a1aa' },
+  running:            { label: 'running',     color: '#fbbf24' },
+  paused_qc:          { label: 'paused: qc',  color: '#06b6d4' },
+  paused_breakpoint:  { label: 'paused: brk', color: '#ef4444' },
+  succeeded:          { label: 'succeeded',   color: '#10b981' },
+  failed:             { label: 'failed',      color: '#ef4444' },
+  cancelled:          { label: 'cancelled',   color: '#a1a1aa' },
 };
 
 function basename(p: string): string {
