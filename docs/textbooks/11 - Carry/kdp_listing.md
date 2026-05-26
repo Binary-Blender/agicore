@@ -1,79 +1,138 @@
-# KDP Listing — Carry: A Future Case Study
+# KDP Listing: Carry — A Future Case Study
 
-## Description
+**Author:** Christopher Bender
+**Publisher:** AI WIN-WIN Institute
+**Volume:** 11 (Textbook Shelf)
+**ASIN:** TBD on publication
+**Format:** Kindle eBook
+**Length:** ~45,000 words, 14 chapters, 4 acts
+**Genre:** Business thriller / Corporate strategy fiction
+**Series:** AI WIN-WIN business-fable quartet — Volume IV (after *Anchor*, *Multiplied*, *Untied*)
 
-In October of Year 1, the most consequential commerce founder in human history sits at his desk on the eleventh floor of his Seattle headquarters and looks at the quarterly numbers and recognizes, finally, what he has been avoiding for six quarters: the company he built is operating on a model the AI era is about to outgrow.
+---
 
-His name is Henry Castellan. His company is Argo, Inc. — a fictional commerce giant the reader will recognize. Argo runs the marketplace. It runs the logistics. It runs the cloud. It runs sixty-four percent of its revenue through a retail business whose competitive moat is filling in faster than any moat in industrial history has ever filled in. AI-augmented solo sellers can run their own marketplaces now. Mid-market brands can build direct-to-consumer infrastructure faster than Argo can defend its position. A hundred small platforms are eating Argo's edges. The math is closing.
+## Title
 
-Henry Castellan, at sixty-two years old, with thirty-one years of building the model he is about to deliberately obsolete, makes a decision over a Belltown weekend with his board chair Cassandra Yu. He commits to the most consequential strategic pivot of his career: stop being a retailer that runs a cloud. Become a platform that has a retail tenant.
+**Carry: A Future Case Study**
 
-What follows is two and a half years of institutional drama at industrial scale.
+## Subtitle (alternate, for ad copy)
 
-The board fights. The longtime board member resigns on principle. The stock loses one hundred ninety billion dollars of market capitalization in ten trading days. Two activist hedge funds take positions. The CNBC chyron reads *ARGO IN FREE FALL*. Three institutional investors demand Henry's resignation. The executive who has run Argo Retail for nineteen years faces the structural subordination of her entire professional life. Eleven warehouses are converted from Argo Retail fulfillment to Argo Carry platform fulfillment. Eighty-four thousand retail-arm jobs are eliminated over twelve months. Three thousand five hundred specific households lose an income. Eight thousand four hundred get a raise. The math, in the analyst reports, balances. The math, on a Saturday morning at a kitchen table in Goodyear, Arizona, where Eric and Maya Madsen do their household budget for the next quarter, does not balance cleanly. The book does not pretend it does.
+*The Memo That Turned the World's Largest Commerce Platform on a Dime*
 
-By the spring of Year 3, Argo has become, in operational terms, the infrastructure layer that most American retail runs on. Walmart and Target are customers. Three hundred eighty thousand small and mid-market businesses are customers. Sarah Choi, who runs a small home-goods business out of Portland and whose ceramic vessels were being undercut by an Argo private-label competitor at the start of Year 1, is now competing directly with Walmart in the home-goods category — and winning some of that competition — on the same platform Walmart uses. The Argo Retail Inc. subsidiary is one tenant among many on its own former parent platform, paying the same fees other tenants pay. The platform competes with none of them. The platform charges them all. The platform serves them all.
+## Categories (KDP primary + secondary)
 
-*Carry* is a business novel in the kinetic register of *The Phoenix Project*, *Moneyball*, and *Liar's Poker*. It is the fourth book in the AI WIN-WIN business-fable quartet, after *Anchor* (restoration), *Multiplied* (implementation), and *Untied* (the labor-market aftermath in software consulting). Where *Untied* was contemplative and slow-burn, *Carry* is faster, higher-stakes, and operates at industrial scale. The cast is bigger. The institutional drama is real. The pacing pulls.
+- Kindle Store > Kindle eBooks > Business & Money > Industries > Retailing
+- Kindle Store > Kindle eBooks > Literature & Fiction > Genre Fiction > Political Fiction
+- Kindle Store > Kindle eBooks > Business & Money > Leadership
 
-Thirteen chapters. Two and a half years. Four parts: **The Threat. The Decision. The Pivot. The Platform.** Read it for the strategic argument — the AWS model applied to all of commerce, additive rather than extractive, helper rather than competitor. Read it for the human cost — the boardroom resignation, the warehouse layoffs, the marriage strain, the executive whose entire professional life is restructured around a new role. Read it for the closing scene in a Portland home-goods studio in May, where a thirty-four-year-old founder explains to a journalist what she would have told herself two years earlier if she had known what the platform pivot would mean for her business.
+## Keywords (KDP, 7 slots)
 
-The book does not pretend the math balances cleanly. The math never does. Henry Castellan knew this. He carried it. The book closes with him carrying it.
+1. business thriller
+2. platform pivot
+3. corporate strategy fiction
+4. founder CEO novel
+5. employee ownership ESOP
+6. AI commoditization
+7. activist investor fiction
 
-The platform carried everyone else.
+---
 
-## Reading order
+## Book Description (Amazon detail page)
 
-*Carry* is the fourth and final book in the AI WIN-WIN business-fable quartet. The books stand alone but reward sequential reading:
+**One memo. Eleven pages. One point six million inboxes. Three hours and twenty-seven minutes between the memo going out and four point two billion dollars of the founder's own money clearing the trust.**
 
-1. ***Anchor*** — restoration after an AI failure (literary novella, insurance carrier)
-2. ***Multiplied*** — a successful greenfield AI implementation (business fable, precision manufacturer)
-3. ***Untied*** — what happens to firms and employees after the rollouts (multi-protagonist fable, software consultancies)
-4. ***Carry*** — the platform pivot at industrial scale (kinetic business novel, commerce giant)
+Cole Westerlund built Carrick, Inc. from a converted Capitol Hill townhouse in 1995. Thirty-one years later it does seven hundred and twenty billion dollars of revenue in seventy-three countries. He is the third-richest person alive.
 
-Together the four books map the AI-era playbook from four different angles: how to recover from a botched rollout, how to do one right, what the labor-market aftermath looks like, and what the largest companies must do to stop being extractive and start being additive.
+On a Wednesday afternoon in late September, six hundred and twenty miles southwest of Guam, on the deck of his research vessel between sets of a deadlift workout with his strength coach, the satellite phone rings.
 
-## Keywords (7)
+The caller is a ceramicist in Portland named Iona Tran. She has been on Carrick's marketplace for six years. Her bestselling product has just been cloned by Carrick's own private-label brand at fifty-seven percent of her cost, using her own sales data to time the launch. She has three weeks of cash. She is one of eleven million small sellers Cole's platform has spent fifteen years quietly crushing.
 
-1. `Amazon platform pivot business novel`
-2. `commerce infrastructure AI era`
-3. `Phoenix Project Moneyball business fiction`
-4. `Bezos visionary founder strategic pivot`
-5. `extractive to additive platform economy`
-6. `AWS model commerce stack`
-7. `industrial-scale corporate transformation novel`
+Cole turns the ship around.
 
-## BISAC Categories
+Eight days later he writes the memo.
 
-- FIC014000 — FICTION / Workplace / General
-- BUS082000 — BUSINESS & ECONOMICS / Industries / Retailing
-- BUS063000 — BUSINESS & ECONOMICS / Workplace Culture
-- COM004000 — COMPUTERS / Intelligence (AI) & Semantics
+The memo says the company he built has been wrong about who its customer is. It announces the most consequential corporate restructuring of the 2020s: full exit from retail, transfer of the six-hundred-and-forty-thousand-employee retail business to its own workforce via the largest employee stock ownership transition in U.S. history, and a personal contribution of four point two billion dollars from Cole himself — wired into the trust three hours and twenty-seven minutes after the memo lands in one point six million inboxes, sixty-two hours before the board votes on whether to ratify the strategy or fire him.
 
-## Cover Art Image Prompts
+The next thirty months are the consequences.
 
-### Primary (photorealistic, business-novel shelf)
+A Bloomberg leak. An eight-billion-dollar short position from an activist investor in Greenwich. A boardroom vote against a director who has been Cole's friend for twenty-three years. A midnight Gulfstream to a private dining room above a steakhouse on East 47th Street where the activist will ask Cole one question across an empty table. A senator's dinner in Georgetown. A first major platform customer in Cincinnati. A warehouse worker in Goodyear, Arizona, whose wife is in the laid-off group on the morning of the conversion. A Senate antitrust subcommittee carve-out negotiated across one dining room table in ninety-six minutes. An earnings call on which a Morgan Stanley analyst who has been wrong about the pivot for eighteen months asks the question that defines the whole arc.
 
-A cinematic photograph taken at dusk from a slightly elevated angle, looking down a row of fulfillment center loading docks at the end of a working day. The trucks at the docks bear the names of seven different retailers — visible but slightly out of focus, the lettering varied (Walmart, Target, smaller regional names, a small-business name in vinyl decals on a sprinter van) — all loading from the same building. The building bears a single small sign on the corner above the dock doors reading ARGO CARRY in restrained sans-serif. The setting sun lights the trucks from the side in warm amber; the dock floor is deep concrete grey; the sky behind the building is the deep blue of early evening. A single forklift operator is visible mid-frame, mid-task, in motion blur. The image makes the book's central thesis — that one company can carry many companies' commerce without competing with any of them — legible at thumbnail size. No people in clear focus, no text overlay beyond the small dock-sign ARGO CARRY.
+**Carry** is the story of the platform pivot at industrial scale, told in the kinetic register of *Liar's Poker* and *Flash Boys* and *Bad Blood.* It is the *Tidal Wave Memo* for AI commoditization, written by a founder who saw the boil before it broke and acted in the time it took to read a single phone call to its end.
 
-### Alternate (minimalist/symbolic)
+This is not a contemplative business fable. This is what happens when a man with two hundred billion dollars, a deadlift max of four hundred and twenty-five pounds, a four-person executive-protection detail, a thirty-one-year track record of being right about the math, and one phone call from a thirty-five-year-old woman in Portland decides to bet his entire net worth, his job, his board, and the company he built across his entire adult life on the truth he has been carrying alone for six months.
 
-A clean flat-design composition on a deep navy background. Centered: a single thick horizontal line representing a platform. Above the line, fifteen small icons evenly spaced — small storefronts, small icons of different retail businesses (a coffee cup, a ceramic vessel, a pair of shoes, a book, a tool, a tomato, a baby's bottle, a candle, etc.), each in a different warm accent color (amber, terracotta, sage, soft gold, deep red). Below the line, in light grey, a single word in restrained serif type: CARRY. The line itself, on closer inspection, is composed of thousands of micro-textures suggesting circuitry, fulfillment-conveyor rails, and shipping routes — but reads as a single solid platform at distance. The icons above the line do not compete with each other. They sit on the same platform. The image is the book's argument in one composition. Limited palette: deep navy, warm cream, fifteen distinct warm accents. No additional text overlay.
+For founders. For CEOs. For board members. For institutional investors. For employees of large platforms. For small sellers on those platforms. For regulators. For antitrust scholars. For any reader who wonders what the next chapter of the platform economy could look like if a founder with sufficient vision and sufficient nerve actually committed to it — and who would like that story told with the urgency it deserves.
 
-## Back-Cover Copy (~180 words)
+The fourth book in the AI WIN-WIN business-fable quartet, after *Anchor*, *Multiplied*, and *Untied*. Reads as a standalone.
 
-In October of Year 1, Henry Castellan — sixty-two years old, founder of the largest commerce company in human history — looks at the quarterly numbers and recognizes that the company he built is operating on a model the AI era is about to outgrow.
+---
 
-What he does over the next thirty months is the story.
+## Editorial reviews (placeholder copy for the listing — author/publisher quotes)
 
-He commits to the most consequential pivot of his career: stop being a retailer that runs a cloud. Become a platform that has a retail tenant. Stop competing with the small businesses that built on top of him. Start being the infrastructure they run on.
+*"The business thriller the AI era was waiting for. Christopher Bender has written the platform-pivot novel that founders are going to be passing to each other for the next decade."*
+— AI WIN-WIN Institute editorial
 
-The board fights. The stock loses one hundred ninety billion dollars in ten trading days. The longest-tenured director resigns on principle. Eleven warehouses are converted. Eighty-four thousand retail jobs are eliminated. The executive who built the retail arm faces the structural subordination of her professional life.
+*"Reads like a private-equity memo a senior partner wrote on a redeye after losing a fight with himself. Closes like a Greek tragedy where everybody wins."*
+— AI WIN-WIN Institute editorial
 
-By the spring of Year 3, Argo has become the infrastructure layer that most American retail runs on — including Walmart, Target, and the small businesses it used to crush.
+---
 
-The platform carried everyone else.
+## Cover concept (for cover designer brief)
 
-## Series Note
+A cinematic photograph taken at dusk on the deck of a research vessel at sea. Foreground: a steel deck with deck-grip pattern visible, a single sealed satellite phone resting on the deck, the curved horizon of the Pacific Ocean filling two-thirds of the frame, the long horizontal gold of an equatorial sunset on the water. Mid-frame: the silhouette of a tall man in workout shorts and a long-sleeved gray T-shirt standing at the rail with his back to the camera, looking out at the water. Far frame: a single freighter visible at the horizon. The image is composed to be legible at thumbnail size — the satphone is the focal point, the silhouette is the witness, the freighter is the world.
 
-*Carry* is Volume 11 of the textbook shelf, published under the **AI WIN-WIN Institute** imprint (the business-side imprint, matching *Anchor*, *Multiplied*, and *Untied*). It is the fourth and final book in the AI WIN-WIN business-fable quartet — the kinetic, industrial-scale companion to the three smaller-scale fables that preceded it.
+Title overlay: **CARRY** in restrained sans-serif at the upper third of the frame, in cool white, with the subtitle *A Future Case Study* below it in smaller italic.
+
+Author name overlay: **Christopher Bender** at the lower third in the same sans-serif, slightly smaller than the title.
+
+No additional graphic elements. The image makes the book's premise — a founder on a research vessel takes a phone call that turns the largest commerce platform in the world on a dime — legible without text overlay beyond the title.
+
+---
+
+## A+ Content (for KDP A+ module — recommended placement)
+
+**Module 1 (text + image):** *The Memo* — a stylized photograph of the eleven-page memo's opening sentence in italics on a printed page, with the text *I have been wrong about who our customer is.* Caption: *"The opening sentence of the memo that turned the world's largest commerce platform on a dime."*
+
+**Module 2 (text):** *The Cast* — a one-line introduction to the principal characters (Cole, Anjali, Owen, Diana, Reese, Margot, Iona, Drew Sallinger, Senator Marsh).
+
+**Module 3 (text + image):** *The Bezos Voice* — a brief author's note describing the book's lineage in the *Tidal Wave Memo* and the kinetic register it draws on from Lewis, Carreyrou, and Stone.
+
+**Module 4 (text):** *The Series* — a brief description of the AI WIN-WIN quartet and the order in which the four books can be read. Each book is a standalone.
+
+---
+
+## Reading-order note for series readers
+
+*Carry* is the fourth book in the AI WIN-WIN business-fable quartet but does not require having read the prior three. The quartet's books are linked by shared thematic terrain (the AI-era pivot at different scales of organization) rather than by shared characters or continuous plot.
+
+- *Anchor* (Vol VI) — restoration of a small civic institution
+- *Multiplied* (Vol VII) — implementation of TAO methodology in a mid-market services firm
+- *Untied* (Vol VIII) — software consulting and labor-market aftermath
+- *Carry* (Vol XI) — platform pivot at industrial scale
+
+Readers new to the series can begin with *Carry* and move backward, or read in publication order. The four are companion books, not a sequence.
+
+---
+
+## Pricing
+
+- **Kindle eBook**: $9.99
+- **KDP Select enrollment**: yes (90-day exclusive on Kindle Unlimited)
+- **Audiobook**: planned, ACX production, TBD on narrator selection
+
+---
+
+## Author bio (for KDP profile + book page)
+
+Christopher Bender writes the AI WIN-WIN business fables for the AI WIN-WIN Institute. His prior books include *Stop Being the Bottleneck*, the *Atomic AI* series, *The Seven Habits of AI-First Founders*, *Anchor*, *Multiplied*, *Untied*, and ten other titles in the AI WIN-WIN textbook shelf. He lives in the Pacific Northwest.
+
+---
+
+## File metadata
+
+- **Title (book file):** Carry: A Future Case Study
+- **Identifier:** ai-win-win-carry-novel-002
+- **Language:** en
+- **Date of publication:** TBD
+- **Build script:** build_epub.py
+- **Output file:** carry.epub

@@ -3,11 +3,12 @@
 Build script for: Carry — A Future Case Study
 Author: Christopher Bender
 Publisher: AI WIN-WIN Institute
-Business fable in the Phoenix Project / Moneyball / Liar's Poker lineage,
-demonstrating an industrial-scale platform pivot at a fictional commerce
-giant (Argo, Inc.) facing structural commoditization in the AI era.
-Fourth book in the AI WIN-WIN business-fable quartet (Anchor / Multiplied /
-Untied / Carry).
+Business thriller in the Liar's Poker / Flash Boys / Bad Blood / Phoenix
+Project lineage. Close third, past tense, kinetic register. A founder
+(Cole Westerlund) writes the Microsoft-Tidal-Wave-equivalent memo and
+turns Carrick, Inc., the world's largest commerce platform, on a dime
+against the AI-piranha threat. Fourth book in the AI WIN-WIN business-
+fable quartet (Anchor / Multiplied / Untied / Carry).
 """
 
 import os
@@ -23,29 +24,30 @@ SUBTITLE = "A Future Case Study"
 AUTHOR = "Christopher Bender"
 PUBLISHER = "AI WIN-WIN Institute"
 LANGUAGE = "en"
-IDENTIFIER = "ai-win-win-carry-novel-001"
+IDENTIFIER = "ai-win-win-carry-novel-002"
 
 PARTS = [
-    ("Part I: The Threat", [1, 2, 3]),
-    ("Part II: The Decision", [4, 5, 6]),
-    ("Part III: The Pivot", [7, 8, 9, 10]),
-    ("Part IV: The Platform", [11, 12, 13]),
+    ("Act 1: The Boil", [1, 2, 3, 4]),
+    ("Act 2: The Strike", [5, 6, 7, 8]),
+    ("Act 3: The Platform", [9, 10, 11, 12]),
+    ("Act 4: The New World", [13, 14]),
 ]
 
 CHAPTER_TITLES = {
-    1:  "The Quarterly Numbers",
-    2:  "The Floor",
-    3:  "The CFO's Spreadsheet",
-    4:  "The Founders' Day",
+    1:  "The Boil",
+    2:  "The Read",
+    3:  "The Walk",
+    4:  "The Memo",
     5:  "The Boardroom",
-    6:  "The Communication",
-    7:  "The Stock Drops",
-    8:  "The Cloud Becomes the Company",
-    9:  "The Warehouse in Goodyear",
-    10: "The Retail VP",
-    11: "The Earnings Call",
-    12: "The Architecture",
-    13: "The Studio in Portland",
+    6:  "The Crash",
+    7:  "The Steakhouse",
+    8:  "The First Customer",
+    9:  "The Floor",
+    10: "The Senator",
+    11: "The Crisis",
+    12: "The Earnings Call",
+    13: "The Handover",
+    14: "The Coelacanth",
 }
 
 CSS = b"""

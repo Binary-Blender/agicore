@@ -1,349 +1,299 @@
-# Chapter 8: The Cloud Becomes the Company
+# Chapter 8: The First Customer
 
-Tomás Aguilar got to his office at six-fifteen on the first Monday of December. The Argo Cloud building was a different building from corporate headquarters, by design — three blocks south on Terry Avenue, eleven stories, a glass cube with a brushed-steel lobby and a coffee bar on the ground floor that Tomás had personally negotiated into the lease eight years earlier. He took the elevator to the seventh floor. He nodded to the overnight security guard. He let himself into his corner office. He set the coffee down. He opened the laptop.
+Reese Okonkwo got to the office at six oh-three AM on the second Monday after the Sallinger meeting and walked the seventh floor of the Carrick Cloud building in the pre-dawn dark with a coffee in his hand and his right knuckles on each conference room door as he passed.
 
-The dashboard came up.
+It was something he had been doing for eleven years.
 
-Argo Cloud had grown thirty-eight percent year-over-year in the quarter just closed. The pipeline for Argo Carry — the platform business Tomás had built quietly for the last four years as an experimental unit inside Cloud — was showing inbound interest from forty-one new prospective customers as of Friday's close. Forty-one was, in raw count, more inbound interest than Carry had received in any month before October. The announcement had done the work.
+He had been doing it on the days he was about to give bad news.
 
-He looked at the forty-one for a moment.
+He was about to give bad news.
 
-Then he opened a new document on his laptop and began to write.
+The bad news was that the platform he had built across the previous four years as an experimental unit inside Carrick Cloud, called Carrick Carry, with a thirty-eight-person engineering team and a thirty-thousand-square-foot fulfillment site in Renton and a half-page write-up in the Year minus two annual report, was, as of six fifteen AM Pacific eleven days earlier, the strategic center of a seven-hundred-and-twenty-billion-dollar company that had been a retailer for thirty-one years and was about to stop being one across the next seven.
 
-The document was titled *The Carry Operating Model, December Through February.*
+The bad news, for the thirty-eight people on the engineering team, was that they were about to become the engineering team of the platform layer that the entire company was going to depend on. They were going to triple in size by Q2 and quadruple by Q4. They were going to ship product on a timeline the team had been planning to ship across thirty months that was now compressed into twelve. They were going to absorb four hundred and twenty engineers from the Carrick Retail systems organization across the same twelve months. They were going to sign their first major enterprise customer inside ninety days. They were going to do it under the spotlight of a board, a press, an activist investor, an antitrust subcommittee, and a hundred competitors who had been quietly waiting for Carrick to make this move and who were, as of eleven days earlier, no longer waiting.
 
-He had been writing it, in pieces, for the last fourteen months. He had been writing it most intensively for the last six weeks. He had known what was coming since October, in the way that an executive who watches the numbers every quarter and reads the executive correspondence and listens carefully at the right meetings knows what is coming. He had not been told. He had not needed to be told.
+Reese had known the news was coming for at least two years.
 
-He had been preparing his organization.
+He had not known it was coming on a Monday morning in October.
 
----
+He had been told by Cole, in Cole's office on the Saturday afternoon before the memo, in the conversation Reese had been invited to without being told the agenda. Anjali had been in the room. Owen had been in the room. Diana had not yet been brought in. Cole had walked Reese through the memo. Cole had asked Reese one question. The question had been: *Reese. Are you ready.*
 
-He had hired seventeen people in the last eight weeks.
+Reese had said: *Cole. I am as ready as I am going to be. I am not going to lie to you. I have not run a business of this size before. I am running it now.*
 
-Two of them were SVPs. One had come from the supply-chain organization at FedEx. The other had come from a smaller cloud-services firm that competed with Argo Cloud in two narrow categories and where she had been chief operating officer. Both of them had signed offers in November after weeks of conversations that had begun, in both cases, with Tomás flying to their cities and having dinner with them and their spouses. He had not made the offers in writing until he had known they were yes. He had not used recruiters. He had done it himself.
+Cole had said: *That is the right answer.*
 
-The other fifteen were directors and senior managers across seven functions: platform architecture, third-party integrations, identity, payments, customer service tooling, regulatory compliance, and the new function he had stood up in October and called *Tenant Operations* — the team that would, over the next thirty months, become the central operating unit of Argo Carry's relationship with every retailer using the platform.
+That had been the conversation.
 
-He had built Tenant Operations from scratch. He had pulled three people out of Cloud. He had hired four from outside. He had asked Daniela Park for one from her organization (Daniela had given him a woman named Olivia Reyes — no relation to Vivian — who had been running fulfillment-center operations for the Pacific Northwest and who Tomás had wanted for two years and Daniela had refused to release until October). He had let the team find its own director by promoting Olivia after eleven days.
+Eleven days later Reese was walking the seventh floor at six AM with the coffee in his hand and the news in his head and the dashboard he was about to open on the wall display in his office at six-ten waiting to tell him what the platform was doing on the morning the team came in to find out what the previous eleven days had done to their lives.
 
-He had been moving.
+He turned the dashboard on.
 
-He had been moving quietly. He had been moving fast.
+The platform-tenant equality metric was 1.00.
 
----
+The trailing-thirty-day inbound enterprise prospect count was sixty-four.
 
-The platform-services portfolio Argo Carry was going to offer was, in Tomás's design document, seven products under one umbrella.
+Sixty-four was, in raw count, more inbound interest than Carry had received in any month before the memo.
 
-Carry Fulfillment. The warehouse-and-shipping operation that handled physical goods for third-party retailers. This was the product that already existed at modest scale. This was the product the first wave of warehouse conversions was about to scale by a factor of eleven.
-
-Carry Logistics. The trucking, freight, and last-mile delivery operation. This was the product that monetized Argo's logistics infrastructure for non-Argo customers. Frank Lattimore's organization. Frank had been a believer from the first meeting.
-
-Carry Customer Service. The platform's tier-one and tier-two customer-service operation, including the AI-agent layer that handled the first ninety percent of customer inquiries before they ever reached a human. This was the product Tomás was personally proudest of. He had been working on the AI-agent layer for three years. The agents handled four hundred million inquiries a year inside Argo's own operations. They were going to handle, in the first year of Carry as a platform, an additional two hundred million inquiries from third-party tenants.
-
-Carry AI Agents. The standalone AI-agent product, which any tenant could plug into their own customer-facing application, regardless of whether they used the rest of the platform. The agents would handle the tenant's customer service, the tenant's internal operations, the tenant's data orchestration. The agents were the product Tomás thought was going to be, by Year 5, the largest revenue line of the entire company. He had said this once, at a small dinner with Henry in October. Henry had nodded.
-
-Carry Identity. The single-sign-on, customer-account, and trust-graph product that let a tenant maintain its own customer relationships while running on Argo infrastructure. This was the product Tomás had personally insisted on. He had argued, in three executive meetings the previous year, that the platform could not be a platform if the platform owned the customer relationship. The platform had to enable the tenant to own the customer relationship. Henry had agreed in the third meeting.
-
-Carry Payments. The payments-processing stack, including international currency support, fraud detection, and tenant-configurable checkout flows. Marcus Goldberg's organization had built most of it. Tomás had inherited it. The team was already running.
-
-Carry Returns. The reverse-logistics product — handling refunds, restocking, and the entire return workflow for a tenant's customers. This was the product Tomás's team had built last and was the one he was least confident about. He had three of his best engineers on it.
-
-Seven products. One platform. One pricing model. One contract.
-
-Any retailer in the world could plug into any subset of the seven, on terms identical to the terms every other tenant got.
-
-Including, after the ESOP closed, Argo Retail Co.
-
-Especially Argo Retail Co.
+The memo had done the work.
 
 ---
 
-He was at his desk on the third Wednesday of December when his assistant put through a call from Henry.
+He held the seventh-floor all-hands at seven AM.
 
-"Tomás."
+Two hundred and eight engineers in the auditorium at the back of the building. Eighty-six on the live stream from the Bellevue satellite office. Forty-one on the live stream from the Phoenix office. Twelve on the live stream from London. Three on the live stream from Tokyo.
 
-"Henry."
+Reese stood at the lectern.
 
-"I want to come over."
+He had no slides.
 
-"When."
+He had no script.
 
-"This afternoon. Two o'clock. I want to walk the floor and see the new team."
+He said: "Good morning. I am going to tell you four things. I am going to tell you each of them once. I am going to take questions for an hour after. The four things are these."
 
-"All right."
+He looked at the room.
 
-"I want to bring Cassandra."
+"One. The memo Cole sent ten days ago is the strategy of the company. Carrick Carry is the company. We are not a unit inside Cloud. We are the platform layer. The cloud team is going to be reorganized into the platform layer across the next ninety days. I am the executive vice president of the platform. Anjali Rao is the chief operating officer. Owen Friedlander is the chief financial officer. Cole is the CEO through Year Four. I will be the CEO inside that window. None of that is news. All of it is true."
 
-"All right."
+He paused.
 
-"I want to ask you a question."
+"Two. The platform is shipping seven products under one umbrella across the next twelve months. Carry Fulfillment, Carry Logistics, Carry Customer Service, Carry AI Agents, Carry Identity, Carry Payments, Carry Returns. The team that has built Carry Fulfillment is going to be the team that ships it at thirty times the current volume by Q3 of Year Two. The team that has built Carry Logistics is going to be the team that ships it at sixty times the current volume by Q3. The team that has built Carry AI Agents is going to be the team that ships it at a scale this room has not yet seen in any product. The team that has not yet existed — the Carry Identity team — is being hired starting today. The first hire is a woman named Hiroko Tanaka who has been the head of identity at Stripe for the last four years and who signed her offer letter at two-eleven PM Pacific on Saturday. She starts Wednesday."
 
-"Ask it."
+The room moved a little. Someone at the back of the auditorium said *no shit*.
 
-"Are you ready."
+Reese smiled.
 
-Tomás was quiet for a beat.
+He kept going.
 
-He was not sure if Henry meant ready in the operational sense — was the platform ready, was the team ready, was the architecture ready — or in the personal sense — was Tomás ready. Both were the question. Both had to be answered.
+"Three. The first major enterprise customer is going to sign inside ninety days. I am not going to tell you who it is this morning. I am going to tell you that the customer's CEO has been in conversation with me for fourteen months. The conversation became a commercial negotiation in March of last year. The negotiation was paused for two weeks after the memo. The conversation resumed last Tuesday. The customer is one of the twelve largest retailers in the United States. The customer is, at the moment, a competitor of Carrick Retail. The customer will, when the contract closes, run on the same platform that Carrick Retail Co. is going to run on after the ESOP transition. The two of them are going to be the first two anchor tenants of a platform that will, by the end of Year Three, have one thousand four hundred tenants on it. The platform is going to charge them both the same fees on the same products on the same SLAs. The platform is going to compete with neither of them. The platform is going to own neither of them. That is what we are building. That is what we are shipping."
 
-He said, "Henry. We are ready for the first wave. We will know in February whether the first wave was right. I will not lie to you. I have not run a business of this size before. I am running it now."
+He paused.
 
-Henry did not say anything for a beat.
+"Four. The hiring plan. We are adding nine hundred and fifty engineers to this team across the next twelve months. The first hundred are already in pipeline. The next two hundred are people some of you in this room are about to be asked to recruit, and the people you are about to be asked to recruit are colleagues you have worked with at other companies for the last ten years, and I am going to ask you to call them this week. The third hundred are leaders. The fourth hundred and fifty are junior engineers we are pulling from the new-grad pipeline at the schools we recruit from. We are going to need every one of them. We are also going to need to absorb four hundred and twenty engineers from the Carrick Retail systems organization across the same twelve months. Some of those four hundred and twenty are going to be in the engineering all-hands two weeks from now. Some of them are people some of you in this room have worked with for years. Treat them well. They are not refugees. They are colleagues. The retail systems team has been running the operating systems of this company for fifteen years and they are good at what they do. They are coming to the platform because the platform is where the work is. Make them welcome. Help them be productive on the new stack. We are not going to have time to lose to integration friction."
 
-Then he said, "That's the right answer. I'll see you at two."
+He stopped.
 
-He hung up.
+He looked at the room.
 
-Tomás sat with the phone in his hand for a moment.
+He said: "That is the four things. I will take questions for fifty minutes."
 
-He looked out the window.
-
-He thought, *the first wave is two months away. We are ready for the first wave. The second wave is the wave I do not yet know how to run. The second wave will arrive in June. I have to know how to run it by April.*
-
-He set the phone down. He opened the laptop. He started a new document. The new document was titled *The Second Wave, By April.*
+He took questions for an hour and twelve.
 
 ---
 
-Henry came at two. Cassandra came with him. They walked the seventh floor for ninety minutes. They sat with the architecture team for forty minutes. They sat with Tenant Operations for thirty. They drank coffee in the cafeteria for twenty. Cassandra, leaving the building at four, said to Tomás at the door: *Tomás. You have built something very serious here. The company is going to need it.* Tomás said, *Thank you.* She nodded. She left.
+The first major enterprise customer was Midcontinent Stores Inc.
 
-Henry stayed.
+Reese had been talking to Midcontinent's CEO, a woman named Marguerite Holloway, for fourteen months. Marguerite was sixty-one years old, had taken Midcontinent over in Year minus three, and had been turning the 200-store regional department-store chain around against the grain of the industry. The conversation had begun in August of the previous year as an exploratory call about whether Carrick Carry's fulfillment service could handle a multi-category catalog. The conversation had moved to active commercial negotiation in March. The conversation had been paused for two weeks after the memo had landed in Marguerite's inbox at 6:15:02 AM Pacific on the Monday morning of the announcement.
 
-"Tomás."
+Marguerite had called Reese on the morning of the Tuesday after the Sallinger meeting.
 
-"Yes."
+She had said: "Reese. I want to be the first major one. I want to sign before any of my competitors do. I want the option to be in front of them, not behind them. I am ready to move."
 
-"Walk me to the car."
+Reese had said: "Marguerite. I am ready to move."
 
-They walked.
+She had said: "Get on a plane."
 
-In the lobby, Henry stopped.
+He had gotten on a plane.
 
-"I want to tell you something."
+The flight was Seattle to Cincinnati on a Tuesday morning. Reese in business class, his deputy Liam Hwang in business class beside him, Carry's chief contracts counsel in business class behind them. The flight was four hours and thirty-one minutes. Reese reread the term sheet on the laptop in his lap.
 
-"All right."
+The term sheet was twenty-one pages. The deal was a five-year platform contract. Two hundred and forty million dollars of committed annual revenue across five years. All seven Carry products. Full integration. Midcontinent's three regional distribution centers would route through Carry Logistics. Midcontinent's customer-service operation would migrate to Carry Customer Service over twelve months. Midcontinent's online identity layer would consolidate onto Carry Identity. Midcontinent's e-commerce checkout would run on Carry Payments by the end of Year 1. Midcontinent's reverse logistics would move to Carry Returns by Q2 of Year 2.
 
-"You are going to be carrying the company. You know that."
+The deal was the largest enterprise contract in Carrick Carry's history.
 
-"Yes."
+The deal was, on a multiple of revenue, larger than any single contract Carrick Cloud had ever closed.
 
-"I am going to be doing the work that has to be done at headquarters and on the board and with Wall Street. I am going to be doing the public part. I am not going to be doing the building. The building is you."
+The deal was the proof.
 
-"Yes."
+The team in Cincinnati spent two days in conference rooms negotiating the final ten percent. The legal teams traded redlines across thirty-six hours. The platform-services pricing was the longest single line item. The carve-out language for Carry's never-compete-with-the-customer commitment was the most carefully drafted section of the contract.
 
-"Tomás. I built this company once. I get to remake it. Almost nobody who has built a company at this scale has gotten the chance to remake it. The founders who did got it because the market made them. The market is not making me. The AI wave that everybody in the press is calling the threat is the second arrow on the same hunt. I have been waiting for the second arrow for thirty years. It is in my hand. I am going to throw it as hard as I have ever thrown anything. The platform is the throw. You are the spear. I want you to understand that I do not see this as a defensive move. I see this as the second great chance of my professional life. I want you to see it the same way."
+Marguerite Holloway signed the contract at four-forty PM Eastern on a Wednesday in late November.
 
-"Henry."
+Reese signed it at four-forty-one.
 
-"Yes."
+The signing was in Marguerite's office in the Midcontinent headquarters building in downtown Cincinnati, with a window that looked out over the Ohio River and the West End and the Findlay Market neighborhood Reese could just see from the corner of the window.
 
-"I see it the same way."
+After the signing Marguerite poured Reese a glass of bourbon.
 
-"Good. Then ask for what you need. Capital. People. Buildings. Acquisitions. Whatever the platform needs. Ask me. I will say yes. I will say yes faster than I have ever said yes to anything. The reason I will say yes is that the company has bet its future on this platform and the only way to win the bet is to fund the bet. Ask for what you need."
+She said: "Reese."
 
-"Henry."
+He said: "Marguerite."
 
-"Yes."
+She said: "I am sixty-one years old. I have been in retail for thirty-eight years. I have never signed a contract that I knew, at the moment I signed it, was going to be on the front page of the Wall Street Journal the following morning."
 
-"I will."
+He said: "It is going to be on the front page."
 
-"Tomás."
+She said: "I know. The press release goes out at eight AM Eastern. I have been on the phone with my board for nine days. They voted unanimously last Friday. I have been on the phone with my management team. They are split. The ones who came up under me are with me. The ones who came up under my predecessor think I am betting the company on Carrick. I told them at the all-hands on Monday that I was not betting the company on Carrick. I was betting the company on the customer. I told them about your seven products. I told them that we are going to use the products to compete with Walmart on the customer the same way Walmart has been competing with us on the customer for thirty years. I told them that the customer is going to win. Walmart has been on the line for an hour. I am going to take that call after you leave. I am going to tell Walmart that they have a choice. Either they are the second major one on the Carry platform inside ninety days or they are the seventh, and the difference between the second and the seventh is two years of margin compression that they are going to absorb in real time."
 
-"Yes."
+Reese said: "Marguerite."
 
-"You are not going to take credit for this in public. I know that about you. You do not want the press. You do not want the spotlight. I am going to be the face of this pivot to the market because that is my job. You are going to be the architect inside the company. We are both going to know who built it."
+She said: "Yes."
 
-"Henry. I do not need the credit."
+He said: "Walmart is going to sign inside forty-five days."
 
-"I know. But Tomás."
+She said: "I know they are."
 
-"Yes."
+He said: "Target is going to sign inside ninety."
 
-"The company is going to know. The people in this building are going to know. The people in Vivian's organization are going to know. The customers are going to know. The credit is going to find you. You do not have to chase it. I am telling you that so that when it finds you, you can let it."
+She said: "I know they are."
 
-Tomás was quiet.
+He said: "Best Buy is going to sign inside one-twenty."
 
-He said, "All right."
+She said: "I know they are. Cole told me on the call last Tuesday. He read me the order. I told him I had the same order in my head. We are going to be the first by twelve weeks. The platform is going to be inside two-thirds of the top twenty by the end of Year Two. That is the proof."
 
-Henry put a hand on his shoulder. Then he walked out to the car.
+He said: "That is the proof."
 
----
+She said: "Drink the bourbon."
 
-January moved fast.
+He drank the bourbon.
 
-The first wave of warehouse conversions began on the second Monday. Eleven facilities. Two hundred and eighty-seven thousand square feet of conversion work happening simultaneously across Goodyear, Arizona; Sparks, Nevada; Robbinsville, New Jersey; Joliet, Illinois; Lakeland, Florida; San Bernardino, California; Coppell, Texas; Hebron, Kentucky; Memphis, Tennessee; Cayce, South Carolina; and Carteret, New Jersey. Each facility had its own integration team. Each team had a counterpart at Tomás's Tenant Operations group. Each team reported daily progress to a unified dashboard that ran on the screen behind Tomás's desk.
-
-The dashboard was green on most days. It was yellow on two. It was, on one Thursday in mid-January, red — when the inventory-management software for the Joliet conversion failed in the middle of the night and the team had to roll back the deployment and rebuild the migration plan over thirty-six hours. Tomás was on the phone with the Joliet team at two in the morning. He was on the phone with Olivia Reyes at three. He was on the phone with the SVP he had hired from FedEx at four. By six the dashboard was yellow. By Monday it was green again.
-
-The first three Carry contracts of January were signed inside two weeks.
-
-The first was a regional grocery chain in the Pacific Northwest. The contract was small — eighteen million in committed annual revenue. The second was a mid-market apparel brand based in Brooklyn. Forty-one million. The third was a footwear company in Portland that Tomás's team had been working with for a year. Twenty-three million.
-
-Eighty-two million in committed annual revenue across three contracts in two weeks.
-
-It was not, in the scale of the company, a large number.
-
-It was the largest two-week period in Carry's history.
-
-The fourth contract was not small.
+He flew home that night.
 
 ---
 
-The fourth contract was Midcontinent Stores Inc.
+The press release went out at eight AM Eastern Thursday morning.
 
-Midcontinent Stores was a 200-store regional department-store chain based in Cincinnati. It had been founded in 1893. It had been public from 1962 to 2009 and private since. It had revenue of nine point three billion dollars. It had been losing market share to Argo Retail in essentially every category it competed in for fifteen years. Its CEO was a woman named Marguerite Holloway, who had taken the company over in Year minus three and had been turning it around against the grain of the industry ever since.
+The contract was the second-largest single platform deal in U.S. enterprise-software history.
 
-Tomás had been in conversation with Marguerite for fourteen months.
+The largest had been Microsoft Office 365 to the U.S. Department of Defense in 2018.
 
-The conversation had begun, in October of the prior year, as an exploratory call about whether Argo Carry's fulfillment service could handle the kind of multi-category catalog Midcontinent ran. The conversation had moved, by January of the announcement year, to active commercial negotiation. The conversation had been paused, briefly, in November when the announcement of the pivot had upended every category of conversation Tomás was in. The conversation had resumed in mid-December, on a call between Tomás and Marguerite during which Marguerite had said, *Tomás. I want to be the first major one. I want to sign before any of my competitors do. I want the option to be in front of them, not behind them.*
+The Carrick Carry / Midcontinent contract was the largest in the private sector.
 
-The deal closed on a Wednesday in February.
+The stock moved up five and a half percent at the bell.
 
-It was a five-year platform contract.
+By the close it was up seven and a half percent on the day.
 
-Two hundred and forty million dollars of committed annual revenue. All seven Carry products. Full integration. Midcontinent's three regional distribution centers would route through Carry Logistics. Midcontinent's customer-service operation would migrate to Carry Customer Service over twelve months. Midcontinent's online identity layer would consolidate onto Carry Identity. Midcontinent's e-commerce checkout would run on Carry Payments by the end of Year 1. Midcontinent's reverse logistics would move to Carry Returns by Q2 of Year 2.
+The Wall Street Journal ran the story on the front page of the Friday-morning paper. Adelaide Krug had the byline. The headline was *Westerlund Lands the Proof.* The story was eighteen hundred words. The first three hundred were about the Midcontinent contract. The next four hundred were about Drew Sallinger having closed his short position on the previous Monday morning. The next six hundred were about the AI-piranha thesis and the math behind the pivot. The last five hundred were a profile of Reese Okonkwo.
 
-The contract was announced on Thursday at 8 AM Eastern.
+The profile was the first time Reese's name had been on the front page of the Journal.
 
-The press release was three pages. The first page was the deal terms. The second page was a quote from Marguerite Holloway. The third page was a quote from Tomás. He had written the quote himself. It said: *Argo Carry was built to let companies like Midcontinent compete on infrastructure rather than against it. We are honored that Marguerite and her team have chosen us as the platform that will carry their next chapter. We will earn that trust every day of the next five years.*
+He read the profile at five-thirty AM Friday in his kitchen in Magnolia with Imani at the table next to him in her robe.
 
-The stock moved up five percent on the day of the announcement.
+Imani read it over his shoulder.
 
-Henry called Tomás at 6:30 PM Pacific.
+She said: "Reese."
 
-"Tomás."
+He said: "Yes."
 
-"Henry."
+She said: "She got you right."
 
-"That was the proof."
+He said: "She did."
 
-"I know."
+Imani said: "The CMU section is good."
 
-"Two hundred stores. Five years. Two hundred and forty million a year. The first major one."
+He said: "It is."
 
-"Yes."
+She said: "The Argo Cloud section is good."
 
-"Tomás. The next four will be easier. The first one was the hard one. You got the first one."
+He said: "It is."
 
-"I know."
+She said: "The line about the platform being the architecture you have been protecting against the political pressure of fifteen years is the line of the piece."
 
-Henry was quiet for a beat.
+He said: "I know it is."
 
-Then he said, "Get some sleep."
+She said: "Cole is going to call you on Monday morning."
 
-"I will."
+He said: "He is."
 
-He hung up.
+She said: "Eat. The kids are going to be up in twenty minutes."
 
-Tomás sat at his desk for a while after. The dashboard on the screen behind him was green. The forty-one inbound prospects from December had become fifty-four by the end of February. Eleven of the fifty-four were retailers with more than a billion dollars in annual revenue. Two of those eleven had Fortune 500 names. One of the Fortune 500s, the smaller of the two, had asked for a meeting in March.
+He ate.
 
-He turned off the screen.
+The kids were up in twenty minutes.
 
-He picked up his phone. He texted Lauren.
+He drove them to school.
 
-*I'm coming home. I am bringing the wine.*
+He came back to the house at eight-fifteen.
 
-Lauren texted back inside a minute.
+Imani was in her scrubs.
 
-*Did you sign Midcontinent.*
+She kissed him on the forehead at the door.
 
-*We did.*
+She said: "Tonight."
 
-*Then we are opening the good wine.*
+He said: "Tonight."
 
-He smiled.
+She left for the hospital.
 
-He stood up.
+He went to the office.
 
-He went home.
+Cole called him on Monday morning at six twenty-seven AM Pacific.
+
+The call lasted ninety seconds.
+
+Cole said: "Reese."
+
+Reese said: "Cole."
+
+Cole said: "Midcontinent was the proof."
+
+Reese said: "I know it was."
+
+Cole said: "Walmart inside forty-five days."
+
+Reese said: "Inside forty-five days."
+
+Cole said: "Reese."
+
+Reese said: "Yes."
+
+Cole said: "The Journal profile was right. The architecture is the architecture you have been protecting against the political pressure of fifteen years. I am going to say that on the record at the Q4 earnings call. I am going to use the line. I am telling you now so that you know what I am going to say."
+
+Reese said: "Cole."
+
+Cole said: "Yes."
+
+Reese said: "Use the line."
+
+Cole said: "Good."
+
+Reese said: "Cole."
+
+Cole said: "Yes."
+
+Reese said: "You are going to be the CEO of this company for four more years. I am going to be the CEO after that. You and I are not going to talk about the succession in public until Year Three. We are not going to talk about it inside the company until Year Three. We are not going to talk about it in this phone call. I am telling you that we are not going to talk about it now because the only way the succession is going to work is if you and I are both running our jobs the way we are running them today, with no thought about whose job is whose. I am going to run the platform. You are going to run the company. We are going to do that for four years. After four years you are going to walk down the hall to my office and you are going to give me the keys. I am going to take them. We are not going to talk about it in the meantime. Is that the right deal."
+
+Cole said: "Reese."
+
+Reese said: "Yes."
+
+Cole said: "That is the right deal."
+
+Reese said: "Thank you."
+
+Cole said: "Reese."
+
+Reese said: "Yes."
+
+Cole said: "Walmart inside forty-five days."
+
+Reese said: "Inside forty-five days."
+
+They hung up.
 
 ---
 
-The lunch with Vivian was on a Friday in late February.
+Walmart signed inside thirty-eight days.
 
-He had not seen Vivian in eight weeks. They had been in three meetings together since October. They had not eaten a meal together in two years. The last meal had been a working lunch in the executive cafeteria during the strategic planning cycle of Year minus one, and Tomás could not now remember what they had talked about.
+Target signed inside seventy-one.
 
-He had asked her. He had walked to her office on the eighth floor of corporate headquarters on a Wednesday afternoon and stood at her door and said: *Vivian. Do you have lunch on Friday.* She had looked up from her laptop. She had looked at him for a moment. She had said: *Yes.*
+Best Buy signed inside eighty-four.
 
-They sat down at a corner table on the south side of the cafeteria. The cafeteria was three-quarters full. People at other tables looked at them and then looked away.
+Kroger signed inside one-twenty.
 
-The lunch was awkward at first.
+Home Depot signed inside one-fifty-eight.
 
-Tomás had not, in his career, ever been the executive who had to have this kind of lunch. He had been the rising one. He had been the one whose business was the future. He had not been the one whose business was about to absorb someone else's.
+By Q2 of Year Two, six of the top twenty American retailers were on Carrick Carry.
 
-He said, "Vivian. Thank you for making time."
+By Q4 of Year Two, eleven of them were.
 
-"Tomás. I have lunch."
+By Q1 of Year Three the platform had three hundred and eighty thousand small and mid-market businesses on it.
 
-"How are you."
+By Q2 of Year Three, when the New York Times Magazine ran the Cole Westerlund cover profile, the platform-tenant equality metric on Reese's dashboard had been at 1.00 for nineteen consecutive months.
 
-"I am working through a difficult quarter."
+The architecture was the architecture.
 
-"I know."
+The platform was the platform.
 
-She looked at him.
+The proof had been the proof since Marguerite Holloway had signed the contract at four-forty PM Eastern on a Wednesday in late November of Year One, and Reese Okonkwo had signed it at four-forty-one, and the two of them had drunk a bourbon and looked out at the Ohio River.
 
-"You know."
-
-"I know."
-
-She nodded.
-
-She unwrapped her sandwich.
-
-"Tomás. Let me say something."
-
-"All right."
-
-"I have spent the last four months thinking about what kind of executive I want to be in the next phase of this company. I have spent the last four months thinking about my reports. I have spent the last four months thinking about how the retail organization is going to survive a transition that is going to subordinate it to the platform you have built. I have spent the last four months thinking about whether I am going to be the executive who fights the transition from inside the room, or the executive who makes the transition work because the company needs the transition to work."
-
-"And."
-
-"I have decided I am going to be the second one."
-
-He looked at her.
-
-"Vivian."
-
-"Tomás. I am going to work with you. I am going to help you make this work. I am not going to fight you on the strategic direction. I am going to disagree with you about specific things. I will tell you when I disagree. I will tell you in private. I will not undermine you in public. I will not undermine you in board meetings. I will not undermine you with my reports. I am going to do this with you because it is the right thing to do for the company and because the company is, in the end, what we are here for."
-
-"Vivian."
-
-"Yes."
-
-"I want to say something."
-
-"Say it."
-
-"I did not build what you built. The retail business is not my work. The retail business is your work. The platform you and Henry and Daniela and Frank built over twenty years is what made it possible for the cloud to grow up underneath you. I did not build a company from a Bellevue warehouse to the largest commerce operation in human history. You did. You and the people in your division. I am not going to take credit for what you built. I am going to take responsibility for what I am going to build on top of it. Those are different things. I will keep them separate. In public, in private, in board meetings, in earnings calls. I will keep them separate."
-
-She did not say anything for a beat.
-
-Then she reached across the table.
-
-He shook her hand.
-
-The handshake was not theatrical. It was not for show. They were a man and a woman in a half-full cafeteria on the eighth floor of a building they had each spent more than a decade working in, and they had reached an agreement that was going to determine, more than any board vote or earnings call or contract signing, whether the company was going to make the pivot it had decided to make.
-
-They sat back.
-
-Vivian opened her bag of chips.
-
-She said, "Tomás. Tell me about Midcontinent."
-
-He told her.
-
-The lunch ran long.
-
-When they left the cafeteria at quarter past two, the people at the other tables looked up again and then looked away again, and the two of them walked back to the elevators together, and the elevator doors opened, and Vivian got off on eight and Tomás kept going down to the lobby, and on the ride out to the street he thought, for the first time in five months, that the company was actually going to do this.
-
-He thought: *we are going to do this.*
-
-He thought: *I am going to do my part. She is going to do hers. The rest will follow.*
-
-He walked the three blocks back to the Argo Cloud building. He took the elevator to the seventh floor. He sat down at his desk. The dashboard was green. The Midcontinent integration team was running ahead of schedule. The Joliet warehouse was at eighty-seven percent of its conversion target with three weeks to go. The forty-one inbound prospects from December were now fifty-four. The two hundred and forty million dollars of committed annual revenue from Midcontinent was the first major contract on a list that Tomás suspected, by the end of Year 2, would be fifteen or twenty contracts long.
-
-The work proceeded.
-
-He opened the laptop.
-
-He started writing.
+End of Act 2.
