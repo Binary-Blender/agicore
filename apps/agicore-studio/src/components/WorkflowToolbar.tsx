@@ -11,6 +11,7 @@ import {
   reloadActiveWorkflow,
 } from '../lib/persistence';
 import { makeRunner } from '../lib/runner';
+import DiffPreviewModal from './DiffPreviewModal';
 
 const WorkflowToolbar: React.FC = () => {
   const name = useWorkflowStore((s) => s.workflow.name);
@@ -38,6 +39,7 @@ const WorkflowToolbar: React.FC = () => {
 
   const [busy, setBusy] = useState<'saving' | 'opening' | null>(null);
   const [elapsed, setElapsed] = useState<string>('');
+  const [diffOpen, setDiffOpen] = useState(false);
 
   // Live elapsed-time tick while a run is in flight
   useEffect(() => {
@@ -125,6 +127,14 @@ const WorkflowToolbar: React.FC = () => {
         {busy === 'opening' ? 'Opening…' : 'Open'}
       </button>
       <button
+        onClick={() => setDiffOpen(true)}
+        disabled={busy !== null || workflow.nodes.length === 0}
+        title="Preview the .agi changes this save will write"
+        className="text-xs px-3 py-1.5 rounded border border-[var(--border)] hover:border-[var(--text-secondary)] disabled:opacity-50 transition-colors"
+      >
+        Preview diff
+      </button>
+      <button
         onClick={onSave}
         disabled={busy !== null}
         className="text-xs px-3 py-1.5 rounded border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--bg-input)] disabled:opacity-50 transition-colors"
@@ -148,6 +158,7 @@ const WorkflowToolbar: React.FC = () => {
           Run ▶
         </button>
       )}
+      {diffOpen && <DiffPreviewModal onClose={() => setDiffOpen(false)} />}
     </div>
   );
 };
