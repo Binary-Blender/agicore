@@ -1,0 +1,130 @@
+// Settings panel — modal triggered from the title bar cog. Per-provider
+// key input, masked by default with an eye toggle to reveal. Save
+// writes through to the shared %APPDATA%/Agicore/api-keys.json file
+// per OQ-4 — sibling apps see the same keys.
+
+import React, { useEffect, useState } from 'react';
+import { PROVIDERS, useSettingsStore, type ProviderId } from '../store/settingsStore';
+
+interface Props {
+  onClose: () => void;
+}
+
+const SettingsPanel: React.FC<Props> = ({ onClose }) => {
+  const keys = useSettingsStore((s) => s.keys);
+  const loaded = useSettingsStore((s) => s.loaded);
+  const saving = useSettingsStore((s) => s.saving);
+  const error = useSettingsStore((s) => s.error);
+  const load = useSettingsStore((s) => s.load);
+  const setKey = useSettingsStore((s) => s.setKey);
+  const save = useSettingsStore((s) => s.save);
+
+  const [reveal, setReveal] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (!loaded) void load();
+  }, [loaded, load]);
+
+  const onSave = async () => {
+    try {
+      await save();
+      onClose();
+    } catch (e) {
+      // Error is surfaced via the store; modal stays open so the user
+      // can see what went wrong.
+      console.error('settings save failed:', e);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg bg-[var(--bg-panel)] border border-[var(--border)] rounded-lg shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
+              Settings
+            </p>
+            <h2 className="text-sm font-semibold mt-0.5">API keys</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-sm"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="px-5 py-4">
+          <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed mb-4">
+            Stored locally at <code className="font-mono text-[var(--accent)]">%APPDATA%/Agicore/api-keys.json</code>{' '}
+            (or the platform equivalent). Shared with sibling Agicore apps —
+            you configure once and use everywhere.
+          </p>
+
+          <div className="space-y-3">
+            {PROVIDERS.map((p) => {
+              const value = keys[p.id] ?? '';
+              const revealed = reveal[p.id] ?? false;
+              return (
+                <div key={p.id}>
+                  <label className="block text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-1">
+                    {p.label}
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type={revealed ? 'text' : 'password'}
+                      value={value}
+                      onChange={(e) => setKey(p.id as ProviderId, e.target.value)}
+                      placeholder={p.placeholder}
+                      className="flex-1 bg-[var(--bg-input)] border border-[var(--border)] rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-[var(--accent)] placeholder:text-[var(--text-muted)]"
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setReveal((r) => ({ ...r, [p.id]: !revealed }))}
+                      className="px-2 py-1 text-[10px] border border-[var(--border)] rounded hover:border-[var(--text-secondary)] text-[var(--text-muted)] transition-colors"
+                    >
+                      {revealed ? 'hide' : 'show'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {error && (
+            <p className="mt-4 text-[11px] text-red-400 font-mono">
+              {error}
+            </p>
+          )}
+        </div>
+
+        <div className="px-5 py-3 border-t border-[var(--border)] flex items-center justify-end gap-2">
+          <button
+            onClick={onClose}
+            disabled={saving}
+            className="text-xs px-3 py-1.5 rounded border border-[var(--border)] hover:border-[var(--text-secondary)] disabled:opacity-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onSave}
+            disabled={saving}
+            className="text-xs px-3 py-1.5 rounded bg-[var(--accent)] text-black font-semibold hover:bg-[var(--accent-hot)] hover:text-white disabled:opacity-50 transition-colors"
+          >
+            {saving ? 'Saving…' : 'Save'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SettingsPanel;
