@@ -3,8 +3,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
+import { useProjectStore } from '../store/projectStore';
 import { useRunStore } from '../store/runStore';
-import { saveCurrentWorkflow, openWorkflowFromDisk } from '../lib/persistence';
+import {
+  saveCurrentWorkflow,
+  openWorkflowFromDisk,
+  reloadActiveWorkflow,
+} from '../lib/persistence';
 import { makeRunner } from '../lib/runner';
 
 const WorkflowToolbar: React.FC = () => {
@@ -13,6 +18,16 @@ const WorkflowToolbar: React.FC = () => {
   const setName = useWorkflowStore((s) => s.setWorkflowName);
   const dirty = useWorkflowStore((s) => s.dirty);
   const filePath = useWorkflowStore((s) => s.filePath);
+  const loadedMtime = useWorkflowStore((s) => s.loadedMtime);
+
+  // External-modification check: compare loaded mtime against the
+  // polled mtime in the project store. >loadedMtime means the file
+  // was touched outside the Studio since we read it.
+  const projectFile = useProjectStore((s) =>
+    filePath ? s.files.find((f) => f.path === filePath) : undefined,
+  );
+  const externallyModified =
+    !!projectFile && loadedMtime > 0 && projectFile.modifiedAt > loadedMtime;
 
   const runStatus = useRunStore((s) => s.status);
   const startedAt = useRunStore((s) => s.startedAt);
@@ -54,6 +69,19 @@ const WorkflowToolbar: React.FC = () => {
     finally { setBusy(null); }
   };
 
+  const onReload = async () => {
+    if (dirty) {
+      const ok = confirm(
+        'Reload from disk?\n\n' +
+        'This will discard your unsaved canvas edits and replace them with ' +
+        'whatever is currently in the file on disk.',
+      );
+      if (!ok) return;
+    }
+    try { await reloadActiveWorkflow(); }
+    catch (e) { console.error('reload failed:', e); }
+  };
+
   const canRun =
     workflow.nodes.length > 0 &&
     runStatus !== 'running' &&
@@ -77,6 +105,15 @@ const WorkflowToolbar: React.FC = () => {
       <div className="flex items-center gap-2 text-[10px] text-[var(--text-muted)] font-mono">
         {filePath ? <span title={filePath}>📄 {basename(filePath)}</span> : <span>● unsaved</span>}
         {dirty && <span className="text-[var(--node-branch)]">● modified</span>}
+        {externallyModified && (
+          <button
+            onClick={onReload}
+            className="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-widest text-cyan-300 border border-cyan-700 hover:bg-cyan-950 transition-colors animate-pulse"
+            title="The file changed on disk since you loaded it. Click to reload."
+          >
+            ↻ disk newer · reload
+          </button>
+        )}
         {elapsed && <RunStatusPill status={runStatus} elapsed={elapsed} />}
       </div>
       <div className="flex-1" />
