@@ -21,6 +21,7 @@ import {
   type OnEdgesChange,
 } from '@xyflow/react';
 import StudioNode from './StudioNode';
+import WelcomePanel from './WelcomePanel';
 import {
   useWorkflowStore,
 } from '../store/workflowStore';
@@ -167,8 +168,11 @@ const CanvasInner: React.FC = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [selectedNodeId, selectedEdgeId, deleteNode, deleteEdge]);
 
+  const showWelcome = workflow.nodes.length === 0;
+
   return (
-    <div className="w-full h-full" onDragOver={onDragOver} onDrop={onDrop}>
+    <div className="w-full h-full relative" onDragOver={onDragOver} onDrop={onDrop}>
+      {showWelcome && <WelcomePanel />}
       <ReactFlow
         nodes={rfNodes}
         edges={rfEdges}
