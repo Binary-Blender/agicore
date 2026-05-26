@@ -17,21 +17,27 @@ interface StudioNodeData {
 }
 
 const TYPE_COLORS: Record<NodeKind, string> = {
-  start:         'var(--node-start)',
-  http_call:     'var(--node-http)',
-  ai_call:       'var(--node-ai)',
-  qc_checkpoint: 'var(--node-qc)',
-  branch:        'var(--node-branch)',
-  end:           'var(--node-end)',
+  start:           'var(--node-start)',
+  http_call:       'var(--node-http)',
+  ai_call:         'var(--node-ai)',
+  qc_checkpoint:   'var(--node-qc)',
+  branch:          'var(--node-branch)',
+  loop:            'var(--node-loop)',
+  parallel_fanout: 'var(--node-fanout)',
+  router_call:     'var(--node-router)',
+  end:             'var(--node-end)',
 };
 
 const TYPE_LABEL: Record<NodeKind, string> = {
-  start:         'start',
-  http_call:     'HTTP',
-  ai_call:       'AI',
-  qc_checkpoint: 'Human QC',
-  branch:        'branch',
-  end:           'end',
+  start:           'start',
+  http_call:       'HTTP',
+  ai_call:         'AI',
+  qc_checkpoint:   'Human QC',
+  branch:          'branch',
+  loop:            'loop',
+  parallel_fanout: 'fanout',
+  router_call:     'router',
+  end:             'end',
 };
 
 const STATUS_RING: Record<NodeRunStatus, string> = {

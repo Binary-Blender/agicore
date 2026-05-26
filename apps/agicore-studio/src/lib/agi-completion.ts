@@ -354,12 +354,15 @@ const TEST_KEYWORDS: Completion[] = [
 ];
 
 const NODE_TYPE_VALUES: Completion[] = [
-  v('start',          'Workflow entry point'),
-  v('http_call',      'HTTP request to an external endpoint'),
-  v('ai_call',        'LLM call with a templated prompt'),
-  v('qc_checkpoint',  'Pause for human approval (first-class node type)'),
-  v('branch',         'Conditional routing'),
-  v('end',            'Workflow exit'),
+  v('start',            'Workflow entry point'),
+  v('http_call',        'HTTP request to an external endpoint'),
+  v('ai_call',          'LLM call with a templated prompt'),
+  v('qc_checkpoint',    'Pause for human approval (first-class node type)'),
+  v('branch',           'Conditional routing'),
+  v('loop',             'Iterate downstream nodes over a collection'),
+  v('parallel_fanout',  'Run multiple downstream paths in parallel'),
+  v('router_call',      'Dispatch via a tier-based cooperative-intelligence router'),
+  v('end',              'Workflow exit'),
 ];
 
 const HTTP_METHOD_VALUES: Completion[] = [

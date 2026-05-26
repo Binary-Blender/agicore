@@ -21,6 +21,9 @@
   --node-branch:    #f59e0b;
   --node-start:     #10b981;
   --node-end:       #6b7280;
+  --node-loop:      #ec4899;        /* pink — iteration */
+  --node-fanout:    #14b8a6;        /* teal — concurrency */
+  --node-router:    #f97316;        /* warm orange — delegation */
 }
 
 html, body, #root {

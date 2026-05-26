@@ -160,6 +160,45 @@ export class StubRunner implements RunnerAdapter {
       });
     }
 
+    // Loop: the stub fires once. Real iteration is a CLI concern.
+    if (node.kind === 'loop') {
+      const over = (node.properties.over as string) ?? '<unset>';
+      const asName = (node.properties.as as string) ?? 'item';
+      onEvent({
+        kind: 'log',
+        timestamp: Date.now(),
+        node_id: node.id,
+        level: 'info',
+        message: `[stub: loop over ${over} as ${asName} — iteration semantics not simulated]`,
+      });
+    }
+
+    // Parallel fanout: the stub serializes the downstream paths via the
+    // topological walk. Real concurrency is a CLI concern.
+    if (node.kind === 'parallel_fanout') {
+      onEvent({
+        kind: 'log',
+        timestamp: Date.now(),
+        node_id: node.id,
+        level: 'info',
+        message: '[stub: fanout serialized — true parallel execution not simulated]',
+      });
+    }
+
+    // Router call: the stub picks a synthetic tier. Real cost-based
+    // routing lands when the CLI knows about the ROUTER declaration.
+    if (node.kind === 'router_call') {
+      const router = (node.properties.router as string) ?? '<unset>';
+      const task = (node.properties.task_type as string) ?? 'general';
+      onEvent({
+        kind: 'log',
+        timestamp: Date.now(),
+        node_id: node.id,
+        level: 'info',
+        message: `[stub: routed via ${router} for ${task} — picked tier 2]`,
+      });
+    }
+
     onEvent({
       kind: 'node_succeeded',
       timestamp: Date.now(),
@@ -192,6 +231,17 @@ function syntheticOutput(node: WorkflowNode): unknown {
       return { decision: 'approved', final_output: '[stub]' };
     case 'branch':
       return { taken: 'true' };
+    case 'loop':
+      return { iterations: 1, note: '[stub: real iteration arrives with the CLI]' };
+    case 'parallel_fanout':
+      return { fanout_count: 0, note: '[stub: counts the downstream paths]' };
+    case 'router_call':
+      return {
+        tier:     2,
+        model:    'claude-haiku-4-5',
+        provider: 'anthropic',
+        note:     '[stub: routing decision is synthetic]',
+      };
   }
 }
 
