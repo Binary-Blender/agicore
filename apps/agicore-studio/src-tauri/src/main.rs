@@ -8,6 +8,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             commands::save_workflow_to_disk,
             commands::load_workflow_from_disk,
+            commands::list_project_files,
+            commands::create_project_file,
+            commands::delete_project_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Agicore Studio");
