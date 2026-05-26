@@ -476,6 +476,29 @@ pub fn remove_recent_project(root_path: String) -> Result<Vec<RecentProject>, St
 }
 
 // ============================================================================
+// Multi-window — spawn a fresh Studio webview pointing at the same
+// frontend bundle. Each window's renderer state is independent
+// (separate JS context per webview), so users can hold two projects
+// side-by-side without store cross-talk.
+// ============================================================================
+
+#[tauri::command]
+pub fn open_studio_window(app: tauri::AppHandle) -> Result<(), String> {
+    use tauri::{WebviewUrl, WebviewWindowBuilder};
+    let label = format!("studio-{}", chrono::Utc::now().timestamp_millis());
+    let url = WebviewUrl::App("index.html".into());
+    WebviewWindowBuilder::new(&app, &label, url)
+        .title("Agicore Studio")
+        .inner_size(1600.0, 1000.0)
+        .min_inner_size(1100.0, 700.0)
+        .decorations(false)
+        .center()
+        .build()
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+// ============================================================================
 // Git status — shells out to `git status --porcelain` in the project
 // root, returns a map keyed by absolute file path. Gracefully degrades
 // when the directory isn't a git repo or git isn't installed.

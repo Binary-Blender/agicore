@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/core';
 import SettingsPanel from './SettingsPanel';
 
 const TitleBar: React.FC = () => {
   const minimize = () => getCurrentWindow().minimize();
   const toggleMax = () => getCurrentWindow().toggleMaximize();
   const close = () => getCurrentWindow().close();
+  const newWindow = () => {
+    void invoke('open_studio_window').catch((e) =>
+      console.error('open_studio_window failed:', e),
+    );
+  };
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
@@ -21,6 +27,16 @@ const TitleBar: React.FC = () => {
           </span>
         </div>
         <div className="flex items-center gap-0.5">
+          <button
+            onClick={newWindow}
+            className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-primary)]"
+            title="Open a new Studio window"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="5" width="13" height="13" rx="1.5" />
+              <path d="M8 10h13v9a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1z" />
+            </svg>
+          </button>
           <button
             onClick={() => setSettingsOpen(true)}
             className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-primary)]"

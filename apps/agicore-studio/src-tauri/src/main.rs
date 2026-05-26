@@ -21,6 +21,7 @@ fn main() {
             commands::push_recent_project,
             commands::remove_recent_project,
             commands::git_status_for_project,
+            commands::open_studio_window,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Agicore Studio");
