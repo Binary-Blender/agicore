@@ -1,11 +1,12 @@
 // Workflow ↔ disk plumbing. Bridges the workflow store to the Rust
-// commands that handle .agi + sidecar I/O.
-//
-// MVP scope: open one file at a time. Multi-file projects are Alpha.
+// commands that handle .agi + sidecar I/O. Coordinates with the
+// project store so that opening any file adopts its containing
+// directory as the project (multi-file aware as of Alpha sprint 4).
 
 import { invoke } from '@tauri-apps/api/core';
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
 import { useWorkflowStore } from '../store/workflowStore';
+import { useProjectStore } from '../store/projectStore';
 import { emitAgi, emitLayoutSidecar } from './agi-emitter';
 import { parseAgiToWorkflow } from './agi-parser';
 
@@ -14,8 +15,13 @@ export async function saveCurrentWorkflow(): Promise<void> {
   let path = state.filePath;
 
   if (!path) {
+    // If a project is open, default the new file inside it.
+    const project = useProjectStore.getState().project;
+    const defaultPath = project
+      ? `${project.rootPath}/${state.workflow.name}.agi`
+      : `${state.workflow.name}.agi`;
     const chosen = await saveDialog({
-      defaultPath: `${state.workflow.name}.agi`,
+      defaultPath,
       filters: [{ name: 'Agicore workflow', extensions: ['agi'] }],
     });
     if (!chosen) return; // user cancelled
@@ -32,6 +38,15 @@ export async function saveCurrentWorkflow(): Promise<void> {
   });
 
   state.markClean(path);
+
+  // Save may have created a new file — refresh the explorer so it shows up.
+  const project = useProjectStore.getState().project;
+  if (project) {
+    void useProjectStore.getState().refresh();
+  } else {
+    // No project yet — adopt the saved file's parent dir.
+    void useProjectStore.getState().adoptForFile(path);
+  }
 }
 
 export async function openWorkflowFromDisk(): Promise<void> {
@@ -40,10 +55,15 @@ export async function openWorkflowFromDisk(): Promise<void> {
     filters: [{ name: 'Agicore workflow', extensions: ['agi'] }],
   });
   if (!chosen || Array.isArray(chosen)) return;
+  await loadWorkflowByPath(chosen);
+}
 
+/** Load a specific file by path. Used by both the file dialog and the
+ *  project explorer (click a file in the rail). */
+export async function loadWorkflowByPath(path: string): Promise<void> {
   const loaded = await invoke<{ agiSource: string; layoutJson: string | null }>(
     'load_workflow_from_disk',
-    { path: chosen },
+    { path },
   );
 
   const wf = parseAgiToWorkflow(loaded.agiSource);
@@ -60,5 +80,9 @@ export async function openWorkflowFromDisk(): Promise<void> {
     }
   }
 
-  useWorkflowStore.getState().resetTo(wf, chosen);
+  useWorkflowStore.getState().resetTo(wf, path);
+  // Adopt the file's directory as the project — single-file opens now
+  // implicitly create a one-file project, which is the right mental
+  // model now that the explorer rail expects one.
+  void useProjectStore.getState().adoptForFile(path);
 }
