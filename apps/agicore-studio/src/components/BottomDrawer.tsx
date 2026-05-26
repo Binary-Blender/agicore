@@ -1,5 +1,6 @@
-// Tabbed bottom drawer. Tabs: Source (live-emitted .agi, EDITABLE) and
-// Run (event log). Auto-switches to Run when a run starts.
+// Tabbed bottom drawer. Tabs: Source (live-emitted .agi, EDITABLE),
+// Run (event log), Tests (TEST-block runner). Auto-switches to Run
+// when a workflow run starts.
 //
 // Source is editable as of Alpha — typing in the .agi text re-parses
 // after a 600 ms idle and updates the workflow store, which re-emits
@@ -10,12 +11,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { useRunStore } from '../store/runStore';
+import { useTestStore } from '../store/testStore';
 import { emitAgi } from '../lib/agi-emitter';
 import { tryParseAgi } from '../lib/agi-parser';
+import { parseTestBlocks } from '../lib/agi-test-parser';
 import AgiEditor from './AgiEditor';
 import RunEventLog from './RunEventLog';
+import TestsPanel from './TestsPanel';
 
-type Tab = 'source' | 'run';
+type Tab = 'source' | 'run' | 'tests';
 
 /** Live state of the text↔canvas sync loop. */
 type SyncState =
@@ -33,10 +37,11 @@ const BottomDrawer: React.FC = () => {
   const filePath = useWorkflowStore((s) => s.filePath);
   const runStatus = useRunStore((s) => s.status);
   const eventCount = useRunStore((s) => s.log.length);
+  const testRecords = useTestStore((s) => s.records);
 
   // Auto-open + switch to Run tab when a run starts
   useEffect(() => {
-    if (runStatus === 'running' || runStatus === 'paused_qc') {
+    if (runStatus === 'running' || runStatus === 'paused_qc' || runStatus === 'paused_breakpoint') {
       setTab('run');
       setOpen(true);
     }
@@ -44,6 +49,16 @@ const BottomDrawer: React.FC = () => {
 
   const source = useMemo(() => emitAgi(workflow), [workflow]);
   const lineCount = source.split('\n').length;
+  const testCount = useMemo(() => parseTestBlocks(source).length, [source]);
+  const testSummary = useMemo(() => {
+    let passed = 0;
+    let failed = 0;
+    for (const r of Object.values(testRecords)) {
+      if (r.status === 'passed') passed += 1;
+      else if (r.status === 'failed' || r.status === 'error') failed += 1;
+    }
+    return { passed, failed };
+  }, [testRecords]);
 
   // ---- Text↔canvas sync state ----
   const [syncState, setSyncState] = useState<SyncState>({ kind: 'synced' });
@@ -130,12 +145,34 @@ const BottomDrawer: React.FC = () => {
           }`}
         >
           Run
-          {(runStatus === 'running' || runStatus === 'paused_qc') && (
+          {(runStatus === 'running' || runStatus === 'paused_qc' || runStatus === 'paused_breakpoint') && (
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
           )}
           {eventCount > 0 && (
             <span className="text-[10px] text-[var(--text-muted)] font-mono normal-case tracking-normal">
               {eventCount} events
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => { setTab('tests'); setOpen(true); }}
+          className={`px-4 text-xs uppercase tracking-widest border-r border-[var(--border)] transition-colors flex items-center gap-2 ${
+            tab === 'tests' && open ? 'bg-[var(--bg-page)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-input)]'
+          }`}
+        >
+          Tests
+          {testCount > 0 && (
+            <span className="text-[10px] text-[var(--text-muted)] font-mono normal-case tracking-normal">
+              {testCount}
+              {(testSummary.passed > 0 || testSummary.failed > 0) && (
+                <>
+                  {' · '}
+                  <span className="text-emerald-400">{testSummary.passed}✓</span>
+                  {testSummary.failed > 0 && (
+                    <span className="text-red-400 ml-1">{testSummary.failed}✕</span>
+                  )}
+                </>
+              )}
             </span>
           )}
         </button>
@@ -149,16 +186,16 @@ const BottomDrawer: React.FC = () => {
       </div>
       {open && (
         <div className="flex-1 min-h-0 overflow-hidden">
-          {tab === 'source' ? (
+          {tab === 'source' && (
             <AgiEditor
               initialDoc={source}
               docResetCounter={docResetCounter}
               onChange={onEditorChange}
               readOnly={false}
             />
-          ) : (
-            <RunEventLog />
           )}
+          {tab === 'run' && <RunEventLog />}
+          {tab === 'tests' && <TestsPanel />}
         </div>
       )}
     </div>
