@@ -20,10 +20,17 @@ interface WorkflowStore {
   dirty: boolean;
   /** Visible filesystem path of the current workflow (null = unsaved). */
   filePath: string | null;
+  /** Unix epoch seconds of the file at load time. The hot-reload poller
+   *  compares the project-store's polled mtime against this; when the
+   *  polled value is greater, the file was modified outside the Studio. */
+  loadedMtime: number;
 
   // Workflow-level edits
   setWorkflowName: (name: string) => void;
   setWorkflowDescription: (desc: string) => void;
+  /** Update the loaded-mtime baseline (called by persistence after a
+   *  save so the post-save mtime doesn't read as an external edit). */
+  setLoadedMtime: (mtime: number) => void;
 
   // Node ops
   addNode: (kind: NodeKind, position: { x: number; y: number }) => WorkflowNode;
@@ -52,6 +59,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   selectedEdgeId: null,
   dirty: false,
   filePath: null,
+  loadedMtime: 0,
 
   setWorkflowName: (name) =>
     set((s) => ({
@@ -64,6 +72,8 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
       workflow: { ...s.workflow, description },
       dirty: true,
     })),
+
+  setLoadedMtime: (mtime) => set({ loadedMtime: mtime }),
 
   addNode: (kind, position) => {
     const id = nextId();
