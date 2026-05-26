@@ -12,6 +12,7 @@
 import React from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { useRunStore } from '../store/runStore';
+import { useProjectStore } from '../store/projectStore';
 import { openWorkflowFromDisk } from '../lib/persistence';
 import { getTemplate } from '../lib/templates';
 
@@ -19,6 +20,7 @@ const WelcomePanel: React.FC = () => {
   const resetTo = useWorkflowStore((s) => s.resetTo);
   const setName = useWorkflowStore((s) => s.setWorkflowName);
   const resetRun = useRunStore((s) => s.reset);
+  const pickAndOpenProject = useProjectStore((s) => s.pickAndOpen);
 
   const startBlank = () => {
     setName('untitled_workflow');
@@ -37,6 +39,11 @@ const WelcomePanel: React.FC = () => {
     catch (e) { console.error('open failed:', e); }
   };
 
+  const onOpenProject = async () => {
+    try { await pickAndOpenProject(); }
+    catch (e) { console.error('open project failed:', e); }
+  };
+
   return (
     <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
       <div className="pointer-events-auto w-full max-w-xl px-10 py-9 rounded-xl bg-[var(--bg-panel)] border border-[var(--border)] shadow-2xl">
@@ -52,17 +59,25 @@ const WelcomePanel: React.FC = () => {
           a human and resume when you decide.
         </p>
 
-        <div className="grid grid-cols-3 gap-2 mb-6">
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <Action
+            label="Open project folder…"
+            hint="Pick a directory of .agi files."
+            onClick={onOpenProject}
+            variant="ghost"
+          />
+          <Action
+            label="Open file…"
+            hint="Load a single .agi from disk."
+            onClick={onOpen}
+            variant="ghost"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2 mb-6">
           <Action
             label="Start blank"
             hint="Empty canvas. Drag from the palette."
             onClick={startBlank}
-            variant="ghost"
-          />
-          <Action
-            label="Open…"
-            hint="Load an .agi from disk."
-            onClick={onOpen}
             variant="ghost"
           />
           <Action
@@ -74,7 +89,7 @@ const WelcomePanel: React.FC = () => {
         </div>
 
         <p className="text-[10px] text-[var(--text-muted)] italic">
-          Or drag a node from the palette on the left to begin.
+          Or drag a node from the palette to begin.
         </p>
       </div>
     </div>

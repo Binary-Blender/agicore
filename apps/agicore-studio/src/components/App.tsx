@@ -1,22 +1,24 @@
-// MVP layout:
+// Alpha layout (multi-file projects):
 //
-//   +--------+----------------------------+----------+
-//   |        |  Toolbar (name · Run ▶)    |          |
-//   | Pal-   +----------------------------+ Inspec-  |
-//   | ette   |                            | tor      |
-//   |        |          Canvas            |          |
-//   |        |  (paints node statuses     |          |
-//   |        |   during a run)            |          |
-//   |        +----------------------------+          |
-//   |        |  Bottom drawer: Source │ Run |        |
-//   +--------+----------------------------+----------+
+//   +-------+--------+----------------------------+----------+
+//   |       |        |  Toolbar (name · Run ▶)    |          |
+//   | Pro-  | Pal-   +----------------------------+ Inspec-  |
+//   | ject  | ette   |                            | tor      |
+//   | Expl- |        |          Canvas            | / QC     |
+//   | orer  |        |                            |          |
+//   |       |        +----------------------------+          |
+//   |       |        |  Bottom drawer: Source │ Run |        |
+//   +-------+--------+----------------------------+----------+
 //
-// AD-1 visible in the Source tab. AD-5 visible in the Run tab + canvas
-// status painting. Auto-switch to Run when a workflow starts executing.
+// Project Explorer is mounted only when a project is open. Without a
+// project the layout collapses back to the MVP shape (palette + canvas
+// + bottom drawer + right rail), and the Welcome panel offers the
+// "Open project folder" action.
 
 import React from 'react';
 import TitleBar from './TitleBar';
 import NodePalette from './NodePalette';
+import ProjectExplorer from './ProjectExplorer';
 import RightRail from './RightRail';
 import Canvas from './Canvas';
 import WorkflowToolbar from './WorkflowToolbar';
@@ -26,6 +28,7 @@ const App: React.FC = () => (
   <div className="flex flex-col h-screen bg-[var(--bg-page)]">
     <TitleBar />
     <div className="flex-1 flex overflow-hidden min-h-0">
+      <ProjectExplorer />
       <NodePalette />
       <div className="flex-1 flex flex-col overflow-hidden min-h-0">
         <WorkflowToolbar />
