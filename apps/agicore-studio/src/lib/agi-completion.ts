@@ -42,11 +42,6 @@ interface LineContext {
   pastLeadingWord: boolean;
 }
 
-interface Context {
-  enclosing: EnclosingBlock;
-  line: LineContext;
-}
-
 function detectEnclosingBlock(doc: string, pos: number): EnclosingBlock {
   // Walk backwards counting unmatched opens.
   //

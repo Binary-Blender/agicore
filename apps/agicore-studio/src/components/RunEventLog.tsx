@@ -108,6 +108,12 @@ function describeEvent(e: RunEvent): { label: string; color: string; detail: str
       return { label: 'node.skip',  color: '#52525b', detail: `${e.node_name} (${e.reason})` };
     case 'qc_paused':
       return { label: 'qc.pause',   color: '#06b6d4', detail: `${e.node_name}: ${e.prompt}` };
+    case 'breakpoint_paused':
+      return {
+        label: e.reason === 'step' ? 'debug.step' : 'debug.break',
+        color: '#ef4444',
+        detail: e.node_name,
+      };
     case 'log':
       return {
         label: e.level === 'error' ? 'log.error' : e.level === 'warn' ? 'log.warn' : 'log',
