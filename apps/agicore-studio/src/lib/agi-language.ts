@@ -1,15 +1,15 @@
-// Minimal CodeMirror 6 language extension for the Agicore DSL.
+// CodeMirror 6 language extension for the Agicore DSL.
 //
-// Sprint 0 scope: tokenizer + highlighter only. No parser, no autocomplete,
-// no diagnostics. Validates that CodeMirror 6's extensibility surface is
-// adequate for everything MVP will need (it is).
-//
-// Alpha work: replace this StreamLanguage with a Lezer grammar for proper
-// AST-driven features (autocomplete, semantic highlighting, error squiggles).
+// Sprint 0 scope: tokenizer + highlighter.
+// Alpha sprint 2: context-aware autocomplete via agi-completion.
+// Alpha later: replace the StreamLanguage with a Lezer grammar for proper
+// AST-driven semantic features (squiggles, jump-to-def, refactor).
 
 import { StreamLanguage } from '@codemirror/language';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { autocompletion } from '@codemirror/autocomplete';
 import { tags as t } from '@lezer/highlight';
+import { agiCompletion } from './agi-completion';
 
 const KEYWORDS = new Set([
   // Structural
@@ -113,4 +113,10 @@ const agiHighlightStyle = HighlightStyle.define([
 export const agicoreLanguageSupport = () => [
   agiLanguage,
   syntaxHighlighting(agiHighlightStyle),
+  autocompletion({
+    override: [agiCompletion],
+    activateOnTyping: true,
+    icons: false,        // matches the rest of the chrome — no icons in the popup
+    closeOnBlur: true,
+  }),
 ];
