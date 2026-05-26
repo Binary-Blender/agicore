@@ -2,9 +2,12 @@ import { create } from 'zustand';
 import type {
   NodeRunRecord,
   NodeRunStatus,
+  PendingQc,
+  QcDecision,
   RunEvent,
   RunStatus,
 } from '../types/run';
+import type { RunnerAdapter } from '../lib/runner';
 
 interface RunStore {
   status: RunStatus;
@@ -17,13 +20,15 @@ interface RunStore {
   nodes: Record<string, NodeRunRecord>;
   /** Set when status === 'failed'. */
   errorMessage: string | null;
-  /** Handle the active runner returns so we can cancel mid-run. */
-  cancelHandle: (() => void) | null;
+  /** Active runner — held so we can cancel and resume QC. */
+  runner: RunnerAdapter | null;
+  /** Live QC checkpoint awaiting a human decision, or null when none. */
+  pendingQc: PendingQc | null;
 
-  startRun: (cancelHandle: () => void) => void;
+  startRun: (runner: RunnerAdapter) => void;
   ingest: (event: RunEvent) => void;
-  setCancelHandle: (handle: (() => void) | null) => void;
   cancel: () => void;
+  submitQcDecision: (decision: QcDecision) => void;
   reset: () => void;
 }
 
@@ -36,9 +41,10 @@ export const useRunStore = create<RunStore>((set, get) => ({
   log: [],
   nodes: {},
   errorMessage: null,
-  cancelHandle: null,
+  runner: null,
+  pendingQc: null,
 
-  startRun: (cancelHandle) =>
+  startRun: (runner) =>
     set({
       status: 'running',
       startedAt: Date.now(),
@@ -46,7 +52,8 @@ export const useRunStore = create<RunStore>((set, get) => ({
       log: [],
       nodes: {},
       errorMessage: null,
-      cancelHandle,
+      runner,
+      pendingQc: null,
     }),
 
   ingest: (event) =>
@@ -58,6 +65,7 @@ export const useRunStore = create<RunStore>((set, get) => ({
       let status = s.status;
       let finishedAt = s.finishedAt;
       let errorMessage = s.errorMessage;
+      let pendingQc = s.pendingQc;
 
       switch (event.kind) {
         case 'run_started':
@@ -85,6 +93,12 @@ export const useRunStore = create<RunStore>((set, get) => ({
             output: event.output,
             error: null,
           });
+          // A node_succeeded that follows a qc_paused for the same node
+          // clears the pending QC and returns the run to running.
+          if (s.pendingQc?.node_id === event.node_id) {
+            pendingQc = null;
+            status = 'running';
+          }
           break;
 
         case 'node_failed':
@@ -104,6 +118,10 @@ export const useRunStore = create<RunStore>((set, get) => ({
             status: 'skipped',
             finished_at: event.timestamp,
           });
+          // node_skipped on a QC node = the reviewer rejected it.
+          if (s.pendingQc?.node_id === event.node_id) {
+            pendingQc = null;
+          }
           break;
 
         case 'qc_paused':
@@ -113,22 +131,32 @@ export const useRunStore = create<RunStore>((set, get) => ({
             status: 'paused_qc',
           });
           status = 'paused_qc';
+          pendingQc = {
+            node_id: event.node_id,
+            node_name: event.node_name,
+            prompt: event.prompt,
+            upstream_output: event.upstream_output,
+            paused_at: event.timestamp,
+          };
           break;
 
         case 'run_completed':
           status = 'succeeded';
           finishedAt = event.timestamp;
+          pendingQc = null;
           break;
 
         case 'run_failed':
           status = 'failed';
           finishedAt = event.timestamp;
           errorMessage = event.error;
+          pendingQc = null;
           break;
 
         case 'run_cancelled':
           status = 'cancelled';
           finishedAt = event.timestamp;
+          pendingQc = null;
           break;
 
         case 'log':
@@ -136,14 +164,18 @@ export const useRunStore = create<RunStore>((set, get) => ({
           break;
       }
 
-      return { log, nodes, status, finishedAt, errorMessage };
+      return { log, nodes, status, finishedAt, errorMessage, pendingQc };
     }),
 
-  setCancelHandle: (handle) => set({ cancelHandle: handle }),
-
   cancel: () => {
-    const h = get().cancelHandle;
-    if (h) h();
+    const r = get().runner;
+    if (r) r.cancel();
+  },
+
+  submitQcDecision: (decision) => {
+    const r = get().runner;
+    if (!r) return;
+    r.resumeQc(decision);
   },
 
   reset: () =>
@@ -154,7 +186,8 @@ export const useRunStore = create<RunStore>((set, get) => ({
       log: [],
       nodes: {},
       errorMessage: null,
-      cancelHandle: null,
+      runner: null,
+      pendingQc: null,
     }),
 }));
 
