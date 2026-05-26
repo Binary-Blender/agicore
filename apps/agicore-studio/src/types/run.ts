@@ -48,3 +48,23 @@ export interface NodeRunRecord {
   output: unknown;
   error: string | null;
 }
+
+/** Outcome the human reviewer submits to resolve a paused QC checkpoint. */
+export type QcDecisionKind = 'approved' | 'edited' | 'rejected';
+
+export interface QcDecision {
+  decision: QcDecisionKind;
+  /** Required when decision === 'edited'. Replaces the upstream output. */
+  edited_output?: unknown;
+  /** Optional comment that joins the run log so future-them can read why. */
+  comment?: string;
+}
+
+/** Live state of a workflow paused at a QC checkpoint. */
+export interface PendingQc {
+  node_id: string;
+  node_name: string;
+  prompt: string;
+  upstream_output: unknown;
+  paused_at: number;
+}

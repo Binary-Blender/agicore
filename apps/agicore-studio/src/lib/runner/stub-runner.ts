@@ -1,12 +1,12 @@
 // StubRunner — in-renderer simulator that drives the run-event protocol.
 //
 // Lives here so we can build the run-time UX (canvas painting, event log,
-// per-node I/O inspection, eventually QC pause/resume) before the real
-// agicore-cli exists. When the CLI lands, this implementation gets
-// replaced by CliRunner (spawn binary, parse "listening" line, connect
-// websocket, pipe events) — same RunnerAdapter interface, no UI changes.
+// QC pause/resume, per-node I/O inspection) before the real agicore-cli
+// exists. When the CLI lands, this implementation gets replaced by
+// CliRunner (spawn binary, parse "listening" line, connect websocket,
+// pipe events). Same RunnerAdapter interface, no UI changes.
 
-import type { RunEvent } from '../../types/run';
+import type { QcDecision, RunEvent } from '../../types/run';
 import type { Workflow, WorkflowNode } from '../../types/workflow';
 import type { RunnerAdapter } from './index';
 
@@ -14,26 +14,30 @@ const NODE_DELAY_MS = { min: 350, max: 900 };
 const EDGE_DELAY_MS = 80; // brief pause between nodes for visual rhythm
 
 export class StubRunner implements RunnerAdapter {
-  start(workflow: Workflow, onEvent: (e: RunEvent) => void): () => void {
-    let cancelled = false;
-    const cancel = () => {
-      cancelled = true;
-    };
+  private cancelled = false;
+  private pendingResume: ((decision: QcDecision) => void) | null = null;
 
+  start(workflow: Workflow, onEvent: (e: RunEvent) => void): void {
+    this.cancelled = false;
+    this.pendingResume = null;
     const ordered = topologicalOrder(workflow);
 
-    (async () => {
+    void (async () => {
       onEvent({ kind: 'run_started', timestamp: Date.now(), workflow_name: workflow.name });
 
       try {
         for (const node of ordered) {
-          if (cancelled) {
+          if (this.cancelled) {
             onEvent({ kind: 'run_cancelled', timestamp: Date.now() });
             return;
           }
-          await runOne(node, onEvent, () => cancelled);
+          const cont = await this.runOne(node, onEvent);
+          if (cont === 'cancel') {
+            onEvent({ kind: 'run_cancelled', timestamp: Date.now() });
+            return;
+          }
         }
-        if (cancelled) {
+        if (this.cancelled) {
           onEvent({ kind: 'run_cancelled', timestamp: Date.now() });
           return;
         }
@@ -50,60 +54,123 @@ export class StubRunner implements RunnerAdapter {
         });
       }
     })();
-
-    return cancel;
   }
-}
 
-async function runOne(
-  node: WorkflowNode,
-  onEvent: (e: RunEvent) => void,
-  isCancelled: () => boolean,
-): Promise<void> {
-  onEvent({
-    kind: 'node_started',
-    timestamp: Date.now(),
-    node_id: node.id,
-    node_name: node.name,
-  });
+  resumeQc(decision: QcDecision): void {
+    const resolve = this.pendingResume;
+    if (!resolve) return;
+    this.pendingResume = null;
+    resolve(decision);
+  }
 
-  const work = NODE_DELAY_MS.min + Math.random() * (NODE_DELAY_MS.max - NODE_DELAY_MS.min);
-  await sleep(work);
-  if (isCancelled()) return;
+  cancel(): void {
+    this.cancelled = true;
+    // If we're stuck awaiting a QC decision, unblock the await with a synthetic
+    // rejection so the loop can observe `cancelled` and exit cleanly.
+    if (this.pendingResume) {
+      const resolve = this.pendingResume;
+      this.pendingResume = null;
+      resolve({ decision: 'rejected', comment: '[cancelled]' });
+    }
+  }
 
-  // QC nodes: until the QC pause/resume UX lands next session, the stub
-  // auto-passes them with a clear log line so the user sees what's pending.
-  if (node.kind === 'qc_checkpoint') {
+  /** Run one node. Returns 'continue' to keep going or 'cancel' to stop. */
+  private async runOne(
+    node: WorkflowNode,
+    onEvent: (e: RunEvent) => void,
+  ): Promise<'continue' | 'cancel'> {
     onEvent({
-      kind: 'log',
+      kind: 'node_started',
       timestamp: Date.now(),
       node_id: node.id,
-      level: 'warn',
-      message: '[stub: QC checkpoint auto-approved — interactive pause/resume is wired in the next sprint]',
+      node_name: node.name,
     });
-  }
 
-  // Branch: just fire the success and emit a log explaining which path won.
-  // The stub doesn't actually evaluate the WHEN; that's compiler territory.
-  if (node.kind === 'branch') {
+    const work = NODE_DELAY_MS.min + Math.random() * (NODE_DELAY_MS.max - NODE_DELAY_MS.min);
+    await sleep(work);
+    if (this.cancelled) return 'cancel';
+
+    // QC checkpoint: suspend the run until the human submits a decision.
+    if (node.kind === 'qc_checkpoint') {
+      const upstreamOutput = syntheticUpstreamForQc(node);
+      onEvent({
+        kind: 'qc_paused',
+        timestamp: Date.now(),
+        node_id: node.id,
+        node_name: node.name,
+        upstream_output: upstreamOutput,
+        prompt: (node.properties.prompt as string) ?? 'Review and approve.',
+      });
+
+      const decision = await new Promise<QcDecision>((resolve) => {
+        this.pendingResume = resolve;
+      });
+
+      if (this.cancelled) return 'cancel';
+
+      const finalOutput =
+        decision.decision === 'edited' ? decision.edited_output : upstreamOutput;
+
+      if (decision.comment) {
+        onEvent({
+          kind: 'log',
+          timestamp: Date.now(),
+          node_id: node.id,
+          level: 'info',
+          message: `qc[${node.name}] reviewer note: ${decision.comment}`,
+        });
+      }
+
+      if (decision.decision === 'rejected') {
+        onEvent({
+          kind: 'node_skipped',
+          timestamp: Date.now(),
+          node_id: node.id,
+          node_name: node.name,
+          reason: 'rejected by reviewer',
+        });
+        // For MVP, a rejection ends the run. Branching on rejection is a
+        // future feature (an explicit "rejected" out-edge on QC nodes).
+        onEvent({
+          kind: 'run_cancelled',
+          timestamp: Date.now(),
+        });
+        return 'cancel';
+      }
+
+      onEvent({
+        kind: 'node_succeeded',
+        timestamp: Date.now(),
+        node_id: node.id,
+        node_name: node.name,
+        output: { decision: decision.decision, final_output: finalOutput },
+      });
+      await sleep(EDGE_DELAY_MS);
+      return 'continue';
+    }
+
+    // Branch: the stub doesn't evaluate; the compiler will. Log + pass.
+    if (node.kind === 'branch') {
+      onEvent({
+        kind: 'log',
+        timestamp: Date.now(),
+        node_id: node.id,
+        level: 'info',
+        message: '[stub: branch condition evaluated as true]',
+      });
+    }
+
     onEvent({
-      kind: 'log',
+      kind: 'node_succeeded',
       timestamp: Date.now(),
       node_id: node.id,
-      level: 'info',
-      message: '[stub: branch condition evaluated as true]',
+      node_name: node.name,
+      output: syntheticOutput(node),
     });
+
+    await sleep(EDGE_DELAY_MS);
+    return 'continue';
   }
-
-  onEvent({
-    kind: 'node_succeeded',
-    timestamp: Date.now(),
-    node_id: node.id,
-    node_name: node.name,
-    output: syntheticOutput(node),
-  });
-
-  await sleep(EDGE_DELAY_MS);
 }
 
 function syntheticOutput(node: WorkflowNode): unknown {
@@ -122,13 +189,35 @@ function syntheticOutput(node: WorkflowNode): unknown {
         tokens: { input: 42, output: 17 },
       };
     case 'qc_checkpoint':
-      return {
-        decision: 'approved',
-        final_summary: '[stub: auto-approved upstream output]',
-      };
+      return { decision: 'approved', final_output: '[stub]' };
     case 'branch':
       return { taken: 'true' };
   }
+}
+
+/**
+ * What upstream node would have produced for this QC node. The stub
+ * inspects upstreamFrom (set by NodeInspector) and fakes a plausible
+ * payload — text for "summarize" / "summary"-named refs, generic
+ * synthetic-output otherwise.
+ */
+function syntheticUpstreamForQc(node: WorkflowNode): unknown {
+  const from = (node.properties.upstreamFrom as string | undefined) ?? '';
+  if (/summar/i.test(from)) {
+    return {
+      text:
+        'The original article argues three things: first, that the framework matters more than the model; second, that latency budgets dominate user perception; and third, that determinism is a feature, not a constraint. Each point is supported with examples drawn from production deployments.',
+    };
+  }
+  if (/answer|response|content/i.test(from)) {
+    return {
+      text: '[synthetic upstream content awaiting review]',
+    };
+  }
+  return {
+    note: `[stub: synthetic upstream output. Wire upstreamFrom in the inspector to control this.]`,
+    upstream_from: from,
+  };
 }
 
 function sleep(ms: number): Promise<void> {
