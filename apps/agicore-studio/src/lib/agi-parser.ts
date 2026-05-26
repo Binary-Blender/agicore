@@ -20,7 +20,7 @@ import {
   type WorkflowNode,
 } from '../types/workflow';
 
-const NODE_KIND_RE = /^(start|http_call|ai_call|qc_checkpoint|branch|end)$/;
+const NODE_KIND_RE = /^(start|http_call|ai_call|qc_checkpoint|branch|loop|parallel_fanout|router_call|end)$/;
 
 /** Result-shaped parser. Use this from sync paths that need to refuse
  *  to apply broken input. The forgiving variant below stays available
@@ -221,6 +221,23 @@ function parseProperties(inner: string, kind: NodeKind): Record<string, unknown>
       if (cond) p.condition = cond;
       break;
     }
+    case 'loop': {
+      const over = matchValue(inner, /^\s*OVER\s+(.+?)\s*$/m);
+      if (over) p.over = over;
+      const as = matchValue(inner, /^\s*AS\s+(\w+)/m);
+      if (as) p.as = as;
+      break;
+    }
+    case 'router_call': {
+      const router = matchValue(inner, /^\s*ROUTER\s+(\w+)/m);
+      if (router) p.router = router;
+      const task = matchValue(inner, /^\s*TASK_TYPE\s+(\w+)/m);
+      if (task) p.task_type = task;
+      break;
+    }
+    case 'parallel_fanout':
+      // No properties.
+      break;
   }
   return p;
 }

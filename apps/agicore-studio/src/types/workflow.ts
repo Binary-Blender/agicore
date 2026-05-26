@@ -17,6 +17,9 @@ export type NodeKind =
   | 'ai_call'
   | 'qc_checkpoint'
   | 'branch'
+  | 'loop'
+  | 'parallel_fanout'
+  | 'router_call'
   | 'end';
 
 export interface WorkflowNode {
@@ -82,17 +85,40 @@ export function defaultPropertiesFor(kind: NodeKind): Record<string, unknown> {
       return {
         condition: 'previous.value == "approved"',
       };
+    case 'loop':
+      return {
+        // Iterate over a collection expression. The runner re-executes
+        // downstream nodes once per item, binding the current item to
+        // the `as` name. Stub doesn't actually iterate yet — see runner.
+        over: '{{input.items}}',
+        as:   'item',
+      };
+    case 'parallel_fanout':
+      return {
+        // No properties. The fanout is implicit in the multiple
+        // outgoing edges drawn from this node on the canvas.
+      };
+    case 'router_call':
+      return {
+        // References a top-level ROUTER declaration (e.g. BabyAI).
+        // task_type narrows the routing tier choice.
+        router:    'BabyAI',
+        task_type: 'general',
+      };
   }
 }
 
 export function defaultNameFor(kind: NodeKind, nthOfKind: number): string {
   const base: Record<NodeKind, string> = {
-    start:         'start',
-    end:           'end',
-    http_call:     'http_call',
-    ai_call:       'ai_call',
-    qc_checkpoint: 'qc_checkpoint',
-    branch:        'branch',
+    start:           'start',
+    end:             'end',
+    http_call:       'http_call',
+    ai_call:         'ai_call',
+    qc_checkpoint:   'qc_checkpoint',
+    branch:          'branch',
+    loop:            'loop',
+    parallel_fanout: 'fanout',
+    router_call:     'route',
   };
   return nthOfKind <= 1 ? base[kind] : `${base[kind]}_${nthOfKind}`;
 }

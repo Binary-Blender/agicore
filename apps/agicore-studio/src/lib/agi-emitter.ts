@@ -17,12 +17,15 @@ import type {
 } from '../types/workflow';
 
 const KIND_TO_AGI_TYPE: Record<NodeKind, string> = {
-  start:         'start',
-  end:           'end',
-  http_call:     'http_call',
-  ai_call:       'ai_call',
-  qc_checkpoint: 'qc_checkpoint',
-  branch:        'branch',
+  start:           'start',
+  end:             'end',
+  http_call:       'http_call',
+  ai_call:         'ai_call',
+  qc_checkpoint:   'qc_checkpoint',
+  branch:          'branch',
+  loop:            'loop',
+  parallel_fanout: 'parallel_fanout',
+  router_call:     'router_call',
 };
 
 export interface EmitterOptions {
@@ -108,6 +111,17 @@ function emitNode(node: WorkflowNode, out: string[]): void {
       if (p.condition) out.push(`    WHEN      ${p.condition}`);
       break;
     }
+    case 'loop': {
+      if (p.over) out.push(`    OVER      ${p.over}`);
+      if (p.as)   out.push(`    AS        ${p.as}`);
+      break;
+    }
+    case 'router_call': {
+      if (p.router)    out.push(`    ROUTER    ${p.router}`);
+      if (p.task_type) out.push(`    TASK_TYPE ${p.task_type}`);
+      break;
+    }
+    case 'parallel_fanout':
     case 'start':
     case 'end':
       // No extra fields
