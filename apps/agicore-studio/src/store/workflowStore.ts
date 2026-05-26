@@ -42,7 +42,7 @@ interface WorkflowStore {
   selectEdge: (id: string | null) => void;
 
   // Bulk
-  resetTo: (wf: Workflow, filePath?: string | null) => void;
+  resetTo: (wf: Workflow, filePath?: string | null, opts?: { dirty?: boolean }) => void;
   markClean: (filePath?: string | null) => void;
 }
 
@@ -167,7 +167,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   selectNode: (id) => set({ selectedNodeId: id, selectedEdgeId: null }),
   selectEdge: (id) => set({ selectedEdgeId: id, selectedNodeId: null }),
 
-  resetTo: (wf, filePath = null) => {
+  resetTo: (wf, filePath = null, opts) => {
     // Refresh the id counter to clear any new-node collisions
     let maxN = 0;
     for (const n of wf.nodes) {
@@ -179,13 +179,19 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
       if (m) maxN = Math.max(maxN, parseInt(m[1], 10));
     }
     idCounter = maxN + 1;
-    set({
+    set((s) => ({
       workflow: wf,
       selectedNodeId: null,
       selectedEdgeId: null,
-      dirty: false,
-      filePath: filePath ?? null,
-    });
+      // Default: reset clears dirty (the workflow now matches disk).
+      // Text-sync path passes { dirty: true } because the user's edit
+      // diverges from disk even though it's now reflected in the store.
+      dirty: opts?.dirty ?? false,
+      // filePath preserved when caller passes undefined; explicit null
+      // clears (e.g., new project). Distinguishes "no path" from "use
+      // current path".
+      filePath: filePath === undefined ? s.filePath : filePath,
+    }));
   },
 
   markClean: (filePath) =>

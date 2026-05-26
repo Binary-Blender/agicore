@@ -1,19 +1,36 @@
-// Tabbed bottom drawer. Tabs: Source (live-emitted .agi) and Run (event log).
-// Auto-switches to Run when a run starts so the user sees activity.
+// Tabbed bottom drawer. Tabs: Source (live-emitted .agi, EDITABLE) and
+// Run (event log). Auto-switches to Run when a run starts.
+//
+// Source is editable as of Alpha — typing in the .agi text re-parses
+// after a 600 ms idle and updates the workflow store, which re-emits
+// to the canvas. Cycle prevention: canvas edits bump docResetCounter
+// to force the editor to reflect the new source, but only when the
+// user isn't actively typing.
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { useRunStore } from '../store/runStore';
 import { emitAgi } from '../lib/agi-emitter';
+import { tryParseAgi } from '../lib/agi-parser';
 import AgiEditor from './AgiEditor';
 import RunEventLog from './RunEventLog';
 
 type Tab = 'source' | 'run';
 
+/** Live state of the text↔canvas sync loop. */
+type SyncState =
+  | { kind: 'synced' }
+  | { kind: 'typing' }
+  | { kind: 'parse_error'; errors: string[] };
+
+const PARSE_DEBOUNCE_MS = 600;
+
 const BottomDrawer: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<Tab>('source');
   const workflow = useWorkflowStore((s) => s.workflow);
+  const resetTo = useWorkflowStore((s) => s.resetTo);
+  const filePath = useWorkflowStore((s) => s.filePath);
   const runStatus = useRunStore((s) => s.status);
   const eventCount = useRunStore((s) => s.log.length);
 
@@ -28,6 +45,65 @@ const BottomDrawer: React.FC = () => {
   const source = useMemo(() => emitAgi(workflow), [workflow]);
   const lineCount = source.split('\n').length;
 
+  // ---- Text↔canvas sync state ----
+  const [syncState, setSyncState] = useState<SyncState>({ kind: 'synced' });
+  const [docResetCounter, setDocResetCounter] = useState(0);
+  // True while a text→canvas update is in flight or just landed.
+  // The next workflow effect that fires for that reason should NOT bump
+  // the editor's doc — the editor already has what the user typed.
+  const lastUpdateFromTextRef = useRef(false);
+  const typingTimerRef = useRef<number | null>(null);
+
+  // When the workflow changes from a canvas action, push the new source
+  // into the editor. Skip when it changed because we just parsed text.
+  // If a canvas edit lands while typing is pending, cancel the typing
+  // timer — otherwise it would later parse stale text and clobber the
+  // canvas edit on the rebound.
+  useEffect(() => {
+    if (lastUpdateFromTextRef.current) {
+      lastUpdateFromTextRef.current = false;
+      return;
+    }
+    if (typingTimerRef.current !== null) {
+      window.clearTimeout(typingTimerRef.current);
+      typingTimerRef.current = null;
+      setSyncState({ kind: 'synced' });
+    }
+    setDocResetCounter((c) => c + 1);
+  }, [source]);
+
+  const onEditorChange = (text: string) => {
+    setSyncState({ kind: 'typing' });
+    if (typingTimerRef.current !== null) {
+      window.clearTimeout(typingTimerRef.current);
+    }
+    typingTimerRef.current = window.setTimeout(() => {
+      typingTimerRef.current = null;
+      const result = tryParseAgi(text);
+      if (result.errors.length === 0 && result.workflow.nodes.length > 0) {
+        lastUpdateFromTextRef.current = true;
+        resetTo(result.workflow, filePath, { dirty: true });
+        setSyncState({ kind: 'synced' });
+      } else if (result.errors.length > 0) {
+        setSyncState({ kind: 'parse_error', errors: result.errors });
+      } else {
+        // No errors but no nodes either — empty workflow body. Allow it
+        // so users can clear the canvas by deleting the WORKFLOW body.
+        lastUpdateFromTextRef.current = true;
+        resetTo(result.workflow, filePath, { dirty: true });
+        setSyncState({ kind: 'synced' });
+      }
+    }, PARSE_DEBOUNCE_MS);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typingTimerRef.current !== null) {
+        window.clearTimeout(typingTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div
       className={`flex flex-col border-t border-[var(--border)] bg-[var(--bg-panel)] transition-all duration-200 ${
@@ -37,12 +113,13 @@ const BottomDrawer: React.FC = () => {
       <div className="h-9 flex items-stretch flex-shrink-0">
         <button
           onClick={() => { setTab('source'); setOpen(true); }}
-          className={`px-4 text-xs uppercase tracking-widest border-r border-[var(--border)] transition-colors ${
+          className={`px-4 text-xs uppercase tracking-widest border-r border-[var(--border)] transition-colors flex items-center gap-2 ${
             tab === 'source' && open ? 'bg-[var(--bg-page)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-input)]'
           }`}
         >
           Source
-          <span className="ml-2 text-[10px] text-[var(--text-muted)] font-mono normal-case tracking-normal">
+          <SyncIndicator state={syncState} />
+          <span className="text-[10px] text-[var(--text-muted)] font-mono normal-case tracking-normal">
             {workflow.name}.agi · {lineCount}L
           </span>
         </button>
@@ -73,9 +150,12 @@ const BottomDrawer: React.FC = () => {
       {open && (
         <div className="flex-1 min-h-0 overflow-hidden">
           {tab === 'source' ? (
-            // key forces CodeMirror to re-mount when source changes — simpler
-            // than reaching into the editor state for MVP.
-            <AgiEditor key={source} initialDoc={source} readOnly />
+            <AgiEditor
+              initialDoc={source}
+              docResetCounter={docResetCounter}
+              onChange={onEditorChange}
+              readOnly={false}
+            />
           ) : (
             <RunEventLog />
           )}
@@ -83,6 +163,32 @@ const BottomDrawer: React.FC = () => {
       )}
     </div>
   );
+};
+
+const SyncIndicator: React.FC<{ state: SyncState }> = ({ state }) => {
+  switch (state.kind) {
+    case 'synced':
+      return (
+        <span
+          title="In sync with the canvas"
+          className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"
+        />
+      );
+    case 'typing':
+      return (
+        <span
+          title="Typing — will parse when you pause"
+          className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block animate-pulse"
+        />
+      );
+    case 'parse_error':
+      return (
+        <span
+          title={state.errors.join('\n')}
+          className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block"
+        />
+      );
+  }
 };
 
 export default BottomDrawer;
