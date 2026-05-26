@@ -7,6 +7,8 @@ import React, { useEffect, useState } from 'react';
 import { PROVIDERS, useSettingsStore, type ProviderId } from '../store/settingsStore';
 import { useTelemetryStore } from '../store/telemetryStore';
 import { previewBuffer } from '../lib/telemetry';
+import { useCrashStore } from '../store/crashStore';
+import { previewCrashes } from '../lib/crash-reporter';
 
 interface Props {
   onClose: () => void;
@@ -29,6 +31,12 @@ const SettingsPanel: React.FC<Props> = ({ onClose }) => {
   const setTelemetryEnabled = useTelemetryStore((s) => s.setEnabled);
   const clearTelemetry = useTelemetryStore((s) => s.clear);
   const [showPreview, setShowPreview] = useState(false);
+
+  const crashEnabled = useCrashStore((s) => s.enabled);
+  const crashReports = useCrashStore((s) => s.reports);
+  const setCrashEnabled = useCrashStore((s) => s.setEnabled);
+  const clearCrashes = useCrashStore((s) => s.clear);
+  const [showCrashPreview, setShowCrashPreview] = useState(false);
 
   useEffect(() => {
     if (!loaded) void load();
@@ -177,6 +185,61 @@ const SettingsPanel: React.FC<Props> = ({ onClose }) => {
                     : previewBuffer(telemetryEvents)}
                 </pre>
               </div>
+            )}
+          </div>
+
+          <div className="mt-6 pt-4 border-t border-[var(--border)]">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-1">
+                  Crash reports
+                </p>
+                <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
+                  Off by default. Captures uncaught errors and
+                  unhandled promise rejections from the renderer.
+                  Stack frames are normalized to basenames so your
+                  home directory doesn't leak. Session-only; nothing
+                  is transmitted today.
+                </p>
+              </div>
+              <label className="flex items-center gap-2 shrink-0 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={crashEnabled}
+                  onChange={(e) => setCrashEnabled(e.target.checked)}
+                  className="accent-[var(--accent)]"
+                />
+                <span className="text-xs">{crashEnabled ? 'On' : 'Off'}</span>
+              </label>
+            </div>
+
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowCrashPreview((v) => !v)}
+                className="text-[10px] px-2 py-1 border border-[var(--border)] rounded hover:border-[var(--text-secondary)] text-[var(--text-muted)] transition-colors"
+              >
+                {showCrashPreview ? 'Hide preview' : 'Show me what would be sent'}
+              </button>
+              <button
+                type="button"
+                onClick={clearCrashes}
+                disabled={crashReports.length === 0}
+                className="text-[10px] px-2 py-1 border border-[var(--border)] rounded hover:border-[var(--text-secondary)] text-[var(--text-muted)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Clear session
+              </button>
+              <span className="text-[10px] text-[var(--text-muted)] ml-auto font-mono">
+                {crashReports.length} report{crashReports.length === 1 ? '' : 's'}
+              </span>
+            </div>
+
+            {showCrashPreview && (
+              <pre className="mt-3 text-[10px] font-mono bg-[var(--bg-input)] border border-[var(--border)] rounded p-2 max-h-48 overflow-auto whitespace-pre-wrap">
+                {crashReports.length === 0
+                  ? '(no crashes captured this session — that\'s a good sign)'
+                  : previewCrashes(crashReports)}
+              </pre>
             )}
           </div>
         </div>

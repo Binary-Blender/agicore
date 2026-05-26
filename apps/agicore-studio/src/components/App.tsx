@@ -30,10 +30,12 @@ import BottomDrawer from './BottomDrawer';
 import RecoveryBanner from './RecoveryBanner';
 import { startAutosave, stopAutosave } from '../lib/recovery';
 import { recordEvent } from '../lib/telemetry';
+import { installCrashReporter } from '../lib/crash-reporter';
 
 const App: React.FC = () => {
   useEffect(() => {
     startAutosave();
+    installCrashReporter();
     recordEvent('studio_started', {});
     return () => stopAutosave();
   }, []);

@@ -18,7 +18,7 @@ import { useWorkflowStore } from '../store/workflowStore';
 import { useRunStore } from '../store/runStore';
 import { useProjectStore } from '../store/projectStore';
 import { openWorkflowFromDisk } from '../lib/persistence';
-import { getTemplate } from '../lib/templates';
+import { getTemplate, TEMPLATES } from '../lib/templates';
 import {
   readRecentProjects,
   removeRecentProject,
@@ -48,6 +48,13 @@ const WelcomePanel: React.FC = () => {
 
   const loadCanonical = () => {
     const t = getTemplate('canonical');
+    if (!t) return;
+    resetTo(t.build());
+    resetRun();
+  };
+
+  const loadTemplate = (id: string) => {
+    const t = getTemplate(id);
     if (!t) return;
     resetTo(t.build());
     resetRun();
@@ -158,6 +165,26 @@ const WelcomePanel: React.FC = () => {
             onClick={loadCanonical}
             variant="primary"
           />
+        </div>
+
+        <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-2">
+          More samples
+        </p>
+        <div className="space-y-0.5 mb-4">
+          {TEMPLATES.filter((t) => t.id !== 'canonical').map((t) => (
+            <button
+              key={t.id}
+              onClick={() => loadTemplate(t.id)}
+              className="w-full text-left px-2 py-1.5 rounded hover:bg-[var(--bg-input)] transition-colors group"
+            >
+              <span className="text-xs font-semibold text-[var(--text-primary)]">
+                {t.name}
+              </span>
+              <span className="text-[10px] text-[var(--text-muted)] block leading-snug">
+                {t.description}
+              </span>
+            </button>
+          ))}
         </div>
 
         <p className="text-[10px] text-[var(--text-muted)] italic">

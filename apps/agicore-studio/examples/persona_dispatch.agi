@@ -1,0 +1,73 @@
+// persona_dispatch.agi
+// A tiny port of Reality.AI's persona-dispatch pattern — the showcase
+// app gets a workflow-shaped reduction so the Studio can demonstrate
+// it builds the framework's own canonical patterns.
+//
+// What it does: takes a user question, asks a router to pick the
+// best persona for the topic (technical, creative, supportive), the
+// chosen persona answers, then a composer wraps the answer with a
+// brief preface naming who answered. The other two personas don't
+// run — router selection is exclusive via WHEN gates on the edges.
+//
+// Why this fixture: it exercises router_call (the Beta-tier pattern
+// the canonical_workflow doesn't), WHEN-gated edges, and the "many
+// branches, one output" composition that real persona systems need.
+
+APP persona_dispatch {
+  TITLE  "Persona Dispatch (Reality.AI shape)"
+  DB     persona_dispatch.db
+}
+
+WORKFLOW answer_with_persona {
+  DESCRIPTION "Route a question to the right persona, answer it, attribute the answer."
+
+  INPUT  question: string
+  OUTPUT final: string
+
+  NODE start {
+    TYPE start
+  }
+
+  NODE pick_persona {
+    TYPE      router_call
+    PROMPT    "Pick the best persona for this question: technical, creative, or supportive. Respond with exactly one of those three words."
+    OUTPUT    persona: string
+  }
+
+  NODE technical_answer {
+    TYPE      ai_call
+    PROMPT    "Answer this question as a senior engineer. Be precise and concrete.\n\nQuestion: {{input.question}}"
+    OUTPUT    text: string
+  }
+
+  NODE creative_answer {
+    TYPE      ai_call
+    PROMPT    "Answer this question as a working artist. Use vivid imagery and a confident voice.\n\nQuestion: {{input.question}}"
+    OUTPUT    text: string
+  }
+
+  NODE supportive_answer {
+    TYPE      ai_call
+    PROMPT    "Answer this question as a kind, patient teacher. Acknowledge the asker first, then give the answer plainly.\n\nQuestion: {{input.question}}"
+    OUTPUT    text: string
+  }
+
+  NODE compose {
+    TYPE      ai_call
+    PROMPT    "Prepend one short line attributing this answer to the {{pick_persona.persona}} persona, then include the answer verbatim.\n\nAnswer: {{technical_answer.text}}{{creative_answer.text}}{{supportive_answer.text}}"
+    OUTPUT    final: string
+  }
+
+  NODE end {
+    TYPE end
+  }
+
+  EDGE start              -> pick_persona
+  EDGE pick_persona       -> technical_answer  WHEN pick_persona.persona == "technical"
+  EDGE pick_persona       -> creative_answer   WHEN pick_persona.persona == "creative"
+  EDGE pick_persona       -> supportive_answer WHEN pick_persona.persona == "supportive"
+  EDGE technical_answer   -> compose
+  EDGE creative_answer    -> compose
+  EDGE supportive_answer  -> compose
+  EDGE compose            -> end
+}

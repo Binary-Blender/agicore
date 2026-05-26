@@ -1,0 +1,38 @@
+// hello_workflow.agi
+// The smallest useful Studio workflow — one AI call, one end.
+//
+// Open this in the Studio, click Run, see the run log light up. Five
+// seconds of "yes the thing works" before you go build something real.
+//
+// Pair with examples/canonical_workflow.agi for the full HTTP + AI +
+// QC + post tour, and with examples/persona_dispatch.agi for the
+// ROUTER pattern.
+
+APP hello {
+  TITLE  "Hello, Workflow"
+  DB     hello.db
+}
+
+WORKFLOW say_hello {
+  DESCRIPTION "Ask an AI to greet whoever you name, then stop."
+
+  INPUT  whom: string
+  OUTPUT greeting: string
+
+  NODE start {
+    TYPE start
+  }
+
+  NODE greet {
+    TYPE      ai_call
+    PROMPT    "Write a one-sentence friendly greeting for {{input.whom}}. No preamble — just the greeting itself."
+    OUTPUT    greeting: string
+  }
+
+  NODE end {
+    TYPE end
+  }
+
+  EDGE start -> greet
+  EDGE greet -> end
+}
