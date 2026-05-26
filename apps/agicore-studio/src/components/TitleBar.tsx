@@ -14,7 +14,7 @@ const TitleBar: React.FC = () => {
       <div className="flex items-center gap-2 pointer-events-none">
         <span className="text-sm font-semibold tracking-wide">Agicore Studio</span>
         <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] ml-2">
-          Sprint 0 · Bench
+          MVP
         </span>
       </div>
       <div className="flex items-center gap-0.5">
