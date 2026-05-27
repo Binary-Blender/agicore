@@ -68,11 +68,20 @@ Releasing a new version is two commands.
 
 ### 1. Bump the version
 
-Edit three files (they must agree):
+Edit four files (they must agree):
 
-- `apps/agicore-studio/package.json`          → `"version"`
-- `apps/agicore-studio/src-tauri/Cargo.toml`  → `version`
+- `apps/agicore-studio/package.json`              → `"version"`
+- `apps/agicore-studio/src-tauri/Cargo.toml`      → `version`
 - `apps/agicore-studio/src-tauri/tauri.conf.json` → `"version"`
+- `apps/agicore-studio/src/lib/updater.ts`        → `getCurrentVersion()` return literal
+
+> **Windows MSI restriction.** Pre-release identifiers in the
+> internal version string must be numeric-only (the MSI bundler
+> rejects `beta.2`, `rc.1`, etc.). Use the pattern `0.1.0-N`
+> instead of `0.1.0-beta.N`. The tag name has no such restriction
+> — `studio-v0.1.0-beta.2` is fine as a tag; just keep the
+> in-file version numeric-prerelease. The hyphen still triggers
+> the workflow's prerelease marking either way.
 
 ### 2. Tag and push
 
