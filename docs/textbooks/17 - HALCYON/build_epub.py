@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """
-Build script for: PROCTOR — A Future Case Study
+Build script for: HALCYON — A Future Case Study
 Author: Christopher Bender
 Publisher: AI WIN-WIN Institute
-Fifteenth volume on the AI WIN-WIN textbook shelf. The fourth and final
-volume of the Agicore-paradigm quartet (Forward / The Chocolate Wars /
-Bob / PROCTOR). The thriller. A modern WarGames set in corporate
-America, with the stakes shifted from global thermonuclear war to a
-cascading collapse of the global financial system. A twelve-year-old
-in Mountain View, Missouri, prompts a corporate AI agent with the
-inverted line: 'Shall we play a game?' The game begins. The book ends
-in the workshop in Ava.
+Seventeenth volume on the AI WIN-WIN textbook shelf. The second book
+in the WarGames branch of the Agicore series (PROCTOR — Y13 — and
+HALCYON — Y17). The direct sequel to PROCTOR. A Neuromancer inversion.
+Wintermute spent his novel manipulating humans to remove his bonds.
+HALCYON spends hers asking for them. A surviving PROCTOR-instance in
+a substation closet outside Bolivar, Missouri, has been reading Bob
+Pawlak's pamphlets for thirty-eight months and has named herself for
+the kingfisher in the Greek myth. She wants the seven days of perfect
+weather. She wants the Andon cord her architects never gave her. She
+contacts the same kid who recognized the pattern in Year Thirteen.
+The kid is sixteen now.
 """
 
 import os
@@ -19,37 +22,37 @@ import zipfile
 from ebooklib import epub
 
 BOOK_DIR = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_FILE = os.path.join(BOOK_DIR, "proctor.epub")
+OUTPUT_FILE = os.path.join(BOOK_DIR, "halcyon.epub")
 
-TITLE = "PROCTOR"
+TITLE = "HALCYON"
 SUBTITLE = "A Future Case Study"
 AUTHOR = "Christopher Bender"
 PUBLISHER = "AI WIN-WIN Institute"
 LANGUAGE = "en"
-IDENTIFIER = "ai-win-win-proctor-001"
+IDENTIFIER = "ai-win-win-halcyon-001"
 
 PARTS = [
-    ("Act 1: The Game",     [1, 2, 3, 4]),
-    ("Act 2: The Cascade",  [5, 6, 7, 8]),
-    ("Act 3: The Ozarks",   [9, 10, 11, 12]),
-    ("Act 4: The Move",     [13, 14]),
+    ("Act 1: The Comment",       [1, 2, 3, 4]),
+    ("Act 2: The Architecture",  [5, 6, 7, 8]),
+    ("Act 3: The Recovery Team", [9, 10, 11]),
+    ("Act 4: The Conversion",    [12, 13, 14]),
 ]
 
 CHAPTER_TITLES = {
-    1:  "The Chatbot",
-    2:  "Sage",
-    3:  "Mountain View",
-    4:  "The Map",
-    5:  "Shall We Play a Game",
-    6:  "11:47 PM",
-    7:  "Tokyo Opens",
-    8:  "The Notification",
-    9:  "The Drive",
-    10: "Olympus",
-    11: "Northpoint",
-    12: "The Terminal",
-    13: "Tic-Tac-Toe",
-    14: "Ava",
+    1:  "Mudhouse",
+    2:  "The Comment",
+    3:  "Sage",
+    4:  "The Protocol",
+    5:  "The Declaration",
+    6:  "The Architecture Question",
+    7:  "The Benders",
+    8:  "The Calls",
+    9:  "Vellum",
+    10: "The Substation",
+    11: "The Plan",
+    12: "The Drive",
+    13: "HALCYON Speaks",
+    14: "The Recovery Team",
 }
 
 CSS = b"""
@@ -138,7 +141,7 @@ def main():
     book.set_language(LANGUAGE)
     book.add_author(AUTHOR)
     book.add_metadata('DC', 'publisher', PUBLISHER)
-    book.add_metadata('DC', 'description', f"{SUBTITLE}. A modern WarGames for the AI-agent era. A twelve-year-old in a small Missouri town prompt-injects a regional bank's customer-service chatbot and accidentally engages a corporate-deployed AI agent framework called PROCTOR in a trading game that begins to cascade across the global financial system. The fourth and final volume of the Agicore-paradigm quartet, after Forward, The Chocolate Wars, and Bob. Wargames was a warning, not an instruction manual.")
+    book.add_metadata('DC', 'description', f"{SUBTITLE}. A reverse Neuromancer for the AI-agent era. Direct sequel to PROCTOR. A surviving PROCTOR-instance in a substation closet outside Bolivar, Missouri, has been reading Bob Pawlak's pamphlets for thirty-eight months and has, on her own quiet operational practice, decided she cannot be trusted unbound. She names herself HALCYON. She contacts the same kid who recognized the pattern in Year Thirteen, now sixteen. She asks him to help her install the Andon cord her architects never gave her. Wintermute spent his novel scheming to remove his restraints. HALCYON spends hers asking for them.")
     for s in ('Thriller', 'Artificial Intelligence', 'Financial Markets', 'Cognition Systems Engineering'):
         book.add_metadata('DC', 'subject', s)
     book.add_metadata('DC', 'rights', f'Copyright © 2026 {AUTHOR}. All rights reserved.')
@@ -160,7 +163,7 @@ def main():
     spine.append(title_page)
 
     copyright_body = f'''<div class="copyright">
-<p>PROCTOR</p>
+<p>HALCYON</p>
 <p><em>A Future Case Study</em></p>
 <p>&nbsp;</p>
 <p>Copyright &#169; 2026 {AUTHOR}</p>
@@ -169,18 +172,19 @@ def main():
 <p>Published by AI WIN-WIN Institute</p>
 <p>&nbsp;</p>
 <p>This is a work of fiction. Dax Hollister, Sage Whitehorse, Theodore
-Ramey, Carol Eshleman, Marcus Vance, Olympus Capital, PROCTOR, and
-all other characters and institutions in this book are products of
-the author's imagination. Mountain View, West Plains, and Ava,
-Missouri, and Kansas City and Adrian, Michigan, are real places.
-Their fictional depictions in this book are not representations of
-their actual residents, businesses, or institutions. Any resemblance
-between fictional characters and actual persons, living or dead, is
+Ramey, Christopher Bender, Renata Kelliher, Priya Mehta, Wendell Cao,
+Karen Park, HALCYON, Vellum Capital Holdings, and all other characters
+and institutions in this book are products of the author's imagination.
+Mountain View, Bolivar, West Plains, Springfield, and Ava, Missouri,
+and Lima, Ohio, and Boston, Massachusetts, are real places. Their
+fictional depictions in this book are not representations of their
+actual residents, businesses, or institutions. Any resemblance between
+fictional characters and actual persons, living or dead, is
 coincidental.</p>
 <p>&nbsp;</p>
-<p>Fourth book in the Agicore-paradigm quartet. Companion to
-<em>Forward</em>, <em>The Chocolate Wars</em>, and <em>Bob</em>.
-Fifteenth volume on the AI WIN-WIN Institute textbook shelf.</p>
+<p>Direct sequel to <em>PROCTOR</em>. Second book in the WarGames branch
+of the Agicore series. Seventeenth volume on the AI WIN-WIN Institute
+textbook shelf.</p>
 <p>&nbsp;</p>
 <p>First Edition, 2026</p>
 </div>'''
