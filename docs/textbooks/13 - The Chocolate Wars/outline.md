@@ -7,17 +7,17 @@
 **Length target:** ~50,000 words, 14 chapters, 4 acts
 **Register:** Close third, past tense, kinetic. Faster cadence than *Carry* or *Forward*. The protagonist runs on different operational metabolism than Cole Westerlund did.
 
-> **Revision note (May 2026):** This outline reflects the first-draft plan. The published chapters supersede it where they conflict. Two substantive revisions to the cast: (1) Jimmy's wife was renamed and reshaped — she is now **Thea**, American, no Cape Town / KwaZulu-Natal background, supportive Greenville spouse rather than program director; (2) **Thandi Khoza** runs Beast Philanthropy on the ground (she was already in the original outline as a supporting character; the revision elevates her to the operational lead and gives her the Ch 3 POV and the Ch 13 visit with Eleanor that the first draft assigned to Lerato Booysen). The book's themes, plot beats, and closing arguments are unchanged.
+> **Revision note (May 2026):** This outline reflects the first-draft plan. The published chapters supersede it where they conflict. Three substantive revisions: (1) Jimmy's wife was renamed and reshaped — she is now **Thea**, American, no Cape Town / KwaZulu-Natal background, supportive Greenville spouse rather than program director; (2) **Thandi Khoza** runs Beast Philanthropy on the ground (she was already in the original outline as a supporting character; the revision elevates her to the operational lead and gives her the Ch 3 POV and the Ch 13 visit with Eleanor that the first draft assigned to Lerato Booysen); (3) the Agicore maintainer character had his surname stripped (now referred to as "Christopher" or "C.B." rather than "Christopher Bender") and the baby-naming beat at the close of the book was flipped from Christopher to **Theodore** (Roosevelt — the arena speech). The book's themes, plot beats, and closing arguments are unchanged.
 
 ---
 
 ## Concept
 
-This is the book where the most-subscribed YouTuber on the planet, a man with a hundred-and-fifty-employee studio in Greenville, North Carolina, a chocolate brand that has been eating Hershey's shelf space for three years, a wife he met eighteen months earlier and married eleven months ago, and a philanthropy operation that is, by the start of the book, building its eighth school in KwaZulu-Natal — discovers an open-source project called Agicore and realizes, across approximately ninety-one minutes of reading the README in his studio at two AM on a Tuesday in March of Year Nine, that the operating philosophy he has been using on instinct for nine years is the operating philosophy somebody named Christopher Bender has been formalizing into infrastructure in a small house on the north side of a small town in Missouri.
+This is the book where the most-subscribed YouTuber on the planet, a man with a hundred-and-fifty-employee studio in Greenville, North Carolina, a chocolate brand that has been eating Hershey's shelf space for three years, a wife he met eighteen months earlier and married eleven months ago, and a philanthropy operation that is, by the start of the book, building its eighth school in KwaZulu-Natal — discovers an open-source project called Agicore and realizes, across approximately ninety-one minutes of reading the README in his studio at two AM on a Tuesday in March of Year Nine, that the operating philosophy he has been using on instinct for nine years is the operating philosophy a quiet maintainer in a small town in Missouri has been formalizing into infrastructure.
 
-Jimmy Donaldson does not know who Christopher Bender is.
+Jimmy Donaldson does not know who the maintainer is.
 
-Christopher Bender knows who Jimmy Donaldson is, because everybody knows who Jimmy Donaldson is.
+The maintainer knows who Jimmy Donaldson is, because everybody knows who Jimmy Donaldson is.
 
 This is the book where they find each other.
 
@@ -83,7 +83,7 @@ The closing image of the book reinforces this. The last we see of Eleanor Whitco
 
 **Yvette Park** — 56. Hershey's chief category officer, responsible for the retailer-relationship management Hershey's has built across forty years. Yvette is the operational executor of the Hershey playbook. She is not the antagonist. She is doing her job. Her job has stopped working. She does not yet know it. *Recurring presence; major appearance in Ch 5.*
 
-**Christopher Bender** — 44. Primary author of the Agicore open-source project. Lives in the small town in Missouri established in the *Forward* post-credits scene. Has, in the time between the close of *Forward* and the start of this book, been operating Agicore with one additional consequential contributor — Cole Westerlund, who has been funding the project through the non-commercial arrangement described in the *Forward* closer for the previous twenty-two months. Bender appears once in this book, in Ch 8, when Jimmy submits his own GitHub issue and Bender replies. The reply is the recognition. *Brief appearance; ambient presence in Ch 7-14.*
+**Christopher** — 44. Primary author of the Agicore open-source project. Lives in the small town in Missouri established in the *Forward* post-credits scene. Goes by initials online (C.B., from his GitHub handle Binary-Blender). Has, in the time between the close of *Forward* and the start of this book, been operating Agicore with one additional consequential contributor — Cole Westerlund, who has been funding the project through the non-commercial arrangement described in the *Forward* closer for the previous twenty-two months. Christopher appears once on-page in this book, in Ch 8, when Jimmy submits his own GitHub issue and Christopher replies. The reply is the recognition. *Brief appearance; ambient presence in Ch 7-14.*
 
 **Cole Westerlund** — 67. Executive Chairman emeritus of Carrick, Inc., retired from operations after the third remake of *Forward.* Now spends most of his time on Bainbridge Island with Annika and the Coelacanth marine biology foundation. Has been funding Agicore non-commercially since the close of *Forward.* He does not appear in person in this book. He is referenced once, in Ch 13, in a one-line text message Bender shows Jimmy that reads: *"Welcome to the club. — C.W."* *Off-page presence; the connective tissue to Forward.*
 
@@ -333,7 +333,7 @@ The book ends here.
 
 Yes, there is one.
 
-A small town in Missouri. Christopher Bender at his desk. Late at night.
+A small town in Missouri. Christopher at his desk. Late at night.
 
 He has, by the morning of the second Sunday of February of Year Eleven, exactly two GitHub issues open from people he had not previously expected to be operating in his orbit.
 

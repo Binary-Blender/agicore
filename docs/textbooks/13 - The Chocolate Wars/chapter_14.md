@@ -10,9 +10,9 @@ The baby was, on the obstetrician's projection from the appointment two weeks ea
 
 The baby was, on the ultrasound from the same appointment, a boy.
 
-The name was, on the list on the kitchen counter as of the previous Tuesday evening, narrowed to two.
+The name was, on Thea's pitch at the counter on the previous Tuesday evening, Theodore.
 
-Theodore and Christopher.
+Jimmy had been thinking about it across the four days since.
 
 He got out of bed at six forty-three.
 
@@ -68,7 +68,7 @@ Sat down on the stool.
 
 "Ask."
 
-"Theodore or Christopher."
+"Theodore. Yes or no."
 
 He flipped the first pancake.
 
@@ -76,7 +76,7 @@ He flipped the first pancake.
 
 "Yeah."
 
-"I've been thinking about it for forty-eight hours."
+"I've been thinking about it for four days."
 
 "I know you have."
 
@@ -84,53 +84,23 @@ He flipped the first pancake.
 
 "Tell me."
 
-"The reasoning's two sentences. Then the answer."
+"You were right about it on Tuesday. The arena speech is the speech. Roosevelt was *in* the arena and *also* wrote the speech about the arena. The two things in the same person. I have been quoting the arena speech since I was fifteen years old. The line about the man who, at the worst, if he fails, at least fails while daring greatly. I have been quoting it because, on every honest reading of myself since I was fifteen, that's the line I have been trying to live to. The kid who's coming in fourteen weeks is going to have to choose, over the long arc, whether to be the kind of person who watches and comments or the kind of person who steps into the arena. I want him to know, on his own name, which one I think matters."
 
-"Two sentences."
+"Jimmy."
 
-"One. The fourth boy name's on the list because Christopher Bender, by typing fourteen hundred and seventeen lines of DSL across three days in a workshop in Missouri, gave us the architecture that gave us this morning. Two. The second boy name's on the list because Theodore Roosevelt — who across the eleven years since I started reading biographies has been the operational figure I have most consistently come back to — wrote the speech about the man in the arena. The arena. Dust, sweat, blood. Daring greatly. You know the speech."
+"Yeah."
 
-"I know the speech."
+"Theodore."
+
+"Theodore."
+
+"I love you."
+
+"I love you."
 
 He flipped the second pancake.
 
-He looked at her.
-
 "Thea."
-
-"Yeah."
-
-"Christopher."
-
-"Jimmy."
-
-"Yeah."
-
-"Why."
-
-"Because Theodore Roosevelt wrote the speech about the arena because he was *in* the arena. The speech is great. The speech is also, on what the speech is actually saying, about the kind of person Christopher Bender is. Roosevelt was the man in the arena who *also* wrote the speech about the arena. Christopher Bender is the man in the arena who built the thing the arena needs and never wrote any speech about it. He's been in the arena twenty-two years without anybody knowing his name. The son who's coming in fourteen weeks is going to have to choose, over the long arc, whether to be the kind of person who writes the speech or the kind of person who does the work the speech is about. I want him to know, on his own name, that the second kind exists. The second kind is rarer. The second kind is, on my honest assessment since May, the kind I've been trying to learn to be. The name is Christopher."
-
-Thea looked at him.
-
-She did not say anything for about fourteen seconds.
-
-"Jimmy."
-
-"Yeah."
-
-"Christopher."
-
-"Christopher."
-
-"I agree."
-
-"Thea."
-
-"Yeah."
-
-"Thank you."
-
-"Jimmy."
 
 "Yeah."
 
@@ -228,11 +198,9 @@ He thought about the speech.
 
 He thought about the schools.
 
-He thought about Christopher Bender in Ava, who would, on the schedule Christopher and Jimmy had quietly worked out over email in late August, receive an email from Jimmy on the Thursday of the following week — the day after the Wharton speech — that would say, in three sentences: *Christopher. We are naming the boy after you. He's due in January. The list had eight names; yours was the fourth boy name; Thea picked it; I agreed. — Jimmy.*
-
 He thought about Eleanor Whitcomb at her kitchen table in Hummelstown.
 
-He thought about Sarah Bender's bread.
+He thought about Sarah's bread.
 
 He thought about Karim Brock pulling the actual Andon Cord on the actual Camry line at the Georgetown plant in 2003.
 
@@ -242,7 +210,7 @@ He thought about the slope of the small valley and the southern Drakensberg foot
 
 He thought about the small smile of a nine-year-old girl named Ayanda.
 
-He thought about the Saturday morning, and the next Saturday morning, and the Saturday morning fourteen weeks out, when the boy whose name was going to be Christopher Bender Donaldson would, on the obstetrician's projection, be about one week old, and the pancakes would still be the pancakes.
+He thought about the Saturday morning, and the next Saturday morning, and the Saturday morning fourteen weeks out, when the boy whose name was going to be Theodore Donaldson would, on the obstetrician's projection, be about one week old, and the pancakes would still be the pancakes.
 
 The chocolate was the means.
 
@@ -266,7 +234,7 @@ Woke up next to Thea at twelve twenty-four PM.
 
 ---
 
-In the small workshop in the back half of the detached garage on the property at the southwest edge of Ava, Missouri, at ten forty-one PM Central on the Wednesday of the third week of November of Year Nine — six weeks after the joint operational entity's specification had been signed in the converted feed store in Underberg, four weeks after Jimmy's Wharton speech had run on the standard university-distinguished-lecture publication schedule and had been viewed about forty-one million times across the subsequent fourteen days, and about ninety minutes after Sarah had brought Christopher a cup of coffee and an oatmeal cookie and asked him whether he was going to come to bed at any reasonable hour and he had said *another hour, Sarah* and she had said *another hour, then bed* — Christopher Bender was at the desk in the workshop with the laptop open, the Agicore repository's *issues* tab on the screen, the small lamp on, the window closed against the November cold, and a small green plant on the corner of the desk Sarah had moved from the kitchen to the workshop two weeks earlier, on the theory that Christopher was going to need some additional visual evidence of life in the workshop across the eighteen-month runway he had negotiated with Jimmy in May.
+In the small workshop in the back half of the detached garage on the property at the southwest edge of Ava, Missouri, at ten forty-one PM Central on the Wednesday of the third week of November of Year Nine — six weeks after the joint operational entity's specification had been signed in the converted feed store in Underberg, four weeks after Jimmy's Wharton speech had run on the standard university-distinguished-lecture publication schedule and had been viewed about forty-one million times across the subsequent fourteen days, and about ninety minutes after Sarah had brought Christopher a cup of coffee and an oatmeal cookie and asked him whether he was going to come to bed at any reasonable hour and he had said *another hour, Sarah* and she had said *another hour, then bed* — Christopher was at the desk in the workshop with the laptop open, the Agicore repository's *issues* tab on the screen, the small lamp on, the window closed against the November cold, and a small green plant on the corner of the desk Sarah had moved from the kitchen to the workshop two weeks earlier, on the theory that Christopher was going to need some additional visual evidence of life in the workshop across the eighteen-month runway he had negotiated with Jimmy in May.
 
 The issues tab showed at the top of the list a new issue that had been filed at ten thirty-four PM Central — seven minutes earlier — by a user whose GitHub account Christopher had not previously seen on the repository.
 

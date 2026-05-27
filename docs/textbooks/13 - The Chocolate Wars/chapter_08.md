@@ -34,7 +34,7 @@ Karim took the first sip of his coffee.
 
 "Two."
 
-"Two. The project is, by public-record evidence, maintained by one person. The one person has identified himself, on the website and a small personal blog, as Christopher Bender, of an unspecified small town in Missouri, age unspecified, professional background described only as *twenty-some years of trying to make this idea land in production environments that were not yet ready for it.* He has a single blog post dated September of Year Eight titled *Why I Quit.* Twelve hundred words. The post is, on my honest read, the post of a man who, across a long career in enterprise software, recognized something the industry has not yet recognized, and who walked away from a senior position at a company he does not name in order to build, on his own, the thing he believes the next decade is going to be built on. The post does not, in twelve hundred words, mention money. Or an investor. Or an exit. The post is the post of a man who is doing this because he cannot, on his own internal accounting, *not* do it."
+"Two. The project is, by public-record evidence, maintained by one person. The one person has identified himself, on the website and a small personal blog, as Christopher, of an unspecified small town in Missouri, age unspecified, professional background described only as *twenty-some years of trying to make this idea land in production environments that were not yet ready for it.* He has a single blog post dated September of Year Eight titled *Why I Quit.* Twelve hundred words. The post is, on my honest read, the post of a man who, across a long career in enterprise software, recognized something the industry has not yet recognized, and who walked away from a senior position at a company he does not name in order to build, on his own, the thing he believes the next decade is going to be built on. The post does not, in twelve hundred words, mention money. Or an investor. Or an exit. The post is the post of a man who is doing this because he cannot, on his own internal accounting, *not* do it."
 
 "Three."
 
@@ -44,7 +44,7 @@ Jimmy looked at the chair.
 
 "The chair."
 
-"This morning's chair is the chair I have set up for Christopher Bender. The chair is the chair I am asking you, on how you interact with this guy across the next thirty days, to keep empty for the next thirty days. The chair stays empty because the way you interact with him across that window is going to determine whether the architecture you have been looking for since the second of March is, in operational reality, available to you at the rate the empire needs to absorb it. The interaction is not a Jimmy-Donaldson-deploys-resources-at-the-thing interaction. The first one will fail. It's a Jimmy-Donaldson-becomes-an-ordinary-user-of-the-thing interaction. The second one will succeed. Christopher Bender does not yet know who you are. He has not invited you to sit at this table. He has not, on his own assessment, decided whether the MrBeast empire is a user base he wants Agicore deployed on. The chair stays empty until he decides. That's his decision. Your job this morning is to file a GitHub issue."
+"This morning's chair is the chair I have set up for Christopher. The chair is the chair I am asking you, on how you interact with this guy across the next thirty days, to keep empty for the next thirty days. The chair stays empty because the way you interact with him across that window is going to determine whether the architecture you have been looking for since the second of March is, in operational reality, available to you at the rate the empire needs to absorb it. The interaction is not a Jimmy-Donaldson-deploys-resources-at-the-thing interaction. The first one will fail. It's a Jimmy-Donaldson-becomes-an-ordinary-user-of-the-thing interaction. The second one will succeed. Christopher does not yet know who you are. He has not invited you to sit at this table. He has not, on his own assessment, decided whether the MrBeast empire is a user base he wants Agicore deployed on. The chair stays empty until he decides. That's his decision. Your job this morning is to file a GitHub issue."
 
 "A GitHub issue."
 
@@ -56,7 +56,7 @@ Jimmy looked at the chair.
 
 "Walk me through it."
 
-"The issue is going to be a feature request. About four hundred words. Describes a specific operational problem you have on Beast Games that the current DSL is not expressive enough to model. The problem is going to be specific. It is not going to name Beast Games. It is going to be written in the standard six-section format the author has documented in the contribution guide — *context, problem, current behavior, desired behavior, suggested approach, willingness to contribute.* You file it under the GitHub account I set up for you in 2021 for the Linus Tech Tips collab. About fourteen public-repo stars on it across five years. To Bender, the account looks like an ordinary user account. The issue looks like an ordinary feature request from a midsize-CPG operator. It does not identify you as Jimmy Donaldson. It does not identify the operation as MrBeast. It looks, on appearance, like the forty-eighth open issue on a small open-source project."
+"The issue is going to be a feature request. About four hundred words. Describes a specific operational problem you have on Beast Games that the current DSL is not expressive enough to model. The problem is going to be specific. It is not going to name Beast Games. It is going to be written in the standard six-section format the author has documented in the contribution guide — *context, problem, current behavior, desired behavior, suggested approach, willingness to contribute.* You file it under the GitHub account I set up for you in 2021 for the Linus Tech Tips collab. About fourteen public-repo stars on it across five years. To Christopher, the account looks like an ordinary user account. The issue looks like an ordinary feature request from a midsize-CPG operator. It does not identify you as Jimmy Donaldson. It does not identify the operation as MrBeast. It looks, on appearance, like the forty-eighth open issue on a small open-source project."
 
 "Karim."
 
@@ -68,7 +68,7 @@ Jimmy looked at the chair.
 
 "How."
 
-"The specific operational problem you're going to describe is, on my four years at Toyota and on Bender's own twenty years of trying to land this idea, a problem only an operator running an actual large-scale show-production system has. The shape of the problem is going to be the recognition. He won't know it's you. He will know it's somebody running a system at a scale most of his other users are not at. He's going to engage with the issue at a different level than the other forty-seven. The engagement is the conversation. The conversation is the architecture."
+"The specific operational problem you're going to describe is, on my four years at Toyota and on Christopher's own twenty years of trying to land this idea, a problem only an operator running an actual large-scale show-production system has. The shape of the problem is going to be the recognition. He won't know it's you. He will know it's somebody running a system at a scale most of his other users are not at. He's going to engage with the issue at a different level than the other forty-seven. The engagement is the conversation. The conversation is the architecture."
 
 "Help me draft it."
 
@@ -106,11 +106,11 @@ Filed at nine forty-eight AM.
 
 Karim and Jimmy closed the laptop.
 
-"Bender's commit pattern says he works on the project between about nine PM and two AM Central. He'll see the issue tonight."
+"Christopher's commit pattern says he works on the project between about nine PM and two AM Central. He'll see the issue tonight."
 
 "What do we do until tonight."
 
-"Run the empire. Cease-and-desist video is still live. Walmart-aisle video is still live. Companion video drops Friday at ten. Beast Games ops review is at one. Feastables brand check-in at three. Thandi's call about the May twenty-eighth opening at five. We let Bender see the issue tonight."
+"Run the empire. Cease-and-desist video is still live. Walmart-aisle video is still live. Companion video drops Friday at ten. Beast Games ops review is at one. Feastables brand check-in at three. Thandi's call about the May twenty-eighth opening at five. We let Christopher see the issue tonight."
 
 "All right."
 
@@ -134,7 +134,7 @@ Worked through the day.
 
 ---
 
-Christopher Bender, in the small town in Missouri, sat down at his desk in the spare bedroom he had converted to his workspace in October of Year Eight, at nine eleven PM Central Wednesday evening, with a cup of coffee his wife had made him at eight forty-five PM that he had not yet finished, the laptop in front of him, the Agicore repository open in his browser, and the *issues* tab showing — at the top of the list, above the forty-seven previously open issues — issue number fifty-eight.
+Christopher, in the small town in Missouri, sat down at his desk in the spare bedroom he had converted to his workspace in October of Year Eight, at nine eleven PM Central Wednesday evening, with a cup of coffee his wife had made him at eight forty-five PM that he had not yet finished, the laptop in front of him, the Agicore repository open in his browser, and the *issues* tab showing — at the top of the list, above the forty-seven previously open issues — issue number fifty-eight.
 
 He read the title.
 
@@ -150,7 +150,7 @@ Read it a second time.
 
 Clicked the profile of the user who had filed it.
 
-The profile was a GitHub account with fourteen public-repo stars, no public repos of its own, no bio, no location, no linked website, and a profile photo of a person in a baseball cap that was, on Bender's first three seconds of looking at it, not immediately recognizable.
+The profile was a GitHub account with fourteen public-repo stars, no public repos of its own, no bio, no location, no linked website, and a profile photo of a person in a baseball cap that was, on Christopher's first three seconds of looking at it, not immediately recognizable.
 
 He clicked back to the issue.
 
@@ -164,11 +164,11 @@ Set the cup down.
 
 He recognized, at nine twenty-six PM Central Wednesday, that the issue was not the forty-eighth issue.
 
-It was the first issue from an operator who was running, in production, a system at the scale Agicore had been designed for, and that nobody had yet, in the eleven months Bender had been building the project, brought a real instance of to him.
+It was the first issue from an operator who was running, in production, a system at the scale Agicore had been designed for, and that nobody had yet, in the eleven months Christopher had been building the project, brought a real instance of to him.
 
 He had been waiting eleven months to receive this issue.
 
-Bender opened the reply box.
+Christopher opened the reply box.
 
 Sat in it for about seven minutes.
 

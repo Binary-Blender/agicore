@@ -18,7 +18,7 @@ The differential was, across the next thirty days, going to be about one hundred
 
 The differential was not the result of Feastables' senior leadership being smarter than Hershey's.
 
-The differential was the result of line six hundred and forty-seven of the .agi specification, which Christopher Bender had typed on the Saturday afternoon in his workshop in Ava. The line was about fourteen lines of DSL: *commodity inputs to the Feastables operational pipeline shall maintain hedge coverage at the top quartile of the industry's published hedge-disclosure data, sampled monthly from the standard CPG-industry commodity-hedge-reporting service, with the runtime obligated to halt any procurement decision that would, on the runtime's evaluation, take the company below the top quartile, and with escalation to the cord holder (J. Donaldson) on any halt that the operations team cannot clear within seventy-two hours.*
+The differential was the result of line six hundred and forty-seven of the .agi specification, which Christopher had typed on the Saturday afternoon in his workshop in Ava. The line was about fourteen lines of DSL: *commodity inputs to the Feastables operational pipeline shall maintain hedge coverage at the top quartile of the industry's published hedge-disclosure data, sampled monthly from the standard CPG-industry commodity-hedge-reporting service, with the runtime obligated to halt any procurement decision that would, on the runtime's evaluation, take the company below the top quartile, and with escalation to the cord holder (J. Donaldson) on any halt that the operations team cannot clear within seventy-two hours.*
 
 It had been the four-hundred-and-twelfth line Christopher had typed that Saturday.
 
@@ -222,13 +222,13 @@ By the close of trading Tuesday afternoon, the action had materialized as a one-
 
 The variance was, in Adelaide Krug's piece in Wednesday morning's *Wall Street Journal,* the second headline of the business section: *Beast Industries' Hedge Discipline Spares Feastables from Cocoa Crisis That Will Cost Hershey Approximately $140M.*
 
-The piece attributed the eighty-third-percentile position to *the operational discipline of Beast Industries' senior leadership team.* It did not name the .agi specification, Agicore, or Christopher Bender. It identified Ana Vasquez as the operational executor. It quoted Ana, on a brief comment she had given Krug on Tuesday afternoon: *We've been operating, across the past several months, on a new internal framework for commodity-exposure discipline. The framework has been working. We will continue to operate on it.*
+The piece attributed the eighty-third-percentile position to *the operational discipline of Beast Industries' senior leadership team.* It did not name the .agi specification, Agicore, or Christopher. It identified Ana Vasquez as the operational executor. It quoted Ana, on a brief comment she had given Krug on Tuesday afternoon: *We've been operating, across the past several months, on a new internal framework for commodity-exposure discipline. The framework has been working. We will continue to operate on it.*
 
-Ana had not, in the comment, mentioned Agicore or Christopher Bender.
+Ana had not, in the comment, mentioned Agicore or Christopher.
 
-The framework would, on Ana's quiet operational accounting at the close of Tuesday afternoon, remain unattributed for as long as Christopher Bender's situation in Ava, Missouri, required it to.
+The framework would, on Ana's quiet operational accounting at the close of Tuesday afternoon, remain unattributed for as long as Christopher's situation in Ava, Missouri, required it to.
 
-The operational reality of Christopher Bender's situation, on his own articulation to Jimmy at the workshop door the previous Sunday evening, was that the project required eighteen months before it could absorb the audience that public attribution would deliver to it.
+The operational reality of Christopher's situation, on his own articulation to Jimmy at the workshop door the previous Sunday evening, was that the project required eighteen months before it could absorb the audience that public attribution would deliver to it.
 
 The eighteen months had, by Tuesday evening, six weeks of operational runway behind them and seventy-two weeks ahead.
 
@@ -260,11 +260,11 @@ Looked up.
 
 "Yeah."
 
-"The fourth boy name."
+"The second boy name."
 
 "Yeah."
 
-"Christopher."
+"Theodore."
 
 "Yeah."
 
@@ -272,19 +272,19 @@ Looked up.
 
 "Yeah."
 
-"Why is Christopher on the list."
+"Why is Theodore on the list."
 
 She looked at him.
 
-"Jimmy. On the Friday of the week you got back from Missouri, you spent forty minutes at this counter telling me about the three days in Ava. You told me about Sarah's bread. You told me about the chickens. You told me about the crayfish. You told me about the forty-eight-line section at the bottom of the .agi file. You told me about the empty hook. You told me about the eighteen-month counter-offer. You didn't, in the forty minutes, tell me what you owed him. You didn't tell me because you didn't yet know. I'm telling you now. The fourth boy name is on the list because, on every measure I can apply to what you came home from Missouri having received, Christopher Bender is going to be — across the next four decades of our lives — the closest thing to a third parent this family is going to have. If this child is a boy, he's going to be named for the man who typed fourteen hundred and seventeen lines of DSL across three days in a workshop in Missouri and gave us the ninety days back. The ninety days are this family."
+"Jimmy. You've been quoting Roosevelt to me for two years. The arena speech. Last Thanksgiving you quoted it at dinner to my dad after my dad said he didn't understand what you actually *did* for a living. You quoted it again at our anniversary in May, sitting at this counter, when I asked you how you were holding up. You quote it to yourself in the truck when you're driving back from the studio at eleven PM. I've heard you. I put Theodore on the list because, on every honest accounting of who you have been trying to become across the eleven months I have been married to you, Theodore Roosevelt is the operational figure you have been measuring yourself against. If this child is a boy, I want him named for the kind of person his father has been trying to be. The other three boy names are placeholders. We are not deciding tonight. We are deciding by the end of September. But the second name is the one I want."
 
 She paused.
 
-"We're not deciding tonight. We're deciding by the end of September. We're going to decide together. The list is on the counter."
+"The list is on the counter."
 
 Jimmy looked at the list.
 
-Looked at the fourth boy name.
+Looked at the second boy name.
 
 "Thea."
 

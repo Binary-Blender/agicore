@@ -12,7 +12,7 @@ Jimmy had not, in the twenty-four hours since hearing the sentence, considered c
 
 The rental car was a 2023 Honda Accord that Karim had reserved in Jimmy's actual legal name through a small local agency Karim had used twice before for unrelated travel and that did not, on its corporate-systems infrastructure, flag the booking to any of the major rental-car databases. Jimmy drove the Accord himself.
 
-The address Bender had sent on Wednesday night was, on the GPS, fifty-one minutes south of the airport, along a state highway that ran past three small towns, a feed mill, two ranches, and approximately thirty miles of mixed pasture and hardwood forest, before reaching a county road that ran another eight minutes east into a small town the GPS identified as Ava.
+The address Christopher had sent on Wednesday night was, on the GPS, fifty-one minutes south of the airport, along a state highway that ran past three small towns, a feed mill, two ranches, and approximately thirty miles of mixed pasture and hardwood forest, before reaching a county road that ran another eight minutes east into a small town the GPS identified as Ava.
 
 The address was on the southwest side of the small town.
 
@@ -358,7 +358,7 @@ Jimmy said: "I am going to do three things across the next forty-eight hours tha
 
 Christopher said: "Tell me the three things."
 
-Jimmy said: "First. I'm committing, Monday morning at nine AM Eastern, ten million dollars to a five-year unrestricted grant to the Agicore project, structured through the Bender Foundation directly. No deliverables. No reporting requirements. No influence over the project's roadmap. The grant exists because the work you've been doing for eleven months is, on every measure I can apply, the work the next decade is going to be built on — and the work the next decade is going to be built on should not be subject to whether the person doing it has enough money to keep doing it."
+Jimmy said: "First. I'm committing, Monday morning at nine AM Eastern, ten million dollars to a five-year unrestricted grant to the Agicore project, structured through the Agicore Foundation directly. No deliverables. No reporting requirements. No influence over the project's roadmap. The grant exists because the work you've been doing for eleven months is, on every measure I can apply, the work the next decade is going to be built on — and the work the next decade is going to be built on should not be subject to whether the person doing it has enough money to keep doing it."
 
 Christopher said: "Jimmy."
 
@@ -366,7 +366,7 @@ Jimmy said: "I have not finished. The second thing. I am going to, on Wednesday 
 
 Christopher said: "Jimmy."
 
-Jimmy said: "I have not finished. The third thing. I am going to, in approximately seventy-two hours, post a short YouTube video on the personal-channel side of the MrBeast operation, which has approximately fourteen million subscribers and which I use approximately three times a year. The video is going to be six to nine minutes long. The video is going to be me sitting at the response desk talking about a piece of open-source software a person in Missouri has been building for eleven months that is, on my honest assessment, going to change how every operator runs every operating company for the next decade. The video is not going to ask the audience to do anything. The video is going to direct the audience to the project's GitHub repository. The video is going to mention, by name, Christopher Bender. The video is going to mention, by name, the project. The video is going to be the third thing."
+Jimmy said: "I have not finished. The third thing. I am going to, in approximately seventy-two hours, post a short YouTube video on the personal-channel side of the MrBeast operation, which has approximately fourteen million subscribers and which I use approximately three times a year. The video is going to be six to nine minutes long. The video is going to be me sitting at the response desk talking about a piece of open-source software a person in Missouri has been building for eleven months that is, on my honest assessment, going to change how every operator runs every operating company for the next decade. The video is not going to ask the audience to do anything. The video is going to direct the audience to the project's GitHub repository. The video is going to direct the audience to the project. The video is going to be the third thing."
 
 Christopher was quiet for a long beat.
 

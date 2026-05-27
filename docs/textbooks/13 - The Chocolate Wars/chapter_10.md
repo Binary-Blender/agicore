@@ -182,7 +182,7 @@ Fourteen hundred and three applicants. One thousand three hundred and eighty-eig
 
 In the seven hours and twelve minutes of the cycle, Jimmy had received zero notifications.
 
-In the same seven hours and twelve minutes he had filmed two cold-opens for the personal channel, recorded the audio for a podcast appearance scheduled for the following week, taken Thea on a forty-five-minute lunch in downtown Greenville, and read about sixty pages of a book on the history of the Erlanger Toyota plant that Karim had handed him Wednesday morning with the note *read this on the plane to Missouri but don't tell Bender I gave it to you.*
+In the same seven hours and twelve minutes he had filmed two cold-opens for the personal channel, recorded the audio for a podcast appearance scheduled for the following week, taken Thea on a forty-five-minute lunch in downtown Greenville, and read about sixty pages of a book on the history of the Erlanger Toyota plant Karim had handed him Wednesday morning with the note *read this on the plane to Missouri but don't tell Christopher I gave it to you.*
 
 He had not, in the same seven hours and twelve minutes, been the cord on Beast Games.
 

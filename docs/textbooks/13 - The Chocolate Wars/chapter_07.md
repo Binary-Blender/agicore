@@ -186,7 +186,7 @@ Read them twice.
 
 "Yeah."
 
-"The repo is owned by an account called Binary-Blender. The README author identifies in the footer as C. Bender. There's no further identifying info on the about page. By the commit history he's been committing at about fourteen commits a week for the past eleven months. By the contributors list, no other contributors. On the project's website — linked from the README — there's a small page that says the project is being built by one person in a small town in Missouri because the operating model it encodes is, in his own words, the operating model AI-native organizations are going to be built around in the next decade. Single person. Lives in Missouri. Calls himself an AI-native operator. Says he's *doing what he can with what he has.*"
+"The repo is owned by an account called Binary-Blender. The README author signs the footer as C. There's no further identifying info on the about page. By the commit history he's been committing at about fourteen commits a week for the past eleven months. By the contributors list, no other contributors. On the project's website — linked from the README — there's a small page that says the project is being built by one person in a small town in Missouri because the operating model it encodes is, in his own words, the operating model AI-native organizations are going to be built around in the next decade. Single person. Lives in Missouri. Calls himself an AI-native operator. Says he's *doing what he can with what he has.*"
 
 Karim was quiet.
 
