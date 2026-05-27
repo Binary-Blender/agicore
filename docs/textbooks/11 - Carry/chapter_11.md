@@ -1,318 +1,256 @@
 # Chapter 11: The Crisis
 
-The leak hit Bloomberg at one fourteen PM Pacific on a Wednesday in early April of Year Two, fifteen hours before the Q1 earnings call.
+The Bloomberg piece hit at 1:14 PM Pacific on a Wednesday in early April of Year Two — fifteen hours before the Q1 earnings call.
 
-Cole was in his office on the eleventh floor with Owen and Reese when Mara walked through the door without knocking, which was the third time in four years Mara had walked into Cole's office without knocking, and set the encrypted tablet on the conference table.
+Cole was at the conference table on the eleventh floor with Owen and Reese, building the talk track for the call, when Mara walked through the door without knocking. It was the third time in four years she had done that. The first two times had been a State Department threat update during the *Coelacanth* return and the night the federal grand jury had subpoenaed Carrick's competitive-intelligence logs eleven months earlier. This was the third.
 
-She said: "Cole. Bloomberg ran a piece at one twelve. The piece quotes an internal memo from you to Anjali dated Friday. The memo is the Q2 ESOP-tranche pricing schedule. The piece reproduces the second paragraph verbatim. The paragraph contains material non-public information about the Year Three tranche pricing methodology. The stock is down four percent in the last six minutes. We are running off-cycle. The 8-K filing on the Q2 tranche was not scheduled until two weeks from Friday. The leak has compressed the disclosure window to today. Priya is on her way up. I have started the internal forensics. I am going to know who leaked it by three PM. I came up here first."
+She set the encrypted tablet on the table.
 
-Cole looked at her.
+"Bloomberg ran a piece at one twelve. Byline Marcus Drummond. The piece quotes your Friday memo to Anjali on the Q2 ESOP tranche pricing. The fourth paragraph is reproduced verbatim. Material non-public. The stock is down four percent in the last six minutes. We are running off-cycle. The 8-K wasn't scheduled until two weeks from Friday. The leak has compressed the window to today. Priya's on her way up. I've started internal forensics. I'll know who leaked it by three. I came up here first."
 
-Owen had already opened the Bloomberg piece on the second monitor.
+Owen had already opened the piece on the second monitor. Reese was reading over his shoulder.
 
-Reese was reading it over Owen's shoulder.
+Cole walked over and read it.
 
-Cole walked to the second monitor. He read the piece.
+Eleven paragraphs. Drummond. Carrick beat reporter for fourteen months — competent, ambitious, not malicious. First three paragraphs setup. The fourth was the leaked paragraph, word-for-word. The remaining seven were Drummond's analysis of what it meant.
 
-The piece was eleven paragraphs. The byline was Marcus Drummond, a Bloomberg reporter who had been covering the Carrick pivot for fourteen months. The first three paragraphs were a setup. The fourth paragraph reproduced the second paragraph of Cole's Friday memo to Anjali verbatim. The remaining seven paragraphs were Drummond's analysis of what the leaked paragraph meant for the Q2 tranche pricing.
+What it meant — Cole could read it in two seconds, because he had written the underlying document — was that the Q2 tranche pricing methodology Carrick had not yet disclosed was now disclosed, and the people who knew were now arbitraged against the people who didn't.
 
-The leaked paragraph contained the tranche-pricing methodology Cole had not yet disclosed to the public, and which was not going to be disclosed until the 8-K filing two weeks later.
+The leak was material. The leak was illegal. The leak was timed.
 
-The leak was material.
+He turned to Mara.
 
-The leak was illegal.
+"How many had access to the memo on Friday."
 
-The leak was timed.
+"Seventeen. The five executives — you, me, Owen, Anjali, Reese, Diana. The three direct reports under Diana running the Retail Co. transition. The two corp-dev directors on tranche pricing under Owen. The three engineers maintaining the document store. Priya's three counsels on the ESOP build. Seventeen."
 
-Cole said: "Mara."
+"Forensics."
 
-She said: "Yes."
+"Running. The store logs every access by session ID. Every session ID ties to a badge. The badge gives us geo, device fingerprint, and timestamp. The leaker had to download the document or photograph the screen. If they downloaded, I have the download log. If they photographed, the access log narrows to a four-minute window around Drummond's draft-document timestamps. Drummond used a Google Docs collaborative draft. The Google Docs metadata is in the public DOM and timestamps the moment the first paste happened. I will know who it was in two hours."
 
-He said: "How many people had access to the Friday memo."
+"Two hours."
 
-She said: "Seventeen. The five executives — you, me, Owen, Anjali, Reese, Diana. The three direct reports under Diana running the Retail Co. transition team. The two corp-dev directors working the tranche pricing under Owen. The three engineers maintaining the encrypted document store. The Priya team's three counsels on the ESOP build. That is seventeen."
+"My analyst is pulling the seventeen badges. Narrows to single digits inside an hour. Named by three. Case file to Priya by four. Priya calls Seattle FBI by five. I called Field Office Director Kim at one twenty-one. He has two agents on standby."
 
-He said: "Forensics."
+"Run it."
 
-She said: "Already running. The document store logs every access. Every access has a session ID. Every session ID is tied to a badge. The badge tracks geographic location, device fingerprint, and access time. The leaker had to have downloaded the document or photographed the screen. If they downloaded, we have the download log. If they photographed, we have the access log narrowed to a four-minute window matching the Drummond timestamps on his draft document. I will know in two hours."
-
-Cole said: "Two hours."
-
-She said: "Two hours. I have an analyst in Mara's team who is already pulling the seventeen badges. The list will be narrowed to single digits inside an hour. The leaker will be named by three. The case file goes to Priya by four. Priya makes the call on the FBI Seattle field office by five. The FBI is already on standby. I called Field Office Director Kim at one twenty-one. He cleared two agents for our case if it goes that far."
-
-Cole said: "Mara."
-
-She said: "Yes."
-
-He said: "Run it."
-
-She said: "Running."
+"Running."
 
 She walked out.
 
 ---
 
-Priya Bhattacharya walked in at one twenty-six.
+Priya Bhattacharya came in at 1:26.
 
-She had a folder in her hand and a tablet under her arm.
+Folder in one hand, tablet under the other arm, hair pulled back the way she pulled it back when something had broken and the day was no longer hers.
 
-She said: "Cole. Owen. Reese."
+"Material non-public was disclosed at one twelve. The disclosure is illegal under Regulation FD if the source was Carrick. Illegal under Rule 10b-5 if the source was Carrick and the source is short the stock or has a related party short the stock. Illegal under multiple state statutes regardless of the federal questions. The 8-K on Q2 tranche pricing was scheduled for two weeks from Friday. We move that filing up to today. I have a draft. The text is on the tablet. Sending it to the three of you now."
 
-The three of them said her name back.
+She tapped. Three devices chimed at the same time.
 
-She said: "Material non-public information was disclosed at one twelve. The disclosure is illegal under Regulation FD if the source was Carrick. The disclosure is illegal under Rule 10b-5 if the source was Carrick and the source is short the stock or has a related party short the stock. The disclosure is illegal under multiple state-level statutes regardless. The 8-K disclosure on the Q2 tranche pricing methodology was scheduled for two weeks from Friday. We are going to need to move that filing up to today. I have drafted the 8-K text in the previous fourteen minutes. The text is in the tablet. I am sending it to the three of you now."
+Owen scrolled, read it for thirty-five seconds, set the phone down. He tugged at his tie like he'd remembered it was there.
 
-She tapped the tablet.
+"Priya. First three paragraphs are the disclosure. The fourth is the methodology. The fifth is the institutional framing. Tighten the fifth. The framing is too defensive. We didn't leak this. We aren't on the back foot. We file because the markets are entitled to the information once it's in circulation, full stop. Make the fifth paragraph read like a normal Q2 disclosure that happens to be coming today rather than the Friday two weeks from now."
 
-Owen's phone, Reese's phone, and Cole's desktop email all chimed.
+"Tightening."
 
-Owen opened the draft. He read it for thirty-five seconds. He said: "Priya. The first three paragraphs are the disclosure. The fourth is the methodology. The fifth is the institutional-investor framing. I would tighten the fifth. The framing is too defensive. We did not leak this. We are not on the defense. We are filing this because the markets are entitled to the information now that the information is in circulation. Make the fifth paragraph read like a normal Q2 disclosure that happens to be coming today rather than the Friday two weeks from now."
+She edited on the tablet, two fingers, fast.
 
-Priya said: "Tightening the fifth."
+"Filing time."
 
-She made the edit on the tablet.
+Cole said: "Six PM Pacific. After the close. Before the after-hours volume hits."
 
-She said: "Filing time."
+Reese had been quiet. He was looking past the window, past the Cloud building across the street, into the middle distance. He spoke without turning.
 
-Cole said: "Six PM Pacific. After the close. Before the after-hours trading volume hits."
+"Cole. The call tomorrow is at two PM Pacific. A six PM filing tonight does two things. Stabilizes the after-hours by lowering the information asymmetry between the parties who read Drummond and the parties who didn't. And it gives Karen Yoshida and the rest of the analyst desks fifteen and a half hours to digest the methodology before they get to ask questions about it on the call. Fifteen and a half hours is the difference between a panicked call and a substantive one. We file at six. We hold the after-hours. We do the call tomorrow on the merits. We don't pretend the leak didn't happen. We address it in the open."
 
-Reese said: "Cole."
+"Reese is right," Owen said.
 
-Cole said: "Yes."
+"Six PM. Filing locked. I have the final to you three by five. Cole signs at five forty. Owen co-signs at five forty-two. Filing transmits at six."
 
-Reese said: "The earnings call is tomorrow at two PM Pacific. The 8-K timing tonight after the close is going to do two things. It is going to stabilize the after-hours price by lowering the information asymmetry between the parties who read the Bloomberg piece and the parties who did not. It is also going to give Karen Yoshida and the rest of the analyst community fifteen and a half hours to digest the methodology before they get to ask questions about it on the call. The fifteen and a half hours are going to be the difference between a panicked earnings call and a substantive earnings call. We file at six. We hold the line in the after-hours. We do the call tomorrow on the merits. We do not pretend the leak did not happen. We address the leak in the opening of the call."
+"Run it."
 
-Owen said: "Reese is right."
-
-Priya said: "Six PM. Filing locked. I will have the final draft to the three of you by five. Cole signs at five forty. Owen co-signs at five forty-two. Filing transmits at six."
-
-Cole said: "Run it."
-
-Priya said: "Running."
+"Running."
 
 She walked out.
 
-The three of them — Cole, Owen, Reese — stood at the conference table for a beat.
+The three of them stood at the table a beat. Outside, a tug horn moved up the bay.
 
-Reese said: "Cole."
+Reese said, "The leak is one of seventeen."
 
-Cole said: "Yes."
+"It's one of seventeen."
 
-Reese said: "The leak is one of the seventeen."
+"I don't have access. It's not one of mine."
 
-Cole said: "It is one of the seventeen."
+"I know it's not one of yours."
 
-Reese said: "I do not have access to the document. It is not one of mine."
+Owen said, "It's not me."
 
-Cole said: "I know it is not one of yours. The seventeen are the seventeen Mara just named. None of them work for you. The leak is in Owen's organization, Diana's organization, or Priya's organization. Or it is one of the executives."
+"I know it's not you."
 
-Owen said: "It is not me."
+"It's not Anjali. It's not Diana. It's not Mara."
 
-Cole said: "I know it is not you."
+"I know it's not. The leak is in Owen's organization, Diana's, or Priya's. We'll know the specific person in two hours. We'll know whether the leak is internal-only — Carrick employee passes information to a friend who isn't at Carrick — or whether there's a positioning trade in the background. If there's a positioning trade, the case escalates. If not, it's termination, civil suit, and criminal referral at the board's discretion."
 
-Reese said: "It is not Anjali. It is not Diana. It is not Mara."
+Owen sat down on the edge of the conference table. Heavy.
 
-Cole said: "I know it is not. The leak is in one of the three direct-report units. We will know in two hours. We will know specifically which person. We will know whether the leak was internal-only — Carrick employee passes information to a friend who is not at Carrick — or whether there is a positioning trade in the background. If there is a positioning trade, the case escalates immediately. If there is not, the case is termination and civil suit, with criminal referral at the Carrick board's discretion."
+"Cole. I have spent four years building the corp-dev team. There are seven on it. Two had access to the memo — both senior directors. Both have been with us since Year Minus Two. Both fully vested. Both with spouses in finance. I can't believe it's either of them."
 
-Owen said: "Cole."
+"Owen. We'll know in two hours. We won't believe what we are going to believe until we know. Treat the seventeen as the seventeen. Don't pre-clear anyone in your head before Mara's report. If we let ourselves do that we'll be wrong."
 
-Cole said: "Yes."
+Owen exhaled and nodded.
 
-Owen said: "I have spent four years building the corp-dev team under me. There are seven people on the team. The two who had access are the two senior directors. Both of them have been on the team since Year Minus Two. Both of them have full vesting. Both of them have spouses who work in finance. I cannot believe it is either of them."
+Cole turned to Reese.
 
-Cole said: "Owen. We will know who it was in two hours. We will not believe what we are going to believe until we know. The seventeen are the seventeen. Treat the seventeen as the seventeen. Do not pre-clear anyone in your head before Mara's report. We will be wrong about the pre-clearing if we let ourselves do it."
+"Walk to the Cloud building. Go back to your dashboard. Run your day. The earnings call tomorrow is on the merits. The platform numbers are the platform numbers. Walk in tomorrow with the deck you've been building. The leak is a sideshow. The platform is the show."
 
-Owen said: "All right."
+"Are you certain it's a sideshow?"
 
-Cole said: "Reese."
+"It's a sideshow today. It's a story for nine days. It's not a story in ten. The platform numbers drown the sideshow inside ten days. Walmart's number comes out on the Walmart side of the contract. Target's comes out on the Target side. Midcontinent's renewal lands Q3. The story in ten days is Walmart on the platform. The story in twenty is Target on the platform. The story in thirty is the carve-out language in the antitrust bill. Drummond's leak piece is a footnote in the Bloomberg archive by the end of the month."
 
-Reese said: "Yes."
-
-Cole said: "Walk to the Cloud building. Go back to your dashboard. Run your day. The earnings call tomorrow is on the merits. The platform numbers are the platform numbers. Walk in tomorrow with the numbers you have been planning to walk in with. The leak is a sideshow. The platform is the show."
-
-Reese said: "Cole."
-
-Cole said: "Yes."
-
-Reese said: "Are you certain it is a sideshow."
-
-Cole said: "It is a sideshow today. It will be a story for nine days. It will not be a story in ten days. The platform numbers are the platform numbers. The numbers are going to drown the sideshow inside ten days. The Walmart numbers come out on the Walmart side of the contract. The Target numbers come out on the Target side. The Midcontinent renewal lands in Q3. The story in ten days is going to be Walmart on the platform. The story in twenty days is going to be Target on the platform. The story in thirty days is going to be the carve-out language in the antitrust legislation. The leak is going to be a footnote in the Bloomberg archive by the end of the month."
-
-Reese said: "All right."
-
-He walked out.
+Reese held his gaze a beat. Then he nodded once and walked out.
 
 ---
 
 Cole sat at his desk for a minute after the door closed.
 
-He did not open the Bloomberg piece again. He did not look at the stock ticker. He did not look at the morning's threat brief. He opened, on his second monitor, the Calvin Yates LinkedIn profile he had pulled up at one twenty-three PM Pacific, eleven minutes after Mara had set the encrypted tablet on the conference table.
+He did not reopen Drummond. He did not look at the ticker. He did not look at the morning's threat brief.
 
-Calvin Yates was thirty-one years old.
+He opened, on the second monitor, the LinkedIn profile he had pulled up at 1:23 PM Pacific — eleven minutes after Mara had set the tablet on the table.
 
-Calvin Yates was a junior associate in the corp-dev organization under Owen.
+Calvin Yates. Thirty-one. Junior associate in corp-dev under Owen. Fourteen months at Carrick. Boston College undergrad, NYU Stern MBA, two years at a mid-tier consulting firm before Carrick. The kind of résumé that read as competent and not particularly distinctive.
 
-Calvin Yates had been at Carrick for fourteen months.
+Yates had access to the encrypted document store. He should not have. The access had been granted in November of Year One when the corp-dev team had been expanded for ESOP-transition diligence and the access controls had been loosened under a temporary policy Mara had flagged at the time and that had not, in the seven months since, been tightened.
 
-Calvin Yates had access to the encrypted document store, which he should not have had access to as a junior associate but which had been granted to him in November of Year One when the corp-dev team had been expanded to handle ESOP-transition diligence and the access controls had been loosened under a temporary policy that Mara had flagged at the time and that had not, in the seven months since, been tightened.
+That was the policy. The policy was not why Cole was looking at Calvin Yates's profile.
 
-Calvin Yates had two specific behavioral tells that had been on Cole's quiet personal list of *individuals to watch* since the start of Year Two.
+Cole was looking at Calvin Yates's profile because of two tells.
 
 The first tell was the parking lot.
 
-Yates parked his Tesla Model 3 in space B-47 of the underground garage. B-47 was three rows past the corp-dev junior-associate parking row, fourteen feet from the freight elevator, and assigned, on the building roster, to a senior compliance analyst named Hua-Ling Tao who had been on maternity leave since Year One Q3 and had not yet returned. Yates had been parking in Tao's space for fifty-one weeks. The space's only operational advantage over Yates's assigned space was *speed of egress in the event of an event that required speed of egress.* Cole had walked the parking lot every Friday morning at six-fifteen AM Pacific for the previous twenty months and had logged Yates's car in the B-47 space on forty-seven of the fifty-one Fridays. Cole had not, until thirteen minutes ago, known why Yates wanted the egress.
+Yates parked his Model 3 in space B-47 of the underground garage. B-47 sat three rows past the corp-dev junior row, fourteen feet from the freight elevator, and was assigned on the building roster to a senior compliance analyst named Hua-Ling Tao, who had been on maternity leave since Year One Q3 and had not yet returned. Yates had parked in Tao's space for fifty-one weeks. The only operational advantage over Yates's assigned space was speed of egress in the event of an event that required speed of egress.
+
+Cole walked the garage every Friday morning at 6:15 AM Pacific. It was a tic — a holdover from a security audit he had run himself in Year Minus One — that he had never broken. He had logged Yates's car in B-47 on forty-seven of the fifty-one Fridays.
+
+He had not, until thirteen minutes ago, known why Yates wanted the egress.
 
 The second tell was the brother-in-law.
 
-Yates's LinkedIn profile listed a connection named Ethan Brock, portfolio manager at Pemberley Capital, married to Yates's sister, nine years at Pemberley. Cole had read the Pemberley quarterly positions register at three AM the previous Wednesday, in the routine sweep Mara's office circulated to him every Tuesday night, and had flagged Brock as the desk lead on the Pemberley Carrick short position that had been opened the previous Monday morning at eleven forty-one AM Pacific. Cole had not, at the time of the flag, connected Brock to Yates. The brother-in-law connection had been three layers deep in the LinkedIn graph and had not surfaced in the routine sweep.
+Yates's LinkedIn graph, three layers deep, included a connection named Ethan Brock, portfolio manager at Pemberley Capital, married to Yates's sister, nine years at Pemberley. Cole had read the Pemberley quarterly positions register at three AM the previous Wednesday in the routine sweep Mara's office circulated to him every Tuesday night, and he had flagged Brock as the desk lead on the Pemberley Carrick short position that had been opened the previous Monday morning at 11:41 AM Pacific.
 
-The brother-in-law connection had surfaced in Cole's head twelve minutes after Mara said the word *leak.*
+He had not, at the time of the flag, connected Brock to Yates. The brother-in-law connection had been three layers deep in the graph and had not surfaced in the sweep.
 
-The position. The brother-in-law. The B-47 parking space. The fourteen-month tenure that had given Yates exactly enough time to accumulate access but not enough time to develop loyalty. The corp-dev role that gave him visibility into the Q2 tranche pricing without giving him the seniority to be cleared for it.
+It surfaced in his head twelve minutes after Mara said the word *leak.*
+
+The position. The brother-in-law. The B-47 space. The fourteen-month tenure that had given Yates exactly enough time to accumulate access but not enough to develop loyalty. The corp-dev role that gave him visibility into Q2 tranche pricing without the seniority to be cleared for it.
 
 The math was the math.
 
 Cole picked up the phone.
 
-He called Mara.
+"Mara."
 
-He said: "Mara."
+"Cole."
 
-She said: "Cole."
+"Calvin Yates. Corp-dev, junior associate, fourteen months. B-47 in the garage. Brother-in-law named Ethan Brock, Pemberley Capital. The Pemberley short opened Monday morning is the position the leak was for. Your forensics will confirm at three PM Pacific. I'm giving you the name now so the operators are ready at his desk for the call by Priya at four. Don't have anyone speak to him in the meantime. Let him have the afternoon."
 
-He said: "Calvin Yates. Corp-dev. B-47 in the garage. Brother-in-law at Pemberley. The position the brother-in-law opened Monday morning is the position the leak was for. Your forensics will confirm at three PM Pacific. I am giving you the name now so the operators are ready at his desk for the call by Priya at four. Do not have anyone speak to him in the meantime. Let him have the afternoon."
+Mara was quiet for two seconds. Cole could hear a printer in the background and the soft *thunk* of a desk drawer closing.
 
-Mara was quiet for two seconds.
+"Cole."
 
-Mara said: "Cole."
+"Yes."
 
-He said: "Yes."
+"I have not yet logged the Yates badge as a candidate. The candidate list narrows at two thirty. Forensics drop at three."
 
-Mara said: "I have not yet logged the Yates badge as a candidate. The candidate list narrows at two-thirty Pacific. The forensics drop at three."
+"I know. I've had the name since one twenty-three. The brother-in-law connection took me twelve minutes once you said the word. The brother-in-law is the lever. The Pemberley position is the proof. The B-47 space is the third leg. I'm ninety-six percent. The remaining four is the case Priya needs airtight before the FBI walks him out. You close the four at three. Have the operators at four."
 
-He said: "I know. I have known the name since one twenty-three PM. The brother-in-law connection took me twelve minutes once you said *leak.* The brother-in-law is the lever. The Pemberley position is the proof. The B-47 space is the third leg. I am ninety-six percent confident. The remaining four percent is the case Priya is going to want airtight before the FBI walks him out. You will close the four percent at three. Have the operators at four."
+"Cole. How long have you been watching Yates?"
 
-Mara said: "Cole."
+"Twelve months. He went on the list in April of Year One after the B-47 observation. The brother-in-law I made in October when the Pemberley positions report crossed the desk. I haven't, until today, had a triggering event. I should have flagged him earlier. I'm sorry I didn't."
 
-He said: "Yes."
+"Cole. The leak happened today. You connected the dots in twelve minutes. The forensics will confirm in ninety. You watched the man for twelve months without a triggering event. That's what watching is for. The triggering event happened. The watching paid off."
 
-Mara said: "How long have you been watching Yates."
+"Thank you, Mara."
 
-He said: "Twelve months. He went on the list in April of Year One after I noticed the B-47 space. The brother-in-law connection I made in October when the Pemberley positions report crossed my desk. I have not, until today, had a triggering event. I am sorry I did not flag this earlier. I should have."
-
-Mara said: "Cole. The leak happened today. You connected the dots in twelve minutes. The forensics will confirm in ninety. You did not miss anything. You watched the man for twelve months without a triggering event. That is what watching is for. The triggering event happened. The watching paid off."
-
-He said: "Thank you, Mara."
-
-Mara said: "I will have the operators at four."
+"I'll have the operators at four."
 
 She hung up.
 
-Cole sat at the desk.
-
-He closed the LinkedIn tab.
-
-He opened the Carrick Carry dashboard.
-
-The platform metrics were the platform metrics.
+Cole closed the LinkedIn tab. He opened the Carrick Carry dashboard. The platform metrics scrolled in green: GMV, take rate, marketplace seller-onboarding velocity, the Lacquer & Cup Echo replacement holding at 168% of the Carrick Basics baseline at the close of Q1.
 
 He worked.
 
 ---
 
-Mara's report came at three oh-eight PM Pacific.
+Mara's report came at 3:08 PM Pacific.
 
-The report was three pages.
+Three pages, single-spaced, no header art.
 
-The first page was the badge-access narrowing. Seventeen badges had been narrowed to four in the four-minute window matching the Drummond draft document timestamps. Three of the four were corp-dev directors with valid business reasons for having accessed the document at the relevant time. One of the four was Calvin Yates, age 31, a junior associate in the corp-dev team — not one of the two senior directors Owen had been worried about — who had been at Carrick for fourteen months, who had no business reason for having accessed the document on Friday afternoon at three forty-seven PM Pacific, and whose badge had registered an access to the document at three forty-seven on Friday afternoon followed by a four-minute session in the document store followed by a logout.
+Page one was the badge-access narrowing. Seventeen badges narrowed to four in the four-minute window matching the Drummond draft-document timestamps. Three of the four had valid business reasons. The fourth was Calvin Yates.
 
-The session log included a single screen-photograph command issued from a personal phone that had been within Bluetooth range of Calvin Yates's badge during the four-minute window. The personal phone was not on the Carrick network. The personal phone was a Yates personal device that had been brought into the Carrick office in violation of the device policy that applied to corp-dev personnel with document-store access.
+Yates had accessed the document at 3:47 PM Pacific on Friday afternoon, sat in the document store for four minutes, and logged out. The session log included a single screen-photograph command issued from a personal device that had been within Bluetooth range of his badge during the four-minute window. The personal device was not on the Carrick network. It had been brought into the office in violation of the corp-dev device policy.
 
-The second page of Mara's report was the trade investigation.
+Page two was the trade investigation. Ethan Brock, portfolio manager at Pemberley Capital, $2.1B AUM, Greenwich. The Pemberley Carrick short was $48M notional. The position had opened Monday morning at 11:41 AM Pacific — six minutes after the Yates household had used a personal cell to FaceTime Brock for sixteen minutes on Sunday evening. The FaceTime metadata sat on the public AT&T billing record Mara's analyst had pulled at 2:31 PM Pacific Wednesday under a subpoena Priya's team had drafted at 2:07 and the cooperating judge in the Western District of Washington had granted at 2:23.
 
-Calvin Yates's brother-in-law worked at a midsized hedge fund in Greenwich called Pemberley Capital, which had opened a short position on Carrick on Monday morning at eleven forty-one AM Pacific, six minutes after the Yates household had used a personal cell phone to FaceTime the brother-in-law for sixteen minutes on Sunday evening. The FaceTime metadata was on the public AT&T billing record Mara's analyst had pulled at two thirty-one PM Pacific Wednesday under a subpoena Priya's team had drafted at two oh-seven and that the cooperating judge in the Western District of Washington had granted at two twenty-three.
+Page three was Priya's draft criminal-referral memo.
 
-The third page was Priya's draft criminal-referral memo to the FBI Seattle field office.
+Cole read all three at 3:12 PM Pacific. He looked up.
 
-Cole read the three pages at his desk at three twelve PM Pacific.
+"Brother-in-law."
 
-He looked up.
+"Brother-in-law is Ethan Brock. Portfolio manager at Pemberley. Fund is two point one billion. Short position is forty-eight million notional. Position opened Monday at eleven forty-one Pacific. FaceTime was Sunday evening. Drummond hit was Wednesday afternoon. Timeline is the timeline. Case is the case."
 
-He said: "Mara."
+"Priya."
 
-Mara said: "Yes."
+She had come back in at some point. She was standing next to Mara now, holding the referral page.
 
-He said: "The brother-in-law."
+"Refer it."
 
-She said: "The brother-in-law is named Ethan Brock. He is a portfolio manager at Pemberley. The fund is two point one billion dollars. The short position is forty-eight million dollars notional. The position was opened Monday morning. The FaceTime was Sunday evening. The leak to Drummond was Wednesday afternoon. The timeline is the timeline. The case is the case."
-
-Cole said: "Priya."
-
-Priya said: "Yes."
-
-He said: "Refer it."
-
-Priya said: "Referring."
+"Referring."
 
 She walked out.
 
-Cole said: "Mara."
+"Where's Yates?"
 
-She said: "Yes."
+"Seventh floor of the corp-dev wing, at his desk. Doesn't know the forensics have closed on him. Learns at three forty-five when two operators and an HR director walk to his desk and ask him to come to a conference room on the eighth. The FBI agents will be in the room. They Mirandize him at three forty-seven. They arrest him at three fifty-two pending charges. Pemberley positions get frozen by the SEC at four PM Pacific under an emergency cooperation order pre-cleared with the Seattle U.S. Attorney's office at one twenty-six on the predicate Priya's team built between one twenty and one twenty-five. By six the 8-K is filed. Six thirty the criminal-referral release is out. Seven PM the DOJ release. Seven thirty the SEC release. By eight, the four-percent Wednesday drop is a two-percent net move and the after-hours volume is normal."
 
-He said: "Where is Yates."
+"Run it."
 
-She said: "Yates is at his desk on the seventh floor of the corp-dev wing. He does not know the forensics have closed on him. He is going to learn at three forty-five when two operators and an HR director walk to his desk and ask him to come with them to a conference room on the eighth floor. The FBI agents will be in the conference room. The agents will Mirandize him at three forty-seven. The agents will arrest him at three fifty-two pending charges. The Pemberley positions will be frozen by the SEC at four PM Pacific under an emergency cooperation order that has been pre-cleared with the Seattle U.S. Attorney's office at one twenty-six this afternoon based on the predicate Priya's team built between one twenty and one twenty-five. By six PM Pacific the 8-K is filed. By six thirty Pacific the press release on the criminal referral is out. By seven PM Pacific the Department of Justice press release is out. By seven thirty PM Pacific the SEC press release is out. By eight PM Pacific the four-percent Wednesday drop is going to be a two-percent net move and the after-hours volume is going to be normal."
-
-Cole said: "Mara."
-
-She said: "Yes."
-
-He said: "Run it."
-
-She said: "Running."
+"Running."
 
 She walked out.
+
+At 3:45 PM Pacific, on the seventh floor, two operators and an HR director walked across the corp-dev floor and stopped at Calvin Yates's desk. From the eleventh floor Cole could not see the seventh-floor desks. He did not need to. The clock on his monitor moved through 3:45 to 3:46 to 3:47. He did not look at it.
+
+He worked.
 
 ---
 
-At seven forty-eight PM Pacific Wednesday, with the 8-K filed, the criminal referral filed, the SEC emergency order filed, the Department of Justice press release out, the Carrick press release out, the after-hours stock recovering, and Calvin Yates in a federal holding facility in Tukwila, Cole was alone in his office with the Echo bud vase on the credenza and the Q1 earnings-call deck on the desk in front of him.
+At 7:48 PM Pacific the 8-K was filed, the criminal referral was filed, the SEC emergency order was filed, the DOJ release was out, the Carrick release was out, the after-hours stock was recovering toward the prior close, and Calvin Yates was in a federal holding facility in Tukwila.
+
+Cole was alone in his office. The Echo bud vase sat on the credenza, the Q1 earnings deck on the desk in front of him.
 
 The Q1 numbers were the Q1 numbers.
 
-Argo Cloud (the parent's cloud business unit, renamed Carrick Cloud post-memo): revenue up forty-nine percent year over year.
+Carrick Cloud (the parent's cloud business, renamed post-memo): revenue +49% YoY.
 
-Carrick Carry: revenue up three hundred and eighteen percent year over year. Off a base that had been four hundred and ten million the previous Q1 and was now, on a trailing-twelve-month basis, a different size of business altogether.
+Carrick Carry: +318% YoY. Off a base that had been $410M the prior Q1 and was now, on a trailing-twelve-month basis, a different size of business altogether.
 
-Carrick Retail Co. (eight percent employee-owned at the close of Q1, on the publicly disclosed glidepath to one hundred): revenue down eleven percent year over year. Profitable for the first time in three years.
+Carrick Retail Co. (8% employee-owned at the close of Q1, on the publicly disclosed glidepath to 100): revenue −11% YoY. Profitable for the first time in three years.
 
-Total Carrick, Inc. parent revenue (excluding the ESOP-controlled Retail Co. equity Carrick no longer owned beyond the remaining seventy-seven percent stake): up eight percent year over year.
+Total Carrick, Inc. parent revenue (excluding the ESOP-controlled Retail Co. equity Carrick no longer owned beyond the remaining 77% stake): +8% YoY.
 
-Operating margin on the parent: fourteen percent, up from eight at the start of Year One.
+Operating margin on the parent: 14%, up from 8 at the start of Year One.
 
-Stock price at the close Wednesday: seven percent above the pre-memo level.
+Stock at the Wednesday close: 7% above the pre-memo level.
 
-The pivot had turned the corner.
+The pivot had turned the corner. The leak had been a Wednesday-afternoon sideshow. The call was tomorrow.
 
-The leak had been a Wednesday-afternoon sideshow.
+Cole stood. He walked to the credenza. He picked up the Echo bud vase. He held it for a moment in his hand. It was lighter than he expected every time. He set it back down.
 
-The earnings call was tomorrow.
+He picked up the encrypted phone. He called Iona Tran.
 
-Cole stood up.
-
-He walked to the credenza.
-
-He picked up the Echo bud vase.
-
-He held it in his hand for a moment.
-
-He set it back down.
-
-He picked up the encrypted phone.
-
-He called Iona Tran.
-
-She answered.
+She picked up on the second ring.
 
 "Cole."
 
@@ -320,57 +258,43 @@ She answered.
 
 "I saw the Bloomberg piece."
 
-"It is going to be a footnote by the end of the month."
+"It's going to be a footnote by the end of the month."
 
-"I know it is."
+"I know."
 
 "Iona."
 
 "Yes."
 
-"The earnings call tomorrow is the first call since the memo on which the pivot is going to be discussed on its merits rather than on its survival. The model held. The platform held. The leak got handled. The carve-out is in the legislation. Walmart is on the platform. Target is on the platform. Midcontinent renewed. The Goldfinch Home of October Year One — sorry, the Lacquer & Cup of October Year One — is, in its category, beating the Carrick Basics version of the Echo by sixty-eight percent on the new-platform marketplace. We are on the other side of the pivot. I have spent six months getting here. I am going to spend the next six months making sure the work holds."
+"The earnings call tomorrow is the first call since the memo where the pivot is going to be discussed on its merits rather than on its survival. The model held. The platform held. The leak got handled. The carve-out is in the bill. Walmart is on the platform. Target is on the platform. Midcontinent renewed. The Lacquer & Cup of October Year One is, in its category, beating the Carrick Basics version of the Echo by sixty-eight percent on the new platform. We are on the other side of the pivot. I have spent six months getting here. I am going to spend the next six making sure the work holds."
 
-She said: "Cole."
+A pause on her end. He could hear her in her kitchen — the kettle, water in a glass.
 
-He said: "Yes."
+"Cole. Why are you calling me tonight?"
 
-She said: "Why are you calling me tonight."
+"Because I made you a promise on the satphone on the *Coelacanth* the morning the boil surfaced. I told you I would call you back inside forty-eight hours. I called you back. I made a second promise when I sent the memo. I told you the memo was what your call did. The memo did what your call did. I'm making a third promise tonight. I'm going to call you again in twenty-four months when we close the Q1 of Year Three earnings call. I am going to call you on the morning that the *Wall Street Journal* runs the piece titled *The Pivot That Worked.* The piece is going to be by Adelaide Krug. The piece is going to put your name in the second paragraph. I want you to know it's coming. I want you to be ready for it. I'm giving you the heads-up in April of Year Two for the morning of late April of Year Three. That's the third promise."
 
-He said: "Because I made you a promise on the satphone on the *Coelacanth* on the morning the boil surfaced. I told you I would call you back inside forty-eight hours. I called you back. I made you a second promise when I sent the memo. I told you the memo was what your call did. The memo did what your call did. I am making a third promise tonight. I am going to call you again in twenty-four months when we close the Q1 of Year Three earnings call. I am going to call you on the morning that the Wall Street Journal runs the piece titled *The Pivot That Worked.* The piece is going to be by Adelaide Krug. The piece is going to put your name in the second paragraph. I want you to know the piece is coming. I want you to be ready for it. I am giving you the heads-up in April of Year Two for the morning of late April of Year Three. That is the third promise."
+He could hear her smiling on the other end of the line, though smiles do not travel through phones — but he could hear it anyway.
 
-She said: "Cole."
+"Cole."
 
-He said: "Yes."
+"Yes."
 
-She said: "I will be ready."
+"I will be ready."
 
-He said: "Goodnight."
+"Goodnight, Iona."
 
-She said: "Goodnight."
+"Goodnight, Cole."
 
 He hung up.
 
-He walked to the elevator.
+He walked to the elevator. He took it down to the garage. The Suburban was running. The follow car was running.
 
-He took it down to the underground garage.
+The credible-threat section of the morning's brief had two new entries — both from the Pemberley positioning exposure, neither rising to credible level on Mara's protocol but worth tracking. Mara had already pushed the perimeter check at Bainbridge to twenty-minute intervals through the night.
 
-The Suburban was waiting.
+Cole got in. The Suburban moved. He read the brief in the dim cabin light, finished it, set it down. The ferry took him across in the rain. He was at the Bainbridge house at 10:04 PM. He was asleep at 10:30.
 
-The follow car was running.
-
-The credible-threat section of the morning's brief had two new entries — both from the Pemberley positioning trade exposure, neither rising to credible-threat level on Mara's protocol but worth tracking. Mara had already directed the duty operator at the gatehouse to push the perimeter check to twenty-minute intervals through the night.
-
-Cole got in the Suburban.
-
-It drove him to the ferry.
-
-He was at the Bainbridge house at ten oh-four PM.
-
-He was asleep at ten thirty.
-
-He was at the bar in the gym at five fifty.
-
-Bear had the first set racked.
+At 5:50 AM he was in the gym. Bear had the first set racked.
 
 He pulled three-eighty for triples.
 
