@@ -330,23 +330,27 @@ which is what this checkpoint marks.
 **Mission:** Stop adding features. Make the thing solid.
 
 - ⏳ Bug-fix focus — ongoing
-- ⏳ Full documentation site — scaffolded; one walkthrough shipped,
-  four to go (docs/README.md, docs/01-first-workflow.md, plus
-  TODO-marked grammar.md and node-kinds.md reference stubs)
-- ⏳ Tutorial library — five guided walkthroughs covering progressively
-  richer workflows (1 of 5 shipped)
-- ✅ Sample projects — five reference projects shipping IN the
-  Studio: hello, canonical, persona_dispatch, parallel_research,
-  iterate_refine. Persona dispatch is the Reality.AI tribute called
-  out as a must-have. Only `branch` node kind lacks a worked example.
+- ⏳ Full documentation site — five walkthroughs shipped, reference
+  stubs honestly marked TODO (docs/README.md, docs/01-05, plus
+  grammar.md, node-kinds.md, accessibility.md)
+- ✅ Tutorial library — 5 of 5 guided walkthroughs shipped:
+  first-workflow, authoring-on-canvas, branching-and-routing,
+  human-QC-checkpoints, deploying
+- ✅ Sample projects — six reference projects (over the planned
+  five) shipping IN the Studio: hello, canonical, persona_dispatch,
+  parallel_research, iterate_refine, validate_with_branch. Every
+  node kind now has a worked example.
 - ✅ Crash reporting infrastructure (opt-in)
 - ✅ Auto-update infrastructure — Tauri updater plugin wired,
   GitHub Releases as the channel, CI workflow publishes signed
   installers + latest.json manifest on `studio-v*` tags. Maintainer
   runs the one-time key-generation ceremony per RELEASING.md to
   activate.
-- ⏳ Final accessibility pass (keyboard navigation, screen-reader
-  compatibility on the chrome, contrast audit)
+- ⏳ Final accessibility pass — first sprint shipped (global focus
+  ring, NodePalette click-to-add for keyboard authoring, aria-labels
+  on TitleBar icon buttons, accessibility.md documenting status +
+  known gaps). Remaining: keyboard edge creation, aria-live for run
+  state, canvas pan/zoom keys, light/high-contrast theme.
 - ⏳ Localization scaffolding (English-only at 1.0, but i18n-ready)
 - ⏳ Marketing site lite — landing page, screenshots, demo video
 

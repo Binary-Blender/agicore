@@ -15,8 +15,12 @@ authors should read them in order; experienced users can jump.
 3. [Branching and routing](03-branching-and-routing.md) — the four
    shapes (router_call, WHEN, branch, parallel_fanout) and when each
    is the right one.
-4. *Human QC checkpoints* — TODO (RC sprint).
-5. *Deploying a workflow* — TODO (RC sprint).
+4. [Human QC checkpoints](04-human-qc-checkpoints.md) — when the
+   pause is the feature, how to write prompts a reviewer can decide
+   on, composing QC with the branching shapes.
+5. [Deploying a workflow](05-deploying-a-workflow.md) — three
+   targets (Studio, Tauri bundle, Docker), the auto-update story,
+   versioning conventions.
 
 ## Reference
 
