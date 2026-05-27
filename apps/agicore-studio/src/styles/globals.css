@@ -38,6 +38,41 @@ html, body, #root {
 }
 
 /* ============================================================================
+   Accessibility: focus-visible ring
+   ----------------------------------------------------------------------------
+   Default ring for every keyboard-focused interactive control. Per-component
+   styles can override by setting their own focus-visible outline, but every
+   uncustomized button / input / link / canvas-focusable surface inherits this
+   so tab navigation is always visible.
+
+   Uses the same purple as --accent so it reads as part of the design system
+   rather than a browser default. The 2px outline + 2px offset keeps the ring
+   off the control's own border, which matters for the dense node UI where
+   buttons sit inside bordered panels.
+
+   :focus (without -visible) is left to the browser default — focus indicators
+   on mouse clicks are noisy and most of our buttons already have hover/active
+   states. The :focus-visible target only fires on keyboard focus.
+   ============================================================================ */
+*:focus { outline: none; }
+
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Inputs and the editor textarea benefit from a tighter ring — the offset
+   above looks loose around text inputs because they already have a border. */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+.cm-editor.cm-focused {
+  outline: 2px solid var(--accent);
+  outline-offset: 0px;
+}
+
+/* ============================================================================
    React Flow surface — dark theme overrides for the canvas
    ============================================================================ */
 

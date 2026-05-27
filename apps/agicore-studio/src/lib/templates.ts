@@ -47,6 +47,12 @@ export const TEMPLATES: Template[] = [
     description: 'Draft, then loop critique-and-revise N rounds, then polish. The "make it better N times" creator pattern.',
     build: buildIterateRefineWorkflow,
   },
+  {
+    id: 'validate_with_branch',
+    name: 'Validate with branch',
+    description: 'Generate, validate against a rubric, branch pass cases to auto-approve and fail cases to a human QC override.',
+    build: buildValidateWithBranchWorkflow,
+  },
 ];
 
 export function getTemplate(id: string): Template | undefined {
@@ -350,6 +356,76 @@ function buildIterateRefineWorkflow(): Workflow {
       { id: 'e4', source: 'n4', target: 'n5' },
       { id: 'e5', source: 'n5', target: 'n6' },
       { id: 'e6', source: 'n6', target: 'n7' },
+    ],
+  };
+}
+
+function buildValidateWithBranchWorkflow(): Workflow {
+  // Mirrors examples/validate_with_branch.agi.
+  return {
+    name: 'validate_and_route',
+    description: 'Generate content, validate it against a rubric, branch pass vs. fail.',
+    inputs: [{ name: 'topic', type: 'string' }],
+    outputs: [
+      { name: 'final',        type: 'string' },
+      { name: 'was_approved', type: 'bool'   },
+    ],
+    nodes: [
+      { id: 'n1', name: 'start', kind: 'start', position: { x: 80, y: 280 }, properties: {} },
+      {
+        id: 'n2',
+        name: 'generate',
+        kind: 'ai_call',
+        position: { x: 260, y: 280 },
+        properties: {
+          prompt: 'Write a single paragraph on {{input.topic}}. Aim for clarity and one concrete example.',
+        },
+      },
+      {
+        id: 'n3',
+        name: 'validate',
+        kind: 'ai_call',
+        position: { x: 500, y: 280 },
+        properties: {
+          prompt: 'Judge this paragraph against the rubric: (1) has a concrete example, (2) is one paragraph, (3) does not hedge. Respond with exactly "pass" or "fail" on the first line, then a one-sentence reason on the second line.\n\nParagraph: {{generate.text}}',
+        },
+      },
+      {
+        id: 'n4',
+        name: 'gate',
+        kind: 'branch',
+        position: { x: 740, y: 280 },
+        properties: { condition: 'validate.verdict starts_with "pass"' },
+      },
+      {
+        id: 'n5',
+        name: 'auto_approve',
+        kind: 'ai_call',
+        position: { x: 960, y: 160 },
+        properties: {
+          prompt: 'Light polish only — fix any typos, return the paragraph.\n\nParagraph: {{generate.text}}',
+        },
+      },
+      {
+        id: 'n6',
+        name: 'human_override',
+        kind: 'qc_checkpoint',
+        position: { x: 960, y: 400 },
+        properties: {
+          prompt:       'The AI validator failed this paragraph. Review the verdict and decide: approve as-is, edit, or reject. Verdict: {{validate.verdict}}',
+          upstreamFrom: 'generate.text',
+        },
+      },
+      { id: 'n7', name: 'end', kind: 'end', position: { x: 1200, y: 280 }, properties: {} },
+    ],
+    edges: [
+      { id: 'e1', source: 'n1', target: 'n2' },
+      { id: 'e2', source: 'n2', target: 'n3' },
+      { id: 'e3', source: 'n3', target: 'n4' },
+      { id: 'e4', source: 'n4', target: 'n5', whenExpression: 'gate.matched == true'  },
+      { id: 'e5', source: 'n4', target: 'n6', whenExpression: 'gate.matched == false' },
+      { id: 'e6', source: 'n5', target: 'n7' },
+      { id: 'e7', source: 'n6', target: 'n7' },
     ],
   };
 }

@@ -1,0 +1,78 @@
+// validate_with_branch.agi
+// The "validate, then split" pattern. An AI-judge checks output
+// against a rubric; a branch routes pass cases to a success path and
+// fail cases to a human QC pause where a reviewer can override.
+//
+// What this fixture closes: branch is the last node kind without a
+// worked example. Branch differs from router_call (which uses an AI
+// to pick) in that branch takes an explicit expression — useful when
+// the gate is a known computation, not a judgment call.
+//
+// Pair with:
+//   persona_dispatch.agi  — router_call (AI picks among labels)
+//   parallel_research.agi — parallel_fanout (run all branches)
+//   canonical_workflow.agi — WHEN gates on edges (per-edge gating)
+//
+// Branch vs WHEN gates: branch is a node, so it appears as a
+// diamond on the canvas and the routing logic is centralized in one
+// place. WHEN-gated edges scatter the routing across the connections.
+// Use branch when the splits are the whole point of the workflow;
+// use WHEN when the gating is incidental.
+
+APP validate_with_branch {
+  TITLE  "Validate with Branch"
+  DB     validate_with_branch.db
+}
+
+WORKFLOW validate_and_route {
+  DESCRIPTION "Generate content, validate it against a rubric, branch pass vs. fail."
+
+  INPUT  topic: string
+  OUTPUT final: string, was_approved: bool
+
+  NODE start {
+    TYPE start
+  }
+
+  NODE generate {
+    TYPE      ai_call
+    PROMPT    "Write a single paragraph on {{input.topic}}. Aim for clarity and one concrete example."
+    OUTPUT    text: string
+  }
+
+  NODE validate {
+    TYPE      ai_call
+    PROMPT    "Judge this paragraph against the rubric: (1) has a concrete example, (2) is one paragraph, (3) does not hedge. Respond with exactly 'pass' or 'fail' on the first line, then a one-sentence reason on the second line.\n\nParagraph: {{generate.text}}"
+    OUTPUT    verdict: string
+  }
+
+  NODE gate {
+    TYPE      branch
+    CONDITION "validate.verdict starts_with \"pass\""
+  }
+
+  NODE auto_approve {
+    TYPE      ai_call
+    PROMPT    "Light polish only — fix any typos, return the paragraph.\n\nParagraph: {{generate.text}}"
+    OUTPUT    final: string
+  }
+
+  NODE human_override {
+    TYPE      qc_checkpoint
+    PROMPT    "The AI validator failed this paragraph. Review the verdict and decide: approve as-is, edit, or reject. Verdict: {{validate.verdict}}"
+    INPUT     paragraph: string FROM generate.text
+    OUTPUT    decision: string, final_paragraph: string
+  }
+
+  NODE end {
+    TYPE end
+  }
+
+  EDGE start            -> generate
+  EDGE generate         -> validate
+  EDGE validate         -> gate
+  EDGE gate             -> auto_approve    WHEN gate.matched == true
+  EDGE gate             -> human_override  WHEN gate.matched == false
+  EDGE auto_approve     -> end
+  EDGE human_override   -> end
+}

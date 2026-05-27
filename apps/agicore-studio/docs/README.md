@@ -10,8 +10,11 @@ authors should read them in order; experienced users can jump.
 
 1. [Your first workflow](01-first-workflow.md) — install, open the
    hello sample, run it. Five minutes.
-2. *Authoring on the canvas* — TODO (RC sprint).
-3. *Branching and routing* — TODO (RC sprint).
+2. [Authoring on the canvas](02-authoring-on-the-canvas.md) — blank
+   canvas to saved file. The full palette / inspector / save tour.
+3. [Branching and routing](03-branching-and-routing.md) — the four
+   shapes (router_call, WHEN, branch, parallel_fanout) and when each
+   is the right one.
 4. *Human QC checkpoints* — TODO (RC sprint).
 5. *Deploying a workflow* — TODO (RC sprint).
 
@@ -21,8 +24,12 @@ authors should read them in order; experienced users can jump.
   keyword, every property.
 - [Node kinds](node-kinds.md) — the palette: what each kind does,
   what properties it takes, how it runs.
+- [Accessibility](accessibility.md) — keyboard navigation, screen
+  reader support, WCAG status, known gaps.
 - [Build and ship](../BUILD.md) — local build, CI matrix, code
   signing.
+- [Releasing](../RELEASING.md) — one-time signing-key ceremony,
+  per-release tag flow.
 - [Contributing custom node kinds](../CONTRIBUTING_NODE_KINDS.md) —
   the SDK guide for shipping new palette entries.
 
@@ -38,6 +45,7 @@ for each lives in [`../examples/`](../examples/) for reference.
 | Persona dispatch    | router_call → 1-of-N + composer      | Routing exactly one branch    |
 | Parallel research   | parallel_fanout → all-of-N + merge   | Concurrent branches           |
 | Iterative refinement| ai_call → loop critique/revise       | Iteration to convergence      |
+| Validate with branch| ai_call → branch → auto / human QC   | Pass-fail gate with override  |
 
 ## Status
 
