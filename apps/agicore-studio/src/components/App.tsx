@@ -28,6 +28,7 @@ import Canvas from './Canvas';
 import WorkflowToolbar from './WorkflowToolbar';
 import BottomDrawer from './BottomDrawer';
 import RecoveryBanner from './RecoveryBanner';
+import RunAnnouncer from './RunAnnouncer';
 import { startAutosave, stopAutosave } from '../lib/recovery';
 import { recordEvent } from '../lib/telemetry';
 import { installCrashReporter } from '../lib/crash-reporter';
@@ -56,6 +57,7 @@ const App: React.FC = () => {
         </div>
         <RightRail />
       </div>
+      <RunAnnouncer />
     </div>
   );
 };

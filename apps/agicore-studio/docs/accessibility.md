@@ -40,10 +40,13 @@ them blocks you, please flag in the issue tracker.
 - **Canvas pan / zoom keys.** React Flow ships keyboard shortcuts
   for pan and zoom but we haven't surfaced them in the docs or
   wired the standard arrow-key fallbacks.
-- **Screen-reader narration of run state.** The canvas re-paints
-  node status via colored borders but emits no aria-live updates.
-  Screen-reader users can't follow a running workflow without
-  reading the run-log drawer manually.
+- **~~Screen-reader narration of run state.~~** Wired via
+  `RunAnnouncer.tsx` — an invisible aria-live polite region that
+  watches the run log and announces run start/end, per-node
+  succeeded/failed/skipped, QC pauses, and breakpoint stops.
+  Intentionally skips node_started and log events to avoid
+  chattiness; the canvas paint is the equivalent signal for
+  sighted users.
 - **High-contrast theme.** The default dark theme passes WCAG AAA;
   no light theme exists yet, and the WCAG-AAA-Plus monochrome
   high-contrast mode is not wired.
