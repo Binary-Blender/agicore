@@ -1,262 +1,252 @@
 # Chapter 2: The Cease-and-Desist
 
-Karim Brock walked into Jimmy's office at the studio at nine forty-two AM Pacific on Friday morning of the same week, three days after the bay-two confrontation, with a manila envelope in his right hand.
+Karim Brock walked into Jimmy's office at the studio at nine forty-two AM Friday — three days after the bay-two conversation — with a manila envelope in his right hand.
 
 Jimmy was at the desk.
 
-He had not been at the desk for fifty-seven consecutive hours. He had been at the desk for nine hours since Tuesday. On Wednesday and Thursday he had been at the desk for the standard Jimmy-Donaldson working schedule, which was, on his own attempted recalibration, a twelve-hour day from seven AM to seven PM with a forty-five-minute window in the middle for what Lerato had, on Wednesday afternoon, suggested he start calling *lunch.*
+He had been at the desk, give or take a meal, since Tuesday morning. Wednesday and Thursday he had run a normal day: in at seven, out at seven, forty-five-minute lunch in the middle that Thea had told him on Wednesday afternoon she wanted him to call *lunch* instead of *lunch break* because *break* implied he was breaking from something he otherwise would not have broken from.
 
-Lunch was the new tradition.
+Lunch was new.
 
-Lunch had, on Karim's quiet count from the studio's badge-access logs across the previous three days, been the first three lunch hours Jimmy had taken in approximately fourteen months.
+Thea had been keeping the count.
 
 Karim set the envelope on the desk.
 
-He said: "Jimmy."
+"Jimmy."
 
-Jimmy said: "Karim."
+"Karim."
 
-Karim said: "I would normally walk this in at the end of the day so it does not blow up the morning. I am walking it in now because the morning is not, on my own honest read of what this letter is, going to be the morning we save it for the end of."
+"I would normally walk this in at the end of the day so it doesn't blow up the morning. I'm walking it in now because, on what I think this is, the morning is not the right thing to save it for."
 
-Jimmy said: "What is it."
+"What is it."
 
-Karim said: "Cease and desist. Hershey Company. Latham and Watkins is the counsel. Fourteen pages. The headline is that they are asking us to stop selling the Crunch product, recall existing inventory, and pay damages on the alleged trade-dress infringement of the wrapper."
+"Cease and desist. Hershey Company. Latham and Watkins is counsel. Fourteen pages. They want us to stop selling Crunch, recall existing inventory, and pay damages on alleged trade-dress infringement of the wrapper."
 
-Jimmy said: "The wrapper."
+"The wrapper."
 
-Karim said: "The wrapper."
+"The wrapper."
 
 Jimmy opened the envelope.
 
-He took out the letter.
+He read the letter across the next nineteen minutes.
 
-He read the letter.
+It was the kind of letter Latham and Watkins wrote — careful, comprehensive, structurally designed to make any response other than capitulation look operationally expensive. It walked through Hershey's claim of trade dress on the Krackel wrapper. It walked through the alleged infringement on Feastables' Crunch wrapper, which had launched in December. It walked through Hershey's pre-litigation negotiation framework. There was a draft consent decree attached as Exhibit A that the letter requested Feastables sign within seven business days.
 
-He read it across the next nineteen minutes.
+Jimmy set the letter on the desk.
 
-The letter was, in the way Latham and Watkins letters were always written, careful, comprehensive, and structurally designed to make any response other than capitulation look operationally expensive. The letter walked through the Hershey Company's claim of trade-dress protection on the Krackel wrapper. The letter walked through the alleged infringement points on Feastables' Crunch wrapper, which had launched in December of Year Eight. The letter walked through the Hershey Company's pre-litigation negotiation framework. The letter included a draft consent decree, attached as Exhibit A, that the letter requested Feastables sign within seven business days of receipt.
+"Karim."
 
-Jimmy finished reading.
+"Yeah."
 
-He set the letter on the desk.
+"Get Ana in here. Get Priya on video."
 
-He looked at Karim.
+"Priya is in New York."
 
-He said: "Karim."
+"Get her on video."
 
-Karim said: "Yes."
+"Standing up."
 
-Jimmy said: "Get Ana in here. Get Priya in here."
+Karim came back at nine fifty-six with Ana Vasquez in person and Priya Sharma — Feastables' general counsel — on the conference-room display at the back of the office.
 
-Karim said: "Priya is in New York."
+Ana read the letter for nine minutes.
 
-Jimmy said: "Get Priya on the video link."
-
-Karim said: "Standing up. Ana is at her desk. I will get them both."
-
-He walked out.
-
-He came back at nine fifty-six AM with Ana Vasquez in person and Priya Sharma (the general counsel of MrBeast LLC, no relation to Priya Bhattacharya from a different book) on the conference-room display at the back of Jimmy's office.
-
-Ana read the letter.
-
-She read it across nine minutes.
-
-Priya, who had received an emailed scan of the letter from Karim seven minutes before the call started, had already read it.
+Priya, who had received a scan from Karim seven minutes before the call, had already read it.
 
 Ana set the letter down.
 
-She said: "Jimmy."
+"Jimmy."
 
-Jimmy said: "Ana."
+"Yeah."
 
-She said: "The case is weak. The trade-dress claim does not hold up against the relevant chocolate-wrapper precedent. The Krackel wrapper has, on the litigation history I have on this category from my time at Disney, been subject to two prior trade-dress claims by other parties, both of which Hershey's settled rather than litigated, and one prior claim Hershey's filed against a competitor that Hershey's withdrew before discovery. The pattern is the pattern. The case will not, in operational terms, get to summary judgment. It is going to cost us between two and four million dollars to defeat in pretrial motion practice. The four million dollars is the upper bound. The two million dollars is the lower bound. The case will not be the case."
+"The case is weak. The trade-dress claim doesn't hold up against the relevant precedent. The Krackel wrapper has been subject to two prior trade-dress claims by other parties, both of which Hershey settled rather than litigate. They filed one against a competitor that they then withdrew before discovery. This is not a case that gets to summary judgment. It costs us between two and four million dollars to defeat in pretrial motion practice. The case is not the case."
 
-Jimmy said: "Priya."
+"Priya."
 
-Priya said: "Yes."
+"I agree with Ana. Three additional things."
 
-He said: "Do you agree."
+"Go."
 
-Priya said: "I agree with the substantive analysis. I want to add three things."
+"One. This is a pre-positioning move. Hershey isn't actually trying to litigate. The letter exists so Hershey can show its retailers a paper trail and argue Feastables is operating in legal gray space when it comes to shelf allocation. The retailer pressure campaign is the threat. The letter is the prop."
 
-He said: "Add the three things."
+"Two."
 
-Priya said: "First. The cease-and-desist is, on my read of how Latham handles this kind of letter, a pre-positioning move rather than a case Hershey's seriously intends to litigate. The letter is the opening move of a multi-pronged retailer-relationship campaign Hershey's has been telegraphing through industry channels for the previous nine weeks. The letter exists to give Hershey's a paper trail it can show its retailers when it argues that Feastables is operating in legal gray space and should be deprioritized in shelf allocation. The litigation is not the threat. The retailer-relationship campaign is the threat. The letter is the prop."
+"Two. We have three options. Settle and redesign the wrapper and avoid the press. Litigate quietly and absorb the legal cost. Or make the letter public and turn the cease-and-desist itself into the story. Option three is the option no CPG company has ever taken in twenty years of this kind of letter. Option three is also, on the competitive dynamics right now, the option with the highest expected value."
 
-He said: "Second."
+"Three."
 
-She said: "Second. We have, on the standard CPG-industry response playbook, three options. Option one is to settle, redesign the wrapper, and avoid the press attention. Option two is to litigate quietly and absorb the legal cost. Option three is to make the letter public and turn the cease-and-desist itself into the story. Option three is, on the industry's collective read across the previous twenty years, the option that no CPG company has ever taken. Option three is also, on my own honest read of the current operational situation, the option that has the highest expected value given the specific competitive dynamics between Feastables and Hershey's at the present moment."
+"Three. I haven't, in the nine weeks I've been your general counsel, recommended a thing to you that I wouldn't have recommended to an equivalent CEO at Disney or Kraft or Hershey. I am, this morning, recommending something none of those CEOs would do. You're not them. That's why the recommendation is option three. You were built to take this kind of move."
 
-He said: "Third."
-
-She said: "Third. I have not, in the previous nine weeks of being your general counsel, recommended a single thing to you that I would not, in the same operational position at Disney or Kraft or Hershey's, have recommended to the equivalent CEO. I am, this morning, recommending something none of those CEOs would do. The recommendation is option three. I am putting it on the table because you are not the equivalent CEO. You are Jimmy. The option three is, in operational terms, the option you have specifically been built to take."
-
-The room was quiet for a beat.
+Beat.
 
 Jimmy looked at Ana.
 
-He said: "Ana."
+"Ana."
 
-She said: "Yes."
+"Yeah."
 
-He said: "What do you think."
+"What do you think."
 
-She said: "Jimmy. I have been at this company for thirty-two months. I have, in those months, watched you take approximately fourteen decisions that, in the operational position I was in at Disney, I would have been fired for taking. The fourteen decisions have, by every available measure I have been able to apply across thirty-two months of doing the same operational accounting I did at Disney, been the right decisions. The fourteenth was the Carla Hernandez call at Walmart in December that we have not yet executed on. The fifteenth is, on my read of Priya's analysis, this one. I am voting for option three. I am voting for option three because, on my honest assessment of what you have been built to do, option three is the option a normal CEO would not take and is also the option that, in the operational context of who Feastables is and who Hershey's is, is the right option."
+"Jimmy, I've been here thirty-two months. I have watched you take about fourteen decisions that, in my position at Disney, I would have been fired for taking. Every one of those decisions turned out to be the right one. The fourteenth was the Carla Hernandez call at Walmart in December that we haven't executed on yet. The fifteenth is this one. I'm voting option three. I'm voting option three because option three is the move a normal CEO would not take and is also the move that, given who you are and who Hershey is, is the right move."
 
-He said: "Karim."
+"Karim."
 
-Karim said: "Yes."
+"Yeah."
 
-He said: "Stage seven. Two hours."
+"Stage seven. Two hours."
 
-Karim said: "Two hours."
+"Two hours."
 
-He said: "Cancel the social-strategy review."
+"Cancel the social-strategy review."
 
-Karim said: "Cancelled."
+"Cancelled."
 
 Jimmy stood up.
 
-He picked up the letter.
+Picked up the letter.
 
-He walked out of the office.
+Walked out of the office.
 
-He walked the long corridor to stage seven, which was the stage the studio kept clear at all times for what Karim had, in the operational documentation, classified as *unscheduled creative response.*
+He walked the long corridor to stage seven — the stage Karim kept clear at all times for what the production team called, in the studio's operational shorthand, *unscheduled creative response.*
 
 He filmed for one hour and eleven minutes.
 
-The video was the video.
-
 The video was six minutes long.
 
-The video opened on Jimmy at a desk that was, in the staging, deliberately not the desk he actually used. The staged desk was a desk Karim had bought from a thrift store in Greenville for forty-eight dollars in 2021 specifically to be the desk Jimmy filmed videos at when he wanted the visual signal to read *I am responding to something the world should pay attention to.* The desk had been used eleven times. The desk was now, on the production crew's collective informal knowledge, *the response desk.*
+It opened on Jimmy at a desk that was, by design, not the desk he actually used. The staged desk was a thrift-store desk Karim had bought in Greenville in 2021 for forty-eight dollars specifically to be the desk Jimmy filmed at when he wanted the visual signal to read *I am responding to something the world should pay attention to.* The desk had been used eleven times. The crew called it *the response desk.*
 
 Jimmy sat behind the response desk.
 
 He held up the letter to the camera.
 
-He said: "This is a letter."
+"This is a letter," he said.
 
 He paused.
 
-He said: "This is a fourteen-page letter from the Hershey Company. The Hershey Company is asking us, in this letter, to stop selling our Feastables Crunch product because the wrapper of the Feastables Crunch product allegedly looks too much like the wrapper of the Hershey Company's Krackel product. The letter wants us to pull the inventory off the shelves. The letter wants us to pay damages. The letter is fourteen pages."
+"This is a fourteen-page letter from the Hershey Company. They want us to stop selling Feastables Crunch because the wrapper allegedly looks too much like the wrapper of Hershey's Krackel. They want us to pull inventory off the shelves. They want us to pay damages. It is fourteen pages."
 
-He paused again.
+He flipped the letter around so the camera could see the Latham and Watkins letterhead.
 
-He flipped the letter around so the camera could see the Latham and Watkins letterhead at the top of page one.
+"The Hershey Company is a hundred-and-thirty-two-year-old chocolate manufacturer with about eight billion dollars of annual revenue. Feastables is a four-year-old chocolate brand that did six hundred and twenty million dollars of revenue last year. Hershey has, in the wrapper-design space, about sixty wrappers in active production and a hundred and twelve registered trade-dress marks across those wrappers. Hershey is, in the analogy I'm going to use for the rest of this video, the kid in the schoolyard who has a hundred and twelve toys and is, in the letter you are looking at on screen right now, complaining to the principal that one of the other kids has a toy that, in the lighting, looks a little bit like one of theirs."
 
-He said: "The Hershey Company is a hundred-and-thirty-two-year-old chocolate manufacturer with approximately eight billion dollars of annual revenue. Feastables is a four-year-old chocolate brand that did six hundred and twenty million dollars of revenue last year. The Hershey Company has, in the wrapper-design space of the chocolate industry, approximately sixty wrappers in active production. The Hershey Company has, on the federal trademark registry, approximately a hundred and twelve registered trade-dress marks across those wrappers. The Hershey Company is, in the analogy I am going to use for the rest of this video, the kid in the schoolyard who has a hundred and twelve toys and is, in the letter you are looking at on screen right now, complaining to the principal that one of the other kids has a toy that, in the lighting, looks a little bit like one of theirs."
-
-He paused.
+Beat.
 
 He set the letter down.
 
 He looked at the camera.
 
-He said: "We are not changing the wrapper. We will see them in court. Or, more likely, we will see them on Walmart's shelves."
+"We are not changing the wrapper. We will see them in court. Or, more likely, we will see them on Walmart's shelves."
 
 The video closed.
 
-It was six minutes and eleven seconds long.
+Six minutes and eleven seconds.
 
-Karim, the editor, and Jimmy walked through three rounds of cuts across the next two hours.
+Karim, the editor, and Jimmy walked through three rounds of cuts across the next two hours. The final cut had a working title of *Hershey's Sent Us a Letter.*
 
-The final version of the video had a working title of *Hershey's Sent Us a Letter.*
+Scheduled to drop Saturday morning at ten AM Eastern.
 
-The video was scheduled to drop on Saturday morning at ten AM Eastern.
-
-The video, by the close of Friday afternoon, was rendered, encoded, captioned, thumbnailed (the thumbnail was Jimmy holding the letter with the Latham and Watkins letterhead readable), and queued in YouTube's publishing system.
+Rendered, encoded, captioned, thumbnailed — the thumbnail was Jimmy holding the letter with the Latham and Watkins letterhead readable — and queued in YouTube by close of Friday afternoon.
 
 Jimmy went home at six PM Friday.
 
-He had dinner with Lerato at the house.
+Had dinner with Thea at the house.
 
-He did not work on the cold-open of the other video.
+Slept eight hours.
 
-He slept eight hours.
+Up at six AM Saturday.
 
-He was up at six AM Saturday.
+---
 
-The Hershey's Sent Us a Letter video dropped at ten AM Eastern.
+*Hershey's Sent Us a Letter* dropped at ten AM Eastern.
 
 It hit one million views in seventeen minutes.
 
-It hit ten million views in four hours and eleven minutes.
+Ten million in four hours and eleven minutes.
 
-It hit fifty million views by Sunday evening at six PM Eastern.
+Fifty million by Sunday evening.
 
-It hit a hundred million views on Tuesday at two seventeen PM Eastern.
+A hundred million by Tuesday at two seventeen PM.
 
-The Hershey Company's outside counsel withdrew the cease-and-desist on the following Friday afternoon, in a one-paragraph letter that included no acknowledgment of the YouTube video, no acknowledgment of the case's underlying weakness, and no acknowledgment of the operational miscalculation the letter's strategy had represented.
+Hershey's outside counsel withdrew the cease-and-desist the following Friday in a one-paragraph letter that included no acknowledgment of the YouTube video, no acknowledgment of the case's underlying weakness, and no acknowledgment of the operational miscalculation the letter's strategy had represented.
 
-The letter was the letter.
-
-The withdrawal was the withdrawal.
-
-The video was the video.
-
-Ana Vasquez, at her desk on the Friday afternoon the withdrawal letter came in, opened a small private file in her personal Notion that she had been keeping since her first week at MrBeast LLC, titled *Decisions I Would Have Been Fired For at Disney*, and added a fifteenth entry.
+Ana Vasquez, at her desk that Friday afternoon, opened a small private file in her personal Notion that she had been keeping since her first week at MrBeast LLC, titled *Decisions I Would Have Been Fired For at Disney*, and added a fifteenth entry.
 
 The fifteenth entry read: *Cease-and-desist response video. Hershey's. April Year Nine. Outcome: Hershey's withdrew within ten days. Video views: 142M by week three. Brand impact: Feastables sales up 38% the week after the video dropped, on the same shelf allocation. CPG industry's collective read of the move: not a single competitor has tried the same thing in the eleven weeks since. The move is now in the playbook nobody else has the credibility to use.*
 
-She saved the file.
+She saved it.
 
-She closed the laptop.
+Closed the laptop.
 
-She walked out of her office at six oh-six PM Friday.
+Walked out of her office at six oh-six PM Friday.
 
 The empire kept running.
 
 Jimmy went home at six fifteen PM Friday.
 
-Lerato was on the back porch reading.
+Thea was on the back porch reading.
 
 He sat down in the chair next to hers.
 
-She said: "Jimmy."
+"Thea."
 
-He said: "Lerato."
+"Hi."
 
-She said: "The video did the thing."
+"The video did the thing."
 
-He said: "The video did the thing."
+"The video did the thing."
 
-She said: "How are you feeling about the ninety days."
+"How are you feeling about it."
 
-He said: "I am thirteen days in. I have not yet found the model. I have, in the thirteen days, made one substantive observation about why the model is hard to find. The observation is that the way I have been running the company for nine years is the way I will keep running the company unless I find an architecture that lets me delegate decisions I am, today, structurally unable to delegate. The architecture does not, in the operational landscape I have been able to map across the past two weeks, exist. I am going to keep looking."
+"Honestly? Fine. The video was the easy part for you. Cold opens and aggressive corporate trolls — that's the part of you that's already wired up. I'm more interested in the part you can't do yet."
 
-She said: "Jimmy."
+"The model."
 
-He said: "Yes."
+"The model."
 
-She said: "Eleven days into the wedding leave with the brother in December — the one with the catering thing — you said the same sentence."
+"I'm thirteen days in."
 
-He said: "I know I did."
+"I know you are."
 
-She said: "The architecture does not exist."
+"I have one real observation."
 
-He said: "The architecture does not exist."
+"Tell me."
 
-She said: "Jimmy."
+"The way I have been running the company for nine years is the way I am going to keep running it unless I find an architecture that lets me delegate decisions I'm structurally unable to delegate right now. The architecture, on what I've been able to map across the past two weeks, doesn't exist."
 
-He said: "Yes."
+Thea sat with that for a beat.
 
-She said: "The architecture exists. You have not yet found it. There is a difference between the architecture not existing and you not having found it. The difference is the difference. The difference is the difference between the next seventy-seven days and the rest of your life. Look harder. The architecture is going to be there."
+She put her book down on the small table next to her chair.
+
+"Jimmy."
+
+"Yeah."
+
+"Eleven days into our honeymoon — when Mark had the wedding-catering thing — you said the same sentence."
+
+"I know I did."
+
+"You said *the architecture does not exist.*"
+
+"Yeah."
+
+"Jimmy."
+
+"Yeah."
+
+"That's the same sentence you have been saying for eleven months. It's a lazy sentence. There's a difference between a thing not existing and you not having found it. The difference is the difference between the next seventy-seven days and the rest of your life. So look harder. The architecture is out there. You haven't looked in the right places. You haven't looked in the right places because the right places are not the places a YouTube creator who turned into a CEO would normally look. Look in different places. Read different things. Talk to different people. Do the thing where you find someone who has been quietly doing what you've been trying to do without realizing you've been trying to do it. That person exists. Find them."
 
 He looked at her.
 
-He said: "Lerato."
+"Thea."
 
-She said: "Yes."
+"Yeah."
 
-He said: "Thank you."
+"Thank you."
 
-She said: "Dinner is in twenty minutes."
+"Dinner is in twenty minutes."
 
-He said: "I will be there."
+"I'll be there."
 
-She picked up the book.
+She picked the book back up.
 
 She kept reading.
 
@@ -268,12 +258,10 @@ He thought about the architecture.
 
 The architecture was, somewhere, an architecture.
 
-He did not yet know where.
-
 He had seventy-seven days.
 
-The dinner was in twenty minutes.
+Dinner was in twenty minutes.
 
-The empire was, in its current operational form, still the empire.
+The empire was, in its current form, still the empire.
 
-The ninety-day clock was, by Lerato's quiet count on the small notepad on the kitchen counter, at day fourteen and counting.
+Day fourteen, by Thea's quiet count on the small notepad in her tote bag, was tomorrow.

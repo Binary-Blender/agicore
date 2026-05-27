@@ -7,6 +7,8 @@
 **Length target:** ~50,000 words, 14 chapters, 4 acts
 **Register:** Close third, past tense, kinetic. Faster cadence than *Carry* or *Forward*. The protagonist runs on different operational metabolism than Cole Westerlund did.
 
+> **Revision note (May 2026):** This outline reflects the first-draft plan. The published chapters supersede it where they conflict. Two substantive revisions to the cast: (1) Jimmy's wife was renamed and reshaped — she is now **Thea**, American, no Cape Town / KwaZulu-Natal background, supportive Greenville spouse rather than program director; (2) **Thandi Khoza** runs Beast Philanthropy on the ground (she was already in the original outline as a supporting character; the revision elevates her to the operational lead and gives her the Ch 3 POV and the Ch 13 visit with Eleanor that the first draft assigned to Lerato Booysen). The book's themes, plot beats, and closing arguments are unchanged.
+
 ---
 
 ## Concept

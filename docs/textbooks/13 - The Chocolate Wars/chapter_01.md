@@ -1,309 +1,237 @@
 # Chapter 1: Greenville
 
-Jimmy Donaldson was at the editing bay of bay number two of the MrBeast LLC studio in Greenville, North Carolina, at four oh-six AM on a Tuesday in March of Year Nine, on the fifty-seventh consecutive hour of work on a video that was supposed to drop on Saturday morning at ten AM Eastern, with two empty cans of a sugar-free energy drink on the desk to his left, three empty cans of the same energy drink on the desk to his right, a pair of over-ear headphones on his head playing a metal track he had switched to at one twenty AM when his judgment on B-roll cuts had started to slip, and the third re-edit of the cold-open's first eleven seconds on the timeline.
+Jimmy Donaldson was at the editing bay of bay number two at four oh-six AM on a Tuesday in March of Year Nine — fifty-seven hours into a video that was supposed to drop Saturday at ten AM Eastern — with two empty Celsius cans on his left, three on his right, headphones playing a Slipknot track he had switched to at one twenty when his eye for cuts had started going, and the third re-edit of the cold-open on the timeline.
 
-The cold-open's first eleven seconds were the part Jimmy had been working on since approximately Sunday evening at six PM.
+The cold-open was eleven seconds.
 
-The cold-open's first eleven seconds had, by Jimmy's own honest count from the studio's internal analytics dashboard, accounted for approximately seventy-three percent of every drop-off curve on every MrBeast video for the previous six years.
+Seventy-three percent of every drop-off curve on every MrBeast video for the past six years had happened inside those eleven seconds.
 
-The cold-open's first eleven seconds were the work.
+So Jimmy was on edit three.
 
-The rest of the video was the substrate the work was for.
+He hit play. Watched. Hit stop. Nudged the cut on the third frame of the second beat by four frames. Hit play. Watched. Hit stop. Took the headphones off. Opened a fourth Celsius. Drank half. Put the headphones back on. Hit play.
 
-He hit play.
+Thea walked into bay two at four oh-eight.
 
-He watched the eleven seconds.
+She had a dark coat on over what looked like the t-shirt she had been wearing when he had kissed her on the head at noon Sunday on his way back to the studio, and her keys in her hand, and a tote bag over her left shoulder that he was about ninety percent sure had a thermos of coffee in it because that's what she did when she came to the studio at four in the morning, which she had now done twice in eleven months of marriage.
 
-He hit stop.
+This was the second time.
 
-He nudged the cut on the third frame of the second beat by four frames.
-
-He hit play.
-
-He watched the eleven seconds.
-
-He hit stop.
-
-He took the headphones off.
-
-He picked up the fourth energy drink.
-
-He opened it.
-
-He drank half of it.
-
-He put the headphones back on.
-
-He hit play.
-
-Lerato Booysen walked into bay number two at four oh-eight AM, in her dark coat, with her keys in her hand, with the small leather purse she had bought herself in Cape Town in 2023 over her left shoulder, and stood in the doorway of the bay for approximately four seconds before Jimmy noticed her.
-
-Jimmy noticed her in the reflection on the monitor.
+She stood in the doorway for about four seconds before he caught her in the monitor reflection.
 
 He hit pause.
 
-He took the headphones off.
+Took the headphones off.
 
-He turned around.
+Turned around.
 
-He said: "Lerato."
+"Thea."
 
-She said: "Jimmy."
+"Hey."
 
-He said: "It's four AM."
+"It's four AM."
 
-She said: "I know it's four AM."
+"I know it's four AM."
 
-He said: "You drove here."
+"You drove."
 
-She said: "I drove here. I did not call ahead. Karim sent me a text at three forty-eight that said you were in bay two on the cold-open. I drove here from the house. I am not, this morning, going to ask you to come home. I am going to ask you to listen to me for seven sentences. The seven sentences are going to take about ninety seconds. After the seven sentences, I am going to leave the studio. After I leave the studio, you can either go back to the cold-open or you can come after me. Either decision is your decision. The seven sentences are not, in operational terms, an ask. The seven sentences are the runway."
+"I drove. Karim texted me at three forty-eight. Said you were on the cold open. I drove from the house."
 
-Jimmy looked at her.
+She didn't put the bag down. Didn't sit. Stayed standing in the doorway. He noticed.
 
-He said: "Lerato."
+"I'm not asking you to come home," she said. "I'm asking you to listen to me for like ninety seconds. Seven things. Then I'm going to leave. After I leave you can stay on the cold open or you can come after me. Either one is fine. I just need to say the seven things."
 
-She said: "Yes."
+"OK."
 
-He said: "Tell me the seven sentences."
+"You sure you can hear me."
 
-She told him the seven sentences.
+"I can hear you."
 
-She told him in approximately ninety seconds.
+She told him in about ninety seconds.
 
-The seven sentences were:
+She said it like she'd written it on her phone on the drive over, which she had.
 
-1. Her brother's wedding had been the previous Saturday in Durban.
+The seven things were:
 
-2. Jimmy had not been on the trip because the cold-open of a different video he had been working on the previous Wednesday had taken him eleven additional hours past the trip's departure window and the Vector charter Lerato's mother had set up to fly the two of them to Durban from Greenville had departed without him.
+One. Her sister's wedding had been Saturday in Asheville and Jimmy had missed it because the cold open on a different video had eaten the eleven hours before the flight and the flight had left without him.
 
-3. Her cousin's funeral had been three weeks before the wedding, in Pietermaritzburg, in the Friday morning of the second week of February, and Jimmy had not been on that trip for an operationally similar reason involving a Feastables-packaging review meeting that had run twenty-six hours past the planned departure window.
+Two. Her cousin's funeral had been three weeks before that, in Wilmington, and Jimmy had missed that one for a Feastables packaging review that ran twenty-six hours past when it was supposed to end.
 
-4. The wedding-and-funeral miss across a six-week window was, by Lerato's own honest count of the things she had been keeping a quiet ledger of since the wedding, the fourth time across the eleven months of their marriage that Jimmy had missed a consequential family event for an operationally similar reason.
+Three. Counting those two there had been four consequential family things in the eleven months they'd been married that Jimmy had missed for an operationally similar reason. She had been keeping a quiet count. She was not going to read the list.
 
-5. The pattern was the pattern.
+Four. The pattern wasn't the problem. The pattern was the *signal* of the problem.
 
-6. The pattern was not, on her own honest assessment, going to change on the strength of the conversation in bay number two at four oh-eight AM Tuesday morning, because the pattern was structural to the way Jimmy had been running the company for the previous nine years and the pattern would, on her honest projection, continue across the next thirty years of his life unless something in the operational architecture of the company changed.
+Five. The problem was that the way Jimmy had built the company across nine years had baked Jimmy himself into every important decision the company made, and the only way for him to stop missing weddings and funerals was for him to come up with a different way of running it.
 
-7. She was, in operational terms, going to be making a decision about whether the marriage worked at the current pace inside the next ninety days, and the decision was going to be made on the basis of whether Jimmy had, by the end of the ninety days, brought her a different operating model for the company that would, in operational terms, allow him to be a husband and a father — and she was not yet pregnant, but she wanted to be, and she was not going to be pregnant by the man Jimmy currently was, and she wanted Jimmy to know that before he made the next decision about which cold-open he was going to spend the next eleven hours on.
+Six. She was not going to be the person who got him to do that by nagging him. She had tried for eleven months. It didn't work. She wasn't going to try anymore.
+
+Seven. She was giving him ninety days. Inside ninety days she needed him to come back to her with a different way of running the empire. If he came back with one, they kept going. They started trying for a kid in the summer. They built a life. If he didn't come back with one — she stopped on the word *one*, looked at him, kept going — if he didn't come back with one, she was going to be honest with herself about what kind of marriage she'd actually signed up for, and so was he, and they would figure it out from there. She loved him. That was not the question. The question was the architecture. The architecture was on him.
 
 She stopped.
 
 Jimmy looked at her.
 
-He did not, in the four seconds after she stopped, say anything.
+He didn't say anything for about four seconds.
 
-He took the fourth energy drink off the desk.
+He took the fourth Celsius off the desk. Set it on the floor next to the trash can. Missed the trash can. The can rolled three feet across the polished concrete and came to rest against the leg of the chair Karim had been sitting in twelve hours earlier.
 
-He set it on the floor next to the trash can.
+"Thea."
 
-He missed the trash can.
+"Yeah."
 
-The can rolled approximately three feet across the polished concrete floor of the bay.
+"Ninety days."
 
-It came to rest against the leg of the rolling chair Karim had been sitting in twelve hours earlier.
+"Ninety days."
 
-Jimmy said: "Lerato."
+"OK," he said. "I'll come back with one. Inside ninety days. If I don't, I'm the one who leaves the empire. Not you."
 
-She said: "Yes."
+She stood in the doorway another beat.
 
-He said: "Ninety days."
+Then she crossed the three steps to the chair, put her palm flat on the back of his head, kissed the top of his head, and said: "Jimmy."
 
-She said: "Ninety days."
+"Yeah."
 
-He said: "I am going to come back to you with a different operating model inside ninety days. The model is going to be the model. If the model does not work, I will be the one who leaves the empire, not you."
+"Do the work. I don't want to leave."
 
-She did not say anything for a beat.
+"I don't want you to leave either."
 
-She walked the three steps to the editing chair.
-
-She placed her hand, palm flat, on the back of his head.
-
-She kissed the top of his head.
-
-She said: "Jimmy."
-
-He said: "Yes."
-
-She said: "Make the model the model. I do not want to leave."
-
-He said: "I do not want you to leave."
-
-She said: "Then do the work."
+"Then do the work."
 
 She walked out of the bay.
 
-The bay door closed behind her.
+The door closed behind her.
 
-The bay was quiet for approximately seven seconds.
+The bay was quiet for about seven seconds.
 
 Then Jimmy looked at the cold-open timeline.
 
-Then he picked up the can off the floor.
+Then he picked up the can off the floor and carried it to the trash.
 
-He carried it to the trash.
+Sat back down.
 
-He sat back down.
+Took the headphones off the desk but didn't put them on.
 
-He took the headphones off the desk.
+Opened his laptop.
 
-He did not put them on.
+Opened a new doc.
 
-He opened his laptop.
+Titled it *Operating Model — 90-day spec.*
 
-He opened a new document.
+Typed for twenty-three minutes straight.
 
-He titled the document: *Operating Model — 90-day spec.*
+What he typed was the first version of what would, across the next ninety days, become about four thousand lines of operational specification for an empire that, as of that Tuesday morning, ran thirteen LLCs under an informal corporate umbrella, four hundred and ten full-time employees, a hundred and forty-seven part-time contractors, four production stages in Greenville plus one in Hollywood plus one in London, a chocolate brand on track to do six hundred and twenty million in revenue that year, a philanthropy operation that had built eight schools in three years across two African countries, an Amazon-distributed reality competition show in pre-production for season three, and exactly one CEO who had not, in any of the previous nine years, slept more than four hours on a Tuesday.
 
-He typed for approximately twenty-three minutes.
+He saved the doc at five oh-one.
 
-What he typed was the first version of what would, across the following ninety days, become approximately four thousand lines of operational specification for an empire that, by the morning of the third Tuesday of March of Year Nine, had thirteen LLCs under its informal corporate umbrella, four hundred and ten full-time employees, one hundred and forty-seven part-time contractors, four production stages in Greenville plus one in Hollywood plus one in London, a chocolate brand that was on track to do six hundred and twenty million dollars of revenue in Year Nine, a philanthropy operation that had built eight schools in three years across two African countries, an Amazon-distributed reality competition show that was in pre-production for its third season, and a single chief executive officer who had not, in any of the previous nine years, slept more than four hours on a Tuesday night.
+Closed the laptop.
 
-He saved the document at five oh-one AM.
+Stood up.
 
-He closed the laptop.
-
-He stood up.
-
-He walked out of bay number two.
-
-He walked the long corridor past bays three, four, and five.
-
-He walked through the empty studio lobby.
-
-He walked out the front door of the studio into the cold March pre-dawn of Greenville, North Carolina.
+Walked out of bay two, down the corridor past bays three, four, and five, through the empty lobby, and out the front door into the cold March pre-dawn.
 
 The parking lot was empty except for his car and the security guard's car.
 
-The security guard was the night-shift guard, a forty-six-year-old former Marine named Reggie Anders who had been at the studio for four years and who had, in those four years, never once asked Jimmy why he stayed at the studio for fifty-seven consecutive hours at a time.
+The security guard was the night-shift guard, a forty-six-year-old former Marine named Reggie Anders who had been on the gate for four years and who had, in those four years, never once asked Jimmy why he stayed at the studio for fifty-seven consecutive hours at a time.
 
-Reggie was at the small booth by the front gate.
+Reggie was in the small booth by the gate.
 
-Jimmy nodded at Reggie.
+Jimmy nodded. Reggie nodded back.
 
-Reggie nodded at Jimmy.
+"Mr. Donaldson."
 
-Reggie said: "Mr. Donaldson."
+"Reggie."
 
-Jimmy said: "Reggie."
+"Walking out before sunrise."
 
-Reggie said: "You walking out before sunrise."
+"Walking out before sunrise."
 
-Jimmy said: "I am walking out before sunrise."
+"Thea came by."
 
-Reggie said: "Lerato came by."
+"She did."
 
-Jimmy said: "She did."
+"I don't generally comment on personal-life stuff with the principal."
 
-Reggie said: "I do not, generally, comment on personal-life matters with the principal."
+"I know you don't."
 
-Jimmy said: "I know you do not."
+"I'm going to comment now."
 
-Reggie said: "I am going to comment now."
+"Go ahead."
 
-Jimmy said: "Tell me."
+"Mr. Donaldson, I've been on this gate four years. I've watched you leave this studio at four AM eleven hundred and forty times. I've watched Thea come through this gate forty-eight times. The forty-eight times are the only times I've seen you walk out of here for a reason that was not work. I am going to encourage you to drive home and listen to whatever she came to tell you. The forty-eight are the part that matter."
 
-Reggie said: "Mr. Donaldson. I have been on this gate for four years. I have seen you leave this studio at four AM eleven hundred and forty times. I have seen Lerato come through this gate forty-eight times. The forty-eight times have, by my own count, been the only times across the four years that I have seen you walk out of the studio for a reason that was not work. I am, in the operational sense, going to encourage you to drive home and listen to whatever Lerato came to tell you. The forty-eight times are the forty-eight times. The eleven hundred and forty are the eleven hundred and forty. The forty-eight are the part that matter."
+Jimmy looked at him for a beat.
 
-Jimmy looked at Reggie for a beat.
+"Reggie."
 
-He said: "Reggie."
+"Yes sir."
 
-Reggie said: "Yes."
+"Thank you."
 
-Jimmy said: "Thank you."
+"You're welcome. Drive home, Mr. Donaldson."
 
-Reggie said: "You are welcome. Drive home, Mr. Donaldson."
+He drove home.
 
-Jimmy drove home.
+The drive was eleven minutes.
 
-The drive from the studio to the house was eleven minutes.
+He pulled in at five fourteen AM Eastern.
 
-He arrived at the house at five fourteen AM Pacific.
+Thea's car was in the drive. The kitchen light was on.
 
-Lerato's car was in the drive.
+He walked in.
 
-The kitchen light was on.
-
-He walked in the front door.
-
-Lerato was at the kitchen counter in her pajamas with a cup of tea.
+She was at the kitchen counter in pajama pants and the same t-shirt with the thermos of coffee from the tote bag now poured into one of the two mugs they had bought at a flea market in Asheville the weekend they got engaged.
 
 She looked up.
 
-She did not say anything.
+Didn't say anything.
 
-He walked across the kitchen to the counter.
+He walked across the kitchen and sat down on the stool next to hers.
 
-He sat down on the stool next to hers.
+"Thea."
 
-He said: "Lerato."
+"Jimmy."
 
-She said: "Jimmy."
+"I'm sorry I missed the wedding. I'm sorry I missed the funeral. I'm sorry I missed the two other things — and the embarrassing part is I don't even remember what they were, because the way my brain has been running for nine years is that the videos take up the part of the brain that's supposed to remember those things, and I let them. I am sorry. I am sorrier than I know how to tell you yet. I'm going to spend the next ninety days finding the model. I'm also going to spend the next ninety days every Sunday night sitting at this counter trying to actually tell you the sorry part. Not in one speech. In pieces. Because I think the pieces are what I owe you and I have been giving you the headlines instead. The model and the pieces are the same job. I'm going to do the job."
 
-He said: "I am sorry I missed the wedding. I am sorry I missed the funeral. I am sorry I missed the other two consequential family events whose specifics I have lost the operational memory of and that I am, in this moment, embarrassed I cannot name to you the way you have just named them to me. The four are the four. I am sorry I missed all four. I am also going to tell you, in operational terms, that I am sorry was not, on my own honest read of the conversation we just had in bay number two, what you came to the studio at four AM to hear me say. You came to the studio at four AM to give me the runway. The runway is the runway. The runway is ninety days. I am going to spend the ninety days finding the different operating model. I am also going to spend the ninety days asking myself, every Sunday night when I am not at the studio, what I have been doing wrong for nine years that I am, this Tuesday morning at five fifteen AM, finally going to admit I have been doing wrong. The admitting is the admitting. The model is the model. I am sorry. I am sorrier than I am yet ready to tell you. The telling is going to be the telling I am going to do across the ninety days. I am asking you to be patient with the telling. The telling is going to be slow. The model is going to be the model that lets the telling be the telling. The model and the telling are the same thing. I am going to make them the same thing."
+She sat with it for a long beat.
 
-Lerato sat with the sentences for a long beat.
-
-She did not say anything for forty seconds.
+She didn't say anything for forty seconds.
 
 Then she said: "Jimmy."
 
-He said: "Yes."
+"Yeah."
 
-She said: "All right."
+"OK."
 
-He said: "Lerato."
+"OK?"
 
-She said: "Yes."
+"OK. Drink some water. Sleep three hours. The cold open will still be there at eight. I have the firm at nine. I'll cook tonight."
 
-He said: "Thank you."
+"You'll cook tonight."
 
-She said: "Drink some water. Sleep three hours. The cold-open is going to be the cold-open in three hours. I will be at the firm at nine AM. We will have dinner tonight at the house. I will cook. The dinner will be the dinner."
+"I'll cook tonight."
 
-He said: "The dinner will be the dinner."
+She picked up her coffee and walked to the bedroom. The door closed behind her.
 
-She picked up the cup of tea.
+He stood at the counter for about a minute.
 
-She walked into the bedroom.
+Then he opened the fridge, took out a bottle of water, drank it, dropped the empty in the recycling under the sink, and went to the bedroom.
 
-The bedroom door closed behind her.
+He lay down on the bed next to her in his clothes.
 
-Jimmy stood at the kitchen counter for approximately one minute.
+He didn't sleep for the next three hours.
 
-Then he opened the refrigerator.
+He thought, for the three hours, about the operating model.
 
-He took out a bottle of water.
+He didn't know how he was going to build it.
 
-He drank it.
+He knew, with the kind of certainty he had not, across the past nine years, ever had about anything that didn't have a YouTube thumbnail attached to it, that he was going to build it.
 
-He set the empty bottle in the recycling bin under the sink.
+Ninety days.
 
-He walked into the bedroom.
+His wife was asleep on his shoulder for the first time in he could not remember how long.
 
-He lay down on the bed next to Lerato in his clothes.
+The empire, for the first time in nine years, was on the other side of a door he was going to leave closed for three hours.
 
-He did not, in the next three hours, sleep.
+He left it closed.
 
-He thought, across the three hours, about the operating model.
-
-The model was the model.
-
-The model did not yet exist.
-
-He had ninety days to build it.
-
-He did not yet know how he was going to build it.
-
-He knew, with the kind of certainty he had not, in his own honest count of the previous nine years of running the company, ever had about anything that did not have a YouTube thumbnail attached to it, that he was going to build it.
-
-The ninety days were the ninety days.
-
-The bedroom was the bedroom.
-
-The wife next to him was the wife.
-
-The empire was, at five fifteen AM on a Tuesday in March of Year Nine, in his house, in the bedroom, in the dark, in the silence — for the first time in nine years — on the other side of a door he was going to leave closed for the next three hours.
-
-He stayed on the other side of the door.
-
-The work began at eight AM Pacific.
+The work started at eight.

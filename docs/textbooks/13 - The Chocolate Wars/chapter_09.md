@@ -50,7 +50,7 @@ She was approximately Christopher's age, with grey-blonde hair tied back, a deni
 
 She said: "Hello, Jimmy."
 
-He said: "Hello, Sarah. I brought you something. My wife picked it. Her name is Lerato. She said you would like it. I have, on her instruction, not brought any chocolate."
+He said: "Hello, Sarah. I brought you something. My wife picked it. Her name's Thea. She said you'd like it. I have, on her instruction, not brought any chocolate."
 
 He handed her the wooden box.
 
@@ -86,7 +86,7 @@ The coffee was poured at two nineteen PM.
 
 The first conversation of the three days started at two twenty-one PM Central Friday afternoon and ran, by Christopher's quiet count on the small wall clock above the stove, fifty-three minutes.
 
-The conversation was, in its first eleven minutes, about Lerato.
+The conversation was, in its first eleven minutes, about Thea.
 
 The conversation was, in its next nine minutes, about Sarah's chickens.
 
@@ -216,7 +216,7 @@ The text file reached fourteen hundred and seventeen lines at six oh-four PM Sun
 
 The fourteen hundred and seventeen lines were the operating specification of the MrBeast empire.
 
-The specification covered the YouTube production line, the Feastables operational pipeline, the Beast Games production cycle, the Beast Philanthropy school-building program (with Lerato's name in the DSL as the holder of the cord on every constraint that touched the school-building line), the Carrick-Lattice manufacturing partnership Feastables had just signed in February of Year Nine, the standard creator-services pipeline for the YouTube core business, the legal and finance back office, the talent-management system, the philanthropic finance bridge between Feastables revenue and Beast Philanthropy capital allocation, and a small section at the bottom of the file that was, in Christopher's own quiet language at five fifty-one PM Sunday, *the section nobody but you and I will ever read.*
+The specification covered the YouTube production line, the Feastables operational pipeline, the Beast Games production cycle, the Beast Philanthropy school-building program (with Thandi Khoza's name in the DSL as the holder of the cord on every constraint that touched the school-building line), the Carrick-Lattice manufacturing partnership Feastables had just signed in February, the creator-services pipeline for the YouTube core business, the legal and finance back office, the talent-management system, the philanthropic finance bridge between Feastables revenue and Beast Philanthropy capital allocation, and a small section at the bottom of the file that was, in Christopher's quiet language at five fifty-one PM Sunday, *the section nobody but you and I will ever read.*
 
 The small section at the bottom was forty-eight lines.
 
@@ -228,7 +228,7 @@ The Andon Cord transfer schedule specified, in operational terms, which cords Ji
 
 Karim was going to receive the YouTube production cord on day thirty.
 
-Lerato was going to receive — and had, in operational reality, already received — the Beast Philanthropy cord.
+Thandi was going to receive — and had, three weeks earlier, already received — the Beast Philanthropy cord.
 
 Ana Vasquez was going to receive the Feastables operational cord on day sixty.
 
@@ -274,7 +274,7 @@ Jimmy said: "Christopher."
 
 Christopher said: "Yes."
 
-Jimmy said: "I have been on camera for nine years. I have, across those nine years, never had anybody articulate the thing you just articulated. The thing you just articulated is the thing my wife has, on her own seven sentences in March, been trying to articulate to me. The thing you just articulated is the thing Karim has, on his own four years at Toyota, been trying to articulate to me. The thing you just articulated is the thing Ana Vasquez has, on her own thirty-two months at this company, been trying to articulate to me. None of them have, until you, articulated it in the form of one sentence I can hear. You articulated it in one sentence. I heard it. The cord is mine. The cord is going to be mine for as long as I am on camera. The hearing of the sentence is, on my own honest accounting of this weekend, the thing I came to Missouri for."
+Jimmy said: "I've been on camera for nine years. Nobody has ever articulated to me what you just articulated. My wife Thea has been trying to say it for eleven months in her own words. Karim has been trying to say it for six years in his own words. Ana Vasquez has been trying to say it for thirty-two months at the company in her own words. None of them got it down to one sentence. You did. I heard it. The cord is mine. It's going to be mine for as long as I'm on camera. The hearing of the sentence — that's what I came to Missouri for."
 
 Christopher said: "Jimmy."
 
@@ -358,7 +358,7 @@ Jimmy said: "I am going to do three things across the next forty-eight hours tha
 
 Christopher said: "Tell me the three things."
 
-Jimmy said: "First. I am going to commit, on Monday morning at nine AM Eastern, ten million dollars to a five-year unrestricted grant to the Agicore project, structured as a foundation Lerato is going to administer through her existing foundation infrastructure. The grant has no deliverables. The grant has no reporting requirements. The grant has no influence over the project's roadmap. The grant exists because the work you have been doing for eleven months is, on every measure I can apply, the work the next decade is going to be built on, and the work the next decade is going to be built on should not be subject to whether the person doing it has enough money to keep doing it."
+Jimmy said: "First. I'm committing, Monday morning at nine AM Eastern, ten million dollars to a five-year unrestricted grant to the Agicore project, structured through the Bender Foundation directly. No deliverables. No reporting requirements. No influence over the project's roadmap. The grant exists because the work you've been doing for eleven months is, on every measure I can apply, the work the next decade is going to be built on — and the work the next decade is going to be built on should not be subject to whether the person doing it has enough money to keep doing it."
 
 Christopher said: "Jimmy."
 
@@ -464,7 +464,7 @@ The crayfish were in the creek.
 
 The empire, by Monday at nine AM Eastern, was going to have an operating system.
 
-The ninety-day clock, by Lerato's quiet count when Jimmy walked back into the kitchen at the house in Greenville on Monday at one twenty-two AM Eastern with the empire.app file on a USB drive in his jacket pocket, was at day seventy-two and counting.
+The ninety-day clock, on Thea's quiet count when Jimmy walked back into the kitchen at the house in Greenville on Monday at one twenty-two AM Eastern with the empire.app file on a USB drive in his jacket pocket, was at day seventy-two and counting.
 
 Eighteen days remained.
 

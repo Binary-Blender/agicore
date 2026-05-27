@@ -1,408 +1,340 @@
 # Chapter 8: The Issue
 
-The seven AM Wednesday meeting with Karim was, by Karim's own quiet framing on the phone at two fifty-one AM Tuesday morning, the most important meeting of the next phase of the empire.
+The seven AM Wednesday meeting with Karim was, on Karim's framing at two fifty-one AM Tuesday on the phone, the most important meeting of the next phase of the empire.
 
-The meeting was held at the small round table in the corner of Jimmy's office at the studio, which was the table Jimmy used for conversations that, in the operational taxonomy Karim had developed across six years of working with Jimmy, were classified as *Type 4 — strategic-architecture conversations conducted at low volume between fewer than four people*. The Type 4 table had been used, by Karim's count, forty-three times across the past six years. The forty-third use was the meeting on Wednesday morning.
+It was held at the small round table in the corner of Jimmy's office at the studio — the table Karim, in his standard ops taxonomy, classified as *Type 4: strategic-architecture conversations conducted at low volume between fewer than four people.* The Type 4 table had been used, on Karim's count, forty-three times across the previous six years.
 
-The meeting started at seven oh-two AM Eastern Wednesday.
+The forty-third use was this morning.
+
+It started at seven oh-two AM.
 
 The meeting was Jimmy, Karim, and a third chair that was empty.
 
-The third chair was the chair Karim had pulled up to the table when he walked in at six fifty-eight AM. Karim had not, when he pulled up the third chair, explained who the chair was for. Jimmy had not, when he sat down at the table at seven oh-one AM, asked.
+Karim had pulled up the third chair when he walked in at six fifty-eight. He had not, when he pulled it up, explained who the chair was for. Jimmy had not, when he sat down at seven oh-one, asked.
 
-Karim said, on the close of his first sip of coffee at seven oh-two AM: "Jimmy."
+Karim took the first sip of his coffee.
 
-Jimmy said: "Karim."
+"Jimmy."
 
-Karim said: "I have been at this studio for six years and one month. I have, in those six years and one month, watched you make approximately fourteen hundred operational decisions of meaningful consequence. The decisions have been, on the cumulative score of how the empire has performed, the right decisions. I have, across the same six years and one month, made approximately three hundred operational decisions of meaningful consequence on your behalf without checking with you. Those decisions have, on the cumulative score of how the empire has performed, also been the right decisions. The combination has produced, in operational terms, the empire as it currently exists."
+"Karim."
 
-Jimmy said: "Yes."
+"I've been at this studio six years and one month. In that time I've watched you make about fourteen hundred operational decisions of consequence. The decisions have, on the cumulative score of how the empire has performed, been the right ones. In the same six years and one month I've made about three hundred operational decisions of consequence on your behalf without checking with you. Those have, on the same score, also been the right ones. The combination has produced the empire as it currently exists."
 
-Karim said: "The empire as it currently exists is, on every available measure I can apply, going to grow approximately threefold across the next thirty-six months. The growth is going to be driven by Beast Games expansion, by Feastables' Walmart-aisle inflection, by Lerato's forty-to-fifty-school program, by the launch of two additional consumer brands we have not yet announced, and by the underlying compounding of the YouTube subscriber base across the same period. The threefold growth is, in the operational architecture we currently run, going to require approximately seventeen times the volume of Type 4 conversations we currently hold per week. The volume is, on my honest calculation, not achievable in the operating model we currently run. The model is going to break. The model is going to break between months four and eleven of the thirty-six. I have, in private, been doing the math on this for six months. I have not raised it with you because I did not, until two forty-seven AM Tuesday, have a credible suggestion for what to do about it. I now do."
+"Yeah."
 
-Jimmy said: "The README."
+"The empire as it currently exists is going to grow about threefold across the next thirty-six months. Driven by Beast Games expansion, the Walmart inflection, Thandi's forty-to-fifty-school program, the launch of two consumer brands we haven't announced, and the underlying compounding of the YouTube subscriber base. The threefold growth is, in the operational architecture we currently run, going to require about seventeen times the volume of Type 4 conversations we currently have per week. That's not achievable in the model we currently run. The model is going to break — between months four and eleven of the thirty-six. I have, in private, been doing the math on it for six months. I haven't raised it because, until two forty-seven AM Tuesday, I didn't have a credible suggestion for what to do about it. I do now."
 
-Karim said: "The README."
+"The README."
 
-Karim said: "I read the README between three thirty AM Tuesday and five forty-eight AM Tuesday after you hung up. I read it twice. I read the documentation site between five forty-eight AM and seven AM Tuesday. I read the codebase between seven AM Tuesday and ten PM Tuesday in approximately forty-minute focus blocks across the operational day. I have, by this morning at six forty AM Wednesday, formed an opinion. The opinion is in three parts."
+"The README. I read it twice between three thirty and five forty-eight AM Tuesday after you hung up. Read the docs site between five forty-eight and seven AM. Read the codebase across the operational day Tuesday in forty-minute focus blocks. By this morning I have an opinion. The opinion is in three parts."
 
-Jimmy said: "Tell me the three parts."
+"Tell me."
 
-Karim said: "First. The project is real. The codebase is approximately fifty thousand lines of well-organized Rust, TypeScript, and a domain-specific language the author has designed himself, that compiles to Tauri apps via a deterministic build pipeline that I have, in the course of yesterday's reading, been able to walk end-to-end on the author's own example applications. The pipeline works. The deterministic guarantees work. The DSL is, on my honest assessment, the most operationally legible DSL I have encountered in eleven years of looking at workflow-modeling systems. The DSL is also, in its current form, not finished. There are seventeen language features the author has documented as future work. There are three architectural decisions that, on my read of the codebase, the author has not yet committed to in either direction. There are forty-seven open issues on the repository, of which approximately twelve are substantive and the remaining thirty-five are documentation cleanup or low-priority feature requests."
+"One. The project is real. About fifty thousand lines of well-organized Rust, TypeScript, and a domain-specific language the author has designed himself, compiling to Tauri apps through a deterministic build pipeline that I have, in the course of Tuesday, been able to walk end-to-end on the example apps. The pipeline works. The deterministic guarantees work. The DSL is, on my honest read, the most operationally legible DSL I've seen in eleven years of looking at workflow-modeling systems. It is also, in its current form, not finished. Seventeen language features the author has documented as future work. Three architectural decisions he has not yet committed to. Forty-seven open issues on the repo — about twelve substantive, the rest documentation cleanup or low-priority feature requests."
 
-Jimmy said: "Second."
+"Two."
 
-Karim said: "Second. The project is, by the public-record evidence available to me, being maintained by one person. The one person has, on the project's website and on the author's small personal blog linked from the website, identified himself as Christopher Bender, of an unspecified small town in Missouri, age unspecified, professional background unspecified beyond a vague reference to *twenty-some years of trying to make this idea land in production environments that were not yet ready for it*. The author has, on the same blog, a single post dated September of Year Eight titled *Why I Quit*. The post is twelve hundred words. The post is, on my honest read of its operational substance, the post of a person who has, across a long career in enterprise software, recognized something specific about the way software is built that the industry has not yet recognized, and who has, on the strength of that recognition, walked away from a senior position at a company he does not name in order to build, on his own, the thing he believes the next decade is going to be built on. The post does not, in its twelve hundred words, mention money once. The post does not mention an investor once. The post does not mention an exit strategy once. The post is, in its closing two paragraphs, the post of a person who is doing this because he cannot, on the strength of his own internal accounting, not do it."
+"Two. The project is, by public-record evidence, maintained by one person. The one person has identified himself, on the website and a small personal blog, as Christopher Bender, of an unspecified small town in Missouri, age unspecified, professional background described only as *twenty-some years of trying to make this idea land in production environments that were not yet ready for it.* He has a single blog post dated September of Year Eight titled *Why I Quit.* Twelve hundred words. The post is, on my honest read, the post of a man who, across a long career in enterprise software, recognized something the industry has not yet recognized, and who walked away from a senior position at a company he does not name in order to build, on his own, the thing he believes the next decade is going to be built on. The post does not, in twelve hundred words, mention money. Or an investor. Or an exit. The post is the post of a man who is doing this because he cannot, on his own internal accounting, *not* do it."
 
-Jimmy said: "Third."
+"Three."
 
-Karim said: "Third. The empty chair."
+"The empty chair."
 
-Jimmy said: "The empty chair."
+Jimmy looked at the chair.
 
-Karim said: "The empty chair is, in this morning's meeting, the chair I have set up for Christopher Bender. The empty chair is the chair I am asking you, on the operational decision of how to interact with the project's author, to keep empty for the next thirty days. I am asking you to keep the chair empty because, on my own four years at Toyota and six years here, the way you interact with the project's author across the next thirty days is going to determine whether the architecture you have been looking for since the second of March is, in operational reality, available to you at the rate the empire needs to absorb it. The interaction is the interaction. The interaction is not a Jimmy-Donaldson-deploys-resources-at-the-thing interaction. The interaction is a Jimmy-Donaldson-becomes-an-ordinary-user-of-the-thing interaction. The first one will fail. The second one will succeed. The chair is empty because Christopher Bender does not yet know who you are, has not yet invited you to sit at this table, and has not yet, on his own assessment, decided whether the empire of MrBeast is a population of users he wants Agicore to be deployed on. The chair stays empty until he decides. The decision is his to make. Your job, this morning, is to file a GitHub issue."
+"The chair."
 
-Jimmy said: "A GitHub issue."
+"This morning's chair is the chair I have set up for Christopher Bender. The chair is the chair I am asking you, on how you interact with this guy across the next thirty days, to keep empty for the next thirty days. The chair stays empty because the way you interact with him across that window is going to determine whether the architecture you have been looking for since the second of March is, in operational reality, available to you at the rate the empire needs to absorb it. The interaction is not a Jimmy-Donaldson-deploys-resources-at-the-thing interaction. The first one will fail. It's a Jimmy-Donaldson-becomes-an-ordinary-user-of-the-thing interaction. The second one will succeed. Christopher Bender does not yet know who you are. He has not invited you to sit at this table. He has not, on his own assessment, decided whether the MrBeast empire is a user base he wants Agicore deployed on. The chair stays empty until he decides. That's his decision. Your job this morning is to file a GitHub issue."
 
-Karim said: "A GitHub issue."
+"A GitHub issue."
 
-Jimmy said: "Karim."
+"A GitHub issue."
 
-Karim said: "Yes."
+"Karim."
 
-Jimmy said: "Walk me through what the GitHub issue says."
+"Yeah."
 
-Karim said: "The GitHub issue is, on my honest read of the project's open-issue conventions, going to be a feature request. The feature request is going to describe, in approximately four hundred words, an operational problem you have on Beast Games that the current Agicore DSL is not yet expressive enough to model. The operational problem is going to be specific. The operational problem is not going to mention Beast Games by name. The operational problem is going to be written in the standard issue-description format the author has documented in the contribution guide, which is six sections — *context, problem, current behavior, desired behavior, suggested approach, willingness to contribute*. The issue is going to be filed under your own GitHub account, which is the one I set up for you in 2021 for the Linus Tech Tips collab and which has approximately fourteen public-repository stars on it across the past five years. The account is going to look, to Christopher Bender, like an ordinary user account. The issue is going to look, to Christopher Bender, like an ordinary feature request from an operator running a midsize consumer-packaged-goods company who is trying to use his open-source project on a problem the project's DSL does not yet handle. The issue is not going to identify you as Jimmy Donaldson. The issue is not going to identify the operation as MrBeast. The issue is going to be, in operational appearance, the forty-eighth open issue on a small open-source project."
+"Walk me through it."
 
-Jimmy said: "Karim."
+"The issue is going to be a feature request. About four hundred words. Describes a specific operational problem you have on Beast Games that the current DSL is not expressive enough to model. The problem is going to be specific. It is not going to name Beast Games. It is going to be written in the standard six-section format the author has documented in the contribution guide — *context, problem, current behavior, desired behavior, suggested approach, willingness to contribute.* You file it under the GitHub account I set up for you in 2021 for the Linus Tech Tips collab. About fourteen public-repo stars on it across five years. To Bender, the account looks like an ordinary user account. The issue looks like an ordinary feature request from a midsize-CPG operator. It does not identify you as Jimmy Donaldson. It does not identify the operation as MrBeast. It looks, on appearance, like the forty-eighth open issue on a small open-source project."
 
-Karim said: "Yes."
+"Karim."
 
-Jimmy said: "He is going to recognize the issue."
+"Yeah."
 
-Karim said: "He is going to recognize the issue."
+"He's going to recognize the issue."
 
-Jimmy said: "How."
+"He's going to recognize the issue."
 
-Karim said: "The specific operational problem you are going to describe is, on my own four years at Toyota and on Bender's own twenty-some years of trying to land this idea, going to be a problem only an operator running an actual large-scale show-production system would have. The shape of the problem is going to be recognizable. The shape of the problem is going to be the recognition. Bender is not going to know it is you. Bender is going to know it is somebody running a system at a scale most of his other users are not at. Bender is going to engage with the issue at a different level than he engages with the other forty-seven. The engagement is the conversation. The conversation is the architecture. The architecture is the empire."
+"How."
 
-Jimmy said: "Karim."
+"The specific operational problem you're going to describe is, on my four years at Toyota and on Bender's own twenty years of trying to land this idea, a problem only an operator running an actual large-scale show-production system has. The shape of the problem is going to be the recognition. He won't know it's you. He will know it's somebody running a system at a scale most of his other users are not at. He's going to engage with the issue at a different level than the other forty-seven. The engagement is the conversation. The conversation is the architecture."
 
-Karim said: "Yes."
+"Help me draft it."
 
-Jimmy said: "Help me draft the issue."
+"I have been waiting for that sentence for fifty-three minutes. Open your laptop."
 
-Karim said: "I have been waiting for that sentence for fifty-three minutes. Open your laptop."
-
-Jimmy opened the laptop.
-
-They drafted the issue across the next ninety-four minutes.
+They drafted across the next ninety-four minutes.
 
 ---
 
-The issue, in its final form, was filed at nine forty-eight AM Eastern Wednesday morning on the public GitHub repository at github.com/Binary-Blender/agicore.
+The issue was filed at nine forty-eight AM Eastern Wednesday at github.com/Binary-Blender/agicore.
 
-The issue was filed under Jimmy's own GitHub account, which had a profile photo Karim had taken in 2021 of Jimmy in a baseball cap that did not, on direct comparison to the standard Jimmy-Donaldson public-photo set, look immediately recognizable as Jimmy Donaldson to anyone who was not already looking for Jimmy Donaldson.
+Filed under Jimmy's account, which had a profile photo Karim had taken in 2021 of Jimmy in a baseball cap that did not, on direct comparison to the standard Jimmy-Donaldson public-photo set, look immediately recognizable as Jimmy Donaldson to anyone who was not already looking for Jimmy Donaldson.
 
-The issue was assigned the next available issue number in the repository's sequence.
+Next available issue number in the repo's sequence.
 
-The issue number was fifty-eight.
+The number was fifty-eight.
 
-The issue title was: *Feature request — runtime-emitted constraint violations in long-horizon production-cycle ACTION composition*
+Title: *Feature request — runtime-emitted constraint violations in long-horizon production-cycle ACTION composition*
 
-The issue body was four hundred and twenty-seven words.
+Body: four hundred and twenty-seven words.
 
-The issue body opened with the *context* section.
+The *context* section read: *I am running a production-management system for a live competitive entertainment program that operates on a six-to-nine-month production cycle, with about eleven distinct operational sub-systems (casting, set construction, talent logistics, on-site safety, broadcast operations, sponsor compliance, and so on), each of which has its own set of constraints currently enforced by a senior operator pulling what is, in effect, a manual Andon Cord. The senior operator is me. I would like to remove myself from the cord. Agicore looks like the architecture in which I can do this. I have, across the past forty-eight hours of reading the documentation, identified one specific gap in the current DSL that I believe is the gap I need closed in order to deploy this on my system. I am willing to fund the work directly, contribute code if my Rust is good enough, or wait if neither of those is the right path. I would like to know which.*
 
-The *context* section read: *I am running a production-management system for a live competitive entertainment program that operates on a six-to-nine-month production cycle, with approximately eleven distinct operational sub-systems (casting, set construction, talent logistics, on-site safety, broadcast operations, sponsor compliance, and so on), each of which has its own set of constraints that, in the current operating model, are enforced by a senior operator pulling what is, in effect, a manual Andon Cord. The senior operator is, on the operational reality, me. I would like to remove myself from the cord. Agicore looks like the architecture in which I can do this. I am opening this issue because I have, across the past forty-eight hours of reading the documentation, identified one specific gap in the current DSL that I believe is the gap I need closed in order to deploy this on my system. I am willing to fund the work directly, contribute code if my Rust is good enough, or wait if neither of those is the right path. I would like to know which.*
+The *problem* section described, in about a hundred and twenty words, the specific operational pattern.
 
-The *problem* section described, in approximately one hundred and twenty words, the specific operational pattern of how a constraint violation propagates across the eleven sub-systems of a production-cycle the size of Beast Games.
+The *current behavior* section described how the current DSL handled the equivalent pattern.
 
-The *current behavior* section described how Agicore's current DSL handled the equivalent pattern.
+The *desired behavior* section described what the DSL would need to support.
 
-The *desired behavior* section described what the DSL would need to support in order to handle the actual pattern.
-
-The *suggested approach* section described, in three sentences, a proposed extension to the ACTION composition primitive that Karim had, on his honest read of the codebase the previous night, identified as the minimum necessary change to the language to handle the pattern.
+The *suggested approach* section described, in three sentences, a proposed extension to the ACTION composition primitive Karim had identified as the minimum necessary change.
 
 The *willingness to contribute* section read: *Funding: yes, up to whatever the project would responsibly absorb without distorting the contributor structure. Code contribution: my Rust is below the bar this codebase deserves. Time: whatever it takes. I would prefer to wait for the right design rather than ship the wrong one.*
 
-The issue was filed at nine forty-eight AM Eastern.
+Filed at nine forty-eight AM.
 
-Jimmy and Karim closed the laptop.
+Karim and Jimmy closed the laptop.
 
-Karim said: "Jimmy."
+"Bender's commit pattern says he works on the project between about nine PM and two AM Central. He'll see the issue tonight."
 
-Jimmy said: "Yes."
+"What do we do until tonight."
 
-Karim said: "Bender is, on the public-record evidence of his commit-time-of-day pattern, a person who works on the project between approximately nine PM and two AM Central time. He will see the issue tonight."
+"Run the empire. Cease-and-desist video is still live. Walmart-aisle video is still live. Companion video drops Friday at ten. Beast Games ops review is at one. Feastables brand check-in at three. Thandi's call about the May twenty-eighth opening at five. We let Bender see the issue tonight."
 
-Jimmy said: "Tonight."
-
-Karim said: "Tonight."
-
-Jimmy said: "Karim."
-
-Karim said: "Yes."
-
-Jimmy said: "What do we do until tonight."
-
-Karim said: "We run the empire. The empire is, this morning, the same empire it was yesterday. The cease-and-desist video is still live. The Walmart-aisle video is still live. The Walmart-aisle-companion video is going to drop Friday at ten AM. The Beast Games operational review is at one PM today. The Feastables senior brand team check-in is at three PM today. The Lerato call about the eighth-school opening on May twenty-eighth is at five PM today. The empire continues. We do the work. We let Bender see the issue tonight."
-
-Jimmy said: "All right."
+"All right."
 
 Karim stood up.
 
-He pushed his chair under the table.
+Pushed his chair under the table.
 
-He left the empty third chair where it was.
+Left the empty third chair where it was.
 
-He walked out of the office.
+Walked out.
 
-Jimmy stayed at the table for another twenty seconds.
+Jimmy stayed at the table for twenty seconds.
 
-He looked at the empty chair.
+Looked at the empty chair.
 
-He stood up.
+Stood up.
 
-He walked to his desk.
+Walked to his desk.
 
-He worked through the day.
+Worked through the day.
 
 ---
 
-Christopher Bender, in the small town in Missouri, sat down at his desk in the spare bedroom he had converted to his workspace in October of Year Eight, at nine eleven PM Central Wednesday evening, with a cup of coffee his wife had made him at eight forty-five PM and that he had not yet finished, with the laptop in front of him, with the Agicore repository open in his browser, and with the *issues* tab showing — at the top of the list, above the forty-seven previously open issues — issue number fifty-eight.
+Christopher Bender, in the small town in Missouri, sat down at his desk in the spare bedroom he had converted to his workspace in October of Year Eight, at nine eleven PM Central Wednesday evening, with a cup of coffee his wife had made him at eight forty-five PM that he had not yet finished, the laptop in front of him, the Agicore repository open in his browser, and the *issues* tab showing — at the top of the list, above the forty-seven previously open issues — issue number fifty-eight.
 
 He read the title.
 
-He clicked the issue.
+Clicked the issue.
 
-He read the issue body.
+Read the body across nine minutes.
 
-He read it across nine minutes.
+Sat back in his chair.
 
-He sat back in his chair.
+Did not say anything out loud for about forty seconds.
 
-He, on his own honest internal accounting, did not say anything out loud for approximately forty seconds.
+Read it a second time.
 
-He read the issue a second time.
+Clicked the profile of the user who had filed it.
 
-He clicked the profile of the user who had filed the issue.
+The profile was a GitHub account with fourteen public-repo stars, no public repos of its own, no bio, no location, no linked website, and a profile photo of a person in a baseball cap that was, on Bender's first three seconds of looking at it, not immediately recognizable.
 
-The profile loaded.
+He clicked back to the issue.
 
-The profile was a GitHub account with fourteen public-repository stars, no public repositories of its own, no biography, no location, no linked website, and a profile photo of a person in a baseball cap that was, on Bender's first three seconds of looking at it, not immediately recognizable.
+Read it a third time.
 
-Bender clicked back to the issue.
+Picked up the coffee.
 
-He read the issue a third time.
+Drank it.
 
-He picked up the cup of coffee.
+Set the cup down.
 
-He drank it.
+He recognized, at nine twenty-six PM Central Wednesday, that the issue was not the forty-eighth issue.
 
-He set the cup down.
+It was the first issue from an operator who was running, in production, a system at the scale Agicore had been designed for, and that nobody had yet, in the eleven months Bender had been building the project, brought a real instance of to him.
 
-He, on his own internal recognition at nine twenty-six PM Central Wednesday, recognized that the issue was not the forty-eighth issue.
-
-The issue was the first issue from an operator who was running, in production, a system at the scale Agicore had been designed for and that nobody had yet, in the eleven months Bender had been building the project, brought a real instance of to him.
-
-The issue was the issue Bender had, in his own honest internal accounting, been waiting eleven months to receive.
-
-The issue was the issue.
+He had been waiting eleven months to receive this issue.
 
 Bender opened the reply box.
 
-He sat in the reply box for approximately seven minutes.
+Sat in it for about seven minutes.
 
-He typed.
+Typed. Deleted. Typed. Deleted. Typed a third time. Did not delete.
 
-He deleted what he typed.
+Read what he had typed.
 
-He typed again.
-
-He deleted what he typed again.
-
-He typed a third time.
-
-He did not delete what he typed the third time.
-
-He read what he typed.
-
-He clicked *Comment*.
+Clicked *Comment.*
 
 The comment posted at nine forty-one PM Central Wednesday.
 
-The comment was four words.
+Four words:
 
-The comment read: *Jimmy. Come visit. — C.B.*
+*Jimmy. Come visit. — C.B.*
 
 ---
 
-Jimmy was at the kitchen counter of the house in Greenville at ten forty-three PM Eastern Wednesday evening, with Lerato across the counter on her laptop reviewing the Q2 site-construction budget Thandi had emailed her that afternoon, when his phone buzzed with a GitHub notification.
+Jimmy was at the kitchen counter of the house in Greenville at ten forty-three PM Eastern Wednesday evening, with Thea across the counter on her laptop working through Q2 financial models for a client her firm was about to file with, when his phone buzzed with a GitHub notification.
 
 He picked up the phone.
 
-He read the notification.
+Read the notification.
 
-The notification was: *Binary-Blender commented on issue #58 — Jimmy. Come visit. — C.B.*
+*Binary-Blender commented on issue #58 — Jimmy. Come visit. — C.B.*
 
-He read the notification a second time.
+He read it a second time.
 
-He set the phone down on the kitchen counter.
+Set the phone down on the counter.
 
-He looked across the counter at Lerato.
+Looked across at Thea.
 
-He said: "Lerato."
+"Thea."
 
-She said: "Yes."
+"Yeah."
 
-He said: "He knows."
+"He knows."
 
-She said: "Who knows."
+"Who knows."
 
-He said: "The single person in Missouri."
+"The guy in Missouri."
 
-She said: "Knows what."
+"Knows what."
 
-He said: "Knows it is me."
+"That it's me."
 
-She said: "How does he know."
+"How does he know."
 
-He said: "I do not know how he knows. The issue I filed this morning did not, on the operational design of the issue, identify me by name. The issue was filed under an account that does not, on its public profile, identify itself as me. The issue described the problem in the most operationally general terms Karim and I could find. The single person in Missouri has, on his reply at nine forty-one PM his time, addressed the comment to *Jimmy*. He knows."
+"I have no idea. The issue I filed this morning didn't identify me. The account doesn't identify me. Karim and I wrote it in the most generic operational terms we could. He responded *Jimmy. Come visit.* So he knows."
 
-Lerato closed her laptop.
+Thea closed her laptop.
 
-She walked around the counter.
+Walked around the counter.
 
-She sat down on the stool next to his.
+Sat down on the stool next to his.
 
-She picked up the phone.
+Picked up the phone.
 
-She read the notification.
+Read the notification.
 
-She said: "Jimmy."
+"Jimmy."
 
-He said: "Yes."
+"Yeah."
 
-She said: "What did he say."
+"He said come visit."
 
-He said: "Read it."
+"He said come visit."
 
-She read it.
+"Are you going."
 
-She said: "Jimmy."
+"Yeah."
 
-He said: "Yes."
+"When."
 
-She said: "He said come visit."
+"Friday. The Walmart-aisle-companion video drops Friday morning at ten. I want to be in Missouri Friday afternoon. Spend Friday afternoon, Saturday, and Sunday with him. Come back Sunday night. Draft the .agi spec for the empire across the three days. Bring it home Monday morning."
 
-He said: "He said come visit."
+"Jimmy."
 
-She said: "Are you going."
+"Yeah."
 
-He said: "I am going."
+"Go."
 
-She said: "When."
+"Thea."
 
-He said: "Lerato."
+"Yeah."
 
-She said: "Yes."
+"Thank you."
 
-He said: "Friday. The Walmart-aisle-companion video drops Friday morning at ten AM Eastern. I want to be in Missouri Friday afternoon. I want to spend Friday afternoon, Saturday, and Sunday with him. I want to come back Sunday night. I am going to draft the .agi specification for the empire with him on Friday Saturday and Sunday. The drafting is going to be the drafting. The .agi specification is going to be the architecture. The architecture is going to be the architecture."
+"Jimmy."
 
-Lerato said: "Jimmy."
+"Yeah."
 
-He said: "Yes."
+"Bring him a gift."
 
-She said: "Go."
+He looked at her.
 
-He said: "Lerato."
+"What kind."
 
-She said: "Yes."
+"Not a Jimmy-Donaldson gift. A normal gift. The kind of gift you bring when you're visiting somebody at their house for three days because they invited you. A bottle of something. A box of something. Something his wife will be glad you brought. You're going to his house. He's not coming to your studio. The interaction is on his ground. Bring something for his wife. Find out her name before you go."
 
-He said: "Thank you."
+"How did you know to say that."
 
-She said: "Jimmy."
+"Jimmy. In eleven months I have watched you interact with about fourteen people who made things that mattered to you. On every single one of those, you brought a Jimmy-Donaldson gift. On twelve of those fourteen, the Jimmy-Donaldson gift was the wrong gift. The two times it was the right gift were the two times I picked it. I'm picking this one. Bring her something. Find out her name."
 
-He said: "Yes."
+"Thea."
 
-She said: "Bring him a gift."
+"Yeah."
 
-He said: "Lerato."
+"I love you."
 
-She said: "Yes."
-
-He said: "What kind of gift."
-
-She said: "Not a Jimmy-Donaldson gift. A normal gift. The kind of gift you bring when you are visiting somebody at their house for three days because they invited you. A bottle of something. A box of something. Something his wife will be glad you brought. The gift is the gift. The gift is not the operation. You are going to his house. He is not going to your studio. The interaction is on his ground. Bring a gift his wife will like. Find out his wife's name before you go."
-
-Jimmy looked at her.
-
-He said: "Lerato."
-
-She said: "Yes."
-
-He said: "How did you know to say that."
-
-She said: "Jimmy."
-
-He said: "Yes."
-
-She said: "I have, for the previous eleven months of being married to you, watched you interact with approximately fourteen people who have made things that mattered to you. You have, on every one of those fourteen interactions, brought a Jimmy-Donaldson gift. The Jimmy-Donaldson gift has, on twelve of the fourteen interactions, been the wrong gift. The two times the gift was the right gift were the two times I picked it. I am picking this one. Bring a gift his wife will like. Find out her name."
-
-He said: "Lerato."
-
-She said: "Yes."
-
-He said: "I love you."
-
-She said: "I know you do."
+"I know you do."
 
 She kissed him on the cheek.
 
-She picked her laptop back up.
+Picked her laptop back up.
 
-She walked into the bedroom.
+Walked into the bedroom.
 
-He sat at the kitchen counter for another forty seconds.
+He sat at the counter another forty seconds.
 
-He opened the phone.
+Opened the phone.
 
-He typed a reply to issue number fifty-eight.
+Typed a reply to issue number fifty-eight:
 
-The reply was three sentences.
+*Christopher. Thank you. I would like to come Friday afternoon through Sunday evening. Please tell me your home address, what time on Friday is best for you, and the first name of your wife so I can bring her something she'll like. — Jimmy.*
 
-The reply read: *Christopher. Thank you. I would like to come Friday afternoon through Sunday evening. Please tell me your home address, what time on Friday is best for you, and the first name of your wife so that I can bring her something she will like. — Jimmy.*
+Clicked *Comment.*
 
-He clicked *Comment*.
+Posted at ten fifty-one PM Eastern.
 
-The comment posted at ten fifty-one PM Eastern Wednesday.
-
-The reply from Binary-Blender came at eleven oh-eight PM Eastern, seventeen minutes later.
-
-The reply was four lines.
-
-The reply read:
+The reply from Binary-Blender came at eleven oh-eight PM Eastern. Four lines:
 
 *Friday at two PM Central. Address sent to the email on your GitHub. Her name is Sarah. She likes nice tea. Don't bring chocolate.*
 
 *— C.B.*
 
-Jimmy read the reply.
+Jimmy read it.
 
-He read the *don't bring chocolate* line a second time.
+Read the *don't bring chocolate* line a second time.
 
-He laughed.
+Laughed.
 
-He laughed for the second time in two days.
+Second time he had laughed in two days.
 
-He set the phone down on the kitchen counter.
+Set the phone down.
 
-He walked into the bedroom.
+Walked into the bedroom.
 
-Lerato was already in bed.
+Thea was already in bed.
 
-He said: "Lerato."
+"Her name's Sarah. She likes nice tea. He told me not to bring chocolate."
 
-She said: "Yes."
+"Jimmy."
 
-He said: "Her name is Sarah. She likes nice tea. He told me not to bring chocolate."
+"Yeah."
 
-Lerato said: "Jimmy."
+"I like him already."
 
-He said: "Yes."
-
-She said: "I like him already."
-
-He said: "I do too."
+"I do too."
 
 He got into bed.
 
-He fell asleep at eleven forty-one PM Eastern.
+Asleep at eleven forty-one PM.
 
-He slept eight hours.
+Eight hours.
 
-He was on the charter to Missouri at one fifteen PM Eastern Friday, with a small overnight bag, a bound notebook Karim had bought him in 2022 that he had not, in three years, written in, and a wooden box containing one pound of high-grade Japanese sencha tea that the Greenville specialty grocer had identified, on Lerato's call to the shop on Thursday morning, as the gift a person who liked nice tea would, in operational terms, be glad to receive.
+He was on the charter to Missouri at one fifteen PM Eastern Friday — small overnight bag, a bound notebook Karim had bought him in 2022 that he had not, in three years, written in, and a wooden box containing one pound of high-grade Japanese sencha tea that the Greenville specialty grocer had identified, on Thea's call to the shop Thursday morning, as the right gift for a person who liked nice tea.
 
 The chocolate was not on the plane.
 

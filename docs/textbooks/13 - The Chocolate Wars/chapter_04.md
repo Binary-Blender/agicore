@@ -4,15 +4,11 @@ Eleanor Whitcomb walked into the boardroom of the Milton Hershey School Trust at
 
 The pin was small.
 
-The pin was the pin.
+She had worn it to every quarterly meeting for fifty-three years.
 
-She had worn it to every trust meeting.
+The other trustees, on her quiet three-year observation of the seating chart and the body language and the small interpersonal patterns of the eleven-member board, did not particularly notice it anymore.
 
-The other trust members did not, on her three-year quiet observation of the seating chart and the body language and the small interpersonal patterns of the eleven-member board, particularly notice the pin any more.
-
-The pin was the pin she had been wearing for fifty-three years.
-
-The pin was, this morning, the pin she was going to make a quiet decision about in the third hour of the meeting and that, by the close of the meeting, was going to take on a new operational significance the rest of the trust did not yet understand.
+This morning, the pin was going to take on an operational significance the rest of the trust did not yet understand.
 
 She took her seat.
 
@@ -30,15 +26,9 @@ Marcus was in his fourth year as CEO.
 
 Marcus had spent twelve years at Goldman Sachs followed by nine at McKinsey followed by seven at Kraft followed by his current tenure at Hershey's. He had, across thirty-two years of professional life, never worked in a manufacturing role. He had managed manufacturing organizations through the lens of brand, distribution, and balance-sheet optimization. He was, in Eleanor's quiet thirteen-year observation of the chief executive officers the trust had selected, the third consecutive CEO whose professional formation had been outside of operating-floor manufacturing.
 
-The pattern was the pattern.
+The pattern had begun in 2006, when Marcus's predecessor's predecessor had been hired from a Mars confectionery executive role. Continued in 2014, when Marcus's predecessor had been hired from PepsiCo. Continued in 2021, when Marcus himself had been hired from the Kraft CFO chair.
 
-The pattern had begun in 2006, when Marcus's predecessor's predecessor had been hired from a Mars confectionery executive role.
-
-The pattern had continued in 2014, when Marcus's predecessor had been hired from a PepsiCo executive role.
-
-The pattern had continued in 2021, when Marcus had been hired from the Kraft CFO role.
-
-The pattern was, by Eleanor's own count from the small leather notebook, fifteen years deep at the start of this meeting.
+By Eleanor's count from the small leather notebook, the pattern was fifteen years deep at the start of this meeting.
 
 The trust did not, on its own published self-assessment across the same fifteen years, recognize the pattern as a pattern.
 
@@ -50,23 +40,17 @@ Marcus sat down.
 
 Marcus opened the presentation.
 
-The presentation was forty-three slides.
+The presentation was forty-three slides, titled *Q1 Year Nine Strategic Review.*
 
-The presentation was titled *Q1 Year Nine Strategic Review.*
+Marcus walked the board through it across the next one hour and forty-one minutes.
 
-Marcus walked the board through the presentation across the next one hour and forty-one minutes.
-
-The Q1 numbers were the Q1 numbers.
-
-The headline was on slide eleven.
-
-The headline was: *Feastables has, in Q1 of Year Nine, captured approximately eleven point three percent of the U.S. chocolate-bar category by dollar value, up from approximately seven point one percent in Q1 of Year Eight and approximately three point four percent in Q1 of Year Seven.*
+The headline was on slide eleven: *Feastables has, in Q1 of Year Nine, captured approximately eleven point three percent of the U.S. chocolate-bar category by dollar value, up from approximately seven point one percent in Q1 of Year Eight and approximately three point four percent in Q1 of Year Seven.*
 
 The chart on slide twelve showed the trajectory.
 
-The trajectory was the trajectory of a vertical line.
+It was a vertical line.
 
-The trajectory was the trajectory of a category-share movement that, in the operational history of the U.S. CPG industry, had no comparable precedent across the previous forty years.
+In the operational history of the U.S. CPG industry, no category-share movement on that slope had a comparable precedent across the previous forty years.
 
 Marcus walked the board through the response plan across slides thirteen through thirty-eight.
 
@@ -152,11 +136,7 @@ She read through the notes from the previous three trust meetings.
 
 She read through the notes from a single trust meeting from approximately eleven years earlier, in November of the year Catherine Mei-Ling Park had joined the trust, at which Marcus's predecessor's predecessor had presented a Q3 strategic review that had, in retrospect, been the meeting at which the trust had first failed to register a structurally consequential omission in its own CEO's presentation.
 
-The pattern was the pattern.
-
-The pattern had begun in November of approximately eleven years earlier.
-
-The pattern had continued, with increasing severity, across every quarterly meeting since.
+The pattern had begun in November of approximately eleven years earlier and had continued, with increasing severity, across every quarterly meeting since.
 
 Eleanor closed the notebook.
 
@@ -208,11 +188,7 @@ She looked east at the original Milton Hershey factory.
 
 The factory had been built in 1903 on the same plot of land Milton Hershey had bought from a local dairy farmer in 1894 when he had moved his confectionery operation from Lancaster to the small farming community he was, across the next thirty years, going to turn into a company town.
 
-The factory was the factory.
-
-The factory was the factory Milton Hershey had built.
-
-The factory was, by Eleanor's quiet observation across the previous fourteen years, the factory the company had been failing to be a factory in for the previous two decades.
+It was, by Eleanor's quiet observation across the previous fourteen years, the factory the company had been failing to be a factory in for the previous two decades.
 
 She turned from the window.
 
@@ -224,11 +200,7 @@ She walked the four flights down to the lobby.
 
 She walked out the front door of the Hershey Trust Company building onto East Chocolate Avenue.
 
-The small chocolate-shaped streetlights were on the lampposts.
-
-The streetlights had been on the lampposts since approximately 1963.
-
-The streetlights were the streetlights.
+The small chocolate-shaped streetlights were on the lampposts, where they had been since approximately 1963.
 
 Eleanor walked the eleven blocks to her car.
 
@@ -250,17 +222,11 @@ She would, in approximately three months, be ready.
 
 She would tell him on a Saturday afternoon in July, on the porch of the small house they had bought in Hummelstown in 1998, when she would, in operational terms, have completed the structural analysis that this morning's notebook entry had begun.
 
-For now, on the evening of the third Wednesday of April of Year Nine, the trust meeting was the trust meeting.
-
-The notebook was on the desk in the study.
-
-The pin was on the lapel of the charcoal-gray suit hanging in the closet.
-
-The work was the work.
+For now, on the evening of the third Wednesday of April of Year Nine, the notebook was on the desk in the study, and the pin was on the lapel of the charcoal-gray suit hanging in the closet.
 
 Eleanor did not, in any of the four hundred and twenty-seven trust meetings she had attended across her fourteen years on the trust, expect that the work she had been doing — quietly, alone, in the small leather notebooks, in the small Pennsylvania town she had been born in — was going to matter.
 
-The work was going to matter.
+It was going to matter.
 
 She did not yet know it.
 

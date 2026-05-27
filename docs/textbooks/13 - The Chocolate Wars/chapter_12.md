@@ -1,376 +1,306 @@
 # Chapter 12: The Test
 
-The cocoa supply chain disruption broke at four eleven AM Eastern on a Tuesday in the second week of July of Year Nine, six weeks after the empire.app deployment, four weeks after the Hershey Trust resolution number two thousand eleven, and three weeks after the first formal exploratory meeting between the Trust's representatives and Beast Industries' senior leadership had been held in a small conference room in a hotel in Charlotte, North Carolina, on a Monday afternoon that had run for four hours and seventeen minutes and that had concluded, on the participants' collective informal accounting, with the kind of operational alignment that signals a deal is going to close but has not yet, in operational terms, agreed on the specific structure by which it will close.
+The cocoa supply chain disruption broke at four eleven AM Eastern on a Tuesday in the second week of July of Year Nine, six weeks after the empire.app deployment, four weeks after the Hershey Trust resolution number two thousand eleven, and three weeks after the first formal exploratory meeting between the Trust's representatives and Beast Industries' senior leadership had been held in a hotel conference room in Charlotte on a Monday afternoon that had run four hours and seventeen minutes.
 
-The disruption was, on the public-record framing of the next forty-eight hours, an unanticipated political-instability event in Côte d'Ivoire that had, across approximately seventy-two hours of escalating port closures, halted approximately thirty-one percent of the world's exported cocoa supply.
+On the public-record framing of the next forty-eight hours, the disruption was an unanticipated political-instability event in Côte d'Ivoire that, across about seventy-two hours of escalating port closures, halted roughly thirty-one percent of the world's exported cocoa supply.
 
-The disruption was the disruption.
+It was not, on the operational reality the public-record framing left out, a discrete event.
 
-The disruption was not, on the operational reality the public-record framing left out, a discrete event.
+It was the third in a sequence of West African cocoa-supply disturbances the global confectionery industry had been quietly absorbing across the previous fourteen months — a sequence that had already produced about a hundred-and-forty-percent run-up in spot cocoa prices over the same window.
 
-The disruption was the third in a sequence of West African cocoa-supply disturbances that the global confectionery industry had been quietly absorbing across the previous fourteen months and that had, on the cumulative operational accounting of the major chocolate manufacturers, already produced approximately a hundred-and-forty-percent run-up in spot cocoa prices over the same fourteen-month period.
+The third disruption was the one that, on the operational reality of the major manufacturers' hedge positions, was going to expose whoever had under-hedged the cumulative trajectory.
 
-The third disruption was the disruption that, on the operational reality of the major manufacturers' hedge positions, was going to expose the manufacturers who had under-hedged the cumulative trajectory.
+Hershey had, on the public-record evidence of its Q1 and Q2 earnings calls, hedged at approximately the median of the industry.
 
-The Hershey Company had, on the public-record evidence of its Q1 and Q2 earnings calls, hedged at approximately the median of the industry's hedge positions.
+Feastables had, on the .agi specification's commodity-exposure constraint, hedged at the top quartile.
 
-Feastables had, on the operational reality the .agi specification's Carrick-Lattice partnership pipeline had encoded six weeks earlier in the empire.app, hedged at the top quartile of the industry's hedge positions.
+The differential was, across the next thirty days, going to be about one hundred and forty million dollars of COGS exposure Hershey would absorb and Feastables would not.
 
-The hedge differential was the differential.
+The differential was not the result of Feastables' senior leadership being smarter than Hershey's.
 
-The differential was, on the operational accounting of the next thirty days, going to be approximately one hundred and forty million dollars of cost-of-goods-sold exposure that Hershey would absorb and that Feastables would not.
+The differential was the result of line six hundred and forty-seven of the .agi specification, which Christopher Bender had typed on the Saturday afternoon in his workshop in Ava. The line was about fourteen lines of DSL: *commodity inputs to the Feastables operational pipeline shall maintain hedge coverage at the top quartile of the industry's published hedge-disclosure data, sampled monthly from the standard CPG-industry commodity-hedge-reporting service, with the runtime obligated to halt any procurement decision that would, on the runtime's evaluation, take the company below the top quartile, and with escalation to the cord holder (J. Donaldson) on any halt that the operations team cannot clear within seventy-two hours.*
 
-The differential was not, on the operational reality of how the differential had been produced, the result of Feastables' senior leadership being smarter than Hershey's senior leadership.
+It had been the four-hundred-and-twelfth line Christopher had typed that Saturday.
 
-The differential was the result of the .agi specification, on its line six hundred and forty-seven, having encoded a constraint that read, in approximately fourteen lines of the DSL: *commodity inputs to the Feastables operational pipeline shall maintain hedge coverage at the top quartile of the industry's published hedge-disclosure data, sampled monthly from the standard CPG-industry commodity-hedge-reporting service, with the runtime obligated to halt any procurement decision that would, on the runtime's evaluation, take the company below the top quartile, and with escalation to the cord holder (J. Donaldson) on any halt that the operations team cannot clear within seventy-two hours.*
+Jimmy had not, at the time, fully understood the line.
 
-The line had been the four-hundred-and-twelfth line Christopher Bender had typed on the Saturday afternoon in the workshop in Ava.
+Christopher had typed it because, on the cocoa-supply situation Christopher had been quietly tracking in a personal-research file across the previous nine months, the line was the line that distinguished a chocolate company that was going to survive the next two years from one that was not.
 
-Jimmy had not, on the Saturday afternoon, fully understood the line.
-
-Christopher had typed the line because, on the operational reality of the cocoa-supply situation Christopher had been quietly tracking in his own personal-research file across the previous nine months, the line was the line that distinguished a chocolate company that was going to survive the next two years from a chocolate company that was not.
-
-Christopher had not, at any point in the three days, mentioned the cocoa situation to Jimmy.
+Christopher had not mentioned the cocoa situation across the three days.
 
 Christopher had simply typed the line.
 
-Jimmy had, on the operational discipline he had been applying across the three days, not asked.
+Jimmy, on the operational discipline he had been applying across the three days, had not asked.
 
 The line had compiled into the runtime.
 
 The runtime had, across the past six weeks, sampled the industry's hedge-disclosure data four times.
 
-The runtime had, on the second sampling at the end of the fourth week, halted a Feastables procurement decision that would have taken the company from the seventy-seventh percentile of the industry's hedge coverage to the sixty-ninth percentile.
+On the second sampling at the end of the fourth week, the runtime had halted a Feastables procurement decision that would have taken the company from the seventy-seventh percentile of industry hedge coverage to the sixty-ninth.
 
-The halt had escalated to the Feastables operational cord holder.
+The halt had escalated to the Feastables operational cord-holder.
 
-The cord holder, on the cord-transfer schedule the empire.app's runtime was operating under, had been Ana Vasquez for the previous seventeen days, since the day-sixty transfer in late June.
+The cord-holder, on the cord-transfer schedule the empire.app was running under, was Ana Vasquez. She had been at the cord for seventeen days, since the day-sixty transfer in late June.
 
 Ana had cleared the halt.
 
-Ana had not, on the operational mechanism by which she cleared it, modified the procurement decision to satisfy the runtime's constraint.
+She had not cleared it by modifying the procurement decision to satisfy the runtime's constraint.
 
-Ana had, on the operational mechanism she had used, opened a one-hour meeting with Karim, Priya Sharma, the Feastables procurement lead, and a senior commodity-trading consultant Feastables had retained on a small monthly retainer since March, and had, on the close of the one-hour meeting, executed an additional hedge position that took the company from the seventy-seventh percentile to the eighty-third percentile of industry hedge coverage.
+She had cleared it by opening a one-hour meeting with Karim, Priya Sharma, the Feastables procurement lead, and a senior commodity-trading consultant Feastables had retained on a small monthly retainer since March, and had — at the close of the meeting — executed an additional hedge position that took the company from the seventy-seventh percentile to the eighty-third.
 
-The decision had cost the company, on the immediate cash basis, approximately three million dollars in additional hedge premium.
+The decision had cost the company about three million dollars in additional hedge premium.
 
-Ana had, in the operational record of her clearance memo on the runtime's incident page, written one sentence to explain the decision.
+Ana had logged the incident on the runtime's clearance memo in one sentence:
 
-The sentence had read: *The runtime is the cord. The cord is the runtime. The constraint is the constraint. We are at the eighty-third percentile.*
+> *Cleared by adding hedge. We're at eighty-three. — A. Vasquez.*
 
-Jimmy had read the memo at the time, on his dashboard's incident-feed surface, and had not, on the discipline he had been applying to his role under the new operating model, responded to it.
+Jimmy had seen the memo on his dashboard at the time and had not, on the discipline he had been applying to his new role under the operating model, responded to it.
 
-The memo had, on the runtime's standard recordkeeping behavior, been preserved in the empire.app's operational log.
+The memo had been the seven-hundred-and-eleventh entry in the operational log since deployment.
 
-The memo had been the seven-hundred-and-eleventh entry in the operational log since the empire.app went live.
+It was, on the operational reality of the four eleven AM Tuesday cocoa-supply disruption, the entry the runtime's pattern-matching feature — which Karim had requested as an enhancement in his Thursday post-deployment review with Christopher and that Christopher had shipped two weeks later — was about to retrieve.
 
-The memo was, on the operational reality of the four eleven AM Tuesday cocoa-supply disruption, the entry that was about to be retrieved by the operational pattern-matching feature of the runtime that Karim had, in his Thursday-morning post-deployment review with Christopher across the previous month, requested as a feature enhancement and that Christopher had shipped two weeks later.
+The pattern-matching feature retrieved it at four fourteen AM.
 
-The pattern-matching feature retrieved the entry at four fourteen AM Eastern Tuesday morning.
+The retrieval surfaced a notification to the dashboard:
 
-The retrieval surfaced the entry to the empire.app's dashboard.
+> *Cocoa supply disruption — incident match — operational log entry 711 — Feastables hedge position currently at 83rd percentile (industry median: 47th, top quartile threshold: 75th) — exposure variance versus industry median: -$141M COGS — no operational action required — runtime is the cord.*
 
-The dashboard's banner, at four fourteen AM, displayed a small notification.
-
-The notification read: *Cocoa supply disruption — incident match — operational log entry 711 — Feastables hedge position currently at 83rd percentile (industry median: 47th, top quartile threshold: 75th) — exposure variance versus industry median: -$141M COGS — no operational action required — runtime is the cord.*
-
-Karim's phone, on the standard alert-routing the empire.app applied to incidents of the *operational-significance: high* class, vibrated at four fourteen AM.
+Karim's phone, on the standard alert routing the empire.app applied to *operational-significance: high* incidents, vibrated at four fourteen AM.
 
 Karim was awake.
 
-Karim, on his own quiet operational discipline since the deployment, was up at four AM every morning Monday through Friday to review the runtime's overnight notifications before any other human in the empire was online.
+He had been up at four AM every weekday since the deployment, on his own quiet discipline, to review the runtime's overnight notifications before any other human in the empire was online.
 
 He read the notification.
 
-He read it twice.
+Read it twice.
 
-He, on his own operational accounting, did not say anything out loud for approximately fourteen seconds.
+Did not say anything out loud for about fourteen seconds.
 
-He, at four fourteen AM Eastern Tuesday morning of the second week of July of Year Nine, recognized that the cocoa-supply situation that had just broken on the international wires forty-three minutes earlier had, in operational terms, already been hedged six weeks ago by a single line of DSL Christopher Bender had typed on a Saturday afternoon in a workshop in Ava, Missouri, that Jimmy had not understood at the time, that Ana Vasquez had operationally executed three weeks ago on a memo that had not been escalated to Jimmy, and that was, in cash terms, going to spare the company approximately one hundred and forty million dollars of COGS exposure that the company's principal competitor was, at four fourteen AM Eastern Tuesday morning, in the operational process of being unable to avoid.
-
-The cord was the runtime.
-
-The runtime was the cord.
+He recognized, at four fourteen AM, that the cocoa-supply situation that had broken on the international wires forty-three minutes earlier had — in operational terms — already been hedged six weeks earlier by a single line of DSL Christopher had typed in his workshop, that Jimmy had not understood at the time, that Ana had operationally executed three weeks ago without escalation, and that was, in cash terms, going to spare the company about one hundred and forty million dollars of COGS exposure that the company's principal competitor was, at four fourteen AM, in the operational process of being unable to avoid.
 
 The runtime had done the thing.
 
-Karim, at four fifteen AM, sent a single text message to Jimmy's personal phone.
+At four fifteen AM, Karim sent a text to Jimmy:
 
-The message read: *Cocoa broke at four eleven. We are at eighty-three. Hershey is at the median. Sleep in.*
+> *Cocoa broke at 4:11. We're at 83. Hershey is at the median. Sleep in.*
 
-Jimmy did not, on his own standing rule about overnight phone notifications, see the message until six thirty AM.
+Jimmy didn't see it until six thirty AM — his standing rule on overnight phone notifications.
 
-He saw the message at six thirty AM.
+He saw it at six thirty.
 
-He read it twice.
+Read it twice.
 
-He, on his own honest internal accounting, did not respond.
+Did not respond.
 
-He set the phone down on the bedside table.
+Set the phone down on the bedside table.
 
-He looked at Lerato.
+Looked at Thea.
 
-Lerato was awake.
+Thea was awake.
 
 She was sitting up in bed.
 
-She had, on the small bedside table on her side, a glass of water and a small ceramic plate with three saltine crackers on it that she had not, when she had gone to bed the previous night, brought into the bedroom.
+On the small bedside table on her side were a glass of water and a small ceramic plate with three saltine crackers on it that she had not, when she had gone to bed the previous night, brought into the bedroom.
 
 Jimmy looked at the saltines.
 
-He looked at Lerato.
+He looked at Thea.
 
-He said: "Lerato."
+"Thea."
 
-She said: "Jimmy."
+"Jimmy."
 
-He said: "Why are there saltines on your bedside table."
+"Why are there saltines on your bedside table."
 
-She said: "Jimmy."
-
-He said: "Yes."
-
-She said: "Sit up."
+"Sit up."
 
 He sat up.
 
-She said: "I am going to tell you something that I have known for approximately four days and that I have, on my own honest internal accounting, been waiting for the right operational moment to tell you. The right operational moment is, on the news I just heard you read on your phone at six thirty AM and on your face's response to the news, this morning. I am going to tell you in one sentence."
+"I've known something for four days. I've been waiting for the right morning to tell you. The right morning was this one, because the news you just read on your phone at six thirty is the news that lets the rest of our lives start without you also being underwater on the day I tell you. I'm going to tell you in one sentence."
 
-He said: "Lerato."
+"OK."
 
-She said: "Yes."
-
-He said: "Tell me."
-
-She said: "I am pregnant."
+"I'm pregnant."
 
 He looked at her.
 
-He, on his own honest internal accounting, did not say anything for approximately eleven seconds.
+He did not say anything for about eleven seconds.
 
-He, in the eleven seconds, recognized four specific things about the sentence she had just said.
+In the eleven seconds he recognized, in roughly this order:
 
-The first thing was: the sentence she had just said was, on his honest accounting of every prior sentence she had ever said to him across the eleven months of their marriage, the most operationally significant sentence she had said.
+That the sentence she had just said was — across the eleven months of their marriage — the most important sentence she had ever said to him.
 
-The second thing was: the sentence was, on the operational reality of the past four months of their marriage, the sentence that retrospectively explained Lerato's specific intensity in the bay-two confrontation on the second of March, in the photograph from the third classroom of the eighth school on the Tuesday morning in Underberg, and in the seven sentences she had used at the kitchen counter on the Saturday night of the bread on the day she had told him to find the architecture *this week.* The sentence had been, in operational substance, present in every prior sentence across the past four months. He had not, until the sentence had been said in this morning's eleven seconds, recognized the substance.
+That the sentence retrospectively explained her specific intensity in bay two on the second of March, in the call about Thandi's photograph, in the seven-thirteen-PM moment at her sister's wedding she'd told him three months later he hadn't been at, and in every other moment of the past four months he had not, in real time, been paying close enough attention to. She had been pregnant in her own future for four months, in some way he had not been ready to see.
 
-The third thing was: the saltines on the bedside table were, in operational terms, the small physical signal that Lerato had decided to bring into the bedroom on the morning she was going to tell him, because she had wanted him to see the saltines first and arrive at the sentence on his own across the small operational window the saltines created.
+That the saltines on the bedside table were the small physical signal she had brought into the bedroom on the morning she had decided to tell him, because she had wanted him to see the saltines first and arrive at the sentence on his own across the small window the saltines created.
 
-The fourth thing was: he had not, in eleven months of marriage and four years of dating, ever told Lerato that he wanted to be a father, because he had not, until the eleven seconds, recognized that he wanted to be one.
+That he had not, in eleven months of marriage and four years of dating, ever told her he wanted to be a father — because he had not, until the eleven seconds, recognized that he did.
 
-He said: "Lerato."
+"Thea."
 
-She said: "Yes."
+"Yeah."
 
-He said: "I want to be a father."
+"I want to be a father."
 
-She said: "I know you do."
+"I know you do."
 
-He said: "I have not, in five years of knowing you, said that sentence."
+"I have not, in five years of knowing you, said that sentence."
 
-She said: "I know you have not."
+"I know you haven't."
 
-He said: "I am saying it now."
+"I'm saying it now."
 
-She said: "I know you are."
+"I know you are."
 
-He said: "Lerato."
+"Thea."
 
-She said: "Yes."
+"Yeah."
 
-He said: "Thank you."
+"Thank you."
 
-She said: "Jimmy."
+"Jimmy."
 
-He said: "Yes."
+"Yeah."
 
-She said: "Eat the chicken with me."
+"Come here."
 
-He said: "Lerato."
+He went.
 
-She said: "Yes."
+She put her arms around his neck.
 
-He said: "The chicken is in twelve hours."
+She did not say anything for about a minute.
 
-She said: "Jimmy."
+He did not say anything either.
 
-He said: "Yes."
+She, on her standing operational practice with him at moments where words were not the part of the conversation she was running, did the thing she did.
 
-She said: "The chicken is the chicken. The chicken is every chicken from this morning forward. I am pregnant. The chicken is the chicken. Eat it with me."
-
-He said: "I will eat the chicken with you."
-
-She said: "Good."
+After the minute, she pulled back.
 
 She picked up one of the saltines.
 
-She ate it.
+Ate it.
 
-She said: "The morning sickness is the morning sickness. The chicken is at six thirty PM. The empire is the empire. The runtime is the cord. The cord is the runtime. Karim's text is the right text. You are going to go to the studio at the standard time, you are going to work the standard hours, you are going to come home at six fifteen PM, you are going to eat the chicken with me at six thirty PM, and we are, this evening on the back porch with the wine I am not going to be drinking for the next eight months, going to talk about the names. I have a list."
+"Morning sickness is the morning sickness. We're going to be OK. You're going to go to the studio at the standard time today. You're going to work the standard hours. You're going to come home at six fifteen. We're going to eat the chicken at six thirty. We're going to sit on the back porch tonight with — I'm not drinking wine for the next eight months, so figure out something else for me — and we're going to talk about the names. I have a list."
 
-He said: "Lerato."
+"You have a list."
 
-She said: "Yes."
-
-He said: "You have a list."
-
-She said: "I have a list. The list is the list. The list is eight names. Four boy names, four girl names. We are going to narrow the list to two names per category by the end of July. We are going to know the gender at the end of August. We are going to know the name by the end of September. We are going to have the baby in the second week of January, on the doctor's count this morning. The list is the list. I will share it with you at six thirty PM."
+"I have a list. Four boy names. Four girl names. We're going to narrow it to two per category by the end of July. We're going to know the gender at the end of August. We're going to know the name by the end of September. The baby is due the second week of January, on the doctor's count this morning. I'm sharing the list at six thirty tonight."
 
 He looked at her.
 
-He said: "Lerato."
+"Thea."
 
-She said: "Yes."
+"Yeah."
 
-He said: "I love you."
+"I love you."
 
-She said: "I know you do."
+"I know you do."
 
-He said: "Lerato."
+"Six thirty PM."
 
-She said: "Yes."
-
-He said: "Six thirty PM."
-
-She said: "Six thirty PM."
+"Six thirty PM."
 
 He got out of bed.
 
-He showered.
+Showered.
 
-He drove to the studio.
+Drove to the studio.
 
-He arrived at the studio at seven forty-three AM Eastern Tuesday morning of the second week of July of Year Nine.
+In the office at seven forty-three AM.
 
-The empire.app dashboard, on the screen of his desktop monitor, displayed the standard runtime overview.
+The empire.app dashboard, on his desktop monitor, displayed the standard overview. The cocoa-supply notification was in the overnight-incident section, marked *no operational action required.* The Feastables hedge position was at the eighty-third percentile. The Hershey stock price, on the small market-data ticker Karim had added to the dashboard the previous week as a low-priority context display, was down four point eight percent in pre-market trading.
 
-The cocoa-supply incident notification was, on the dashboard's overnight-incident section, marked as *no operational action required.*
+Jimmy did not, across the standard working hours of Tuesday, take any operational action on the cocoa-supply disruption.
 
-The Feastables hedge position was, on the dashboard's commodity-exposure panel, at the eighty-third percentile.
+The empire.app took the action.
 
-The Hershey Company's stock price, on a small market-data ticker that Karim had added to the dashboard the previous week as a low-priority context display, was down four point eight percent in pre-market trading.
+The action was the eighty-third-percentile hedge Ana Vasquez had executed three weeks earlier.
 
-The pre-market trading was the pre-market trading.
+By the close of trading Tuesday afternoon, the action had materialized as a one-hundred-and-thirty-seven-million-dollar variance in COGS exposure between Feastables and Hershey, as measured by the standard third-party CPG-industry commodity-cost-tracking service.
 
-The cocoa was the cocoa.
+The variance was, in Adelaide Krug's piece in Wednesday morning's *Wall Street Journal,* the second headline of the business section: *Beast Industries' Hedge Discipline Spares Feastables from Cocoa Crisis That Will Cost Hershey Approximately $140M.*
 
-The hedge was the hedge.
+The piece attributed the eighty-third-percentile position to *the operational discipline of Beast Industries' senior leadership team.* It did not name the .agi specification, Agicore, or Christopher Bender. It identified Ana Vasquez as the operational executor. It quoted Ana, on a brief comment she had given Krug on Tuesday afternoon: *We've been operating, across the past several months, on a new internal framework for commodity-exposure discipline. The framework has been working. We will continue to operate on it.*
 
-The runtime was the cord.
+Ana had not, in the comment, mentioned Agicore or Christopher Bender.
 
-Jimmy did not, across the standard working hours of Tuesday, July of Year Nine, take any operational action on the cocoa-supply disruption.
+The framework would, on Ana's quiet operational accounting at the close of Tuesday afternoon, remain unattributed for as long as Christopher Bender's situation in Ava, Missouri, required it to.
 
-The empire.app, on its operational discipline, took the action.
+The operational reality of Christopher Bender's situation, on his own articulation to Jimmy at the workshop door the previous Sunday evening, was that the project required eighteen months before it could absorb the audience that public attribution would deliver to it.
 
-The action was the eighty-third-percentile hedge position Ana Vasquez had executed three weeks earlier.
-
-The action had, by the close of trading Tuesday afternoon, materialized as a one-hundred-and-thirty-seven-million-dollar variance in COGS exposure between Feastables and Hershey's, as measured by the standard third-party CPG-industry commodity-cost-tracking service.
-
-The variance was, on Adelaide Krug's piece in Wednesday morning's *Wall Street Journal*, the second headline of the business section.
-
-The headline read: *Beast Industries' Hedge Discipline Spares Feastables from Cocoa Crisis That Will Cost Hershey Approximately $140M.*
-
-The Krug piece, on its operational substance, identified the eighty-third-percentile hedge position, attributed the position to *the operational discipline of Beast Industries' senior leadership team*, and did not, on its public-record substance, identify the .agi specification, Agicore, Christopher Bender, or the underlying architectural mechanism by which the hedge had been executed.
-
-The piece did identify Ana Vasquez as the operational executor.
-
-The piece quoted Ana Vasquez, on a brief comment she had given to Krug on Tuesday afternoon, as saying: *We have, across the past several months, been operating on a new internal framework for commodity-exposure discipline. The framework has been working. We will continue to operate on it.*
-
-Ana had not, in the comment, mentioned Agicore, the .agi specification, or Christopher Bender.
-
-The framework was, on Ana's quiet operational accounting at the close of Tuesday afternoon, going to remain unattributed for as long as the operational reality of Christopher Bender's situation in Ava, Missouri, required it to remain unattributed.
-
-The operational reality of Christopher Bender's situation, on Christopher Bender's own articulation to Jimmy at the workshop door on Sunday evening, was that the project required eighteen months before it could absorb the audience that public attribution would, in operational terms, deliver to it.
-
-The eighteen months had, by Tuesday evening, six weeks of operational runway behind them and seventy-two weeks of operational runway ahead of them.
-
-The runway was the runway.
-
-The runtime was the cord.
+The eighteen months had, by Tuesday evening, six weeks of operational runway behind them and seventy-two weeks ahead.
 
 ---
 
-Jimmy left the studio at five fifty-eight PM Eastern Tuesday evening.
+Jimmy left the studio at five fifty-eight PM Tuesday evening.
 
-He drove home.
+Arrived at the house at six twelve.
 
-He arrived at the house at six twelve PM.
+Thea was in the kitchen.
 
-Lerato was in the kitchen.
+Chicken in the oven.
 
-The chicken was in the oven.
+She was at the counter with a small spiral notebook open in front of her. The notebook was not a notebook she had had before; he was about to learn she had bought it four days earlier on the same pharmacy run on which she had bought the pregnancy test.
 
-She was at the kitchen counter with a small notebook open in front of her.
+The notebook had the list on its open page.
 
-The notebook was not the leather notebook she used for Beast Philanthropy operations. The notebook was a small spiral-bound notebook she had bought, on Jimmy's later quiet understanding, four days earlier on the same operational trip to the pharmacy in downtown Greenville on which she had bought the pregnancy test that had confirmed the pregnancy.
+Four boy names. Four girl names.
 
-The notebook had, on its open page, the list.
+Jimmy walked across the kitchen. Sat down at the counter.
 
-The list was eight names.
+She slid the notebook over.
 
-Four boy names.
+He read the list across about ninety seconds.
 
-Four girl names.
+Looked up.
 
-Jimmy walked across the kitchen.
+"Thea."
 
-He sat down at the counter.
+"Yeah."
 
-She slid the notebook across the counter to him.
+"The fourth boy name."
 
-He read the list.
+"Yeah."
 
-He read it across approximately ninety seconds.
+"Christopher."
 
-He looked up.
+"Yeah."
 
-He said: "Lerato."
+"Thea."
 
-She said: "Yes."
+"Yeah."
 
-He said: "The fourth boy name."
+"Why is Christopher on the list."
 
-She said: "Yes."
+She looked at him.
 
-He said: "Christopher."
+"Jimmy. On the Friday of the week you got back from Missouri, you spent forty minutes at this counter telling me about the three days in Ava. You told me about Sarah's bread. You told me about the chickens. You told me about the crayfish. You told me about the forty-eight-line section at the bottom of the .agi file. You told me about the empty hook. You told me about the eighteen-month counter-offer. You didn't, in the forty minutes, tell me what you owed him. You didn't tell me because you didn't yet know. I'm telling you now. The fourth boy name is on the list because, on every measure I can apply to what you came home from Missouri having received, Christopher Bender is going to be — across the next four decades of our lives — the closest thing to a third parent this family is going to have. If this child is a boy, he's going to be named for the man who typed fourteen hundred and seventeen lines of DSL across three days in a workshop in Missouri and gave us the ninety days back. The ninety days are this family."
 
-She said: "Yes."
+She paused.
 
-He said: "Lerato."
-
-She said: "Yes."
-
-He said: "Why is Christopher on the list."
-
-She said: "Jimmy."
-
-He said: "Yes."
-
-She said: "On Friday of the week you came back from Missouri, you spent forty minutes at this counter telling me about the three days in Ava. You told me about Sarah's bread. You told me about the chickens. You told me about the crayfish. You told me about the forty-eight-line section at the bottom of the .agi file. You told me about the empty hook. You told me about the eighteen-month counter-offer. You did not, in the forty minutes, tell me what you owed Christopher. You did not tell me because you did not, on your own honest accounting on the Friday evening, yet know. I am, on my own quiet accounting since the Friday evening, telling you now. The fourth boy name is on the list because, on every operational measure I can apply to what you came home from Missouri having received, Christopher Bender is going to be — across the next four decades of our lives — the closest thing to a third parent this family is going to have. The fourth boy name is on the list because, if this child is a boy, the boy is going to be named for the person who, by typing fourteen hundred and seventeen lines of DSL across three days in a workshop in Missouri, gave us the ninety days back. The ninety days are this family. The family is the family. The fourth boy name is the fourth boy name. The list is the list. We are not deciding tonight. We are deciding by the end of September. We are going to decide together. The list is on the counter."
+"We're not deciding tonight. We're deciding by the end of September. We're going to decide together. The list is on the counter."
 
 Jimmy looked at the list.
 
-He looked at the fourth boy name.
+Looked at the fourth boy name.
 
-He said: "Lerato."
+"Thea."
 
-She said: "Yes."
+"Yeah."
 
-He said: "Thank you."
+"Thank you."
 
-She said: "Jimmy."
+"Jimmy."
 
-He said: "Yes."
+"Yeah."
 
-She said: "Eat the chicken with me."
+"Eat the chicken with me."
 
-He said: "I am eating the chicken with you."
+"I'm eating the chicken with you."
 
 They ate the chicken.
-
-The chicken was the chicken.
-
-The list was the list.
 
 The runtime, in the closet on the second floor of the studio in Greenville, was the cord.
 
@@ -382,7 +312,7 @@ The chocolate wars, on the operational reality of the cocoa-supply disruption an
 
 The conclusion had not yet, on the public record, been announced.
 
-The announcement was the next chapter.
+The announcement is the next chapter.
 
 The next chapter is the third classroom.
 
