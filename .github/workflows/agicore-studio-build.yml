@@ -70,14 +70,25 @@ jobs:
         run: npm run type-check
 
       - name: Build (tauri)
+        env:
+          # Updater signing — TAURI_SIGNING_PRIVATE_KEY is the base64
+          # private key produced by `npm run tauri signer generate`.
+          # When the secret is absent (pushes from forks, first runs
+          # before the one-time key ceremony), the build still
+          # succeeds but produces unsigned artifacts — those won't
+          # pass the runtime updater's signature check, so they're
+          # development-only.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: npm run tauri:build
 
-      # TODO: code-signing
+      # TODO: code-signing (installer-signing, not updater-signing)
       # Windows: import WINDOWS_CERTIFICATE / WINDOWS_CERTIFICATE_PASSWORD secrets
       # macOS:   import APPLE_ID / APPLE_PASSWORD / APPLE_TEAM_ID secrets and a
       #          signingIdentity in tauri.conf.json
-      # Until those are configured, builds are unsigned — SmartScreen and
-      # Gatekeeper will warn on first launch.
+      # Until those are configured, builds are unsigned at the OS level —
+      # SmartScreen and Gatekeeper will warn on first launch. (This is
+      # distinct from the Tauri updater signing above.)
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -86,3 +97,61 @@ jobs:
           path: ${{ matrix.artifact_glob }}
           if-no-files-found: warn
           retention-days: 14
+
+  release:
+    # Tag-only — never publishes a release on plain main pushes.
+    if: startsWith(github.ref, 'refs/tags/studio-v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-artifacts
+
+      - name: Flatten artifact tree
+        # The download-artifact action preserves per-job subdirs and
+        # the matrix's nested {deb,appimage} / {dmg,macos} / {msi,nsis}
+        # globs. Releases attach files, not folders — flatten to one
+        # level so gh release upload sees individual installers.
+        run: |
+          mkdir -p release-assets
+          find dist-artifacts -type f \( \
+            -name "*.deb" -o -name "*.AppImage" -o -name "*.AppImage.sig" \
+            -o -name "*.dmg" -o -name "*.app.tar.gz" -o -name "*.app.tar.gz.sig" \
+            -o -name "*.msi" -o -name "*.msi.zip" -o -name "*.msi.zip.sig" \
+            -o -name "*.exe" -o -name "*.nsis.zip" -o -name "*.nsis.zip.sig" \
+            -o -name "latest.json" \
+          \) -exec cp -v {} release-assets/ \;
+          ls -la release-assets/
+
+      - name: Generate latest.json manifest
+        # The Tauri updater plugin reads this file from the release
+        # endpoint configured in tauri.conf.json. Per-platform asset
+        # URLs are paired with the .sig files Tauri's bundler produced
+        # alongside each installer. Without a TAURI_SIGNING_PRIVATE_KEY
+        # secret no .sig files exist, the script bails, and we publish
+        # the binaries-only release (which won't auto-update).
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if ls release-assets/*.sig 1>/dev/null 2>&1; then
+            node .github/scripts/build-latest-manifest.mjs "$TAG" release-assets
+            cp release-assets/latest.json . || true
+          else
+            echo "No .sig files found — skipping latest.json (unsigned release)."
+          fi
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          fail_on_unmatched_files: false

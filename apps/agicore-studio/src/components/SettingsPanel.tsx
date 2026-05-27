@@ -9,6 +9,12 @@ import { useTelemetryStore } from '../store/telemetryStore';
 import { previewBuffer } from '../lib/telemetry';
 import { useCrashStore } from '../store/crashStore';
 import { previewCrashes } from '../lib/crash-reporter';
+import {
+  checkForUpdate,
+  downloadAndInstall,
+  restartIntoUpdate,
+  type UpdateState,
+} from '../lib/updater';
 
 interface Props {
   onClose: () => void;
@@ -37,6 +43,31 @@ const SettingsPanel: React.FC<Props> = ({ onClose }) => {
   const setCrashEnabled = useCrashStore((s) => s.setEnabled);
   const clearCrashes = useCrashStore((s) => s.clear);
   const [showCrashPreview, setShowCrashPreview] = useState(false);
+
+  const [updateState, setUpdateState] = useState<UpdateState>({ kind: 'idle' });
+
+  const onCheckForUpdate = async () => {
+    setUpdateState({ kind: 'checking' });
+    const next = await checkForUpdate();
+    setUpdateState(next);
+  };
+
+  const onInstallUpdate = async () => {
+    const next = await downloadAndInstall((s) => setUpdateState(s));
+    setUpdateState(next);
+  };
+
+  const onRestart = async () => {
+    // Hard exit + respawn — the canvas's in-memory state is lost. We
+    // don't try to checkpoint here because (a) autosave-on-edit
+    // already keeps recovery drafts and (b) installer-restart is a
+    // user-initiated action so they expect a clean reboot.
+    try {
+      await restartIntoUpdate();
+    } catch (e) {
+      setUpdateState({ kind: 'error', message: e instanceof Error ? e.message : String(e) });
+    }
+  };
 
   useEffect(() => {
     if (!loaded) void load();
@@ -242,6 +273,24 @@ const SettingsPanel: React.FC<Props> = ({ onClose }) => {
               </pre>
             )}
           </div>
+
+          <div className="mt-6 pt-4 border-t border-[var(--border)]">
+            <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-1">
+              Updates
+            </p>
+            <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed mb-3">
+              Releases are published from GitHub. Signed manifests are
+              verified before any install. Currently manual — click
+              the button below to check.
+            </p>
+
+            <UpdateRow
+              state={updateState}
+              onCheck={onCheckForUpdate}
+              onInstall={onInstallUpdate}
+              onRestart={onRestart}
+            />
+          </div>
         </div>
 
         <div className="px-5 py-3 border-t border-[var(--border)] flex items-center justify-end gap-2">
@@ -263,6 +312,113 @@ const SettingsPanel: React.FC<Props> = ({ onClose }) => {
       </div>
     </div>
   );
+};
+
+/** Small inline component because it would clutter the main render
+ *  otherwise. State-driven row with the right button visible per
+ *  lifecycle phase. */
+const UpdateRow: React.FC<{
+  state: UpdateState;
+  onCheck: () => void;
+  onInstall: () => void;
+  onRestart: () => void;
+}> = ({ state, onCheck, onInstall, onRestart }) => {
+  const btnBase =
+    'text-[10px] px-2 py-1 border border-[var(--border)] rounded hover:border-[var(--text-secondary)] text-[var(--text-muted)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
+
+  switch (state.kind) {
+    case 'idle':
+      return (
+        <button type="button" onClick={onCheck} className={btnBase}>
+          Check for updates
+        </button>
+      );
+
+    case 'checking':
+      return (
+        <button type="button" disabled className={btnBase}>
+          Checking…
+        </button>
+      );
+
+    case 'up_to_date':
+      return (
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={onCheck} className={btnBase}>
+            Check again
+          </button>
+          <span className="text-[10px] text-[var(--text-secondary)] font-mono">
+            v{state.currentVersion} — up to date
+          </span>
+        </div>
+      );
+
+    case 'available':
+      return (
+        <div className="space-y-2">
+          <div className="text-[11px] text-[var(--text-primary)]">
+            <span className="font-mono">v{state.currentVersion}</span>{' '}
+            <span className="text-[var(--text-muted)]">→</span>{' '}
+            <span className="font-mono text-[var(--accent)]">v{state.nextVersion}</span>{' '}
+            <span className="text-[var(--text-muted)]">available</span>
+          </div>
+          {state.notes && (
+            <pre className="text-[10px] font-mono bg-[var(--bg-input)] border border-[var(--border)] rounded p-2 max-h-32 overflow-auto whitespace-pre-wrap">
+              {state.notes}
+            </pre>
+          )}
+          <button type="button" onClick={onInstall} className={btnBase}>
+            Download and install
+          </button>
+        </div>
+      );
+
+    case 'downloading': {
+      const pct = state.bytesTotal
+        ? Math.round((state.bytesDownloaded / state.bytesTotal) * 100)
+        : null;
+      return (
+        <div className="space-y-1">
+          <div className="text-[11px] text-[var(--text-primary)]">
+            Downloading v{state.nextVersion}
+            {pct !== null ? ` — ${pct}%` : '…'}
+          </div>
+          {state.bytesTotal && (
+            <div className="h-1 bg-[var(--bg-input)] rounded overflow-hidden">
+              <div
+                className="h-full bg-[var(--accent)] transition-all"
+                style={{ width: `${pct ?? 0}%` }}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    case 'ready_to_restart':
+      return (
+        <div className="space-y-2">
+          <p className="text-[11px] text-[var(--text-primary)]">
+            v{state.nextVersion} installed. Restart to use it — any
+            unsaved canvas state will be lost. (Autosaved drafts will
+            recover on next launch.)
+          </p>
+          <button type="button" onClick={onRestart} className={btnBase}>
+            Restart now
+          </button>
+        </div>
+      );
+
+    case 'error':
+      return (
+        <div className="space-y-2">
+          <p className="text-[11px] text-red-400 font-mono">{state.message}</p>
+          <button type="button" onClick={onCheck} className={btnBase}>
+            Try again
+          </button>
+        </div>
+      );
+  }
 };
 
 export default SettingsPanel;

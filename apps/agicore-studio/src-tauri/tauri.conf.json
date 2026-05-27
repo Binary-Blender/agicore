@@ -26,6 +26,16 @@
       "csp": null
     }
   },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "dialog": false,
+      "endpoints": [
+        "https://github.com/Binary-Blender/agicore/releases/latest/download/latest.json"
+      ],
+      "pubkey": "TODO(release-key)-run-npm-run-tauri-signer-generate-once-and-paste-the-public-key-here"
+    }
+  },
   "bundle": {
     "active": true,
     "targets": "all",
