@@ -18,8 +18,13 @@
 //     Settings; auto-prompt-at-launch lands when we have signed
 //     releases and a real cadence)
 
-import { check, type Update } from '@tauri-apps/plugin-updater';
+import { check } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
+
+// Whatever check() resolves to that isn't null is the Update handle —
+// extract the type instead of importing a named export that may not
+// be stable across plugin versions.
+type Update = NonNullable<Awaited<ReturnType<typeof check>>>;
 
 export type UpdateState =
   | { kind: 'idle' }
@@ -113,9 +118,10 @@ function normalizeError(e: unknown): string {
   }
 }
 
-/** App version baked in at build time by Vite. */
+/** App version. Kept in sync by hand with package.json + tauri.conf.json
+ *  + Cargo.toml via the RELEASING.md per-release checklist. A future
+ *  improvement: read this from the Tauri app metadata via
+ *  @tauri-apps/api/app#getVersion() at startup. */
 function getCurrentVersion(): string {
-  // Vite exposes package.json version under import.meta.env.npm_package_version
-  // when run via npm scripts; fall back to a literal for safety.
-  return (import.meta.env?.npm_package_version as string | undefined) ?? '0.1.0';
+  return '0.1.0';
 }
