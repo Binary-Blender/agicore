@@ -119,16 +119,31 @@ jobs:
         # the matrix's nested {deb,appimage} / {dmg,macos} / {msi,nsis}
         # globs. Releases attach files, not folders — flatten to one
         # level so gh release upload sees individual installers.
+        #
+        # Defensive shape: create both dirs up-front so a missing
+        # dist-artifacts (empty matrix uploads) doesn't kill the step
+        # before the diagnostic listing runs. Always print the full
+        # downloaded tree so the logs tell us what's actually there
+        # — past failures here were silent about whether the matrix
+        # produced any bundles at all.
         run: |
-          mkdir -p release-assets
+          mkdir -p dist-artifacts release-assets
+          echo "=== full downloaded artifact tree ==="
+          find dist-artifacts -type f -printf '%P\n' | head -100 || echo "(no files in dist-artifacts)"
+          echo "=== copying installer files to release-assets ==="
           find dist-artifacts -type f \( \
             -name "*.deb" -o -name "*.AppImage" -o -name "*.AppImage.sig" \
             -o -name "*.dmg" -o -name "*.app.tar.gz" -o -name "*.app.tar.gz.sig" \
             -o -name "*.msi" -o -name "*.msi.zip" -o -name "*.msi.zip.sig" \
             -o -name "*.exe" -o -name "*.nsis.zip" -o -name "*.nsis.zip.sig" \
             -o -name "latest.json" \
-          \) -exec cp -v {} release-assets/ \;
+          \) -exec cp -v {} release-assets/ \; || true
+          echo "=== flattened result ==="
           ls -la release-assets/
+          count=$(find release-assets -type f | wc -l)
+          if [ "$count" -eq 0 ]; then
+            echo "::warning::No installer files found — the GitHub Release will be empty. Check the matrix build logs for the actual bundle output."
+          fi
 
       - name: Generate latest.json manifest
         # The Tauri updater plugin reads this file from the release
