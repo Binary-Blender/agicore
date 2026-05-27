@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
 import SettingsPanel from './SettingsPanel';
+import { t } from '../i18n';
 
 const TitleBar: React.FC = () => {
   const minimize = () => getCurrentWindow().minimize();
@@ -30,8 +31,8 @@ const TitleBar: React.FC = () => {
           <button
             onClick={newWindow}
             className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-primary)]"
-            title="Open a new Studio window"
-            aria-label="Open a new Studio window"
+            title={t('title_bar.new_window')}
+            aria-label={t('title_bar.new_window')}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="5" width="13" height="13" rx="1.5" />
@@ -41,21 +42,21 @@ const TitleBar: React.FC = () => {
           <button
             onClick={() => setSettingsOpen(true)}
             className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-primary)]"
-            title="Settings"
-            aria-label="Open settings"
+            title={t('title_bar.settings')}
+            aria-label={t('title_bar.settings')}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3" />
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
             </svg>
           </button>
-          <button onClick={minimize}  className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-[var(--bg-input)]" title="Minimize" aria-label="Minimize window">
+          <button onClick={minimize}  className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-[var(--bg-input)]" title={t('title_bar.minimize')} aria-label={t('title_bar.minimize')}>
             <svg width="10" height="1" viewBox="0 0 10 1" fill="currentColor" aria-hidden="true"><rect width="10" height="1"/></svg>
           </button>
-          <button onClick={toggleMax} className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-[var(--bg-input)]" title="Maximize" aria-label="Maximize window">
+          <button onClick={toggleMax} className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-[var(--bg-input)]" title={t('title_bar.maximize')} aria-label={t('title_bar.maximize')}>
             <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true"><rect x="0.5" y="0.5" width="7" height="7"/></svg>
           </button>
-          <button onClick={close}     className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-red-700 hover:text-white" title="Close" aria-label="Close window">
+          <button onClick={close}     className="w-7 h-6 flex items-center justify-center rounded text-[var(--text-muted)] hover:bg-red-700 hover:text-white" title={t('title_bar.close')} aria-label={t('title_bar.close')}>
             <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true"><line x1="1" y1="1" x2="8" y2="8"/><line x1="8" y1="1" x2="1" y2="8"/></svg>
           </button>
         </div>

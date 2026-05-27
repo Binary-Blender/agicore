@@ -1,0 +1,46 @@
+{
+  "app.title": "Agicore Studio",
+  "app.tagline": "Visual authoring for the Agicore DSL.",
+
+  "title_bar.new_window": "Open a new Studio window",
+  "title_bar.settings": "Open settings",
+  "title_bar.minimize": "Minimize window",
+  "title_bar.maximize": "Maximize window",
+  "title_bar.close": "Close window",
+
+  "palette.heading": "Nodes",
+  "palette.hint": "Drag onto the canvas, or click to add.",
+  "palette.add_button_label": "Add a {kind} node",
+
+  "welcome.tagline": "Build a workflow on the canvas. The .agi source writes itself. Human QC checkpoints are first-class — runs pause for a human and resume when you decide.",
+  "welcome.recent_heading": "Recent",
+  "welcome.open_project": "Open project folder…",
+  "welcome.open_project_hint": "Pick a directory of .agi files.",
+  "welcome.open_file": "Open file…",
+  "welcome.open_file_hint": "Load a single .agi from disk.",
+  "welcome.start_blank": "Start blank",
+  "welcome.start_blank_hint": "Empty canvas. Drag from the palette.",
+  "welcome.canonical": "Canonical example",
+  "welcome.canonical_hint": "The five-node demo. Includes a QC pause.",
+  "welcome.more_samples": "More samples",
+  "welcome.palette_fallback": "Or drag a node from the palette to begin.",
+
+  "settings.heading": "Settings",
+  "settings.api_keys.heading": "API keys",
+  "settings.api_keys.location_note": "Stored locally at {path} (or the platform equivalent). Shared with sibling Agicore apps — you configure once and use everywhere.",
+  "settings.telemetry.heading": "Telemetry",
+  "settings.telemetry.description": "Off by default. Records schema-safe usage signals (counts, durations, enum statuses) — never workflow contents, file paths, or model output. Session-only; nothing is transmitted today.",
+  "settings.crashes.heading": "Crash reports",
+  "settings.crashes.description": "Off by default. Captures uncaught errors and unhandled promise rejections from the renderer. Stack frames are normalized to basenames so your home directory doesn't leak. Session-only; nothing is transmitted today.",
+  "settings.updates.heading": "Updates",
+  "settings.updates.description": "Releases are published from GitHub. Signed manifests are verified before any install. Currently manual — click the button below to check.",
+  "settings.show_preview": "Show me what would be sent",
+  "settings.hide_preview": "Hide preview",
+  "settings.clear_session": "Clear session",
+  "settings.save": "Save",
+  "settings.cancel": "Cancel",
+  "settings.saving": "Saving…",
+
+  "common.on": "On",
+  "common.off": "Off"
+}

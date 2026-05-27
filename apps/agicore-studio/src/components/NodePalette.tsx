@@ -11,6 +11,7 @@ import React from 'react';
 import { getAllNodeKinds } from '../lib/node-kinds';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { NodeKind } from '../types/workflow';
+import { t } from '../i18n';
 
 const ITEMS = getAllNodeKinds();
 
@@ -49,12 +50,12 @@ const NodePalette: React.FC = () => {
   return (
     <aside
       className="w-56 h-full bg-[var(--bg-panel)] border-r border-[var(--border)] flex flex-col overflow-hidden"
-      aria-label="Node palette"
+      aria-label={t('palette.heading')}
     >
       <div className="px-3 py-2 border-b border-[var(--border)]">
-        <p className="text-xs uppercase tracking-widest text-[var(--text-secondary)]">Nodes</p>
+        <p className="text-xs uppercase tracking-widest text-[var(--text-secondary)]">{t('palette.heading')}</p>
         <p className="text-[10px] text-[var(--text-muted)] mt-0.5">
-          Drag onto the canvas, or click to add.
+          {t('palette.hint')}
         </p>
       </div>
       <div className="flex-1 overflow-y-auto p-2 space-y-1.5" role="list">
@@ -67,7 +68,7 @@ const NodePalette: React.FC = () => {
             onDragStart={(e) => onDragStart(e, item.kind)}
             onClick={() => onActivate(item.kind)}
             onKeyDown={(e) => onKeyDown(e, item.kind)}
-            aria-label={`Add a ${item.paletteLabel} node`}
+            aria-label={t('palette.add_button_label', { kind: item.paletteLabel })}
             className="px-3 py-2 rounded-md bg-[var(--bg-panel-2)] border border-[var(--border)] hover:border-[var(--accent)] cursor-grab active:cursor-grabbing transition-colors"
             style={{ borderLeftWidth: 4, borderLeftColor: item.cssVar }}
           >

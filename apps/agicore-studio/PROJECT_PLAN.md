@@ -351,7 +351,11 @@ which is what this checkpoint marks.
   on TitleBar icon buttons, accessibility.md documenting status +
   known gaps). Remaining: keyboard edge creation, aria-live for run
   state, canvas pan/zoom keys, light/high-contrast theme.
-- ⏳ Localization scaffolding (English-only at 1.0, but i18n-ready)
+- ✅ Localization scaffolding — `src/i18n/` with a 30-line `t()`
+  helper, `en.json` as the source-of-truth string table, showcase
+  migration of TitleBar + NodePalette. docs/i18n.md explains the
+  pattern + how contributors add languages. Per-component migration
+  of remaining hard-coded strings continues incrementally.
 - ⏳ Marketing site lite — landing page, screenshots, demo video
 
 ### RC ship criteria

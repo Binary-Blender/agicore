@@ -30,6 +30,8 @@ authors should read them in order; experienced users can jump.
   what properties it takes, how it runs.
 - [Accessibility](accessibility.md) — keyboard navigation, screen
   reader support, WCAG status, known gaps.
+- [Internationalization](i18n.md) — the `t()` helper, adding
+  strings, adding languages.
 - [Build and ship](../BUILD.md) — local build, CI matrix, code
   signing.
 - [Releasing](../RELEASING.md) — one-time signing-key ceremony,
