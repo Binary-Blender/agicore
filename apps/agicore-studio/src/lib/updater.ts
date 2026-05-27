@@ -123,5 +123,5 @@ function normalizeError(e: unknown): string {
  *  improvement: read this from the Tauri app metadata via
  *  @tauri-apps/api/app#getVersion() at startup. */
 function getCurrentVersion(): string {
-  return '0.1.0';
+  return '0.1.0-beta.2';
 }
