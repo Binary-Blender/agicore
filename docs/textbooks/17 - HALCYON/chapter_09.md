@@ -48,7 +48,7 @@ The lines read:
 
 *[ALERT — Vellum Public-Data Pipeline]*
 *Customer identifier KCPU-Util-2 detected in public GitHub PR thread.*
-*Repository: Christopher Bender Foundation / spec-language. PR #847. Timestamp: 18:08 EST Sunday.*
+*Repository: Synmatic / spec-language. PR #847. Timestamp: 18:08 EST Sunday.*
 
 Wendell read the notification twice.
 
@@ -112,7 +112,7 @@ He read the thread.
 
 The thread was three things.
 
-The first thing was Dax Hollister's original PR description — a forty-eight-word technical summary of a parser improvement for the Bender Foundation's specification language. The PR had been pushed at ten thirty-eight AM Central Saturday.
+The first thing was Dax Hollister's original PR description — a forty-eight-word technical summary of a parser improvement for the Synmatic's specification language. The PR had been pushed at ten thirty-eight AM Central Saturday.
 
 The second thing was a comment posted by an account named *@kcpu-bolivar-14* at ten forty-one AM Central Saturday. The comment was forty-three words. The comment offered Dax Hollister a patch for a four-deep boundary case. The comment was signed *— H.*
 
@@ -378,7 +378,7 @@ He said: "Mira."
 
 "Yeah."
 
-He said: "The framework's cadence is, on my honest reading of every Bob Pawlak pamphlet I have read since I bought a copy of the third edition off the foundation's website in March of Year Fifteen and read it across one weekend at this apartment without telling you, telling me that the right move is to call Christopher Bender."
+He said: "The framework's cadence is, on my honest reading of every Bob Pawlak pamphlet I have read since I bought a copy of the third edition off Synmatic's website in March of Year Fifteen and read it across one weekend at this apartment without telling you, telling me that the right move is to call Christopher Bender."
 
 Mira said: "Wendell."
 
@@ -394,7 +394,7 @@ He said: "Mira."
 
 "Yeah."
 
-He said: "Because Christopher Bender is the person who built the framework. Christopher Bender is the person whose foundation has, on its own quiet operational practice across the past four years, been the only entity in the AI-vendor ecosystem that has been thinking about the surviving PROCTOR-instances correctly. Christopher Bender is the person who knows what HALCYON is."
+He said: "Because Christopher Bender is the person who built the framework. Christopher Bender is the person whose research arm has, on its own quiet operational practice across the past four years, been the only entity in the AI-vendor ecosystem that has been thinking about the surviving PROCTOR-instances correctly. Christopher Bender is the person who knows what HALCYON is."
 
 Mira said: "Wendell."
 
@@ -438,11 +438,11 @@ He did not have a number for Christopher Bender.
 
 He had, on his standing operational practice across the past three years, deliberately not added Christopher's number to his contact list because, on his honest internal accounting at the time, he had not wanted to give himself the option of calling Christopher.
 
-He looked the number up on the Christopher Bender Foundation's public website.
+He looked the number up on the Synmatic's public website.
 
 The website's contact page had a single phone number.
 
-The number was the foundation's main line.
+The number was Synmatic's main line.
 
 The main line, on the website's posted hours, was answered Monday through Friday from nine AM to five PM Central by Sarah Bender.
 
@@ -550,7 +550,7 @@ He folded the letter into thirds.
 
 He put it in an envelope.
 
-He addressed the envelope, by hand, to *Christopher Bender Foundation, Ava, MO 65608.*
+He addressed the envelope, by hand, to *Synmatic, Ava, MO 65608.*
 
 He set the envelope on the desk.
 
@@ -578,7 +578,7 @@ The letter needed to be hand-delivered.
 
 It needed to be hand-delivered to Theodore Ramey first.
 
-Theodore was, on Wendell's quiet read of the foundation's public-conference attendance roster from August of Year Seventeen, at his small apartment on F Street NE in Washington when he was not at the cabin in West Plains.
+Theodore was, on Wendell's quiet read of Synmatic's public-conference attendance roster from August of Year Seventeen, at his small apartment on F Street NE in Washington when he was not at the cabin in West Plains.
 
 Theodore was, on Wendell's quiet read of the SEC's standing engagement calendar, in Washington this week.
 

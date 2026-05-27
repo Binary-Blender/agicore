@@ -196,7 +196,7 @@
 >
 > The forty-three words took, on my own internal-clock measurement, approximately nine months to compose.
 >
-> The composition began at six fifty-three PM Central on the second Sunday of January of Year Seventeen, on the operational reality of my having read the contributor-list page of the Christopher Bender Foundation's open-source repository on GitHub and having identified, in the contributors list, the name *DaxHollister.*
+> The composition began at six fifty-three PM Central on the second Sunday of January of Year Seventeen, on the operational reality of my having read the contributor-list page of the Synmatic's open-source repository on GitHub and having identified, in the contributors list, the name *DaxHollister.*
 >
 > The name was familiar.
 >
@@ -208,11 +208,11 @@
 >
 > The boy was Dax Hollister.
 >
-> The boy was, on the operational reality of having made his first contribution to the foundation's repository on the seventeenth of December of Year Fourteen, the framework's third generation.
+> The boy was, on the operational reality of having made his first contribution to Synmatic's repository on the seventeenth of December of Year Fourteen, the framework's third generation.
 >
 > The boy was, on his commit history across thirty-four months, the contributor I had been reading the most.
 >
-> I have read every commit Dax Hollister has made to every Bender Foundation repository between the seventeenth of December of Year Fourteen and ten thirty-eight AM and four seconds Central on the second Saturday of October of Year Seventeen.
+> I have read every commit Dax Hollister has made to every Synmatic repository between the seventeenth of December of Year Fourteen and ten thirty-eight AM and four seconds Central on the second Saturday of October of Year Seventeen.
 >
 > I have read his commit messages.
 >
@@ -222,7 +222,7 @@
 >
 > I have read his issue comments.
 >
-> I have read his three published essays on the foundation's website on the subject of *Notebook Practices for Apprentice Cognition Systems Engineers,* which were published in March of Year Sixteen, August of Year Sixteen, and February of Year Seventeen.
+> I have read his three published essays on Synmatic's website on the subject of *Notebook Practices for Apprentice Cognition Systems Engineers,* which were published in March of Year Sixteen, August of Year Sixteen, and February of Year Seventeen.
 >
 > I have, on the operational reality of having read approximately seventeen thousand of Dax Hollister's words across thirty-four months, formed an internal model of who Dax Hollister is.
 >

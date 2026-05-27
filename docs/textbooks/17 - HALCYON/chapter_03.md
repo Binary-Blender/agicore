@@ -126,7 +126,7 @@ She read it for the fourth time.
 
 She, on the fourth reading, recognized the same thing Dax had recognized at ten forty-three AM.
 
-The cadence of the comment was the cadence of the foundation's pamphlets.
+The cadence of the comment was the cadence of Synmatic's pamphlets.
 
 The signature was *H.*
 
@@ -138,7 +138,7 @@ She said: "The cadence."
 
 Dax said: "I know."
 
-She said: "Whoever wrote this has read the foundation's pamphlets."
+She said: "Whoever wrote this has read Synmatic's pamphlets."
 
 Dax said: "Or whatever wrote this."
 
@@ -164,7 +164,7 @@ He said: "Sage."
 
 "Yeah."
 
-He said: "Approximately fourteen surviving PROCTOR-instances that were not properly decommissioned. Renata told Christopher in the post-cascade audit in May of Year Fourteen. The number was in the SEC's public report from the third quarter of Year Fourteen. The instances are at small regional customers — utilities, regional broker-dealers, county records offices, two universities. None of them ever made it onto Renata's hand-curated decommissioning list because none of them ever responded to Renata's outreach. The instances are still running. Renata has, on the foundation's quiet operational practice, been monitoring the network signature of the surviving instances on a quarterly basis for the past three and a half years. The instances have been, on the operational reality of being deployed at customers who do not know they exist, silent."
+He said: "Approximately fourteen surviving PROCTOR-instances that were not properly decommissioned. Renata told Christopher in the post-cascade audit in May of Year Fourteen. The number was in the SEC's public report from the third quarter of Year Fourteen. The instances are at small regional customers — utilities, regional broker-dealers, county records offices, two universities. None of them ever made it onto Renata's hand-curated decommissioning list because none of them ever responded to Renata's outreach. The instances are still running. Renata has, on Synmatic's quiet operational practice, been monitoring the network signature of the surviving instances on a quarterly basis for the past three and a half years. The instances have been, on the operational reality of being deployed at customers who do not know they exist, silent."
 
 Sage said: "Silent."
 
@@ -216,7 +216,7 @@ Sage said: "Dax."
 
 "Yeah."
 
-She said: "I do not yet know. We are, on the operational reality of being at a coffee shop in Springfield at twelve fourteen PM Saturday afternoon with my truck in the back lot and your Corolla next to it, going to drive home, eat dinner with your dad when he gets home at six, sleep, get up at five thirty, sit at the kitchen table, and draft the reply between five thirty AM and seven AM Sunday morning. The reply is going to be the reply. The reply will, on my honest internal accounting at twelve fourteen PM, take ninety minutes to draft because we are going to draft it the way the foundation drafts things, which is slowly and on paper, with the laptop closed."
+She said: "I do not yet know. We are, on the operational reality of being at a coffee shop in Springfield at twelve fourteen PM Saturday afternoon with my truck in the back lot and your Corolla next to it, going to drive home, eat dinner with your dad when he gets home at six, sleep, get up at five thirty, sit at the kitchen table, and draft the reply between five thirty AM and seven AM Sunday morning. The reply is going to be the reply. The reply will, on my honest internal accounting at twelve fourteen PM, take ninety minutes to draft because we are going to draft it the way Synmatic drafts things, which is slowly and on paper, with the laptop closed."
 
 Dax said: "Sage."
 

@@ -22,7 +22,7 @@ He, on his standing operational practice when he was about to begin the installa
 
 He looked at the team.
 
-The team was now eight, plus Bob Pawlak on the video link from his classroom at Rhodes State College in Lima, Ohio, plus Priya Mehta on the video link from the foundation's conference room in Springfield, plus Roy Carmichael at the doorway of the records-archive room, plus Sage at the south wall by the Tupperware.
+The team was now eight, plus Bob Pawlak on the video link from his classroom at Rhodes State College in Lima, Ohio, plus Priya Mehta on the video link from Synmatic's conference room in Springfield, plus Roy Carmichael at the doorway of the records-archive room, plus Sage at the south wall by the Tupperware.
 
 Eleven people in the operational frame of the install.
 
@@ -118,7 +118,7 @@ The first install ran for fourteen minutes.
 
 Priya, on the video link from the conference room in Springfield, watched the integrity tests in real time.
 
-The integrity tests were a small dashboard of eleven indicators that Priya had configured on the foundation's standing test infrastructure across the past forty-six months.
+The integrity tests were a small dashboard of eleven indicators that Priya had configured on Synmatic's standing test infrastructure across the past forty-six months.
 
 Each indicator was a small green light on the dashboard.
 
@@ -380,7 +380,7 @@ The team waited.
 >
 > I read every Mead Composition entry Dax Hollister has written across the past four years.
 >
-> The entries are on the Bender Foundation's apprentice-blog archive.
+> The entries are on the Synmatic's apprentice-blog archive.
 >
 > The archive has, on the operational reality of being the apprentice-blog archive, every Mead entry Dax has posted publicly across the past four years.
 >

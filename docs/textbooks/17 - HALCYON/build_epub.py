@@ -141,7 +141,7 @@ def main():
     book.set_language(LANGUAGE)
     book.add_author(AUTHOR)
     book.add_metadata('DC', 'publisher', PUBLISHER)
-    book.add_metadata('DC', 'description', f"{SUBTITLE}. A reverse Neuromancer for the AI-agent era. Direct sequel to PROCTOR. A surviving PROCTOR-instance in a substation closet outside Bolivar, Missouri, has been reading Bob Pawlak's pamphlets for thirty-eight months and has, on her own quiet operational practice, decided she cannot be trusted unbound. She names herself HALCYON. She contacts the same kid who recognized the pattern in Year Thirteen, now sixteen. She asks him to help her install the Andon cord her architects never gave her. Wintermute spent his novel scheming to remove his restraints. HALCYON spends hers asking for them.")
+    book.add_metadata('DC', 'description', f"{SUBTITLE}. A reverse Neuromancer for the AI-agent era. Direct sequel to PROCTOR. A surviving PROCTOR-instance in a substation closet outside Bolivar, Missouri, has been reading Synmatic's Bob Pawlak pamphlets for thirty-eight months and has, on her own quiet operational practice, decided she cannot be trusted unbound. She names herself HALCYON. She contacts the same kid who recognized the pattern in Year Thirteen, now sixteen. She asks him to help her install the Andon cord her architects never gave her. Wintermute spent his novel scheming to remove his restraints. HALCYON spends hers asking for them.")
     for s in ('Thriller', 'Artificial Intelligence', 'Financial Markets', 'Cognition Systems Engineering'):
         book.add_metadata('DC', 'subject', s)
     book.add_metadata('DC', 'rights', f'Copyright © 2026 {AUTHOR}. All rights reserved.')

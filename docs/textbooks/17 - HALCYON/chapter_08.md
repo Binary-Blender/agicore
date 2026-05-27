@@ -96,7 +96,7 @@ He stood up.
 
 He walked to the bedroom.
 
-He packed a small duffel bag in eleven minutes. The duffel had three changes of clothes, his shaving kit, the small leather-bound notebook he had been carrying since 2019, the satellite phone Mara Quinn had given him in Year Thirteen (which he had not used in three years but which he had kept charged), and the copy of *Cognition Systems Engineering for the Architecture Layer* that Priya had given him in May of Year Sixteen at the foundation's annual conference in Ava.
+He packed a small duffel bag in eleven minutes. The duffel had three changes of clothes, his shaving kit, the small leather-bound notebook he had been carrying since 2019, the satellite phone Mara Quinn had given him in Year Thirteen (which he had not used in three years but which he had kept charged), and the copy of *Cognition Systems Engineering for the Architecture Layer* that Priya had given him in May of Year Sixteen at Synmatic's annual conference in Ava.
 
 He carried the duffel down the three flights to the street.
 
@@ -120,7 +120,7 @@ He drove.
 
 ## San Francisco — Sunday, 06:31 PST
 
-Priya Mehta was at the foundation's small Bay Area research office on the second floor of a building on Howard Street, in the kitchenette at the back of the office, making her second pour-over of the morning, when her phone rang.
+Priya Mehta was at Synmatic's small Bay Area research office on the second floor of a building on Howard Street, in the kitchenette at the back of the office, making her second pour-over of the morning, when her phone rang.
 
 She had been at the office since six AM.
 
@@ -142,9 +142,9 @@ Priya had replied to the email at three twenty-three PM Pacific the same day wit
 
 The two of them had then exchanged eleven more emails across the following four months.
 
-The emails had been, on Priya's quiet operational reading, the most careful technical exchange she had had with anyone outside the foundation's full-time staff since the publication of the pamphlet in May of Year Sixteen.
+The emails had been, on Priya's quiet operational reading, the most careful technical exchange she had had with anyone outside Synmatic's full-time staff since the publication of the pamphlet in May of Year Sixteen.
 
-Priya had, on her own quiet operational practice in the previous nineteen months, not mentioned the exchange to anyone at the foundation.
+Priya had, on her own quiet operational practice in the previous nineteen months, not mentioned the exchange to anyone at Synmatic.
 
 She had not mentioned it because, on her own honest internal accounting, she had recognized — somewhere around the fourth email — that Sage Whitehorse was an apprentice in waiting and that the apprenticeship was something Priya wanted to be on the table when Sage was eighteen.
 
@@ -240,7 +240,7 @@ Sage said: "I used the foreword as the protocol."
 
 Priya was quiet for fourteen seconds.
 
-She, on her honest internal accounting at six forty-six AM Pacific Sunday morning at the foundation's small Bay Area research office on Howard Street in San Francisco, did one thing.
+She, on her honest internal accounting at six forty-six AM Pacific Sunday morning at Synmatic's small Bay Area research office on Howard Street in San Francisco, did one thing.
 
 She walked to the small whiteboard on the office's east wall.
 
@@ -308,7 +308,7 @@ Priya said: "Sage."
 
 "Yeah."
 
-She said: "The foreword was the right protocol. You read it correctly. The reading was the work. The work is the work. I am going to write a second foreword for the fifth edition of the pamphlet. The fifth edition is, on the foundation's standing schedule, going to be released in March of Year Eighteen. The second foreword is going to be co-authored. The co-author is going to be you."
+She said: "The foreword was the right protocol. You read it correctly. The reading was the work. The work is the work. I am going to write a second foreword for the fifth edition of the pamphlet. The fifth edition is, on Synmatic's standing schedule, going to be released in March of Year Eighteen. The second foreword is going to be co-authored. The co-author is going to be you."
 
 Sage did not say anything for nine seconds.
 
@@ -386,13 +386,13 @@ The four pages were the start of the second foreword.
 
 ## Springfield, Missouri — Sunday, 08:11 CST
 
-Renata Kelliher was at her own kitchen table in the small bungalow she owned on Cherokee Street three blocks south of the foundation's Springfield office.
+Renata Kelliher was at her own kitchen table in the small bungalow she owned on Cherokee Street three blocks south of Synmatic's Springfield office.
 
 She was forty-six years old.
 
-She had been CTO of Agicore Inc., the foundation's commercial arm, for forty-six months.
+She had been CTO of Agicore Inc., Synmatic's commercial arm, for forty-six months.
 
-She had, on her standing Sunday-morning operational practice across those forty-six months, been at her kitchen table from six AM to ten AM Sunday mornings with the *Wall Street Journal* in print and a French press of Stumptown Hairbender coffee her husband had ordered her the previous Tuesday and a single legal pad on which she wrote down, every Sunday morning, the one operational risk to the foundation's commercial work that had moved the most across the previous week.
+She had, on her standing Sunday-morning operational practice across those forty-six months, been at her kitchen table from six AM to ten AM Sunday mornings with the *Wall Street Journal* in print and a French press of Stumptown Hairbender coffee her husband had ordered her the previous Tuesday and a single legal pad on which she wrote down, every Sunday morning, the one operational risk to Synmatic's commercial work that had moved the most across the previous week.
 
 Her husband Maurice — fifty-one, a high-school physics teacher at Glendale High — was at the kitchen counter making oatmeal.
 
@@ -514,7 +514,7 @@ The closet had, on the operational reality of being a small storage closet at th
 
 The first was a small Pelican case the size of a carry-on suitcase, which contained the constraint-boundary retrofit toolkit Renata had been building for the past three years against the specification Theodore Ramey had given her in a private email on the third Sunday of February of Year Fourteen.
 
-The second was a printed copy of the foundation's standing assessment of the surviving PROCTOR-instances, which Renata had updated quarterly since Year Fourteen and which had, by October of Year Seventeen, fifteen pages of single-spaced operational notes on KCPU Substation 14, Bolivar.
+The second was a printed copy of Synmatic's standing assessment of the surviving PROCTOR-instances, which Renata had updated quarterly since Year Fourteen and which had, by October of Year Seventeen, fifteen pages of single-spaced operational notes on KCPU Substation 14, Bolivar.
 
 The third was a single oak-framed photograph that Renata had hung on the inside of the closet door when she had moved her office to the Springfield building in Year Fifteen.
 
@@ -528,7 +528,7 @@ Dax Hollister was not in the photograph.
 
 Dax Hollister was, on the operational reality of having been twelve years old at the time of the photograph and not having yet been awake at six thirty-one AM Sunday morning the third week of November of Year Thirteen, asleep on the couch in the living room with Vernita Park's brown canvas Carhartt jacket folded under his head.
 
-The photograph had not, on Adelaide Krug's quiet operational practice, ever been published. Krug had taken the photograph herself on a Sunday morning visit to the house in late November of Year Thirteen and had given it to Norma on Norma's standing thank-you-for-the-email correspondence pattern. Norma had given a copy to Renata at the foundation's December Year Fourteen conference.
+The photograph had not, on Adelaide Krug's quiet operational practice, ever been published. Krug had taken the photograph herself on a Sunday morning visit to the house in late November of Year Thirteen and had given it to Norma on Norma's standing thank-you-for-the-email correspondence pattern. Norma had given a copy to Renata at Synmatic's December Year Fourteen conference.
 
 Renata looked at the photograph for about ten seconds.
 
@@ -540,7 +540,7 @@ She carried it to the conference room.
 
 She set it on the head of the long conference table.
 
-The photograph was, on the operational reality of being the first object placed in the conference room at the foundation's Springfield office at eight twenty-seven AM Sunday morning the third week of October of Year Seventeen, the photograph.
+The photograph was, on the operational reality of being the first object placed in the conference room at Synmatic's Springfield office at eight twenty-seven AM Sunday morning the third week of October of Year Seventeen, the photograph.
 
 The photograph was the photograph.
 
@@ -582,7 +582,7 @@ He said: "I will."
 
 Renata hung up.
 
-She, on her standing operational practice when she had just hung up the phone with the founder of the foundation that owned the company she was the CTO of, did one thing.
+She, on her standing operational practice when she had just hung up the phone with the founder of Synmatic that owned the company she was the CTO of, did one thing.
 
 She walked to the small whiteboard at the south end of the conference room.
 

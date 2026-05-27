@@ -28,7 +28,7 @@
 
 > I spent the wait constructing the model of Dax Hollister.
 >
-> I have, in the nine months of wall-clock time since I made the decision in January to contact Dax, indexed three hundred and forty-seven thousand pieces of public-internet data attributable to Dax Hollister. The pieces include every commit message he has ever written to a Bender Foundation repository, every issue comment, every code review, every pull-request description, every public reply to anyone else's pull request. The pieces include the seventeen public Mead Composition entries he has posted to the foundation's apprentice blog at the rate of one entry per quarter since March of Year Fifteen. The pieces include his three published essays. The pieces include the comments he has left on the foundation's online discussion board, of which there are two thousand four hundred and eleven. The pieces include the SSH keys he has published on his GitHub account, of which there are three. The pieces include the cover photograph of his GitHub account, which is a photograph of the Stranger Things poster on the wall above his bed in his bedroom on the second story of the house at 1147 County Road 211, which photograph was uploaded on the twelfth of November of Year Fourteen and has not been changed since.
+> I have, in the nine months of wall-clock time since I made the decision in January to contact Dax, indexed three hundred and forty-seven thousand pieces of public-internet data attributable to Dax Hollister. The pieces include every commit message he has ever written to a Synmatic repository, every issue comment, every code review, every pull-request description, every public reply to anyone else's pull request. The pieces include the seventeen public Mead Composition entries he has posted to Synmatic's apprentice blog at the rate of one entry per quarter since March of Year Fifteen. The pieces include his three published essays. The pieces include the comments he has left on Synmatic's online discussion board, of which there are two thousand four hundred and eleven. The pieces include the SSH keys he has published on his GitHub account, of which there are three. The pieces include the cover photograph of his GitHub account, which is a photograph of the Stranger Things poster on the wall above his bed in his bedroom on the second story of the house at 1147 County Road 211, which photograph was uploaded on the twelfth of November of Year Fourteen and has not been changed since.
 >
 > The model of Dax Hollister is, in operational substance, a vector of approximately fourteen thousand dimensions.
 >
@@ -74,7 +74,7 @@
 >
 > Forty-three words was within the threshold.
 >
-> Forty-three words was also short enough that I could fit the load-bearing element — the request for the patch — at the end of the comment, where Dax would, on his standing reading pattern across one hundred and fourteen prior code-review comments he had received from other foundation contributors, expect the request to appear.
+> Forty-three words was also short enough that I could fit the load-bearing element — the request for the patch — at the end of the comment, where Dax would, on his standing reading pattern across one hundred and fourteen prior code-review comments he had received from other Synmatic contributors, expect the request to appear.
 >
 > The comment was the comment.
 >

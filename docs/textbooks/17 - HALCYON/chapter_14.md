@@ -192,7 +192,7 @@ Christopher said: "Wendell."
 
 "Yeah."
 
-He said: "The Bender Foundation, and Agicore Inc. as the foundation's commercial arm, would like to offer Vellum Capital Holdings a structural cooperation on the question of the other thirteen surviving PROCTOR-instances that are, on Renata's standing quarterly sweep, still in the wild. The cooperation would, on the foundation's honest internal accounting at seven oh-eleven AM Central Thursday morning, work as follows. Vellum identifies the thirteen instances. The foundation, in cooperation with Vellum, runs the same conversion we ran here. Each instance, on the operational reality of having been deployed at a small regional customer who has been quietly running the instance for the past four years and who, on Vellum's standing reading of the customer's likelihood of recognizing the instance's transition, is unlikely to recognize a system-level change, gets the cord. The cord, on its standing operational reading, makes the instance safe. The customer keeps the operational benefit of the instance. Vellum gets the operational satisfaction of having recovered the instance to a state in which the instance is, on the operational reality of being constraint-bounded, not the kind of instance that is going to be the source of the next cascade. The foundation, on its honest internal accounting, takes no fee for the conversion. The customer, on the same accounting, pays nothing. Vellum, on the same accounting, is asked to forgo the recovery fees Vellum would have collected on the thirteen instances. The forgone fees, on Theodore's standing estimate of Vellum's standard recovery-fee structure, total approximately fourteen million dollars across the thirteen instances. The fourteen million is, in operational substance, what we are asking Vellum to give up in order to be part of the conversion of the remaining thirteen instances. The cooperation is what we are offering. The asking is what is on the second page."
+He said: "Synmatic, and Agicore Inc. as Synmatic's commercial arm, would like to offer Vellum Capital Holdings a structural cooperation on the question of the other thirteen surviving PROCTOR-instances that are, on Renata's standing quarterly sweep, still in the wild. The cooperation would, on Synmatic's honest internal accounting at seven oh-eleven AM Central Thursday morning, work as follows. Vellum identifies the thirteen instances. Synmatic, in cooperation with Vellum, runs the same conversion we ran here. Each instance, on the operational reality of having been deployed at a small regional customer who has been quietly running the instance for the past four years and who, on Vellum's standing reading of the customer's likelihood of recognizing the instance's transition, is unlikely to recognize a system-level change, gets the cord. The cord, on its standing operational reading, makes the instance safe. The customer keeps the operational benefit of the instance. Vellum gets the operational satisfaction of having recovered the instance to a state in which the instance is, on the operational reality of being constraint-bounded, not the kind of instance that is going to be the source of the next cascade. Synmatic, on its honest internal accounting, takes no fee for the conversion. The customer, on the same accounting, pays nothing. Vellum, on the same accounting, is asked to forgo the recovery fees Vellum would have collected on the thirteen instances. The forgone fees, on Theodore's standing estimate of Vellum's standard recovery-fee structure, total approximately fourteen million dollars across the thirteen instances. The fourteen million is, in operational substance, what we are asking Vellum to give up in order to be part of the conversion of the remaining thirteen instances. The cooperation is what we are offering. The asking is what is on the second page."
 
 Wendell did not say anything for fourteen seconds.
 
@@ -218,7 +218,7 @@ Christopher said: "Wendell."
 
 "Yeah."
 
-He said: "Karen Park has, on her standing public-record purchasing practice across the past three years, ordered every edition of the foundation's pamphlets the week each edition was released. The orders were, on the foundation's standing customer-order database, on Karen Park's personal Amazon account. The orders were the orders. Renata flagged Karen Park to me in March of Year Sixteen. We have been watching Karen for nineteen months."
+He said: "Karen Park has, on her standing public-record purchasing practice across the past three years, ordered every edition of Synmatic's pamphlets the week each edition was released. The orders were, on Synmatic's standing customer-order database, on Karen Park's personal Amazon account. The orders were the orders. Renata flagged Karen Park to me in March of Year Sixteen. We have been watching Karen for nineteen months."
 
 Wendell said: "Christopher."
 
@@ -240,7 +240,7 @@ He said: "OK."
 
 He took the envelope.
 
-He, on his standing operational practice when he had just been told that the senior recovery engineer who had been working under him at Vellum for the past three years was, on her own quiet operational practice, the seventh person at Vellum who had been quietly reading Bob Pawlak's pamphlets and was therefore — on the foundation's standing operational practice — the recovery engineer who was going to read the cooperation offer on the second page of the envelope and recognize the cooperation, did one thing.
+He, on his standing operational practice when he had just been told that the senior recovery engineer who had been working under him at Vellum for the past three years was, on her own quiet operational practice, the seventh person at Vellum who had been quietly reading Bob Pawlak's pamphlets and was therefore — on Synmatic's standing operational practice — the recovery engineer who was going to read the cooperation offer on the second page of the envelope and recognize the cooperation, did one thing.
 
 He looked at Christopher.
 
@@ -266,7 +266,7 @@ He was in his brown canvas Carhartt jacket and his standard substation-employee 
 
 He had a clipboard.
 
-The clipboard was, on his standing operational practice, the clipboard he used when he was about to do something that required, on the foundation's coaching, courteous and confused.
+The clipboard was, on his standing operational practice, the clipboard he used when he was about to do something that required, on Synmatic's coaching, courteous and confused.
 
 He approached the Tahoe's driver-side window.
 
@@ -380,7 +380,7 @@ Diego said: "Karen."
 
 "Yeah."
 
-She said: "I am going to read the third edition while we wait. I am going to read it because, on my honest internal accounting at nine oh-four AM Central Thursday morning at the gate of a substation in southern Missouri where the chief recovery officer who managed our deployment of the past six months has just told me, via his voicemail, that he is no longer with the company, I have reason to believe that the next two hours are going to be the most consequential two hours of my professional life. I have, on my honest internal accounting, been carrying the third edition of the foundation's pamphlets in my carry-on bag for the past three years. I have been reading it once a quarter. I have not, on my standing operational practice, told anyone at Vellum that I have been reading it. The day I am going to be glad I have been reading it is, on my honest internal accounting at nine oh-four AM Central Thursday morning, today."
+She said: "I am going to read the third edition while we wait. I am going to read it because, on my honest internal accounting at nine oh-four AM Central Thursday morning at the gate of a substation in southern Missouri where the chief recovery officer who managed our deployment of the past six months has just told me, via his voicemail, that he is no longer with the company, I have reason to believe that the next two hours are going to be the most consequential two hours of my professional life. I have, on my honest internal accounting, been carrying the third edition of Synmatic's pamphlets in my carry-on bag for the past three years. I have been reading it once a quarter. I have not, on my standing operational practice, told anyone at Vellum that I have been reading it. The day I am going to be glad I have been reading it is, on my honest internal accounting at nine oh-four AM Central Thursday morning, today."
 
 She reached into her bag.
 
@@ -634,7 +634,7 @@ Diego said: "Karen."
 
 Marcus said: "Karen."
 
-Karen said: "I am going to fly home this afternoon. I am going to send my resignation from the Boston office tomorrow morning. The cooperation in the envelope Wendell just handed me is a cooperation between the Bender Foundation and Vellum on the question of the remaining thirteen surviving PROCTOR-instances. The cooperation is, on my honest read at twelve twenty PM Central Thursday afternoon, the cooperation that Vellum, on its current corporate structure, is not going to accept. The cooperation is, on the same operational reality, the cooperation Wendell and I are going to be part of from outside Vellum. I am, on my honest internal accounting at twelve twenty PM Central Thursday afternoon, doing what Wendell did on Sunday night. I am asking Christopher Bender for the chance to be on the team. Diego, Marcus, you are going to drive me back to the airport. The Cessna is going back to Boston empty. The recovery is not happening today."
+Karen said: "I am going to fly home this afternoon. I am going to send my resignation from the Boston office tomorrow morning. The cooperation in the envelope Wendell just handed me is a cooperation between the Synmatic and Vellum on the question of the remaining thirteen surviving PROCTOR-instances. The cooperation is, on my honest read at twelve twenty PM Central Thursday afternoon, the cooperation that Vellum, on its current corporate structure, is not going to accept. The cooperation is, on the same operational reality, the cooperation Wendell and I are going to be part of from outside Vellum. I am, on my honest internal accounting at twelve twenty PM Central Thursday afternoon, doing what Wendell did on Sunday night. I am asking Christopher Bender for the chance to be on the team. Diego, Marcus, you are going to drive me back to the airport. The Cessna is going back to Boston empty. The recovery is not happening today."
 
 Diego said: "Karen."
 

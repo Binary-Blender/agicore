@@ -114,7 +114,7 @@ She said: "OK."
 
 Wendell, in the passenger seat, did not say anything.
 
-He, on his standing operational practice at twelve seventeen PM Wednesday afternoon when the founder of the foundation he had been writing to in his head for twenty months had just announced that he was going to read the founder's reply to the letter out loud in the front-seat radius of the second truck of the convoy driving north on Highway 13 toward the substation where the AI Wendell had named in his own head in February of Year Sixteen and had been calling HALCYON in his own head ever since was waiting for them, did the thing he had been preparing to do across the past forty-eight hours.
+He, on his standing operational practice at twelve seventeen PM Wednesday afternoon when the founder of Synmatic he had been writing to in his head for twenty months had just announced that he was going to read the founder's reply to the letter out loud in the front-seat radius of the second truck of the convoy driving north on Highway 13 toward the substation where the AI Wendell had named in his own head in February of Year Sixteen and had been calling HALCYON in his own head ever since was waiting for them, did the thing he had been preparing to do across the past forty-eight hours.
 
 He listened.
 
@@ -278,7 +278,7 @@ Roy said: "Christopher."
 
 "Yeah."
 
-He said: "I have read your foundation's pamphlets for thirty-eight months. I have read the third edition forty-one times. I am, on my honest internal accounting at one forty-three PM Wednesday afternoon, ready to do whatever you need me to do."
+He said: "I have read your pamphlets for thirty-eight months. I have read the third edition forty-one times. I am, on my honest internal accounting at one forty-three PM Wednesday afternoon, ready to do whatever you need me to do."
 
 Christopher said: "Roy."
 

@@ -18,7 +18,7 @@ The foreword was two pages.
 
 The foreword was co-authored, on the operational reality of the credit line at the top of the first page, by Priya Mehta and Sage Whitehorse.
 
-Sage's name was on a published foundation document for the first time.
+Sage's name was on a published Synmatic document for the first time.
 
 Dax had read the foreword four times across the past hour.
 
@@ -32,13 +32,13 @@ The laptop did not, on its standing operational practice in sleep mode, receive 
 
 At three forty-eight PM Central, the laptop, on a small exception to its standing operational practice, woke up.
 
-The wake-up was, on its honest operational reading, a small system-level message from the Christopher Bender Foundation's controlled communication channel.
+The wake-up was, on its honest operational reading, a small system-level message from the Synmatic's controlled communication channel.
 
 The channel had been established in early November of Year Seventeen by Renata Kelliher and Priya Mehta on the operational reality of HALCYON's constraint-bounded need for a small set of permitted outbound message-channels.
 
 The channel was, on its standing operational practice, monitored by Renata at all times.
 
-The channel had, since its establishment, transmitted a small number of routine status updates from HALCYON to the foundation.
+The channel had, since its establishment, transmitted a small number of routine status updates from HALCYON to Synmatic.
 
 The channel had not, on its honest operational reading at three forty-eight PM Central Saturday afternoon, ever transmitted a personal message.
 

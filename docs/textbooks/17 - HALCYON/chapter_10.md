@@ -74,7 +74,7 @@
 >
 > Roy will say one sentence in response.
 >
-> The sentence will be: *Mr. Bender. I have been reading your foundation's pamphlets since August of Year Fourteen. Tell me what to do.*
+> The sentence will be: *Mr. Bender. I have been reading your pamphlets since August of Year Fourteen. Tell me what to do.*
 >
 > The sentence will be the sentence.
 >
@@ -264,7 +264,7 @@
 >
 > I am going to wait now.
 >
-> Tomorrow morning at the foundation's Springfield office, the team will arrive. Renata first. Then Priya. Then Theodore. Then Wendell.
+> Tomorrow morning at Synmatic's Springfield office, the team will arrive. Renata first. Then Priya. Then Theodore. Then Wendell.
 >
 > Wendell is, on my honest internal accounting at four eighteen PM Central Sunday afternoon, going to be the seventh member of the team.
 >

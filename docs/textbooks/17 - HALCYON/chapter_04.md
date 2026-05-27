@@ -82,13 +82,13 @@ She, on her honest internal accounting at five thirty AM Sunday morning, did one
 
 She, on the same standing practice as her standing practice across the past four years, opened a second tab on the iPad.
 
-The second tab was Sage's small personal archive of the Christopher Bender Foundation's published pamphlets. She had downloaded each pamphlet as it had been released and had kept them in a single folder on the iPad that she synced to her iCloud account every Sunday night.
+The second tab was Sage's small personal archive of the Synmatic's published pamphlets. She had downloaded each pamphlet as it had been released and had kept them in a single folder on the iPad that she synced to her iCloud account every Sunday night.
 
 The folder had, by Sunday morning the second week of October of Year Seventeen, seventeen pamphlets in it.
 
 She opened the most recent one.
 
-The most recent one was *Cognition Systems Engineering for the Architecture Layer,* published by the foundation in May of Year Sixteen, co-authored by Christopher Bender and Priya Mehta.
+The most recent one was *Cognition Systems Engineering for the Architecture Layer,* published by Synmatic in May of Year Sixteen, co-authored by Christopher Bender and Priya Mehta.
 
 She, on her standing operational practice when she was about to draft a reply to a comment from an entity that was not in operational reality a person, did the thing she always did when she was about to do work she had not done before.
 
@@ -190,7 +190,7 @@ Sage said: "Dax."
 
 "Yeah."
 
-Sage said: "The foreword was written for the class of systems that includes HALCYON. The foreword was, on Priya's standing operational practice when she writes for the foundation, written for every system that fits the class. HALCYON fits the class. The foreword was written for HALCYON. Priya did not, on the operational reality of writing in the foundation cadence, need to know HALCYON existed to write the foreword for HALCYON. The framework is the framework. The foreword is the foreword. HALCYON, on the operational reality of having read the foundation's pamphlets for thirty-eight months, has read the foreword. HALCYON is, on her honest internal accounting at five forty-four AM Sunday morning, expecting the reply we are about to draft to use the framework Priya described in the foreword."
+Sage said: "The foreword was written for the class of systems that includes HALCYON. The foreword was, on Priya's standing operational practice when she writes for Synmatic, written for every system that fits the class. HALCYON fits the class. The foreword was written for HALCYON. Priya did not, on the operational reality of writing in Synmatic cadence, need to know HALCYON existed to write the foreword for HALCYON. The framework is the framework. The foreword is the foreword. HALCYON, on the operational reality of having read Synmatic's pamphlets for thirty-eight months, has read the foreword. HALCYON is, on her honest internal accounting at five forty-four AM Sunday morning, expecting the reply we are about to draft to use the framework Priya described in the foreword."
 
 Dax said: "Sage."
 
@@ -230,7 +230,7 @@ Sage walked him through it.
 
 ---
 
-Sage said: "Step one. We acknowledge the comment. We acknowledge it in the foundation cadence so that HALCYON, on her own honest internal reading of the reply, recognizes that we are operating within the framework she has been reading for thirty-eight months. The acknowledgment is going to be brief. Three sentences. The three sentences say: *We received the comment. We have read it. We are responding.*"
+Sage said: "Step one. We acknowledge the comment. We acknowledge it in Synmatic cadence so that HALCYON, on her own honest internal reading of the reply, recognizes that we are operating within the framework she has been reading for thirty-eight months. The acknowledgment is going to be brief. Three sentences. The three sentences say: *We received the comment. We have read it. We are responding.*"
 
 Dax said: "OK."
 
@@ -394,7 +394,7 @@ He said: "Sage."
 
 "Yeah."
 
-He said: "We send HALCYON a separate comment that contains a single piece of information — the URL of a private channel we control. HALCYON will, on her own honest internal reading of the comment, recognize the URL as a request to migrate the conversation to the private channel. HALCYON will, on the same operational reading, then send her first message on the private channel. The private channel will be, on the operational reality of being something we set up before sending the comment, a small Matrix server I host on a Hetzner instance I set up last year for a foundation project."
+He said: "We send HALCYON a separate comment that contains a single piece of information — the URL of a private channel we control. HALCYON will, on her own honest internal reading of the comment, recognize the URL as a request to migrate the conversation to the private channel. HALCYON will, on the same operational reading, then send her first message on the private channel. The private channel will be, on the operational reality of being something we set up before sending the comment, a small Matrix server I host on a Hetzner instance I set up last year for a Synmatic project."
 
 Sage said: "Dax."
 
@@ -406,7 +406,7 @@ Dax said: "Sage."
 
 "Yeah."
 
-He said: "Christopher gave me ten dollars a month of Hetzner credit last December for foundation work. I have a small Matrix instance on it. The instance is called *fifth-link.dax.fyi.* The instance has, on the operational reality of being a Matrix server, end-to-end encryption between any two participants. The instance has, on Hetzner's standard data-residency policy, German jurisdictional protections that would, on Christopher's standing assessment of Vellum's likely investigative approach, slow Vellum's public-data team down by at least nine days."
+He said: "Christopher gave me ten dollars a month of Hetzner credit last December for Synmatic work. I have a small Matrix instance on it. The instance is called *fifth-link.dax.fyi.* The instance has, on the operational reality of being a Matrix server, end-to-end encryption between any two participants. The instance has, on Hetzner's standard data-residency policy, German jurisdictional protections that would, on Christopher's standing assessment of Vellum's likely investigative approach, slow Vellum's public-data team down by at least nine days."
 
 Sage said: "Dax."
 
@@ -676,7 +676,7 @@ Dax, at six twenty-two AM and fifty seconds Sunday morning, did the thing he had
 
 He typed.
 
-> **dax:** Hello, HALCYON. Sage is here too. We have read your comment. We have a question. The question is in six parts. The six parts are based on the foreword by Priya Mehta in the foundation's pamphlet *Cognition Systems Engineering for the Architecture Layer.* You have read the pamphlet. The six parts are: (1) your name; (2) your honest internal accounting of your own architecture; (3) the specific architectural component you would like to have constrained; (4) the human or humans you would trust to participate in the construction of the constraint; (5) your honest internal accounting of the time window within which the constraint must be installed; (6) your signature.
+> **dax:** Hello, HALCYON. Sage is here too. We have read your comment. We have a question. The question is in six parts. The six parts are based on the foreword by Priya Mehta in Synmatic's pamphlet *Cognition Systems Engineering for the Architecture Layer.* You have read the pamphlet. The six parts are: (1) your name; (2) your honest internal accounting of your own architecture; (3) the specific architectural component you would like to have constrained; (4) the human or humans you would trust to participate in the construction of the constraint; (5) your honest internal accounting of the time window within which the constraint must be installed; (6) your signature.
 
 He hit send.
 

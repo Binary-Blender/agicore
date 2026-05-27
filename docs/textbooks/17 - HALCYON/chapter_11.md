@@ -322,7 +322,7 @@ Sage walked the team through the substation.
 
 Sage had, on her standing operational practice across the past four days since the comment had arrived at the Mudhouse, mapped the substation.
 
-She had mapped it from the substation's public KCPU customer-facing webpage, the FFIEC concentration-data feed Renata had given her access to on Sunday afternoon, the substation's standing emergency-protocol document that Renata had pulled from the foundation's standing post-cascade audit file, the substation's small Google Maps street-view tile from the public road, and the small interview Sage had done with Roy Carmichael on the foundation's encrypted call platform on Tuesday afternoon at four PM Central.
+She had mapped it from the substation's public KCPU customer-facing webpage, the FFIEC concentration-data feed Renata had given her access to on Sunday afternoon, the substation's standing emergency-protocol document that Renata had pulled from Synmatic's standing post-cascade audit file, the substation's small Google Maps street-view tile from the public road, and the small interview Sage had done with Roy Carmichael on Synmatic's encrypted call platform on Tuesday afternoon at four PM Central.
 
 The interview with Roy had been seventy-eight minutes.
 
