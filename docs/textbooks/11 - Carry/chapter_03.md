@@ -1,10 +1,10 @@
 # Chapter 3: The Walk
 
-Cole called Iona Tran from the encrypted line in his study at four fifty-eight AM on Saturday morning, six hours after Margot left, two hours after Cole had slept.
+Cole called Iona Tran from the encrypted line in his study at four fifty-eight AM Saturday morning — six hours after Margot had left and two hours after he had slept.
 
-The caller ID on Iona's phone, when she picked up at four fifty-eight Pacific, read *WESTERLUND.*
+The caller ID on Iona's screen read *WESTERLUND.*
 
-She answered.
+She picked up.
 
 "Cole."
 
@@ -18,23 +18,23 @@ She answered.
 
 "Tell me what your studio looks like at ten AM on a Tuesday."
 
-She was quiet for a second.
+A breath.
 
-"It is going to look the way it looks every Tuesday at ten AM. Maria is at the wheel. Iris is at the design table in the front. Beck is going to be in by ten-thirty. The kiln has been on since six. The front room has six prototypes on the long oak table. Two of them are mine. Four of them are Maria's. The bell on the door rings when somebody walks in. If you walk in at ten AM on a Tuesday I am going to recognize you."
+"It's going to look the way it looks every Tuesday at ten. Maria's at the wheel. Iris is at the design table in the front. Beck comes in by ten-thirty. The kiln's been on since six. There are six prototypes on the long oak table. Two are mine. Four are Maria's. The bell on the door rings when somebody walks in. If you walk in at ten on a Tuesday I'm going to recognize you."
 
-"You are not going to recognize me."
+"You're not going to recognize me."
 
 "Cole."
 
-"Iona. I am going to come into the studio on Tuesday morning at ten. I am going to look like a customer. I am going to look like a customer who has not been a customer in a small ceramics studio in twenty-three years, but I am going to look enough like a customer that the people in the studio are not going to look up from what they are doing. I am going to walk through. I am going to look at the prototypes. I am going to buy an Echo. I am going to pay cash. I am going to leave. I am telling you this for two reasons. The first is that I do not want you to scream when I walk in. The second is that I want you to walk me through the studio the way you would walk through any customer who looked the way I am going to look. Do not give me a tour. Do not introduce me to Maria. Do not pull me aside. Treat me the way you treat any thirty-something man in a cap and a hoodie who walks in alone on a Tuesday morning. Are we clear."
+"Iona. I'm walking into the studio Tuesday morning at ten. I'm going to look like a customer. I'm going to look like a customer who hasn't been a customer in a small ceramics studio in twenty-three years, but I'm going to look enough like one that the people working don't look up. I'm going to walk through. Look at the prototypes. Buy an Echo. Pay cash. Leave. I'm telling you for two reasons. First — don't scream when I come in. Second — walk me through the way you'd walk through any customer in a hoodie and a cap on a Tuesday morning. Don't give me a tour. Don't introduce me to Maria. Don't pull me aside. Are we clear."
 
-"We are clear."
+"Clear."
 
 "Iona."
 
 "Yes."
 
-"There is going to be a second car on the block on Tuesday morning. It is going to have two people in it. They are not going to be obvious. They are going to be there because I am the third-richest person alive and I cannot walk into a studio in Portland without two people in a car. They are not going to come in. They are not going to interfere. They are going to watch the door. If anything happens that is not in the script, they are going to come in. That has not happened in nine years. It is not going to happen Tuesday. I am telling you this because if you see two people sitting in a sedan a block south of your studio at nine-forty on Tuesday morning, those are my people. Do not call the police on them."
+"There's going to be a second car on the block. Two people in it. They're not going to be obvious. They're there because I'm the third-richest person alive and I cannot, on the operational reality of being that person, walk into a studio in Portland without two people in a car. They won't come in. They won't interfere. They'll watch the door. If something happens that's not in the script, they come in. That has not happened in nine years. It will not happen Tuesday. I'm telling you so that if you see two people in a sedan a block south at nine forty, those are mine. Don't call the police on them."
 
 "All right."
 
@@ -42,41 +42,43 @@ She was quiet for a second.
 
 "Yes."
 
-"Forty-eight hours from the call on the satphone, I told you, was Friday."
+"Forty-eight hours from the satphone call was Friday."
 
-"It is Saturday."
+"It's Saturday."
 
-"It is Saturday. I am calling you on Saturday because I needed Friday to write. I am back on the call. You did not close the studio on Friday."
+"It's Saturday. I needed Friday to write. I'm back on the call. You didn't close the studio."
 
-"I did not close the studio on Friday."
+"I didn't close the studio."
 
-"You did not lay anyone off."
+"You didn't lay anyone off."
 
-"I did not lay anyone off."
+"I didn't lay anyone off."
 
-"Good. There will be one more day inside the next eight when you are going to think about closing the studio. Do not close the studio. Do not lay anyone off. The eighth day is Monday. On Monday morning at six-fifteen Pacific you are going to receive an email from a Carrick address you do not currently have in your contacts. The email is going to be about a memo I am sending to the company. The email is going to be a personal note from me, attached to the memo. The memo is going to be public. The personal note is going to be private. The note is going to say one sentence. The sentence is going to be: *Iona. This is what your call did.* Do you understand me."
+"Good. There will be one more day inside the next eight when you'll think about it. Don't. The eighth day is Monday. Monday morning at six fifteen Pacific you'll receive an email from a Carrick address you don't currently have in your contacts. The email is about a memo I'm sending to the company. The memo will be public. The note attached to it for you will be private. The note will say one sentence. *Iona. This is what your call did.* Do you understand me."
 
 "I understand you."
 
-"Until Monday morning at six-fifteen Pacific I want you to live your life as if the call on the satphone never happened. Run the studio. Tell your team you are fine. If a reporter calls, you say *no comment.* On Monday morning at six-fifteen Pacific you read the email. After that we will talk."
+"Until Monday morning at six fifteen, live your life as if the satphone call never happened. Run the studio. Tell your team you're fine. If a reporter calls, *no comment.* Monday at six fifteen you read the email. After that we talk."
 
 "All right."
 
-"Iona."
+"Tuesday morning. Ten."
 
-"Yes."
+"I'll be at the design table."
 
-"Tuesday morning at ten."
-
-"I will be at the design table."
-
-"Goodbye."
+"Goodbye, Iona."
 
 He hung up.
 
-He sat at the desk for a moment.
+He sat at the desk a moment.
 
-Then he stood up. He walked to the window. The sky over the Sound was the color of old pewter. The first ferry of the morning was already approaching the slip. He drank the last of the coffee. He went down to the gym wing. He worked through a short conditioning set with Bear. He showered. He came back upstairs at six twenty. Margot was at the kitchen table with a cup of tea and the morning's *Wall Street Journal.* She had slept four hours on the den couch in her clothes.
+He stood up. He walked to the window. The sky over the Sound was the color of old pewter. The first ferry of the morning was already approaching the slip.
+
+He finished the last of the coffee. Took it cold.
+
+He went down to the gym wing and did a short conditioning set with Bear. Showered. Came back upstairs at six twenty.
+
+Margot was at the kitchen table with a cup of tea and the morning's *Wall Street Journal.* She had slept four hours on the den couch in her clothes.
 
 "Margot."
 
@@ -86,17 +88,17 @@ Then he stood up. He walked to the window. The sky over the Sound was the color 
 
 "I have it."
 
-"I am going to Portland on Tuesday."
+"I'm going to Portland on Tuesday."
 
 She set the tea down.
 
 "Cole."
 
-"I am going to walk through Iona Tran's studio. I am going to buy an Echo. I am going to look at the company we have become from the floor of the studio of one of our sellers. I am not going to make a decision about the memo from the deck of a research vessel and a Gulfstream at thirty-eight thousand feet. I am going to make the decision in the studio. If I walk out of the studio and the memo I have written is still the memo, the memo goes out on Monday. If I walk out of the studio and the memo is not the memo, we have a different conversation."
+"I'm going to walk through Iona Tran's studio. Buy an Echo. Look at the company we've become from the floor of one of our sellers. I'm not making this decision from the deck of a research vessel and a Gulfstream at thirty-eight thousand feet. I'm making the decision in the studio. If I walk out and the memo's still the memo, the memo goes Monday. If I walk out and it isn't, we have a different conversation."
 
-She was quiet for a beat.
+A beat.
 
-She said: "Cole. The memo is the memo. You wrote it on the airplane. I read it in the study last night. The memo is going to be the memo whether you go to Portland or not."
+"Cole. The memo is the memo. You wrote it on the airplane. I read it in the study last night. The memo's going to be the memo whether you go to Portland or not."
 
 "I know it is."
 
@@ -104,47 +106,51 @@ She said: "Cole. The memo is the memo. You wrote it on the airplane. I read it i
 
 He looked at her.
 
-He said: "Because I have been wrong about who our customer is for fifteen years. I am about to send a memo to one point six million people that says I have been wrong. Before I send that memo, I am going to stand in the room with the customer I have been wrong about, in person, and look at her, and look at what we have done to her, and pay her in cash for a vessel I am going to put on the desk in my study and look at every morning for the rest of my professional life. That is why I am going to Portland."
+"Because I've been wrong about who our customer is for fifteen years. I'm about to send a memo to one point six million people that says I've been wrong. Before I send it, I'm going to stand in the room with the customer I've been wrong about, in person, look at her, look at what we've done to her, and pay her in cash for a vessel I'm going to put on the desk in my study and look at every morning for the rest of my professional life. That's why I'm going to Portland."
 
 Margot looked at him over the rim of the teacup.
 
-She said: "All right."
+"All right."
 
 She drank the tea.
 
-She said: "I am coming with you."
+"I'm coming with you."
 
-He said: "Margot."
+"Margot."
 
-She said: "Cole. I am the board chair of this company. The memo is going to be the most consequential single document any commerce CEO has ever sent. The board chair is going to be in the studio on Tuesday morning. I am not going to be in the studio with you. I am going to be in the car a block south. I am going to sit with Mara. I am going to watch the door. I am going to make a phone call I have been meaning to make for nine years to a small-business owner I used to know in Brookline whose business I shut down in 2014. After you leave the studio, I am going to walk in myself. I am going to tell Iona Tran that I am the board chair of the company that has been crushing her. I am going to apologize. I am going to leave. I will fly back to Seattle on the commercial flight. I will be in this house by seven Tuesday night. We will spend Tuesday night doing the final edit on the memo together. Wednesday morning we send it to Owen, Anjali, and Reese. Friday afternoon we send it to Diana. Sunday night we lock the version. Monday at six-fifteen Pacific it goes."
+"Cole. I'm the board chair. The memo is going to be the most consequential single document any commerce CEO has ever sent. The board chair is in the studio Tuesday morning. I'm not in the studio with you. I'm in the car a block south. I'm sitting with Mara. I'm watching the door. I'm making a phone call I've been meaning to make for nine years to a small-business owner I used to know in Brookline whose business I shut down in 2014. After you leave the studio I walk in myself. I tell Iona Tran I'm the board chair of the company that's been crushing her. I apologize. I leave. I fly back to Seattle commercial. I'm in this house by seven Tuesday night. We spend Tuesday night doing the final edit on the memo together. Wednesday morning we send it to Owen, Anjali, and Reese. Friday afternoon to Diana. Sunday night we lock the version. Monday at six fifteen Pacific it goes."
 
 He looked at her.
 
-He said: "Margot."
+"Margot."
 
-She said: "Yes."
+"Yes."
 
-He said: "Thank you."
+"Thank you."
 
-She said: "Drink the coffee. It's cold."
+"Drink the coffee. It's cold."
 
 ---
 
-The Carrick corporate Gulfstream G700 lifted off the runway at Boeing Field at eight oh-four on Tuesday morning. Cole was in the second seat from the back. Margot was across the aisle. Mara was in the seat across from Cole. The detail operator on the second seat behind Mara was a former Army Ranger named Ortiz. The flight to Portland International was thirty-eight minutes.
+The Carrick corporate Gulfstream G700 lifted off Boeing Field at eight oh-four Tuesday morning.
+
+Cole was in the second seat from the back. Margot across the aisle. Mara across from Cole. The detail operator in the seat behind Mara was a former Army Ranger named Ortiz.
+
+Thirty-eight minutes to Portland International.
 
 They landed at eight forty-two. The Suburban was on the apron. Mara handed Cole the prop bag at the bottom of the airstairs.
 
-The bag contained one item.
+One item inside.
 
-The item was a navy blue baseball cap with the logo of the Portland Trail Blazers stitched in red on the front. The cap was new but had been left in a bowl of clean water for sixty seconds and put in a dryer on low heat for ten minutes the night before by an operator in Mara's office, so that the brim had the small ripple that a cap that had been outside in three Pacific Northwest rains had.
+A navy blue baseball cap with the logo of the Portland Trail Blazers stitched in red on the front. The cap was new, but it had been soaked in clean water for sixty seconds and tumbled on low heat for ten minutes the night before by an operator in Mara's office, so the brim had the small ripple a cap that had been outside in three Pacific Northwest rains would have.
 
-Cole put the cap on.
+Cole put it on.
 
-He put on the hoodie he had brought from the Bainbridge house — a charcoal gray Pacific Northwest brand that he had owned for nine years.
+The hoodie he had brought from Bainbridge was a charcoal Pacific Northwest brand he had owned nine years. Lived-in.
 
-He put on the glasses Mara handed him next, which were not the wire-rim glasses he wore in public photographs but a pair of black plastic frames with non-prescription lenses that Cole would put on for the duration of the studio walk.
+Mara handed him the glasses next — not the wire rims from the public photographs, but a pair of black plastic frames with non-prescription lenses. He put them on.
 
-He had not shaved in four days. The stubble on his jaw was already at the length of a beard that had been started on purpose.
+He hadn't shaved in four days. The stubble on his jaw was already at the length of a beard that had been started on purpose.
 
 Mara looked at him.
 
@@ -154,7 +160,7 @@ Mara looked at him.
 
 "You look like a guy who works in IT at a small architecture firm in Vancouver, Washington."
 
-"That is the look."
+"That's the look."
 
 "Good."
 
@@ -162,7 +168,7 @@ Mara looked at him.
 
 "Yes."
 
-"You and Ortiz in the sedan. Block south of Alberta. I am in the studio for forty minutes. I come out the door. I walk one block north, turn left, walk two more blocks to the parking lot of the Vietnamese restaurant where the Suburban will be. I get in the back. We go."
+"You and Ortiz, the sedan, block south of Alberta. Forty minutes in the studio. I come out the door. One block north. Left. Two more blocks to the parking lot of the Vietnamese restaurant. Suburban's there. I get in the back. We go."
 
 "Forty minutes."
 
@@ -172,91 +178,91 @@ Mara looked at him.
 
 "Yes."
 
-"This is the first time you have walked into a public retail space alone in twenty-three years."
+"This is the first time you've walked into a public retail space alone in twenty-three years."
 
-He looked at her.
+He met her eyes.
 
-He said: "I know it is."
+"I know it is."
 
-She said: "Walk slow. Look at the room. Look at the people. Do not look for the exit. The exit is going to be where you left it."
+"Walk slow. Look at the room. Look at the people. Don't look for the exit. The exit is going to be where you left it."
 
-He said: "I know."
+"I know."
 
-She said: "Go."
+"Go."
 
-He walked away from the Suburban onto the sidewalk on NE Alberta Street at nine fifty-six AM Pacific.
+He walked away from the Suburban onto the sidewalk on NE Alberta at nine fifty-six.
 
 ---
 
-The bell on the door of Lacquer & Cup rang once when Cole pushed the door open and stepped inside.
+The bell on the door of Lacquer & Cup rang once when Cole pushed it open and stepped inside.
 
 The studio was the room Iona had described.
 
-Maria was at the wheel at the back of the room. The wheel was a Brent CXR. The clay on the wheel was a porcelain Maria had ordered from a supplier in Sheridan, Oregon, that the studio had been using for seven years. Maria's hands were on the clay. She did not look up.
+Maria was at the wheel at the back. A Brent CXR. The clay on the wheel was a porcelain Maria had been ordering from a supplier in Sheridan, Oregon, for seven years. Her hands were on the clay. She didn't look up.
 
-Iris was at the design table by the front window. Iris was the studio's senior designer. She was thirty-one years old. She had been at Lacquer for two years. She had a small porcelain prototype on the table in front of her and a pencil in her hand. She did not look up.
+Iris was at the design table by the front window. Thirty-one. Two years at Lacquer. A small porcelain prototype on the table in front of her, a pencil in her hand. She didn't look up.
 
-There were six prototypes on the long oak table in the middle of the front room.
+Six prototypes on the long oak table in the middle of the front room.
 
-Three were in a stoneware glaze in a color the studio was calling Shoreline.
+Three in a stoneware glaze the studio was calling Shoreline.
 
-Three were in a matte porcelain in a color the studio had not yet named.
+Three in a matte porcelain the studio hadn't yet named.
 
-Cole stood inside the door for a moment.
+Cole stood inside the door a moment.
 
-The room smelled like wet clay and like the cedar of the shelves at the back of the front room and like the small bouquet of late-October dahlias on the design table in front of Iris.
+The room smelled like wet clay and the cedar of the shelves at the back and the small bouquet of late-October dahlias on the design table in front of Iris.
 
-He walked to the long oak table.
+He crossed to the long oak table.
 
-He picked up one of the matte porcelain prototypes.
+Picked up one of the matte porcelain prototypes.
 
-It was heavier than he had expected it to be.
+Heavier than he had expected.
 
-He held it in both hands for a moment.
+He held it a moment in both hands.
 
-He turned it. The foot ring was small. The lip was thin. The matte glaze caught the light from the front window in a way the stoneware did not.
+Turned it. The foot ring was small. The lip was thin. The matte glaze caught the light from the front window in a way the stoneware didn't.
 
 He set it down.
 
-Iona was at the front of the room behind the small counter where the register sat. She had looked up at the door bell. She looked at Cole. She did not flinch.
+Iona was at the front of the room behind the small counter where the register sat. She had looked up at the door bell. She looked at Cole. She didn't flinch.
 
-She said: "Good morning."
+"Good morning."
 
-He said: "Good morning."
+"Good morning."
 
-He kept his eyes on the prototypes. He picked up the second matte porcelain piece. He turned it.
+He kept his eyes on the prototypes. Picked up the second matte piece. Turned it.
 
-Iona walked out from behind the counter. She stopped at the long oak table.
+Iona walked out from behind the counter. Stopped at the long oak table.
 
-She said: "Anything I can help with."
+"Anything I can help with."
 
-He said: "The matte ones. When are they shipping."
+"The matte ones. When are they shipping."
 
-She said: "Eight weeks."
+"Eight weeks."
 
-He said: "What is the name of the line."
+"What's the line called."
 
-She said: "We are calling it Shoreline. Same as the stoneware version. The matte is going to be a sub-line."
+"Shoreline. Same as the stoneware version. The matte's going to be a sub-line."
 
-He said: "I like the matte better than the stoneware."
+"I like the matte better than the stoneware."
 
-She said: "We think so too. The design team has been arguing about it for three weeks."
+"We think so too. The design team's been arguing about it for three weeks."
 
-He set the second matte porcelain piece down. He moved to the shelves at the back of the front room, where the regular inventory was displayed.
+He set the second matte piece down. Moved to the shelves at the back of the front room, where the regular inventory was displayed.
 
 The Echo line was on the top shelf.
 
-Eleven Echo bud vases were on the top shelf. Five were the moss-green glaze. Three were a slate gray. Three were a small experimental run in a glaze the studio had been working on in the summer that Iona had called Stormwater.
+Eleven Echo bud vases. Five in the moss-green glaze. Three slate gray. Three in a small experimental run in a glaze the studio had been working on in the summer that Iona had called Stormwater.
 
-Cole reached up. He took down the smallest Echo in the moss-green glaze. He held it in his hand.
+Cole reached up. Took down the smallest Echo in moss green. Held it in his hand.
 
 He looked at it.
 
 He looked at it for what felt to him like a long time and was, on Mara's count from the camera Ortiz had placed in the planter box outside the studio window, eighty-two seconds.
 
-The Echo in his hand was wheel-thrown. The small irregularities in the wall, the slightly off-center foot, the soft thumb-mark on the rim — none of them looked like the small irregularities in a machine-formed piece. The thumb-mark was Iona's. He had seen the same thumb-mark on the photographs of the Echo Iona had sent him through the small-business mentorship program nine years earlier, when she had been thirty-one and the studio had been four people and he had bought the first Echo she had ever sold to a stranger.
+The Echo in his hand was wheel-thrown. The small irregularities in the wall — slightly off-center foot, soft thumb-mark on the rim — were not the irregularities of a machine-formed piece. The thumb-mark was Iona's. He had seen the same thumb-mark on the photographs of the Echo Iona had sent him through the small-business mentorship program nine years earlier, when she had been thirty-one and the studio had been four people. He had bought the first Echo she had ever sold to a stranger.
 
-He had not told her at the time that he was the stranger.
+He had not told her, at the time, that he was the stranger.
 
 He had paid two hundred and eighty-three dollars through the program's anonymized purchase channel.
 
@@ -264,11 +270,13 @@ She had used the two hundred and eighty-three dollars to buy three sacks of porc
 
 He had been carrying the receipt in the front pocket of his wallet for nine years.
 
-He had not looked at the receipt in eight.
+He had not looked at it in eight.
 
-He held the Echo in his hand on the top shelf of the studio in Portland on the Tuesday morning seven days before the memo, and he thought about the receipt, and he thought about the form letters from Carrick seller-support, and he thought about the Echo on the Carrick marketplace at twenty-four dollars under the *Stoneware Bud Vase — Hand-Finished Look* listing copy that had been generated by a Carrick AI tool from descriptions Iona had written, and he thought about Phillip Garber, eighty-six years old in a chair in New York, and he thought about the chief scientist of the *Coelacanth* on her dive on the following Tuesday in his absence, and he thought about the boil on the surface six hundred and twenty miles southwest of Guam, and he thought about the morning of August 24, 1995, when he had stood in the kitchen of the Capitol Hill townhouse at five AM and watched a fax machine print the first order Argo Books had ever received from a customer he did not know, and he thought: *I am sixty-two years old. I have built one company. I have spent fifteen years using it to compete with the customer the company was built to serve. The boil has surfaced. The memo is the memo. It goes Monday.*
+He held the Echo on the top shelf of the studio in Portland on the Tuesday morning seven days before the memo, and he thought about the receipt. He thought about the form letters from Carrick seller-support. He thought about the Echo on the Carrick marketplace at twenty-four dollars under the *Stoneware Bud Vase — Hand-Finished Look* listing copy that Carrick's AI tool had generated from her own descriptions. He thought about Phillip Garber, eighty-six years old in a chair in New York. He thought about the chief scientist of the *Coelacanth* on her dive the following Tuesday in his absence. He thought about the boil on the surface six hundred and twenty miles southwest of Guam. He thought about the morning of August 24, 1995, in the kitchen of the Capitol Hill townhouse at five AM, watching a fax machine print the first order Argo Books had ever received from a customer he didn't know.
 
-He took the Echo down off the shelf.
+And he thought: *I am sixty-two years old. I have built one company. I have spent fifteen of the last twenty-six years using it to compete with the customer the company was built to serve. The boil has surfaced. The memo is the memo. It goes Monday.*
+
+He took the Echo off the shelf.
 
 He carried it to the counter.
 
@@ -276,21 +284,21 @@ Iona was back behind the register.
 
 She rang it up.
 
-She said: "Forty-two dollars."
+"Forty-two dollars."
 
 He took two twenties and a five out of his wallet and laid them on the counter.
 
 She made change.
 
-She wrapped the Echo in tissue paper. She put the tissue paper in a small kraft-paper bag. She handed him the bag.
+She wrapped the Echo in tissue paper. Put the tissue paper in a small kraft-paper bag. Handed him the bag.
 
-She said: "Thank you. The Echo is the line that built this studio."
+"Thank you. The Echo's the line that built this studio."
 
-He said: "I can see that."
+"I can see that."
 
 He took the bag.
 
-He looked at her for one second. He nodded.
+He looked at her one second. He nodded.
 
 He walked out the door.
 
@@ -300,19 +308,15 @@ The door closed.
 
 ---
 
-He walked one block north. He turned left. He walked two more blocks west to the parking lot of the Vietnamese restaurant on the corner of NE Alberta and Twenty-Sixth. The Suburban was idling. The back door opened. He got in. Mara was in the passenger seat. Ortiz was driving.
+He walked one block north. Turned left. Walked two more blocks west to the parking lot of the Vietnamese restaurant on the corner of NE Alberta and Twenty-Sixth. The Suburban was idling. The back door opened. He got in. Mara in the passenger seat. Ortiz driving.
 
 Mara handed him a water bottle.
 
-He drank half of it.
+He drank half.
 
-He took the cap off and put it on the seat beside him.
+He took the cap off and put it on the seat beside him. Took the glasses off and put them in the cap. He set the kraft-paper bag with the Echo between his feet on the floor of the Suburban.
 
-He took the glasses off and put them in the cap.
-
-He set the kraft-paper bag with the Echo in it between his feet on the floor of the Suburban.
-
-He said: "Mara."
+"Mara."
 
 "Yes."
 
@@ -320,25 +324,21 @@ He said: "Mara."
 
 "I know it goes Monday."
 
-"Margot is in the studio."
+"Margot's in the studio."
 
-"Margot is in the studio. She is going to be in there for fifteen minutes. She is going to apologize to Iona. Then she is going to ask Iona one question I asked her to ask. After she has the answer, she is going to call me, and I am going to call you. You will know the answer before we land in Seattle."
+"Margot's in the studio. She'll be in there fifteen minutes. She's going to apologize to Iona. Then she's going to ask Iona one question I asked her to ask. After she has the answer, she calls me, and I call you. You'll know the answer before we land in Seattle."
 
-"What is the question."
+"What's the question."
 
 Mara looked at him.
 
-She said: "Cole. The question is whether Iona Tran is willing to be on the front page of the New York Times on the Tuesday after the memo. Because if she is not, the memo runs without her name in it. If she is, the memo runs with her name in it, in the second paragraph, and the story stops being a financial story and starts being the story it actually is. The board chair is in there asking on behalf of the board. You did not want to ask. Margot is asking."
+"Cole. The question is whether Iona Tran is willing to be on the front page of the New York Times the Tuesday after the memo. If she's not, the memo runs without her name in it. If she is, the memo runs with her name in it, in the second paragraph, and the story stops being a financial story and starts being the story it actually is. The board chair is in there asking on behalf of the board. You didn't want to ask. Margot's asking."
 
-He looked at Mara for a beat.
+He looked at Mara a beat.
 
-He said: "Mara."
+"That's why Margot came."
 
-She said: "Yes."
-
-He said: "That is why Margot came."
-
-She said: "That is why Margot came."
+"That's why Margot came."
 
 He sat back against the seat.
 
@@ -346,7 +346,7 @@ He closed his eyes for thirty seconds.
 
 He opened them.
 
-He said: "Get me to the airport."
+"Get me to the airport."
 
 Ortiz drove.
 
@@ -354,7 +354,7 @@ The Suburban turned onto Twenty-Sixth and went south.
 
 The Echo was at Cole's feet.
 
-The memo, in its current draft, in the encrypted laptop bag in the storage compartment behind the rear seat of the Suburban, was the memo it was going to be on Monday morning at six-fifteen Pacific.
+The memo, in its current draft, in the encrypted laptop bag in the storage compartment behind the rear seat of the Suburban, was the memo it was going to be on Monday morning at six fifteen Pacific.
 
 Cole had walked into Iona's studio at nine fifty-six.
 
@@ -364,9 +364,9 @@ He had spent forty-two minutes in the room.
 
 He had paid forty-two dollars.
 
-He had decided, somewhere in the eighty-two seconds he had been holding the Echo in his hand on the top shelf of the back of the studio, that the memo he had been writing on the Gulfstream over the date line was the memo he was going to send. He had not made the decision on the deck of the *Coelacanth.* He had not made the decision on the flight to Seattle. He had not made the decision in the conversation with Anjali on Friday morning. He had not made the decision in the conversation with Owen on Friday afternoon. He had not made the decision in the conversation with Margot at one twenty AM Saturday in his study.
+He had decided, somewhere in the eighty-two seconds he had been holding the Echo on the top shelf in the back of the studio, that the memo was the memo he was going to send. He had not decided on the deck of the *Coelacanth.* He had not decided on the flight to Seattle. He had not decided in the conversation with Anjali on Friday morning. He had not decided in the conversation with Owen on Friday afternoon. He had not decided in the conversation with Margot at one twenty AM Saturday in his study.
 
-He had made the decision standing on the floor of a twelve-person ceramics studio in Portland with an Echo bud vase in his hands.
+He had decided standing on the floor of a twelve-person ceramics studio in Portland with an Echo bud vase in his hands.
 
 The memo was the memo.
 

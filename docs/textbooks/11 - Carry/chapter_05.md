@@ -1,38 +1,40 @@
 # Chapter 5: The Boardroom
 
-Diana Marquez walked into the eleventh-floor boardroom at eight forty-eight on the Wednesday morning two days after the memo, with her father's seventy-eight-year-old voice still in her ear from the phone call she had taken at six AM Pacific time, and the kraft-paper envelope from his lawyer in San Diego that had arrived overnight in her hand.
+Diana Marquez walked into the eleventh-floor boardroom at eight forty-eight Wednesday morning — two days after the memo — with her father's seventy-eight-year-old voice still in her ear from the phone call she had taken at six AM Pacific, and the kraft-paper envelope from his lawyer in San Diego in her hand.
 
 She set the envelope on the table at her assigned seat.
 
 She sat down.
 
-She did not open the envelope.
+She did not open it.
 
-The boardroom was the same boardroom Diana had walked into for fifty-two board meetings across nine years of running Carrick Retail. The table was the same long teak table. The chairs were the same chairs. The view through the south window was the same view of the Sound. What was different on Wednesday morning was that the room had been preparing, since five forty-five AM, for what was either going to be the vote that ratified the most consequential strategic pivot in commerce history or the vote that fired its CEO.
+The boardroom was the same boardroom she had walked into for fifty-two board meetings across nine years of running Carrick Retail. Same long teak table. Same chairs. The view through the south window the same view of the Sound.
 
-Carrick's stock had closed Tuesday down twenty-four percent from the Friday close before the memo.
+What was different on Wednesday morning was that the room had been preparing, since five forty-five AM, for what would be either the vote that ratified the most consequential strategic pivot in commerce history or the vote that fired its CEO.
 
-The market capitalization of Carrick had moved one hundred and seventy-eight billion dollars in two trading days.
+Carrick had closed Tuesday down twenty-four percent from Friday.
 
-Drew Sallinger of Sallinger Capital had filed a 13D at four-twelve PM Tuesday disclosing an eight-billion-dollar short position.
+A hundred and seventy-eight billion dollars of market cap had moved in two trading days.
 
-The Wall Street Journal had run a front-page story Tuesday morning under the byline of Adelaide Krug, who had covered Carrick for fourteen years, titled *Westerlund Writes the Memo Microsoft Tried to Write in 1995 and Sends It Without His Board.*
+Drew Sallinger of Sallinger Capital had filed a 13D at four twelve PM Tuesday disclosing an eight-billion-dollar short position.
 
-Roland Vance had been on CNBC at seven AM Eastern on Tuesday morning, in his retirement office in Boston, in a navy blazer he had been photographed in for nine years, and had said, on tape, *I have been on the Carrick board for twenty-three years. I have voted with Cole on every consequential strategic decision he has made. I am not going to vote with him on this one. I will be in the boardroom on Wednesday morning to say so to his face.*
+The *Wall Street Journal* had run a Tuesday-morning front-pager under Adelaide Krug's byline — Krug had covered Carrick for fourteen years — titled *Westerlund Writes the Memo Microsoft Tried to Write in 1995 and Sends It Without His Board.*
+
+Roland Vance had been on CNBC at seven AM Eastern Tuesday morning, in his retirement office in Boston, in a navy blazer he had been photographed in for nine years, and had said, on tape: *I have been on the Carrick board for twenty-three years. I have voted with Cole on every consequential strategic decision he has made. I am not going to vote with him on this one. I will be in the boardroom on Wednesday morning to say so to his face.*
 
 He had said it on national television.
 
 He had said it before the vote.
 
-He was, by Diana's read on the drive in from her house in Madison Park, going to vote no.
+He was, by Diana's read on the drive in from Madison Park, going to vote no.
 
 He was also going to make Cole earn the other votes.
 
-Diana had read the memo eleven times in two days. She had read it the first time on the desktop in her office at six fifteen AM Monday and had sat at her desk for nine minutes without moving, with the screen reflecting the early-morning light from the window, with her hands flat on the keyboard. She had read it the second time at six twenty-four when her assistant had walked in carrying the paper printout Cole had asked the four executives in the room with him to be given on physical paper. She had read it the third time at noon on Monday, after the all-hands video in the auditorium, in her office with the door closed, with the personal note from Cole that had arrived in her inbox at 6:14:59 Pacific Monday morning open on the second monitor.
+Diana had read the memo eleven times in two days. The first read had been on the desktop in her office at six fifteen AM Monday. She had sat at her desk for nine minutes without moving, the screen reflecting the early-morning light from the window, her hands flat on the keyboard. The second read had been at six twenty-four when her assistant walked in with the paper printout. The third read at noon Monday, after the all-hands video, in her office with the door closed, the personal note from Cole that had arrived at 6:14:59 Pacific open on the second monitor.
 
-The personal note from Cole had said one sentence.
+The note had said one sentence.
 
-The sentence had said: *Diana. The line in the memo is yours to redact if you want it out. I am sending the memo at six-fifteen either way. — C.*
+*Diana. The line in the memo is yours to redact if you want it out. I am sending the memo at six-fifteen either way. — C.*
 
 The line was the line about her father's grocery store in Tijuana.
 
@@ -42,23 +44,25 @@ She had texted Cole at 6:14:03 Pacific Monday: *Cole. Leave the line. My father 
 
 Cole had sent the memo at 6:15:01.
 
-Her father had read it on Tuesday morning in San Diego at five-eleven AM Pacific time, in the kitchen of the apartment in Chula Vista her parents had moved into in 2007 after the second grocery store, the one her father had opened in 2004 in a different neighborhood in Tijuana hoping to salvage what the Walmart Supercenter had taken from the first one, had finally closed in 2006. He had called her at six AM Wednesday. The call had run forty minutes.
+Her father had read it on Tuesday morning in San Diego at five eleven AM Pacific, in the kitchen of the apartment in Chula Vista her parents had moved into in 2007 after the second store closed in 2006 — the second store her father had opened in 2004 in a different neighborhood in Tijuana, trying to salvage what the Walmart Supercenter had taken from the first one.
 
-The kraft-paper envelope on the boardroom table was from her father's lawyer in San Diego. It had been overnighted on Tuesday afternoon. The contents of the envelope, Diana had learned in the phone call at six, were a notarized letter that her father had written and signed on Tuesday afternoon in the lawyer's office in downtown San Diego, addressed to the Carrick board of directors, dated Wednesday morning.
+He had called her at six AM Wednesday. The call had run forty minutes.
 
-She had not read the letter.
+The kraft-paper envelope on the table was from her father's lawyer in San Diego. Overnighted Tuesday afternoon. The contents, Diana had learned from her father in the six-AM call, were a notarized letter that her father had written and signed in the lawyer's office in downtown San Diego on Tuesday afternoon, addressed to the Carrick board, dated Wednesday morning.
 
-She knew what the letter said.
+She had not read it.
 
-Her father had told her on the phone what the letter said.
+She knew what it said.
 
-The letter said, in twenty-two lines in his lawyer's English and the signature underneath in his own Spanish hand, that he, Hector Eladio Marquez, of Chula Vista, California, formerly of Tijuana, Baja California, Mexico, was writing in support of his daughter Diana's appointment as interim Chief Executive Officer of the future Carrick Retail Co., and that he was writing because his daughter had spent twenty-one years of her professional life working for the company that had, in the year 2003, by means of a different name and a different city, put him out of business, and that she had told him, in their telephone conversation at six AM Pacific the previous morning, that she was going to be the executive who hand-delivered the equity of a Carrick that had crushed her family back to the families it had been crushing for fifteen years, and that he, Hector, had spent twenty-three years waiting to be able to write a letter like this one to anyone, and that he was now writing it to the board of directors of Carrick, Inc., on the morning the board was going to vote on whether his daughter's company was going to do the thing he had been told for twenty-three years no large American company would ever do, which was to give the business back to the people who had built it.
+Her father had told her on the phone.
 
-He had asked the lawyer to enclose, with the letter, a photograph.
+The letter said, in twenty-two lines of the lawyer's English and her father's Spanish hand at the bottom, that he, Hector Eladio Marquez of Chula Vista, California, formerly of Tijuana, Baja California, Mexico, was writing in support of his daughter Diana's appointment as interim CEO of the future Carrick Retail Co., and that he was writing because his daughter had spent twenty-one years of her professional life working for the company that had, in 2003, by means of a different name and a different city, put him out of business, and that she had told him she was going to be the executive who hand-delivered the equity of a Carrick that had crushed her family back to the families it had been crushing for fifteen years, and that he, Hector, had spent twenty-three years waiting to write a letter like this one to anyone.
 
-The photograph was of the front window of the grocery store in Tijuana on the morning of October 14, 2003, twelve days before the Walmart Supercenter opening, with Hector at thirty-six years old standing under the sign for the store, which had been called *Mercado Marquez*, holding the four-year-old Diana on his hip.
+He had asked the lawyer to enclose a photograph.
 
-Diana had seen the photograph once before. It had hung on the wall of her father's office in the second store. Her father had kept it in a small wooden frame after the second store closed. She had not seen the photograph in nineteen years.
+The photograph was of the front window of the grocery store in Tijuana on the morning of October 14, 2003 — twelve days before the Walmart Supercenter opening — with Hector at thirty-six standing under the sign for the store, which had been called *Mercado Marquez,* holding a four-year-old Diana on his hip.
+
+Diana had seen the photograph once before. It had hung on the wall of her father's office in the second store. After the second store closed her father had kept it in a small wooden frame in the apartment. She had not seen the photograph in nineteen years.
 
 She did not open the envelope.
 
@@ -68,33 +72,33 @@ The board members began to file in.
 
 ---
 
-Margot Halloran walked in at eight fifty-one and sat down in the chair at the head of the table.
+Margot Halloran walked in at eight fifty-one. Sat down at the head of the table.
 
-She did not say good morning to anyone. She set her own paper folder on the table, opened it, set her reading glasses on top of it, and looked once around the table to confirm the room.
+She did not say good morning. She set her own paper folder on the table, opened it, set her reading glasses on top, and looked once around the room to confirm.
 
-Cole walked in at eight fifty-seven. He was in the dark blue suit. He set the encrypted laptop on the table at the seat to Margot's right. He did not sit down. He stood behind the chair with his hand on the back of it. He nodded at each of the directors in turn. He stopped at Roland Vance. He nodded. Roland nodded back. Roland was in the navy blazer he had worn on CNBC Tuesday morning.
+Cole walked in at eight fifty-seven. Dark blue suit. Set the encrypted laptop on the table at the seat to Margot's right. He did not sit down. He stood behind the chair with his hand on the back of it. He nodded at each of the directors in turn. He stopped at Roland Vance. He nodded. Roland nodded back. Roland was in the navy blazer he had worn on CNBC.
 
-The remaining board members were:
+The remaining directors at the table:
 
-Cassandra Mei, sixty-eight, former CEO of a Pacific Northwest specialty retailer, joined the board in Year minus seven.
+Cassandra Mei, sixty-eight, former CEO of a Pacific Northwest specialty retailer.
 
-Bill Okonkwo (no relation to Reese), sixty-three, former CEO of a Texas-based oil services firm, joined in Year minus six.
+Bill Okonkwo, sixty-three, former CEO of a Texas-based oil services firm. No relation to Reese.
 
-Margaret Lin, fifty-six, biotech-CEO-turned-board-professional, joined in Year minus four.
+Margaret Lin, fifty-six, biotech-CEO-turned-board-professional.
 
-Theodora Mendez, sixty-eight, family-office investor, joined in Year minus eleven.
+Theodora Mendez, sixty-eight, family-office investor.
 
-Diane Kahale, fifty-nine, former technology CEO, joined in Year minus four.
+Diane Kahale, fifty-nine, former technology CEO.
 
-Marcus Rajagopalan, fifty-two, former private equity operating partner, joined in Year minus two.
+Marcus Rajagopalan, fifty-two, former private-equity operating partner.
 
-Charlie Whitcombe, fifty-four, independent director, joined eighteen months ago.
+Charlie Whitcombe, fifty-four, independent director.
 
-Plus Margot. Plus Cole. Plus Diana, who sat as a non-voting EVP at this meeting because the meeting concerned her appointment. Plus the corporate secretary, who sat in the corner.
+Plus Margot. Plus Cole. Plus Diana, sitting non-voting on a meeting concerning her own appointment. Plus the corporate secretary in the corner.
 
 Eleven voting directors.
 
-The vote was going to need eight.
+The vote needed eight.
 
 Margot looked at the clock on the wall.
 
@@ -102,91 +106,85 @@ Eight fifty-nine and thirty seconds.
 
 She waited the thirty seconds.
 
-At nine she said: "I'm calling this meeting to order. This is a special meeting of the board of directors of Carrick, Inc. The purpose of the meeting is the ratification or rescission of the strategic pivot communicated to the company in the all-employee memo of Monday morning. I will preside. Cole will present for thirty minutes. Then we will discuss. Then we will vote. The vote, if we reach it, will determine whether Carrick proceeds with the strategy as announced. If the vote fails, I will accept Cole's resignation as Chief Executive Officer effective immediately, and the board will move to an interim succession plan I have prepared with corporate counsel. I want everyone in this room to know, before Cole begins, that I have read the memo seventeen times, that I have signed off on its content and its release, and that I am, at this meeting, voting to ratify it. Cole."
+At nine she said: "I'm calling this meeting to order. This is a special meeting of the board of Carrick, Inc. The purpose is the ratification or rescission of the strategic pivot communicated in the all-employee memo of Monday morning. I will preside. Cole will present for thirty minutes. Then we discuss. Then we vote. If the vote fails, I'll accept Cole's resignation as Chief Executive Officer effective immediately, and the board will move to an interim succession plan I've prepared with corporate counsel. I want everyone in this room to know, before Cole begins, that I've read the memo seventeen times, that I've signed off on its content and its release, and that I am, at this meeting, voting to ratify it. Cole."
 
 Cole did not sit down.
 
-He pulled the chair back from the table. He walked four steps to the south window. He turned. He stood with his back to the window, in the long horizontal nine-AM light off the Sound, and he looked at the eleven voting directors at the table.
+He pulled the chair back from the table. Walked four steps to the south window. Turned. Stood with his back to the window, in the long horizontal nine-AM light off the Sound, and he looked at the eleven voting directors.
 
-He said: "I am not going to use the laptop. I am not going to use slides. I have a single piece of paper in my pocket. I am going to look at it once. The rest of what I say is in my head. The thirty minutes start now."
+"I'm not using the laptop. I'm not using slides. I have a single piece of paper in my pocket. I'm going to look at it once. The rest is in my head. The thirty minutes start now."
 
 He looked at the wall clock.
 
 Nine oh-one.
 
-He began to talk.
+He began.
 
 ---
 
-He talked for twenty-eight minutes.
+He talked twenty-eight minutes.
 
-He did not start with the financial model. He did not start with the AI commoditization wave. He did not start with the ESOP mechanics. He did not start with Carrick Basics or Iona Tran or the personal contribution.
+He did not start with the financial model. He did not start with the AI commoditization wave. He did not start with the ESOP mechanics or Carrick Basics or Iona Tran or the personal contribution.
 
 He started with the *Coelacanth.*
 
-He told them about the deck. He told them about the satellite-phone call. He told them about turning the ship around. He told them about the helicopter to Guam and the Gulfstream over the date line and the opening sentence of the memo as it had landed on him in the dark cabin at thirty-eight thousand feet. He told them about the walk through Iona's studio in Portland. He told them about the eighty-two seconds with the Echo bud vase on the top shelf at the back of the room.
+He told them about the deck. The satellite-phone call. Turning the ship around. The helicopter to Guam. The Gulfstream over the date line. The opening sentence of the memo as it had landed on him in the dark cabin at thirty-eight thousand feet. The walk through Iona's studio in Portland. The eighty-two seconds with the Echo on the top shelf.
 
-Then he walked them through the financial model.
+Then he walked them through the model.
 
 He named every number.
 
-He named the AI-piranha thirty-month window. He named the cash-flow trajectory of the no-change scenario. He named the cash-flow trajectory of the full-divestiture scenario. He named the four point two billion dollars he was putting in personally. He named the seven-year ESOP timeline. He named the eighty-four-thousand-position workforce reduction. He named the ninety-thousand-position reassignment to platform-fulfillment at higher wages. He named the four hundred and seventy thousand positions that would become co-owned at the end of Year Seven.
+The AI-piranha thirty-month window. The cash-flow trajectory of the no-change scenario. The cash-flow trajectory of the full-divestiture scenario. The four point two billion dollars he was putting in personally. The seven-year ESOP timeline. The eighty-four-thousand-position workforce reduction. The ninety-thousand-position reassignment at higher wages. The four hundred and seventy thousand positions that would become co-owned by the end of Year Seven.
 
-He named the stock movement. Down twenty-four through Tuesday. He named the floor he expected the stock to hit. Down thirty-five to forty-two by Day Twenty. He named the recovery curve. Stable below by Day Ninety. At or above pre-announcement by Year Three. Above by Year Five. Two-times by Year Seven.
+He named the stock movement. Down twenty-four through Tuesday. He named the floor. Down thirty-five to forty-two by Day Twenty. He named the recovery curve. Stable below by Day Ninety. At or above pre-announcement by Year Three. Above by Year Five. Two-times by Year Seven.
 
-He named Drew Sallinger's eight-billion-dollar short position. He named the meeting he was going to take with Sallinger in New York the following Friday night. He named the Wall Street Journal piece. He named the Adelaide Krug byline.
+He named Drew Sallinger's eight-billion-dollar short. He named the meeting he was going to take with Sallinger in New York the following Friday night. He named the *Journal* piece. He named the Adelaide Krug byline.
 
-He named Roland Vance's CNBC appearance.
+He named Roland's CNBC appearance.
 
 He turned and looked at Roland.
 
-He said: "Roland."
+"Roland."
 
-Roland said: "Cole."
+"Cole."
 
-Cole said: "You told the country on Tuesday morning that you were going to vote against me. You did it before the meeting. You did it before I had the chance to make my case to you. You did it because you have been on this board for twenty-three years and you have earned the right to do it whenever you want, on whatever schedule you choose, without consulting me. I am not asking you to retract what you said. I am not asking you to vote any way other than the way your judgment tells you to vote. I am telling you, in this room, with the board listening, that I have read every position paper you have written on platform strategy across the last decade. I know your argument. I know your case. I respect your case. I am not going to relitigate it in this room because I am not going to win it by relitigating it. I am going to win it by being right. The next thirty months are going to be the proof. I want you to vote your conscience. I also want you to know that if I am still the CEO of this company at the end of the meeting, and you are still on the board, the door of my office is going to stay open to you, the same way it has been open to you since 2003."
+"You told the country on Tuesday morning that you were going to vote against me. You did it before the meeting. You did it before I had the chance to make my case. You did it because you've been on this board twenty-three years and you've earned the right to do it whenever you want, on whatever schedule you choose, without consulting me. I'm not asking you to retract it. I'm not asking you to vote any way other than the way your judgment tells you. I'm telling you, in this room, with the board listening, that I've read every position paper you've written on platform strategy across the last decade. I know your argument. I know your case. I respect your case. I'm not going to relitigate it in this room because I'm not going to win it by relitigating it. I'm going to win it by being right. The next thirty months are going to be the proof. I want you to vote your conscience. I also want you to know that if I'm still CEO at the end of this meeting, and you're still on this board, my door stays open to you, same way it has since 2003."
 
-Roland did not say anything for a beat.
+Roland didn't say anything for a beat.
 
-Then he said: "Cole."
+Then: "Cole."
 
 "Yes."
 
 "You knew what I was going to say on CNBC Tuesday morning."
 
-"I knew. Mara told me at six-twenty Pacific on Tuesday morning when the producer reached out to her at five forty-five AM Eastern. I told Mara to thank the producer and to let you proceed. I did not call you to ask you not to do the interview. I did not text you. I let you go on the air. I let you say what you said. I want the country to know that the people opposing this pivot are doing it on principle and not because they are being suppressed. You went on the air for me as much as against me."
+"I knew. Mara told me at six twenty Pacific Tuesday when the producer reached out to her at five forty-five AM Eastern. I told Mara to thank the producer and to let you proceed. I didn't call you. I didn't text you. I let you go on the air. I let you say what you said. I want the country to know that the people opposing this pivot are doing it on principle and not because they're being suppressed. You went on the air for me as much as against me."
 
 Roland was quiet.
 
-He said: "Cole. I did not know that. I thought you were going to be furious."
+"Cole. I didn't know that. I thought you were going to be furious."
 
-Cole said: "I was furious for nine minutes on Tuesday morning. I was over it by nine ten. The pivot has to be ratified by a board that has had the chance to publicly oppose it. The vote in this room today is going to be a real vote because of you. I am not going to thank you for that in public. I will thank you for it now."
+"I was furious for nine minutes Tuesday morning. I was over it by nine ten. The pivot has to be ratified by a board that's had the chance to publicly oppose it. The vote in this room today is going to be a real vote because of you. I'm not going to thank you for that in public. I'll thank you for it now."
 
-Roland looked at him for a long moment.
+Roland looked at him a long moment.
 
-He said: "You're a son of a bitch, Cole."
+"You're a son of a bitch, Cole."
 
-Cole said: "I have been told."
+"I've been told."
 
-Roland said: "I am still going to vote no."
+"I'm still going to vote no."
 
-Cole said: "I know you are."
+"I know you are."
 
 Roland sat back.
 
 He folded his hands.
 
-Cole walked back to the chair he had been standing behind.
-
-He sat down.
-
-He looked at the clock.
+Cole walked back to the chair he had been standing behind. Sat down. Looked at the clock.
 
 Nine twenty-nine.
 
-He said: "I am done. The next forty minutes are yours."
-
-He sat down.
+"I'm done. The next forty minutes are yours."
 
 ---
 
@@ -196,19 +194,19 @@ Roland Vance set both hands flat on the table in front of him and slid the small
 
 Then he said: "Margot."
 
-Margot said: "Roland."
+"Roland."
 
-Roland said: "I am exercising the chair-recognized motion procedure under Section 4.2 of the company's board governance protocols. I am making a motion. I am, by the procedure, allowed to make the motion in the moment, and I am making it now. I want it on the record before the discussion begins."
+"I'm exercising the chair-recognized motion procedure under Section 4.2 of the company's board governance protocols. I'm making a motion. I'm, by the procedure, allowed to make the motion in the moment. I'm making it now. I want it on the record before the discussion begins."
 
-He paused for half a beat.
+A half-beat pause.
 
-"The motion is as follows. The board moves, immediately, to remove Cole Westerlund as Chief Executive Officer of Carrick, Incorporated, on grounds of demonstrable mental incompetence, and to recommend that he voluntarily submit himself to inpatient psychiatric evaluation at a recognized facility for a period not to exceed thirty days, after which the board will reassess whether the strategic-pivot proposal is the product of a sound mind. I am seconding my own motion under the chair-recognized motion procedure. The motion is on the table. I am asking for a vote."
+"The motion is as follows. The board moves, immediately, to remove Cole Westerlund as Chief Executive Officer of Carrick, Incorporated, on grounds of demonstrable mental incompetence, and to recommend that he voluntarily submit himself to inpatient psychiatric evaluation at a recognized facility for a period not to exceed thirty days, after which the board will reassess whether the strategic-pivot proposal is the product of a sound mind. I'm seconding my own motion under the chair-recognized motion procedure. The motion is on the table. I'm asking for a vote."
 
 The room stopped.
 
 Diana stopped.
 
-Margot, who had presided over forty-two board meetings across the previous six years, was opening her mouth to respond when she saw the small movement Cole made with his right shoulder.
+Margot — who had presided over forty-two board meetings across the previous six years — was opening her mouth to respond when she saw the small movement Cole made with his right shoulder.
 
 She did not finish opening her mouth.
 
@@ -218,7 +216,7 @@ Cole did not say anything.
 
 Cole stood up from his chair.
 
-He walked, in the unhurried way a man walks when he has decided that the next twenty-two seconds are going to be his, around the long teak table.
+He walked, in the unhurried way a man walks when he's decided the next twenty-two seconds are going to be his, around the long teak table.
 
 He stopped behind Roland.
 
@@ -226,13 +224,13 @@ He picked Roland up by the lapels of the navy blazer Roland had been wearing on 
 
 He then, with his other hand, picked up Theodora Mendez by the lapels of the cream-colored suit she had been wearing for nine years to board meetings.
 
-The two directors had a combined weight, by Diana's later calculation from the published height-and-weight specifications on their respective LinkedIn-profile press-photo metadata, of approximately three hundred and twenty pounds. Cole's trap-bar deadlift max, as logged on the morning's strength session with Bear Doerksen at five-twenty AM Pacific, was seven hundred and fifteen pounds at lockout with three lengths of ship's chain per side providing the accommodating resistance. Cole had pulled it twice that morning. He had not been winded. The math worked. There was margin.
+The two directors had a combined weight, by Diana's later calculation from the height-and-weight specifications on their LinkedIn press-photo metadata, of approximately three hundred and twenty pounds. Cole's trap-bar deadlift max, logged on the morning's session with Bear at five twenty AM Pacific, was seven hundred and fifteen pounds at lockout with three lengths of ship's chain per side providing accommodating resistance. He had pulled it twice that morning. He had not been winded. The math worked. There was margin.
 
 Cole held them, one in each hand, at approximately his shoulder height.
 
 He brought their heads together.
 
-The sound was not a sound Diana had a name for at the time. She would, in the years that followed, file it under *the sound from the boardroom.* The sound had a register she had previously associated only with the small wooden mallet judges used in courtrooms in movies.
+The sound was not a sound Diana had a name for at the time. She would, in the years that followed, file it under *the sound from the boardroom.* It had a register she had previously associated only with the small wooden mallet judges used in courtrooms in movies.
 
 Cole set Roland back in his chair.
 
@@ -242,7 +240,7 @@ He walked back to the head of the table.
 
 He turned to face the room.
 
-He said: "Meeting adjourned."
+"Meeting adjourned."
 
 He sat down.
 
@@ -250,17 +248,17 @@ The room did not move.
 
 Margot, after a beat, looked at the clock on the wall. The clock read nine thirty-one. The agenda allotted three hours for the meeting. The meeting had been called to order at nine. The meeting had, by her arithmetic, two hours and fifty-nine minutes remaining.
 
-She said: "Cole."
+"Cole."
 
-Cole said: "Margot."
+"Margot."
 
-She said: "The meeting has two hours and fifty-nine minutes remaining on the agenda before we vote."
+"The meeting has two hours and fifty-nine minutes remaining on the agenda before we vote."
 
-Cole said: "I was speaking metaphorically. Continue."
+"I was speaking metaphorically. Continue."
 
 Margot continued.
 
-The small bruise that would, by Thursday morning, be visible across the bridge of Roland's nose was, at the time of his next contribution to the meeting, not yet visible. Theodora Mendez, in her seat, set her hand on the back of her own head for a moment, then put it back in her lap. Neither director referenced the moment. The board's general counsel, sitting against the wall, did not reference the moment. The corporate secretary, taking the minutes, did not record the moment. The minutes for the meeting, when published the following Friday, showed that the discussion had begun at nine twenty-nine and continued without procedural interruption.
+The small bruise that would, by Thursday morning, be visible across the bridge of Roland's nose was, at the time of his next contribution to the meeting, not yet visible. Theodora Mendez, in her seat, set her hand on the back of her own head for a moment, then put it back in her lap. Neither director referenced the moment. The board's general counsel did not reference it. The corporate secretary, taking minutes, did not record it. The minutes for the meeting, when published the following Friday, showed that discussion had begun at nine twenty-nine and continued without procedural interruption.
 
 The moment was, in the official record of the meeting, not a moment.
 
@@ -276,21 +274,21 @@ Bill Okonkwo asked four operational questions. Cole answered them.
 
 Margaret Lin asked one question about regulatory exposure. Priya Bhattacharya, sitting in the corner as general counsel, walked her through the answer.
 
-Diane Kahale spoke in support of the strategy in operational terms. She was, by Diana's read, going to vote yes.
+Diane Kahale spoke in support in operational terms.
 
 Marcus Rajagopalan spoke in support. So did Charlie Whitcombe. So did Cassandra Mei.
 
-Roland spoke last.
+Roland spoke last. Eleven minutes.
 
-He spoke for eleven minutes.
+He laid out the case against the pivot in the cool measured language he had used on CNBC. He named the risks. He named the precedents that had failed. He named the institutional shareholder rotation. He named the timeline pressure. He named the operational complexity of an ESOP transition at this scale. He did not name Cole's personal contribution. He had been told, on the call he had taken from Margot at five PM Tuesday evening, that the four point two billion wasn't the kind of number a board member opposed in public on the merits. He had agreed.
 
-He laid out the case against the pivot in the cool measured language he had used on CNBC Tuesday morning. He named the risks. He named the precedents that had failed. He named the institutional shareholder rotation. He named the timeline pressure. He named the operational complexity of an ESOP transition at this scale. He did not name Cole's personal contribution. He had been told, on the call he had taken from Margot at five PM Tuesday evening, that the four point two billion was not the kind of number a board member opposed in public on the merits, and Roland had agreed.
+He closed:
 
-He closed by saying: *I have served on this board for twenty-three years. I have been wrong about three or four of the calls I have made across those years and I have been right about most of the rest. I do not know, today, whether I am going to be right about this one. I am going to vote my conscience. My conscience says this is too big, too fast, and too sure. The CEO is going to operate this company at a level of conviction this board has not yet seen, and that conviction is going to be either the most important asset of this company across the next decade or the asset that breaks it. I am voting against the strategy not because I think Cole is wrong but because I have, in twenty-three years of doing this work, developed a discomfort with conviction in unsupported magnitudes. I will respect the outcome of the vote. If the strategy is ratified, I will tender my resignation effective immediately. I am not the right director to sit on a board executing a strategy I have voted against. If the strategy is not ratified, I will continue to serve. Either way, I have one ask of the chair before we vote."
+*I have served on this board for twenty-three years. I have been wrong about three or four of the calls I have made across those years and I have been right about most of the rest. I do not know, today, whether I am going to be right about this one. I am going to vote my conscience. My conscience says this is too big, too fast, and too sure. The CEO is going to operate this company at a level of conviction this board has not yet seen, and that conviction is going to be either the most important asset of this company across the next decade or the asset that breaks it. I am voting against the strategy not because I think Cole is wrong but because I have, in twenty-three years of doing this work, developed a discomfort with conviction in unsupported magnitudes. I will respect the outcome of the vote. If the strategy is ratified, I will tender my resignation effective immediately. I am not the right director to sit on a board executing a strategy I have voted against. If the strategy is not ratified, I will continue to serve. Either way, I have one ask of the chair before we vote.*
 
-Margot said: "Roland."
+Margot: "Roland."
 
-He said: "Margot. I would like to read into the record a one-paragraph statement Hector Eladio Marquez of Chula Vista, California, has overnighted to this board. The statement is in front of his daughter, who is sitting at the side of the table. The statement is in a sealed envelope. Hector's lawyer in San Diego sent it by certified courier. I called the lawyer at six-thirty AM this morning to confirm authenticity. I am asking that Diana, with her father's permission, read the paragraph into the record. I am asking because the board should hear the words on the record before the vote. I am asking because, in my judgment, the words are the words this board should have the discomfort of hearing before it casts its ballots."
+"Margot. I'd like to read into the record a one-paragraph statement Hector Eladio Marquez of Chula Vista, California, has overnighted to this board. The statement is in front of his daughter, who is sitting at the side of the table. The statement is in a sealed envelope. Hector's lawyer in San Diego sent it by certified courier. I called the lawyer at six thirty AM this morning to confirm authenticity. I'm asking that Diana, with her father's permission, read the paragraph into the record. I'm asking because the board should hear the words on the record before the vote. I'm asking because, in my judgment, the words are the words this board should have the discomfort of hearing before it casts its ballots."
 
 Diana looked at Roland.
 
@@ -302,15 +300,15 @@ She had told her father on the phone at six AM that the envelope was on the tabl
 
 Her father had told her, in Spanish, *Mija. The letter is for the board. Read it.*
 
-Diana opened the envelope.
+She opened the envelope.
 
 She read the letter.
 
 She read the twenty-two lines.
 
-She did not cry.
+She didn't cry.
 
-She did not look up.
+She didn't look up.
 
 She read the closing sentence in her father's English: *I, Hector Eladio Marquez, of Chula Vista, California, formerly of Tijuana, Baja California, Mexico, hereby express to the board of directors of Carrick, Incorporated, my support for the appointment of my daughter Diana to lead the transition of Carrick Retail to the people who built it.*
 
@@ -322,7 +320,7 @@ Margot looked at Roland.
 
 Roland nodded once.
 
-Margot said: "Thank you, Roland. Thank you, Diana. Thank you, Hector. I am calling the vote. All in favor of ratifying the strategic pivot as communicated in the memo of Monday morning, please indicate."
+Margot: "Thank you, Roland. Thank you, Diana. Thank you, Hector. I'm calling the vote. All in favor of ratifying the strategic pivot as communicated in the memo of Monday morning, please indicate."
 
 She raised her hand.
 
@@ -332,35 +330,35 @@ Theodora Mendez raised hers. Bill Okonkwo raised his. Margaret Lin raised hers. 
 
 Nine.
 
-Margot said: "Opposed."
+"Opposed."
 
 Roland raised his.
 
 One.
 
-Margot said: "Abstaining."
+"Abstaining."
 
 No hands.
 
-She said: "The motion carries nine to one with no abstentions. The strategy is ratified. Roland, do you wish to tender your resignation now or later in the day."
+"The motion carries nine to one with no abstentions. The strategy is ratified. Roland, do you wish to tender your resignation now or later in the day."
 
-Roland said: "Now."
+"Now."
 
-He took an envelope out of the inside pocket of the navy blazer. He set it on the table. He pushed it across to Margot.
+He took an envelope out of the inside pocket of the navy blazer. Set it on the table. Pushed it across to Margot.
 
-Margot picked it up. She slid it into the front of her folder.
+She picked it up. Slid it into the front of her folder.
 
-She said: "Thank you, Roland. For twenty-three years."
+"Thank you, Roland. For twenty-three years."
 
-Roland said: "You are welcome, Margot. Cole."
+"You're welcome, Margot. Cole."
 
-Cole said: "Roland."
+"Roland."
 
-Roland said: "Be right."
+"Be right."
 
-Cole said: "I am going to be right."
+"I'm going to be right."
 
-Roland said: "I know you are."
+"I know you are."
 
 He stood up.
 
@@ -368,7 +366,7 @@ He walked out.
 
 ---
 
-The boardroom emptied across the next twelve minutes.
+The room emptied across the next twelve minutes.
 
 Diana stayed in her chair until the room was Diana and Cole and Margot.
 
@@ -376,59 +374,53 @@ She looked at the letter on the table.
 
 She looked at Cole.
 
-She said: "Cole."
+"Cole."
 
-He said: "Yes."
+"Yes."
 
-She said: "How did Roland know."
+"How did Roland know."
 
-Cole said: "Margot told him. At five PM Tuesday. On the call she took from him. She told him about the line in the memo about your father. She told him about the call you had taken from your father at six AM Tuesday — Mara had told me about the call from the gate log; the call had come in on the encrypted line. She told him the letter was coming. She asked him to ask for it to be read. He asked for it to be read. He did it because he wanted the board to hear the words before they voted, and because he wanted to be the director who asked for them to be heard."
+"Margot told him. Five PM Tuesday. On the call she took from him. She told him about the line in the memo about your father. She told him about the call you took from your father at six AM Tuesday — Mara had told me about the call from the gate log; it had come in on the encrypted line. She told him the letter was coming. She asked him to ask for it to be read. He asked for it to be read. He did it because he wanted the board to hear the words before they voted, and because he wanted to be the director who asked for them to be heard."
 
-Diana said: "He voted no."
+"He voted no."
 
-Cole said: "He voted no."
+"He voted no."
 
-Diana said: "He voted no and he asked the question that ratified the strategy."
+"He voted no and he asked the question that ratified the strategy."
 
-Cole said: "He has been on this board for twenty-three years."
+"He's been on this board twenty-three years."
 
 Diana looked at him.
 
-She picked up her father's letter.
+She picked up her father's letter. Folded it. Slid it back into the envelope.
 
-She folded it. She slid it back into the envelope.
+"I'm keeping this on my desk."
 
-She said: "I am keeping this on my desk."
-
-Cole said: "I know."
+"I know."
 
 Margot stood up from the head of the table.
 
-She said: "The two of you have a press conference at noon. Anjali is on her way up. Owen is on the phone with the institutional desk. Reese is at the Cloud building. The 8-K amendment goes out at eleven. The stock is going to recover at least eight percent today. We have eight days until the next major thing breaks. Use them."
+"The two of you have a press conference at noon. Anjali is on her way up. Owen is on the phone with the institutional desk. Reese is at the Cloud building. The 8-K amendment goes out at eleven. The stock is going to recover at least eight percent today. We have eight days until the next major thing breaks. Use them."
 
 She walked out.
 
-Diana stood up.
+Diana stood.
 
 She picked up the envelope.
 
-She walked toward the door.
+She walked toward the door. At the door she stopped. She turned.
 
-At the door she stopped.
+"Cole."
 
-She turned.
+"Yes."
 
-She said: "Cole."
+"Send him a letter back. Sometime in the next week. In English. Tell him you read it. He's going to want to put it in the same frame as the photograph of the store."
 
-He said: "Yes."
-
-She said: "Send him a letter back. Sometime in the next week. In English. Tell him you read it. He is going to want to put it in the same frame as the photograph of the store."
-
-Cole said: "I will write it tonight."
+"I'll write it tonight."
 
 She walked out.
 
-Cole sat in the chair at the head of the table for a moment.
+Cole sat in the chair at the head of the table a moment.
 
 Then he picked up the encrypted laptop and walked out himself.
 
@@ -448,11 +440,7 @@ The memo was the memo.
 
 It was going to be the memo for the next thirty months.
 
-Cole walked to the elevator.
-
-He took it down to the lobby.
-
-He stepped into the Suburban.
+Cole walked to the elevator. Took it down to the lobby. Stepped into the Suburban.
 
 The pivot was the work.
 
