@@ -330,9 +330,11 @@ which is what this checkpoint marks.
 **Mission:** Stop adding features. Make the thing solid.
 
 - ⏳ Bug-fix focus — ongoing
-- ⏳ Full documentation site — five walkthroughs shipped, reference
-  stubs honestly marked TODO (docs/README.md, docs/01-05, plus
-  grammar.md, node-kinds.md, accessibility.md)
+- ✅ Full documentation site — five walkthroughs shipped, all
+  reference docs filled in against parser/emitter as source of
+  truth (grammar.md, node-kinds.md, accessibility.md, i18n.md).
+  One known divergence flagged: router_call's actual behavior vs.
+  walkthrough 03's description.
 - ✅ Tutorial library — 5 of 5 guided walkthroughs shipped:
   first-workflow, authoring-on-canvas, branching-and-routing,
   human-QC-checkpoints, deploying

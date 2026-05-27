@@ -48,7 +48,7 @@ WORKFLOW validate_and_route {
 
   NODE gate {
     TYPE      branch
-    CONDITION "validate.verdict starts_with \"pass\""
+    WHEN      validate.verdict starts_with "pass"
   }
 
   NODE auto_approve {

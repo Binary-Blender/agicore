@@ -36,8 +36,8 @@ WORKFLOW refine_draft {
 
   NODE rounds {
     TYPE      loop
-    OVER      "{{range(input.rounds)}}"
-    AS        "round"
+    OVER      {{range(input.rounds)}}
+    AS        round
   }
 
   NODE critique {
