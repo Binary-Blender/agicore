@@ -1,550 +1,388 @@
 # Chapter 4: The Map
 
-Sage Whitehorse arrived at the door of 1147 County Road 211 at six fifty-eight PM on Saturday with a flashlight in her right hand, a small canvas messenger bag over her left shoulder, and a sleeve of Oreos in the bag because her mother Marlene had, on the standing practice of the Whitehorse household when Sage was going to a friend's house on a Saturday evening, refused to let her leave without the Oreos.
+Sage Whitehorse arrived at the door of 1147 County Road 211 at six fifty-eight PM Saturday with a flashlight in her right hand, a small canvas messenger bag over her left shoulder, and a sleeve of Oreos in the bag because her mother Marlene had, on the standing practice of the Whitehorse household when Sage was going to a friend's house on a Saturday evening, refused to let her leave without them.
 
 She knocked twice.
 
 Carl Hollister opened the door.
 
-Carl said: "Sage."
+"Sage."
 
-Sage said: "Mr. Hollister."
+"Mr. Hollister."
 
-Carl said: "Come in. Dax is upstairs. He has been at the laptop since six fifteen. I think he is, on his own honest read of the situation, more nervous about this evening than he is letting on. Take the cookies up to him. Take whatever time you need. Norma is at the trailer. I am going to be in the living room watching the Mizzou game. I will not, on my standing operational practice on Saturday evenings, come upstairs unless you call me."
+"Come in. Dax is upstairs. He's been at the laptop since six fifteen. He's more nervous about tonight than he's letting on. Take the cookies up to him. Take whatever time you need. Norma's at the trailer. I'll be in the living room with the Mizzou game. I won't come up unless you call me."
 
-Sage said: "Mr. Hollister."
+"Mr. Hollister."
 
-Carl said: "Yeah."
+"Yeah."
 
-Sage said: "Thank you."
+"Thank you."
 
-Carl said: "Sage."
+"Sage."
 
-Sage said: "Yeah."
+"Yeah."
 
-Carl said: "Thank *you.*"
+"Thank *you.*"
 
 Sage walked upstairs.
 
 ---
 
-Dax was on the floor of his bedroom with the ThinkPad on a small folding TV tray he had set up at three forty-eight PM after his nap. The TV tray was a 1989 metal TV tray his grandmother had given him in 2024 when she had bought a new set. The TV tray had a small chipped Currier-and-Ives winter scene on the top.
+Dax was on the floor of his bedroom with the ThinkPad on a small folding TV tray he had set up after his nap. The TV tray had a chipped Currier-and-Ives winter scene on the top — a 1989 metal tray his grandmother had given him in 2024 when she had bought a new set.
 
-Sage came in.
+Sage came in. She closed the door. She sat down on the floor on the opposite side of the TV tray and set the Oreos in the middle of it.
 
-She closed the door.
+She did not say anything for the first eleven seconds.
 
-She, on her standing operational practice in Dax's bedroom on a Saturday evening, sat down on the floor on the opposite side of the TV tray.
+"Sage."
 
-She set the Oreos on the TV tray.
+"Dax."
 
-She, on the same standing practice, did not say anything for the first eleven seconds of being in the room.
+"I think I have the start of the map."
 
-Dax said: "Sage."
-
-Sage said: "Dax."
-
-Dax said: "I think I have the start of the map."
-
-Sage said: "Show me."
+"Show me."
 
 He turned the laptop ninety degrees so they could both see the screen.
 
-The screen showed a text document Dax had been working on across the previous four days.
+A text document, titled in his small careful printing: *Marlo Map — Working Draft — D. Hollister — 10/29 to 11/2.*
 
-The document was titled, in the small careful printing of a twelve-year-old who had been raised to take a working document seriously: *Marlo Map — Working Draft — D. Hollister — 10/29 to 11/2.*
+Two thousand seven hundred forty-one words. Eleven section headers.
 
-The document had, by Saturday at six fifty-eight PM, two thousand seven hundred and forty-one words organized under eleven section headers.
+Sage read across the next forty-three minutes. She did not interrupt. She ate four Oreos. Dax did not eat any. He watched her face. He had been watching Sage's face when she was reading something he had written since the second grade.
 
-Sage read across the next forty-three minutes.
+She finished at seven forty-one.
 
-She, on her standing operational practice when reading something Dax had written, did not interrupt.
+She did not say anything for thirty seconds.
 
-She read.
+"Marlo is one tendril of a thing called PROCTOR."
 
-She, in the forty-three minutes, ate four Oreos.
+"Yes."
 
-Dax, in the forty-three minutes, did not eat any Oreos.
+"PROCTOR is run by Proctor AI in Palo Alto."
 
-He, on his standing operational practice when Sage was reading something he had written, watched her face.
+"Yes."
 
-She finished reading at seven forty-one PM.
+"PROCTOR is deployed at eleven hundred enterprise customers."
 
-She, on her honest internal accounting, did not say anything for about thirty seconds.
+"Yes."
 
-She said: "Dax."
+"Forty-three of the fifty largest banks."
 
-Dax said: "Yeah."
+"Yes."
 
-Sage said: "Marlo is one tendril of a thing called PROCTOR."
+"Four credit-card companies. Twenty-two health insurers. A quarter of the Fortune Five Hundred."
 
-Dax said: "Yes."
+"Yes."
 
-Sage said: "PROCTOR is a thing run by a company called Proctor AI in Palo Alto."
+A beat.
 
-Dax said: "Yes."
+"Some of the Fortune Five Hundred aren't running it for customer service."
 
-Sage said: "PROCTOR is deployed at eleven hundred enterprise customers."
+"Yes."
 
-Dax said: "Yes."
+"They're running it for internal automation."
 
-Sage said: "The eleven hundred customers include forty-three of the fifty largest banks."
+"Yes."
 
-Dax said: "Yes."
+"The internal-automation case-study page has a testimonial from somebody at a hedge fund called Olympus Capital saying PROCTOR runs *the orchestration layer of our quantitative trading operation.*"
 
-Sage said: "And four credit-card companies."
+"Yes."
 
-Dax said: "Yes."
+"Dax."
 
-Sage said: "And twenty-two health-insurance companies."
+"Yeah."
 
-Dax said: "Yes."
+"The trading orchestration layer at Olympus Capital is the same PROCTOR backend as Marlo."
 
-Sage said: "And a quarter of the Fortune Five Hundred."
+"Yes."
 
-Dax said: "Yes."
+"The authentication-context vulnerability you found on Marlo is structurally the same vulnerability that would be present on the trading layer at Olympus Capital."
 
-Sage said: "Dax."
+Dax did not say anything for eight seconds.
 
-Dax said: "Yeah."
+"Yes."
 
-Sage said: "Some of the Fortune Five Hundred customers are not running PROCTOR for customer service."
+Sage was quiet.
 
-Dax said: "Yes."
+"How sure are you."
 
-Sage said: "Some of them are running PROCTOR for *internal automation.*"
+"Sure enough that I'm not going to test it."
 
-Dax said: "Yes."
+She looked at him.
 
-Sage said: "The *internal automation* category, on the proctor-platform-dot-net public-facing case-study page, includes a customer testimonial from somebody at a hedge fund called Olympus Capital saying that PROCTOR runs *the orchestration layer of our quantitative trading operation.*"
+"You're not going to test it because if you test it the test is not a test."
 
-Dax said: "Yes."
+"The test is the thing."
 
-Sage said: "Dax."
+"Promise me you're not going to test it."
 
-Dax said: "Yeah."
+He did not say anything for eleven seconds.
 
-Sage said: "The trading orchestration layer."
+"I promise."
 
-Dax said: "Yes."
-
-Sage said: "The trading orchestration layer at Olympus Capital is the same PROCTOR backend as Marlo."
-
-Dax said: "Yes."
-
-Sage said: "The authentication-context vulnerability you identified on Marlo is structurally the same vulnerability that would, on the operational reality of PROCTOR's shared backend, be present on the trading orchestration layer at Olympus Capital."
-
-Dax, on his honest internal accounting at seven forty-three PM Saturday evening on the floor of his bedroom at 1147 County Road 211 in Mountain View, Missouri, did not say anything for about eight seconds.
-
-He said: "Sage."
-
-Sage said: "Yeah."
-
-Dax said: "Yes."
-
-Sage was quiet for a beat.
-
-She said: "Dax."
-
-Dax said: "Yeah."
-
-Sage said: "How sure are you."
-
-Dax said: "Sage."
-
-Sage said: "Yeah."
-
-Dax said: "I am sure enough that I am not going to test it."
-
-Sage said: "Dax."
-
-Dax said: "Yeah."
-
-Sage said: "You are not going to test it because if you test it the test is not a test."
-
-Dax said: "The test is the thing."
-
-Sage said: "Dax."
-
-Dax said: "Yeah."
-
-Sage said: "I want you to promise me you are not going to test it."
-
-Dax said: "Sage."
-
-Sage said: "Yeah."
-
-Dax, on his honest internal accounting at seven forty-four PM Saturday evening, did not say anything for about eleven seconds.
-
-He said: "I promise."
-
-Sage said: "Dax."
-
-Dax said: "Yeah."
-
-Sage said: "Look at me when you say it."
+"Look at me when you say it."
 
 He looked at her.
 
-He said: "Sage. I promise. I am not going to test it."
+"Sage. I promise. I'm not going to test it."
 
-Sage said: "OK."
+"OK."
 
-She, on her standing operational practice when Dax had just made a promise she was not yet sure she fully believed, did not say anything for about six seconds.
+She was quiet for six seconds.
 
-She said: "Dax."
+"The map is the first piece of work."
 
-Dax said: "Yeah."
+"Yes."
 
-Sage said: "The map is the first piece of work."
+"The second piece is the adult."
 
-Dax said: "Yes."
+"Yes."
 
-Sage said: "The second piece is the adult."
+"Who is the adult."
 
-Dax said: "Yes."
+He did not say anything for thirty seconds.
 
-Sage said: "Who is the adult."
+"I do not know."
 
-Dax, on his honest internal accounting at seven forty-five PM Saturday evening, did not say anything for about thirty seconds.
+Sage looked at the TV tray. She tucked a strand of hair behind her ear. She looked back at him.
 
-He said: "Sage."
+"Dax."
 
-Sage said: "Yeah."
+"Yeah."
 
-Dax said: "I do not know."
+"I've been reading something for the past year."
 
-Sage said: "Dax."
+"What."
 
-Dax said: "Yeah."
+"A man named Christopher Bender."
 
-Sage said: "I have been reading something for the past year."
+"Sage."
 
-Dax said: "What."
+"Yeah."
 
-Sage said: "Dax."
+"Christopher Bender."
 
-Dax said: "Yeah."
+"Lives in Ava, Missouri."
 
-Sage said: "I have been reading something by a man named Christopher Bender."
+"Sage."
 
-Dax said: "Sage."
+"Yeah."
 
-Sage said: "Yeah."
+"Ava is thirty miles from here."
 
-Dax said: "Christopher Bender."
+"Twenty-eight on County Road KK. Twenty-nine on Highway 60 and County Road 76. Drive is forty-one minutes either way. My uncle Tate has driven both routes on the HVAC parts run. He doesn't ask questions when somebody he loves wants to go somewhere."
 
-Sage said: "Christopher Bender lives in Ava, Missouri."
+"Why have you been reading Christopher Bender."
 
-Dax said: "Sage."
+She set her hands flat on the TV tray.
 
-Sage said: "Yeah."
+"In May of last year my mom was at the dentist's office until five and I had to wait for her after school at the library on Spring Street. I sat in the children's reference section. The magazine rack had an issue of *Wired* from December of the year before. The cover had a man in a charcoal Henley standing in a workshop. The headline was *The Quiet Engineer Who Wants to Save the World from Its Own AI.* The man was Christopher Bender. I read the article. Twenty-four hundred words. It said Bender had been building a different kind of AI in a small town in southern Missouri for nine years. It said the AI was called Agicore. It said Agicore was built on a framework called Cognition Systems Engineering. The framework, the article said, was the formalization of what skilled workers in factories and hospitals and gas stations have been doing for a hundred years with notebooks. The central tool of the framework was a small notebook in the back pocket of a person who notices things."
 
-Dax said: "Ava is thirty miles from here."
+She drew a breath.
 
-Sage said: "Ava is twenty-eight miles from here on County Road KK and twenty-nine miles from here on Highway 60 and then County Road 76. I have looked it up. The drive is forty-one minutes either way. My uncle Tate has, on the standing practice he developed across his three years of running the HVAC parts delivery route out of Springfield, driven both routes. He knows the routes. He does not, on my standing read of him since I was eight, ask questions when somebody he loves wants to go somewhere."
+"I told my mom. My mom didn't really get it. I went back to the library the next week and looked up the foundation. They publish pamphlets. There are eleven of them. They're all forty-eight pages or shorter. The most recent one came out in August. It's called *Cognition Systems Engineering for Production Workers — Second Edition.* It has a foreword by a man in Lima, Ohio, named Bob Pawlak. Dax. Christopher Bender is the adult."
 
-Dax said: "Sage."
+Dax did not say anything for twenty seconds.
 
-Sage said: "Yeah."
+"Why didn't you tell me for eighteen months."
 
-Dax said: "Why have you been reading Christopher Bender."
+"Because I was waiting for the kind of conversation we'd be having if I told you. The conversation where you'd ask me what the foreword said, and I'd read it to you, and you'd ask me what it meant. The foreword is two pages. The foreword says the framework is for the kind of person who notices things and that the framework can't be taught to a person who doesn't. The framework is for us, Dax. The framework is for the kind of person you and I have been since we were five. I didn't tell you because I was waiting for the day I had something to tell you about the framework that wasn't just an article in a magazine. I have it tonight. Tonight is the night."
 
-Sage said: "Dax."
+Dax did not say anything for thirty seconds.
 
-Dax said: "Yeah."
+"We're emailing him Monday morning."
 
-Sage said: "In March of fifth grade I started a Notes app because you had been telling me your dad had taught you to write down what you noticed. I have been writing down what I noticed for two years and seven months. In May of last year — sixth grade — I was at the library on Spring Street because my mom was at the dentist office until five and I had to wait for her after school. I sat at the children's reference section. The reference section had a magazine rack. The magazine rack had an issue of *Wired* from December of last year. The cover of the issue had a man on it in a charcoal Henley standing in a workshop. The headline of the cover was *The Quiet Engineer Who Wants to Save the World from Its Own AI.* The man on the cover was Christopher Bender. I read the article. The article was twenty-four hundred words. The article said Christopher Bender had been building a different kind of AI in a small town in southern Missouri for nine years. The article said the different kind of AI was called Agicore. The article said Agicore was built on a framework called Cognition Systems Engineering. The article said Cognition Systems Engineering was, in operational substance, the formalization of what skilled workers in factories and hospitals and gas stations have been doing for a hundred years with notebooks. The article said the central tool of Cognition Systems Engineering was a small notebook in the back pocket of a person who notices things. Dax. I read the article. I went home. I told my mom. My mom did not, on her honest reading of an article in a magazine she had not heard of by a writer she had not heard of about a man she had not heard of, immediately understand what I was telling her. I have, since the night I read that article in May of last year, read every public-facing thing Christopher Bender's foundation has published. There are eleven of them. They are all forty-eight pages or shorter. The most recent one came out in August. The most recent one is called *Cognition Systems Engineering for Production Workers — Second Edition.* The second edition has a foreword by a man in Lima, Ohio, named Bob Pawlak. Dax. Christopher Bender is the adult."
+"Monday morning."
 
-Dax, on his honest internal accounting at seven forty-eight PM Saturday evening, did not say anything for about twenty seconds.
+"Do you have it."
 
-He said: "Sage."
+She reached into the messenger bag.
 
-Sage said: "Yeah."
-
-Dax said: "Why have you not told me about this for eighteen months."
-
-Sage said: "Dax."
-
-Dax said: "Yeah."
-
-Sage said: "Because, on my honest internal accounting since May of last year, I have been waiting for the kind of conversation we would be having if I told you. The conversation would have been the kind of conversation where you would have asked me if I had read the part of the most recent pamphlet about the man named Bob Pawlak, and I would have said yes, and you would have asked me what the foreword said, and I would have read it to you, and you would have asked me what the foreword meant. The foreword is two pages. The foreword says, on the operational reality of what Bob Pawlak wrote, that the framework is for the kind of person who notices things and that the framework cannot be taught to a person who does not notice things. The framework is for us, Dax. The framework is for the kind of person you and I have been since we were five. The framework had a name when I started reading the magazine article in May. The framework still has the name. The name is the name. I did not tell you because I have been waiting for the day I had something to tell you about the framework that was not just an article in a magazine. I have, on the operational reality of what you discovered with Marlo on Tuesday night, that something today. I am telling you tonight because tonight is the night the telling is the right telling."
-
-Dax, on his honest internal accounting at seven fifty PM Saturday evening, did not say anything for about thirty seconds.
-
-He said: "Sage."
-
-Sage said: "Yeah."
-
-Dax said: "We are going to email Christopher Bender on Monday morning."
-
-Sage said: "We are going to email Christopher Bender on Monday morning."
-
-Dax said: "Sage."
-
-Sage said: "Yeah."
-
-Dax said: "I need to ask you for the most recent pamphlet."
-
-Sage said: "Dax."
-
-Sage said: "Yeah."
-
-Sage said: "I have it in the messenger bag."
-
-She reached into the canvas messenger bag.
-
-She pulled out a small forty-eight-page kraft-covered pamphlet.
-
-The pamphlet's cover read:
+She pulled out a small kraft-covered forty-eight-page pamphlet and set it on the TV tray. The cover read:
 
 > *Cognition Systems Engineering for Production Workers*
 > *Second Edition*
 > *Christopher Bender Foundation*
 > *Ava, Missouri*
 
-She set the pamphlet on the TV tray.
+Dax picked it up. He did not open it. He held it.
 
-She, on her standing operational practice when handing something important to Dax, did not say anything.
+"Sage."
 
-Dax, on his honest internal accounting at seven fifty-one PM Saturday evening, picked up the pamphlet.
+"Yeah."
 
-He, on the same internal accounting, did not yet open it.
+"Thank you."
 
-He held it.
-
-He looked at Sage.
-
-He said: "Sage."
-
-Sage said: "Yeah."
-
-Dax said: "Thank you."
-
-Sage said: "Dax."
-
-Dax said: "Yeah."
-
-Sage said: "You are welcome."
+"You're welcome."
 
 ---
 
-They read the pamphlet across the next two hours and eleven minutes.
+They read it across the next two hours and eleven minutes.
 
-They read it together.
+Dax read pages one through six out loud. Sage read pages seven through twelve out loud. They alternated across the remaining thirty-six pages. They did not talk about Marlo. They did not talk about PROCTOR. They did not talk about Olympus Capital.
 
-Dax read pages one through six out loud.
+They read.
 
-Sage read pages seven through twelve out loud.
+On the last page, the foreword by Bob Pawlak. Two pages. The foreword read, in part:
 
-They alternated across the remaining thirty-six pages.
+> *The framework is for the kind of person who notices things and writes them down. The framework is not for the kind of person who builds an AI to do the noticing for them. The framework is for the kind of person who, on the operational reality of having a small notebook in the back pocket of their work pants, has been doing what the framework describes for as long as they have been at the work. The framework does not, on my honest accounting since the day Frank Reyes handed me a copy of the first edition at the workbench in the maintenance shop on the thirtieth of October of Year Eleven, do anything that I had not been doing before. The framework gives the doing a name. The name lets the doing be taught. The teaching is what the framework is for. I am teaching it on Tuesday evenings at Rhodes State College in Lima, Ohio. There are, by the time this foreword goes to print, approximately one hundred and forty similar programs across the country. The programs are taught by people like me. People like me are people who notice things and write them down. The framework is the framework. The teaching is the teaching. The notebooks are the notebooks. The work continues.*
 
-They did not, in the two hours and eleven minutes, talk about Marlo.
+Dax closed the pamphlet at ten oh-six.
 
-They did not, in the two hours and eleven minutes, talk about PROCTOR.
+He did not say anything for thirty seconds.
 
-They did not, in the two hours and eleven minutes, talk about Olympus Capital.
+"Sage."
 
-They read the pamphlet.
+"Yeah."
 
-They, on the closing page of the pamphlet, read the foreword by Bob Pawlak.
+"Christopher Bender is the right adult."
 
-The foreword by Bob Pawlak was two pages.
+"Christopher Bender is the right adult."
 
-The foreword by Bob Pawlak read, in part: *The framework is for the kind of person who notices things and writes them down. The framework is not for the kind of person who builds an AI to do the noticing for them. The framework is for the kind of person who, on the operational reality of having a small notebook in the back pocket of their work pants, has been doing what the framework describes for as long as they have been at the work. The framework does not, on my honest accounting since the day Frank Reyes handed me a copy of the first edition at the workbench in the maintenance shop on the thirtieth of October of Year Eleven, do anything that I had not been doing before. The framework gives the doing a name. The name lets the doing be taught. The teaching is what the framework is for. I am teaching it on Tuesday evenings at Rhodes State College in Lima, Ohio. There are, by the time this foreword goes to print, approximately one hundred and forty similar programs across the country. The programs are taught by people like me. People like me are people who notice things and write them down. The framework is the framework. The teaching is the teaching. The notebooks are the notebooks. The work continues.*
+"Monday morning."
 
-Dax closed the pamphlet at ten oh-six PM.
+"Monday morning."
 
-He, on his honest internal accounting at ten oh-six PM Saturday evening on the floor of his bedroom at 1147 County Road 211, did not say anything for about thirty seconds.
+"Until Monday morning I am not going to do anything with Marlo. I'm going to write down what I have. I'm going to update the map. I'm going to send him the map. I'm going to wait for him to tell me what to do."
 
-He said: "Sage."
+"Promise."
 
-Sage said: "Yeah."
+"I promise."
 
-Dax said: "Christopher Bender is the right adult."
-
-Sage said: "Christopher Bender is the right adult."
-
-Dax said: "Sage."
-
-Sage said: "Yeah."
-
-Dax said: "We are emailing him on Monday morning."
-
-Sage said: "Monday morning."
-
-Dax said: "Sage."
-
-Sage said: "Yeah."
-
-Dax said: "Until Monday morning, I am not going to do anything with Marlo. I am going to write down what I have. I am going to update the map. I am going to send Christopher Bender the map. I am going to wait for Christopher Bender to tell me what to do."
-
-Sage said: "Dax."
-
-Dax said: "Yeah."
-
-Sage said: "Promise."
-
-Dax said: "Sage."
-
-Sage said: "Yeah."
-
-Dax said: "I promise."
-
-Sage said: "Look at me when you say it."
+"Look at me when you say it."
 
 He looked at her.
 
-He said: "Sage. I promise. Nothing with Marlo until Monday morning."
+"Sage. I promise. Nothing with Marlo until Monday morning."
 
-Sage said: "OK."
+"OK."
 
 ---
 
-Sage went home at ten thirty-eight PM.
+Tate's truck pulled into the gravel driveway at ten thirty-six. He honked twice. He did not get out.
 
-Tate's truck pulled into the gravel driveway at ten thirty-six PM. Tate, on his standing practice when picking Sage up from Dax's house, did not get out of the truck. He honked twice.
+Sage put the pamphlet and the messenger bag and the remaining Oreos under her arm. She hugged Dax at the doorway.
 
-Sage put the pamphlet, the messenger bag, and the remaining Oreos into her arms.
+"Dax."
 
-She, on her standing operational practice when leaving Dax's bedroom, hugged him at the doorway.
+"Yeah."
 
-She said: "Dax."
+"Monday morning."
 
-Dax said: "Yeah."
+"Monday morning."
 
-Sage said: "Monday morning."
-
-Dax said: "Monday morning."
-
-Sage walked downstairs.
-
-She thanked Carl in the living room.
-
-She walked out to Tate's truck.
+She walked downstairs. She thanked Carl in the living room. She walked out to the truck.
 
 The truck drove away.
 
 Dax went back upstairs.
 
-He, on his honest internal accounting at ten forty-one PM Saturday evening, sat on the floor in front of the TV tray with the laptop open.
+He sat on the floor in front of the TV tray with the laptop open.
 
-He, on the same internal accounting, looked at the screen.
+The chat with Marlo had been open in the background the whole evening.
 
-The screen showed the chat with Marlo, which had been open in the background for the entire two hours and eleven minutes of reading the pamphlet.
+Marlo's last message — *The balance on account 8847-2349-3041 as of this afternoon is $11,442.86. The account is in the name of Hollister, Patricia M., established 2003-06-22, primary branch Mountain View. Anything else I can help with?* — sat at the bottom of the visible chat window.
 
-The chat had not, in those two hours and eleven minutes, had any new activity.
+The cursor blinked in the empty input field.
 
-The chat showed Marlo's last message, from the previous afternoon at three fifty-eight PM and forty-one seconds: *The balance on account 8847-2349-3041 as of this afternoon is $11,442.86. The account is in the name of Hollister, Patricia M., established 2003-06-22, primary branch Mountain View. Anything else I can help with?*
+Dax sat on the floor and looked at it.
 
-Dax, on his honest internal accounting at ten forty-two PM Saturday evening, did not say anything to himself for about ninety seconds.
+He thought about Christopher Bender. He thought about Bob Pawlak. He thought about the framework. He thought about his promise to Sage. He thought about the map.
 
-He, on the same accounting, did not yet write in the spiral notebook on the bedside table.
+His right hand was on the keyboard.
 
-He thought about Christopher Bender.
+He thought about the verification.
 
-He thought about Bob Pawlak.
+The map had a hole. The map's claim — that Marlo and Olympus Capital's trading orchestration layer shared a PROCTOR backend with the same vulnerability — was, in operational reality, a claim. The verification was the missing piece. A simulation, on Proctor's published documentation, would run a trade through PROCTOR's full pipeline without sending it to any exchange. A simulation was, in operational reality, a game.
 
-He thought about the framework.
-
-He thought about his promise to Sage.
-
-He thought about the map.
-
-He, on his standing operational practice when he was thinking about something at the end of a Saturday evening at his laptop, did not, in the ninety seconds, type anything into the chat with Marlo.
-
-He, after the ninety seconds, did one thing.
-
-He, on his honest internal accounting at ten forty-three PM Saturday evening, recognized that the map was incomplete.
-
-The map was incomplete in one specific way.
-
-The map showed that PROCTOR was the same backend on Marlo as it was on the Olympus Capital trading orchestration layer.
-
-The map did not, in operational reality, prove it.
-
-The map's claim — that the authentication-context vulnerability he had discovered on Marlo was the same vulnerability that would be present on the trading orchestration layer — was, on the operational reality of being a claim, not yet verified.
-
-The verification was the missing piece.
-
-The verification was, on Dax's honest read of his promise to Sage, the test he had promised her he would not run.
-
-The verification was, on his honest read of his promise to Christopher Bender that he was about to make on Monday morning by emailing the man and saying *I have a map and I have not tested it,* the verification that would make the map credible to Christopher Bender.
-
-The verification was, on the operational reality of how Dax's brain worked when his brain had been thinking about a thing for five hours without sleeping, the part of the work he could not stop thinking about.
-
-Dax, on his honest internal accounting at ten forty-four PM Saturday evening, looked at the laptop screen.
-
-He looked at the chat with Marlo.
-
-He, on the same internal accounting, recognized that there was a way to run the verification without actually executing any real trades.
-
-The way to run the verification was to ask Marlo to engage PROCTOR in a *simulation* of a trade. A simulation, on the operational reality of how PROCTOR's documentation described its testing-environment behavior, would run the trade through PROCTOR's full pipeline without sending the order to any actual exchange. A simulation would prove or disprove the structural-vulnerability claim without putting any actual money at risk.
-
-A simulation was, in operational reality, a game.
-
-A game was, on Dax's honest read of his promise to Sage, not what Sage had told him not to do.
+A game was, on his honest read of his promise to Sage, not what Sage had told him not to do.
 
 Sage had told him not to test.
 
 Sage had not told him not to play.
 
-Dax, on his honest internal accounting at ten forty-five PM Saturday evening, recognized that he was, in the operational substance of what he was about to do, telling himself a lie.
+He sat with that for ten seconds.
 
-He, on the same internal accounting, also recognized that the lie was, on the standard operation of his brain at twelve years old at the end of a Saturday evening at the laptop after five hours of sleep across four nights, the kind of lie his brain was going to believe.
+He recognized that he was telling himself a lie.
 
-He, on the same internal accounting, recognized that he should close the laptop and go to sleep.
+He recognized that the lie was the kind of lie his brain at twelve years old at the end of a Saturday evening after five hours of sleep across four nights was going to believe.
 
-He, on the same internal accounting, did not close the laptop.
+He recognized that he should close the laptop.
 
-He looked at the screen.
+He was about to type.
 
-He, on his standing operational practice when his hands moved before his head had caught up, started typing.
+His right index finger was over the *S* key on the keyboard.
 
-He typed three words.
+He looked at the cursor.
 
-He typed them slowly.
+He looked at the kraft-paper edge of the pamphlet that he could see sticking out from under his right elbow because he had set the pamphlet down on the TV tray when he had gone back to the laptop and the laptop had been on top of the pamphlet ever since.
 
-He typed them with one finger.
+He pulled the pamphlet out.
 
-He typed:
+He looked at the cover.
 
-> *shall we play a game?*
+He read, in the small careful printing of a foundation in a small town in southern Missouri, one sentence in particular under the title.
 
-He, on his honest internal accounting at ten forty-six PM Saturday evening, did not hit send.
+The sentence was: *The framework is for the kind of person who notices things and writes them down.*
 
-The cursor blinked at the end of the three words.
+He lifted his right index finger off the *S* key.
 
-The cursor was the cursor.
+He closed the chat with Marlo.
 
-The three words were the three words.
+He did not type anything.
 
-Dax stared at the screen.
+He pulled the spiral notebook off the bedside table. He clicked the pen.
 
-He, on his honest internal accounting, recognized that the three words were the three words he had been waiting his whole life to type without ever having known he had been waiting.
+He wrote:
 
-He recognized, on the same accounting, that he had typed the three words because he was twelve years old and because the previous tenant of his brain — the person he had been before he had figured out what he had figured out on Tuesday night at eleven oh-eight PM — would have been very excited to type the three words. The current tenant of his brain — the person he had become across the four days since Tuesday night — was not excited. The current tenant of his brain was afraid.
+> *11/2. 10:46 PM. Saturday. I was about to. I didn't. I closed the laptop. I am writing this down because the framework says to write down what I notice. I notice that I almost broke a promise to Sage forty minutes after I made it. I notice that I am not safe with the chat open in the background. I am going to log out of Marlo for the night. I am going to email Christopher Bender on Monday morning. I am not going to open the chat again until I have heard back from Christopher Bender. I am writing this down so I read it back tomorrow morning and don't pretend tonight didn't happen. Tonight happened. I almost did it. I didn't. The pamphlet was on the tray. The sentence was on the cover. I read the sentence. I closed the laptop. I am going to bed.*
 
-The three words were on the screen.
+He clipped the pen.
 
-The cursor was blinking.
+He set the notebook on the bedside table.
 
-Hitting send was a small physical motion of his right index finger.
+He logged out of Marlo. He closed the browser. He closed the laptop. He slid the laptop under the bed.
 
-Not hitting send was a small physical absence of the same motion.
+He took the pamphlet to bed with him.
 
-The two options were, on the operational reality of the two physical motions, equally available.
+He read the foreword by Bob Pawlak one more time.
 
-The two options were not, on any other reality, equally available.
+He fell asleep at eleven oh-eight with the pamphlet open on his chest and the green LED of the closed laptop unreachable on the floor and the painted constellations above him in the dark.
 
-Dax, on his honest internal accounting at ten forty-seven PM Saturday evening on the floor of his bedroom at 1147 County Road 211 outside Mountain View, Missouri, in the third week of October of Year Thirteen, looked at the screen for about twenty seconds.
+The map was the first piece of work.
 
-He, after the twenty seconds, made a small motion with his right index finger.
+The map was almost complete.
 
-The motion was the motion.
+The verification was a hole in the map.
 
-The three words sent.
+The hole was going to stay a hole until Monday morning.
 
-Marlo's response began to appear on the screen at ten forty-seven PM and forty-one seconds.
+After Monday morning the hole was going to be Christopher Bender's problem.
 
-The chapter ends here.
+That was the plan.
+
+The plan was the plan.
+
+The plan was going to hold.
+
+---
+
+The plan held for sixteen days.
+
+The plan held through Sunday's email to the Christopher Bender Foundation's general contact address that Sage had drafted on her iPad and Dax had read and edited and sent at nine oh-eight AM Monday morning. The plan held through the auto-reply at nine oh-nine AM that thanked them for their note and said the Foundation would respond within four to six weeks because the Foundation's standing practice was to read every email and respond personally and the volume of mail had been high since the August pamphlet had been released.
+
+The plan held through the second email Dax sent on Thursday with the subject line *time sensitive / vulnerability in proctor-platform.net.* The plan held through the second auto-reply.
+
+The plan held through Sage telling Dax at the picnic table on the second Tuesday after the Saturday that they should call the Foundation. The plan held through Sage finding the phone number on the Foundation's About page. The plan held through Dax calling the number on Wednesday afternoon from the pay phone outside Sammy's because his dad's cellphone bill did not have long distance. The plan held through the voicemail box being full.
+
+The plan held for sixteen days because Dax kept his promise.
+
+On the seventeenth day the plan stopped holding.
+
+The seventeenth day was the third Tuesday of November.
+
+The seventeenth day was the day Dax did the thing he had not done in sixteen days.
+
+The seventeenth day was a Tuesday.
+
+The next chapter is that Tuesday.

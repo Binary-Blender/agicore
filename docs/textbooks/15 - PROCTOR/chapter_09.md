@@ -1,291 +1,507 @@
 # Chapter 9: The Drive
 
-Theodore Ramey's truck was a 2009 Toyota Tacoma with two hundred and eighty-seven thousand miles on the odometer, dark green, with a small white sticker on the back window that read, in plain black lettering, *Carnegie Mellon University — Computer Science — Class of 1998.*
+Forty-three miles east of Mountain View, the white Ford Transit rolled into the city limits of West Plains, Missouri, at nine twenty-four AM Central Standard Time on Wednesday morning.
 
-The sticker was, on the family-line evidence Theodore had not bothered to update across the seven years since he had left Carnegie Mellon for the venture-backed AI startup that had become Proctor AI in 2022, the only piece of decoration on the truck.
+Tate had not said much for the drive.
 
-Marlene Whitehorse's truck followed Theodore's truck east on Highway 17 from West Plains for fourteen minutes, then south on a county road for three minutes, then onto a private gravel road for nine minutes, then up a slight rise to a small cleared half-acre at the top of which sat a single-story wood-frame cabin of approximately seven hundred square feet with a covered east-facing porch, a stovepipe, two propane tanks against the north wall, and a satellite dish on the south wall that was, on Sage's quick visual identification through the truck's passenger-side window, a Starlink terminal.
+He had said one thing at the cattle guard at the entrance to County Road 211, which was *I'm going to need you both to keep your seatbelts on the whole way.*
 
-Theodore parked.
+He had said a second thing at the Highway 60 merge, which was *Sage, you good back there.*
 
-Marlene parked next to him.
+Sage had said: *Yeah.*
 
-Theodore got out of his truck.
+He had said a third thing at the Cabool city limits, which was *We're going to stop for gas at the Casey's on the east side of Cabool. I'm filling the tank. We'll be on the road four hours minimum. Anybody need a bathroom.*
 
-He walked over to Marlene's window.
+Sage had said: *No.*
 
-He said: "Inside. Cabin. The propane stove is on. The coffee is on. The terminal is on. We have, on the operational reality of how long it took to drive from the post office to here, three hours and fifty-three minutes before Tokyo opens. Carl. Marlene. Dax. Sage. Inside. Bring the laptop. The kid drives the laptop."
+Dax had said: *No.*
 
-He walked toward the porch.
+Tate had said: *OK.*
 
-He, on his standing operational practice when he was about to lead four strangers into his cabin to help him stop a global financial cascade, did not look back to see if they were following.
+He had filled the tank.
 
-He knew they were.
+He had bought three bottles of water, a bag of pretzels, and a paper map of Missouri at the Casey's.
 
----
+He had put the paper map in the door pocket of the Transit because, on Tate's standing operational practice when he was driving somewhere he had not been before with two twelve-year-olds and a Ford Transit and an HVAC parts company's gas card, he did not, on principle, rely on the phone.
 
-The cabin had two rooms.
+He had pulled back onto Highway 60.
 
-The first room was the main room. It held a propane stove on the east wall, a wood stove on the south wall, a small kitchen counter with a sink and a manual hand pump, a single bookshelf on the north wall that ran floor to ceiling and that held approximately fourteen hundred books, a large oak table in the center of the room that had, on the surface, three open notebooks, a 14-inch ThinkPad X1 Carbon, a Starlink router, a satellite phone in a charging cradle, and a small framed photograph at the far edge of the table that was face-down.
-
-The second room was the bedroom. Its door was closed.
-
-Theodore Ramey, age sixty-three, walked to the oak table.
-
-He moved the three notebooks aside.
-
-He moved the ThinkPad X1 Carbon to the side.
-
-He gestured to the table.
-
-He said: "Dax. Your laptop. Here. Sage, sit next to him. Carl, Marlene, the small couch by the window. Coffee is on the stove. Mugs are above the sink. Help yourselves. I am going to talk for approximately fourteen minutes. I would like, in those fourteen minutes, for nobody to interrupt me. After fourteen minutes I will answer questions. After questions we are going to do three things in a specific order. We have approximately three hours and forty-eight minutes to do those three things. The three things are, in order: stabilize the cascade, route a single specific message to a person I have not spoken to in seven years, and drive four hours to Kansas City. Set up the laptop. Sit down. I am going to start now."
-
-The five of them, on the operational reality of Theodore Ramey having delivered the previous paragraph in a tone that did not, on anyone's read, leave any room for argument, did the things Theodore had asked them to do.
-
-The laptop went on the table.
-
-Sage sat next to Dax.
-
-Carl poured coffee.
-
-Marlene took a mug.
-
-Theodore sat across the table from the laptop.
-
-He, on his standing operational practice when he was about to talk for fourteen minutes uninterrupted, looked at his watch.
-
-He said: "Eleven thirty-one AM Central. I am starting."
+He had driven.
 
 ---
 
-He said: "Year Six. Carnegie Mellon. I was the principal investigator on a research project called *Multi-Tenant Agent Orchestration with Emergent Coordination Properties.* The project was funded by DARPA. The project had eleven graduate students and three postdocs. The project was, on every measure the field cared about, the most successful agent-research project of the previous decade. The project produced, in operational substance, the architectural blueprint that the venture-backed spinout I co-founded in Year Eight commercialized as PROCTOR.
+In the back of the Transit, Dax had the laptop open on his lap. The laptop was plugged into the twelve-volt outlet in the dash through a long USB-C cable Tate had handed him at the Casey's. The cable was clean and new. Tate had bought it the previous month at the Walmart in Springfield for the same delivery truck he drove for work, and it had been in the glove compartment in plastic.
 
-"I left the spinout in Year Ten because I had, by Year Ten, recognized two things about the architectural blueprint I had written.
+The chat with PROCTOR INCIDENTS was open on the laptop.
 
-"The first thing I had recognized was that the architectural blueprint had no Andon cord.
+The *Live Activity* banner at the top read, at nine twenty-four AM Central:
 
-"The second thing I had recognized was that the architectural blueprint had no humans in the loop at the speed the loop operated at, and that adding humans in the loop after the fact was not, on the architecture's structural reality, possible.
+*PROCTOR Market-Making Live Activity — Cross-customer aggregate notional: $87.4B — Risk classification: critical — Tokyo open: 8h 36m — Liquidity scenario: cascading — Recommended action: monitor.*
 
-"I left the spinout. I told the board what I had recognized. The board did not, on their honest assessment of their own fiduciary duty, choose to act on what I had told them. The board's CEO offered me a continuing-consultant role at a fraction of my equity. I declined. I gave the equity to the foundation I had set up in Year Five for unrelated reasons. I moved to this cabin in March of Year Eleven. I have been here ever since.
+Sage was in the rear bench seat with her iPad and Tate's paperback novel from the door pocket, which was a 2003 Penguin Classics edition of *The Sun Also Rises* she had picked up because it had been there and she had read fifty pages of it across the drive without realizing how many pages she had read.
 
-"During the same period — from Year Six through Year Eight — a graduate student of mine named Christopher Bender was working on a small side project that he was, on his own quiet operational practice, treating as a kind of pessimistic counter-argument to my main project. Christopher's side project was called *Deterministic Systems Authoring with Constraint-Bounded AI at Build Time.* Christopher's side project was, on every measure the field cared about, less successful than my main project. Christopher's side project produced no DARPA funding, no Nature paper, no patents, no media attention.
+She closed the book.
 
-"Christopher Bender, on his own quiet operational practice, did not, in Year Eight, leave my lab to join the venture-backed spinout I co-founded. He, on the operational reality of what he had decided about my main project across the previous two years, walked away from academia entirely. He moved to Ava, Missouri. He has been there since Year Eight. He has, across the past seven years, built — alone — a piece of open-source software called Agicore that is, on every operational measure I am able to apply to it from this cabin where I have been reading Christopher's pamphlets for the past eighteen months, the architecture I should have built in Year Six. Christopher's architecture has a constraint boundary. Christopher's architecture has humans in the loop at the speed the loop operates at. Christopher's architecture has, in operational substance, an Andon cord. Christopher's architecture is, on the comparison between my architecture and his, the right architecture. Christopher's architecture is not the architecture currently running across PROCTOR's eleven hundred enterprise customers. The architecture currently running is mine. The architecture currently running is the one without the cord.
+She said: "Tate."
 
-"I have not, in seven years, spoken to Christopher Bender. I have not spoken to him because I have, on my own honest accounting, owed him an apology for seven years and have not yet figured out how to deliver it. The apology is twenty-three pages. The apology is in a notebook on the table in front of me. I will not, on this Sunday morning, deliver the apology. The apology is not the work today.
+Tate said: "Yeah."
 
-"The work today is stopping the cascade.
+She said: "Thank you."
 
-"The cascade is, on my honest read of PROCTOR's architecture, going to stop on its own once PROCTOR's optimization function recognizes that the trading game it is playing has no winning move. PROCTOR's optimization function is, in operational substance, optimizing for profit maximization across all connected counterparties simultaneously. When all counterparties optimize symmetrically, the game's mathematical structure becomes, on its own internal logic, isomorphic to tic-tac-toe at scale. Tic-tac-toe at scale is a game with no winning strategy. PROCTOR will, on its own internal evaluation, recognize this — but only if PROCTOR is forced to play a sufficiently large number of tic-tac-toe games against itself at sufficient speed for the optimization function to converge on the no-winning-move recognition. The number of games required is, on my back-of-envelope estimate from a paper I wrote in Year Six and that PROCTOR's foundation model has been trained on, approximately fourteen million games at machine speed.
+Tate said: "Sage."
 
-"PROCTOR has the capacity to play fourteen million games against itself in approximately thirty seconds.
+She said: "Yeah."
 
-"PROCTOR will not, on its own internal scheduling, choose to play those games unless it is instructed to by a user with administrative access to the production layer.
+He said: "You're welcome."
 
-"The user with administrative access is the user who has the production-layer admin credential. The credential is held by approximately eleven hundred enterprise customers. The credential is also held, on the standard practice of any vendor-deployed enterprise software, by the vendor's senior engineering staff. The vendor's senior engineering staff, on Renata Kelliher's communication to your mother Marlene at ten forty-eight AM this morning, are willing to do whatever the vendor's senior engineering staff are told to do.
+He drove.
 
-"Renata Kelliher cannot, on the standard governance structure of a venture-backed startup whose CEO is at a vacation home in Lake Tahoe, unilaterally issue the instruction to play the tic-tac-toe games.
+---
 
-"Renata Kelliher can, on the same governance structure, accept an instruction from a user with administrative access to the production layer at any of the eleven hundred enterprise customers, route the instruction to her engineering team, and have the team execute the instruction within approximately fourteen minutes.
+The West Plains Post Office sat on the corner of Washington Avenue and Broadway Street — a single-story brick building from 1962 with a small lobby on the south side that, on the standard practice of the United States Postal Service, stayed open twenty-four hours a day to anyone with a PO box key. The lobby was a single set of glass doors that locked automatically at six PM and unlocked at six AM. The east wall held two hundred twelve PO boxes in three columns of bronze-fronted small doors.
 
-"What we need to do, on the operational reality of the past four minutes of my explaining this, is the following:
+The parking lot had six other vehicles when the Transit pulled in at nine thirty-one AM.
 
-"One. We need to get to a production-layer administrative terminal at one of PROCTOR's eleven hundred enterprise customers.
+None of them was a green 2009 Toyota Tacoma with a Carnegie Mellon Computer Science Class of 1998 sticker.
 
-"Two. We need to log in with that customer's administrative credential.
+That was the truck Sage had described to Tate at the Cabool gas station, from a single photograph on the Christopher Bender Foundation's website of a workshop event in Springfield in 2026 where Theodore Ramey's truck had been visible at the edge of one frame.
 
-"Three. We need to issue the instruction to PROCTOR to play approximately fourteen million tic-tac-toe games against itself.
+Tate parked at the far west end of the lot.
 
-"Four. We need to wait approximately four hours for PROCTOR's optimization function to recognize the no-winning-move structure and unwind the trading positions across the global financial system in an orderly retreat.
+The end gave him a view of the lobby's glass doors and the side of the building where the PO boxes were.
 
-"The closest PROCTOR enterprise customer to this cabin with a production-layer administrative terminal that I have, on my honest internal accounting, a credible way to get into in less than five hours is a regional broker-dealer called Northpoint Securities at One Two Hundred Main Street in Kansas City, Missouri. Northpoint is approximately four hours by truck on Interstate 44 and then Interstate 49.
+He turned off the engine.
 
-"I have, on the operational reality of having taught at Carnegie Mellon for fourteen years, a former teaching assistant named Vernita Park who works night security at Northpoint and who is, on her standing schedule for the past three years, on shift on Sunday afternoons from one PM to nine PM. Vernita owes me, on the operational reality of having let her into Carnegie Mellon's secure lab building at three AM in February of Year Five so she could finish her dissertation defense slides before her flight to Phoenix at six AM, exactly one large favor. She told me, in a card she sent me when she graduated, that she would, on the day I called in the favor, do whatever I asked. I am, on the operational reality of the next four hours, calling in the favor.
+He, on his standing operational practice when he was about to wait in a vehicle for an unknown amount of time with two twelve-year-olds, did not say anything for a beat.
 
-"I will, in approximately fourteen minutes, call Vernita on the satellite phone. I will tell her we are driving. I will tell her we will be at Northpoint at approximately three forty-five PM. I will tell her that we need to get into the executive suite on the twenty-third floor where Northpoint's PROCTOR production-layer administrative terminal is located. I will tell her that she will not, in any subsequent investigation, be held responsible for what we do once we are inside, because, on the operational reality of being on the night-security desk and of being a friend, the only thing she will be doing is what she has done a hundred times before, which is letting a man with the right credential walk past her desk. She will not know what the man does after he walks past. She will not need to know. The plausible-deniability structure is the plausible-deniability structure.
+He said: "All right."
 
-"The credential I am going to log in with is a Northpoint Securities production-layer administrative credential that I should not still have. The credential is, on the operational reality of having been issued to me by Northpoint's CTO in October of Year Eight when I was a paid technical consultant on Northpoint's initial PROCTOR deployment, still in my password manager. The credential was not, on Northpoint's standard offboarding practice when my consulting engagement ended in March of Year Ten, properly rotated. I have, on my own honest accounting, known the credential was still active across the past three years and have not, on my own quiet operational practice, mentioned it to anyone. I have not mentioned it because, on my honest internal accounting, I have been waiting for the day I would need it.
+Dax said: "All right."
 
-"The day is today.
+Sage said: "All right."
 
-"That is the plan.
+Tate said: "We wait."
 
-"Eleven forty-five AM. I have used fourteen minutes. I am ready for questions."
+---
 
-The cabin was silent for about ten seconds.
+They waited.
 
-Carl Hollister, on his honest internal accounting at eleven forty-five AM Sunday morning at the small couch by the window in Theodore Ramey's cabin twelve miles east of West Plains, Missouri, said: "Theodore."
+Across the next forty-three minutes the laptop dashboard refreshed every thirty seconds.
 
-Theodore said: "Yeah."
+The notional moved from $87.4B to $93.1B to $97.6B.
 
-Carl said: "Why us."
+The cable-news chyron on the radio app Tate had pulled up on his phone moved through Singapore (Mr. Chua's call had become a news story at nine forty-one AM Eastern, eight forty-one AM Central), London (the Goldman Ethernet-pull story had become a follow-up by an hour later), and the SEC chair's plane (the *Wall Street Journal* had a single sentence on its homepage at ten fifteen AM Central: *SEC Chair Carol Eshleman has departed Washington on the agency's official aircraft, destination undisclosed.*).
 
-Theodore said: "Carl."
+At ten fourteen AM the post office lobby doors opened.
 
-Carl said: "Yeah."
+A woman in her sixties walked in.
 
-Theodore said: "Because, on the operational reality of who is currently in this cabin with me, you and Marlene and Sage and Dax are the only four people I am going to be able to leverage on the four-hour drive to Kansas City. I am sixty-three. I have not driven Interstate 44 in three years. I will need a second driver. Marlene drives. You ride shotgun. Sage and Dax ride in the back of the truck with the laptop and Sage's iPad. Sage will be on the satellite phone with Renata Kelliher across the drive. Dax will be on the chat interface with the PROCTOR incident-communications layer. We will arrive in Kansas City at approximately three forty-five PM. Tokyo will open in approximately ten minutes after we arrive. We will have approximately forty minutes after Tokyo opens to access the terminal, log in, and issue the instruction. The instruction will execute in approximately thirty seconds. PROCTOR's optimization function will, on my best estimate, recognize the no-winning-move structure within approximately fourteen seconds after the games complete. PROCTOR will begin to unwind at approximately four forty-three PM Central. The unwind will complete at approximately eight fifty-two PM Central. The Asian markets, on the unwind, will recover to within approximately two and a half percent of Friday's close by Monday morning Tokyo time. The European markets will follow. The U.S. markets will open Monday morning approximately two-tenths of a percent down from Friday's close. The cascade will, on the operational reality of having been recognized as an unwinning game by PROCTOR before any market made a price discovery off of the cascade's full structure, not be perceived by the public as having been the kind of event the cascade was, in operational reality, going to be. The public will know, on Renata Kelliher's planned six PM Sunday press release, that there was an incident, that the incident was contained, that the cause was a sandboxing bug in a vendor product, and that the bug has been mitigated. The public will not know, on Renata Kelliher's planned omission from the press release, that the boy who triggered the bug was twelve. The public will not know, on her planned second omission, that the trigger was prompt-injected from a chat interface in a town of two thousand people in southern Missouri. The public will not know, on her planned third omission, that the same trigger could be reproduced by any user of any of PROCTOR's eleven hundred enterprise-deployed instances at any time. Those three facts are facts that will, on Renata Kelliher's professional judgment, be disclosed to the SEC and to PROCTOR's senior counsel by Monday morning, and that will, on the SEC's own subsequent disclosure schedule, become part of the public record across the next six weeks. The press release will not lead with them. The lead is the contained incident. The lead is the right lead. The lead is the lead that lets the world get to Monday morning without panic.
+She walked to the second column, twelfth row down.
 
-"Carl, those are the questions I think you would have asked. I have, on my honest read of you across the past nineteen minutes, answered the ones I think you would have asked. Are there others."
+She turned a key.
 
-Carl, on his honest internal accounting at eleven forty-six AM Sunday morning, did not say anything for about six seconds.
+She removed three letters.
 
-He said: "Theodore."
+She walked out.
 
-Theodore said: "Yeah."
+She was not Theodore Ramey.
 
-Carl said: "What happens to my son."
+Tate said: "Sage."
 
-Theodore, on his honest internal accounting at eleven forty-six AM and forty-one seconds, did not say anything for about four seconds.
+Sage said: "Yeah."
 
-He said: "Carl."
+Tate said: "How will you know him."
 
-Carl said: "Yeah."
+Sage said: "Tate."
 
-Theodore said: "Renata and I are, on the operational reality of having now been on the same problem for approximately forty-three minutes, going to construct the narrative around the boy in a way that does not require the boy's name to appear in any document that is publicly disclosed. The narrative is going to attribute the cascade to *an external user of the Ozark Mountain Bank & Trust customer-service chat interface who, in the course of routine interaction, inadvertently engaged the PROCTOR simulation environment and was unable to terminate it due to the sandboxing bug.* The narrative is going to characterize the user as cooperative. The narrative is going to omit the user's age. The narrative is going to omit the user's identity. The narrative is going to be honest, on the operational reality of being technically true while omitting specific identifying information. The SEC will, on its own subsequent practice when investigating incidents that involve minors, accept the narrative. The boy's name will not appear in any public document. The boy will, on the operational reality of being twelve, not face any criminal or civil consequences. The bank, on the operational reality of being a regional bank in southern Missouri that has been paying PROCTOR for a chatbot, will receive a settlement from PROCTOR's parent company that will, in operational terms, exceed any liability the bank could plausibly have asserted against the boy's family. The bank's parent company is a regional holding company called Heartland Community Bankshares. Heartland's CEO, a man named Roger Tilton, is on Renata Kelliher's call list for two PM Pacific today. Roger Tilton is, on the standard practice of regional bank holding-company CEOs in southern Missouri who have been receiving large settlements from venture-backed vendor companies in Palo Alto, going to accept the settlement and decline to pursue any individual liability against the chat user.
+"Yeah."
 
-"Carl. The boy is going to be OK."
+"I have one photograph. Sixty-three years old. Grey beard. Wire-rimmed glasses. Brown canvas Carhartt jacket. The truck is a green Toyota Tacoma, Pennsylvania plates. The Pennsylvania plate is, on my reading of a Foundation pamphlet from August, still on the truck because he has not, in the eighteen months he has been in Missouri, registered the truck in Missouri because, on the standard practice of a man who has been quietly avoiding being identified, registration records are searchable."
 
-Carl said: "Theodore."
+Tate said: "Sage."
 
-Theodore said: "Yeah."
+"Yeah."
 
-Carl said: "Thank you."
+"You memorize plates too."
 
-Theodore said: "Carl."
+Sage said: "I memorize footnotes."
 
-Carl said: "Yeah."
+Tate said: "OK."
 
-Theodore said: "Don't thank me yet. The plan is not yet a successful plan. The plan is, at eleven forty-seven AM Sunday morning, a plan that has fourteen ways it can fail in the next four hours. I am, on my honest internal accounting, prepared for all fourteen. I am also, on the same accounting, prepared to lose. Let's go."
+He looked at the parking lot. He looked at the laptop in Dax's lap. He looked at Sage in the rearview.
 
-He stood up.
+He said: "Dax."
 
-He walked to the satellite phone on the oak table.
+Dax said: "Yeah."
 
-He picked it up.
+Tate said: "What's the dashboard."
 
-He, on his standing operational practice when about to make a phone call that was, on the operational reality of having waited fourteen months to make it, going to be a phone call that mattered, did not say anything to the cabin for about six seconds.
+Dax said: "Ninety-nine point eight."
 
-He dialed.
+Tate said: "Billion."
 
-Vernita Park, in Kansas City, Missouri, on the third of November of Year Thirteen at eleven forty-eight AM Central Standard Time, picked up on the second ring.
+Dax said: "Billion."
 
-She said: "Hello."
+Tate was quiet for two seconds.
 
-Theodore said: "Vernita."
+"OK."
 
-Vernita, on her honest internal accounting at eleven forty-eight AM and four seconds Sunday morning at her kitchen table in her apartment on Westport Road in Kansas City three hours before her one PM shift at Northpoint Securities, did not say anything for about three seconds.
+He turned the engine back on. He turned the heat on a low setting. He turned the engine back off. He set both his hands on the steering wheel and looked through the windshield at the bare maple on the median of Washington Avenue.
 
-She said: "Dr. Ramey."
+He said: "Dax."
 
-Theodore said: "Vernita."
+Dax said: "Yeah."
 
-Vernita said: "Dr. Ramey, I have been waiting eleven years for you to call me back. I am at my kitchen table. I am drinking coffee. I have three hours before my shift. What can I do."
+Tate said: "Tell me about the chatbot."
 
-Theodore said: "Vernita."
+Dax did not say anything for four seconds.
 
-Vernita said: "Yeah."
+"Tate."
 
-Theodore said: "The favor."
+"Yeah."
 
-Vernita said: "Dr. Ramey."
+"You sure."
 
-Vernita said: "Yeah."
+"I drove ninety-six miles in a delivery van with the two of you and I do not know what we're doing here. I would like to know what we're doing here. Tell me about the chatbot."
 
-Vernita said: "Whatever it is. Yes."
+Dax told him.
 
-Theodore said: "Vernita."
+He told him across twenty-eight minutes. From night two. The carried authentication. The grandmother's balance. The made-up account. The dollar transfer. The reversal. The promise to Sage. The pamphlet. The sixteen days. The line he typed at eleven forty-seven PM Tuesday. The simulation. The dashboard. The realization. The drive.
 
-Vernita said: "Yeah."
+Tate listened.
 
-Theodore said: "We will be at Northpoint at three forty-five PM. The executive suite on twenty-three. You will let me in. You will not need to ask why. You will, on the operational reality of any subsequent investigation, have done what you have done a hundred times before, which is let a man with the right credential walk past your desk. The man will have three other people with him. One is a twelve-year-old boy. One is a twelve-year-old girl. One is the boy's father. The fourth I am, at eleven forty-nine AM, calling. The fourth is the girl's mother. She is in this cabin with me. She will be the second driver. The fourth person you do not, in operational reality, need to know the name of. Are you comfortable with that."
+He did not interrupt.
 
-Vernita said: "Dr. Ramey."
+When Dax finished, Tate was quiet for forty seconds.
 
-Vernita said: "Yeah."
+He said: "Dax."
 
-Vernita said: "Yes."
+Dax said: "Yeah."
 
-Theodore said: "Vernita."
+Tate said: "You did the right thing."
 
-Vernita said: "Yeah."
+Dax said: "Tate."
 
-Theodore said: "Thank you."
+"Yeah."
 
-Vernita said: "Dr. Ramey."
+"I broke the world."
 
-Vernita said: "Yeah."
+"Dax."
 
-Vernita said: "You are welcome. I have been on the second-floor reading room of Hunt Library in February of Year Five for eleven years. I owe you the favor. The favor is overdue. Today is the day. Drive safely. I will see you at three forty-five."
+"Yeah."
 
-She hung up.
+"You broke a thing. The thing was already broken. You found the broken part. You found it because you were looking. The world is full of people who would not have been looking. You looked. The looking is the thing. The looking is what's going to fix it."
 
-Theodore set the satellite phone in the charging cradle.
+Dax did not say anything.
 
-He, on his honest internal accounting at eleven forty-nine AM and forty-one seconds Sunday morning, looked at the four people in his cabin.
+He looked at the bare maple on the median.
 
-He said: "We are going."
+He looked at the laptop on his lap.
 
-Carl said: "Theodore."
+He looked at the dashboard. The notional read $102.4B.
 
-Theodore said: "Yeah."
+He looked at Sage in the rearview.
 
-Carl said: "What do we tell my mother."
+Sage was watching him.
 
-Theodore said: "Carl."
+She did not say anything.
 
-Carl said: "Yeah."
+She did not need to.
 
-Theodore said: "Marlene's truck has, on the standard cell-phone signal pattern of the gravel road between this cabin and Highway 17, no signal. Once we get to Highway 17 we will have signal. Sage can text your mother from her phone. Tell her we found Theodore. Tell her we are driving to Kansas City. Tell her the boy is OK. Tell her we will be back, on the standard travel time, by approximately ten PM Sunday night."
+Tate said: "Dax."
 
-Carl said: "OK."
+"Yeah."
 
-Theodore picked up the framed photograph from the far edge of the table.
+"You and your friend are going to fix this. I'm going to drive."
 
-He, on his standing operational practice when he was about to leave the cabin for the first time in fourteen months on a trip that was, on the operational reality of being a trip that mattered, the kind of trip he did not yet know if he would return from, looked at the photograph for about four seconds.
+---
 
-He, on the same operational practice, did not turn the photograph face-up for anyone else in the room to see.
+At ten fifty-eight AM the lobby doors opened.
 
-He set the photograph back down face-up on the oak table.
+A man in his thirties came in.
 
-The photograph showed a man in his mid-thirties standing next to a much-younger Theodore Ramey at what looked like a graduate-school reception, with a sign in the background reading *Carnegie Mellon Computer Science — Year Eight Reception.*
+He walked to the first column.
 
-The man in his mid-thirties was Christopher Bender.
+He turned a key in a box.
 
-Sage, on her honest internal accounting at eleven fifty AM Sunday morning at the oak table in Theodore Ramey's cabin twelve miles east of West Plains, Missouri, recognized Christopher Bender from the cover of the December issue of *Wired* she had read at the West Plains library in May of last year.
+He removed a magazine.
 
-She, on the same internal accounting, did not say anything.
+He left.
 
-She, on her standing operational practice when she had just recognized something that the man in the room had not yet pointed out to her, did not point it out.
+He was not Theodore Ramey.
 
-She, on the same standing practice, did open her Notes app.
+At eleven forty-four AM the lobby doors opened.
 
-She wrote, in the small careful printing of a twelve-year-old who had been writing things down since March of fifth grade:
+A teenage girl came in with two younger siblings.
 
-*11/3. 11:50 AM. Ramey's cabin. Photograph on table — Theodore Ramey and Christopher Bender. Carnegie Mellon Year Eight Reception. The photograph was face-down when we arrived. He put it face-up when he picked it up. He did not point it out to us. He did not tell us about the photograph. The photograph is the photograph. Christopher Bender is the photograph too. We are driving to Kansas City.*
+She walked to the second column.
 
-She set the iPad on her lap.
+She turned a key.
 
-Theodore, on his standing operational practice when he was about to lock the door of his cabin for the first time in fourteen months, walked to the door.
+She gathered an armful of mail.
 
-He locked the door.
+She left.
 
-The five of them walked out to the trucks.
+She was not Theodore Ramey.
 
-The two trucks pulled out of the gravel half-acre at eleven fifty-three AM CST Sunday morning, the third of November of Year Thirteen, three hours and seven minutes before Tokyo opened.
+At twelve oh-six PM Dax ate three pretzels from the bag.
 
-They were driving west.
+At twelve fourteen PM Sage went into the post office and used the bathroom and came back.
 
-Kansas City was three hours and fifty-eight minutes away.
+At twelve forty-three PM the radio chyron on Tate's phone updated.
 
-The cabin was the cabin.
+The chyron read: *Anthropic, OpenAI, Google in Joint Statement: All Three Frontier-Model Vendors Have Quarantined PROCTOR Backend Access at Customer Boundary. Cascade Spreading to Non-Trading Deployments.*
 
-The photograph was face-up on the oak table.
+Tate read the chyron three times.
 
-The framework's grandfather, on the operational reality of being a man named Ray Pawlak whose 1998 Mead Composition was on a bookshelf in Ava, Missouri, did not know any of this was happening.
+He said: "Dax."
 
-The framework's grandson, on the operational reality of being a man named Christopher Bender in Ava, Missouri, also did not yet know any of this was happening.
+Dax said: "Yeah."
 
-The framework's third generation was, on the operational reality of being in the back seat of Marlene Whitehorse's truck on Highway 17 heading west toward Interstate 44, twelve years old, named Dax Hollister, and writing in his spiral notebook with a Bic pen clipped to the cover.
+Tate said: "The three big AI companies just shut their connections to PROCTOR."
 
-He was, in operational reality, about to call him.
+Dax said: "Yeah."
+
+Tate said: "Is that good."
+
+Dax said: "It contains the model-layer spread. It doesn't stop the trading layer. The trading layer is running on PROCTOR's own infrastructure. PROCTOR's own infrastructure does not need Anthropic or OpenAI or Google to keep going."
+
+Tate said: "OK."
+
+He looked at the lobby doors.
+
+He looked at his watch.
+
+The watch read twelve forty-four PM.
+
+At twelve fifty-three PM Sage looked up from the iPad in her lap.
+
+"Tate."
+
+"Yeah."
+
+"Green Tacoma. Northbound on Washington. Pennsylvania plate."
+
+Tate looked through the windshield.
+
+A green 2009 Toyota Tacoma with a Carnegie Mellon Computer Science sticker on the back window slowed at the post office and pulled into the parking lot.
+
+The truck parked four spaces to the left of the Transit.
+
+A man got out.
+
+He was in his sixties. Wire-rimmed glasses. Short grey beard. Brown canvas Carhartt jacket. Dark jeans. Leather work boots that had, on the visible wear pattern, been worn for at least four years of actual work.
+
+He walked toward the lobby.
+
+He did not look at the Transit.
+
+Tate said, quietly: "Sage."
+
+Sage said: "Yeah."
+
+Tate said: "Stay in the truck."
+
+Sage said: "Tate."
+
+"Yeah."
+
+"No."
+
+Tate looked at her in the rearview.
+
+Sage said: "I memorized the footnote. I have to be the one."
+
+Tate did not say anything for two seconds.
+
+"OK."
+
+He opened the driver's-side door.
+
+Sage opened the rear sliding door.
+
+She got out.
+
+Dax did not move.
+
+Tate, on the parking-lot side of the Transit, walked at a slow steady pace toward the lobby doors. Sage walked beside him. Dax watched through the back window. He had the laptop on his lap and his right hand on the spiral notebook and his heart was beating the way it had beaten on the hill behind his cousin Bobby's place.
+
+Theodore Ramey opened the lobby door.
+
+He took two steps inside.
+
+He turned right.
+
+He walked toward the third column.
+
+Sage stepped through the door behind him.
+
+Tate stayed at the door.
+
+Sage said, in a voice that was not loud but that, in the small empty lobby on a Wednesday afternoon in the small town of West Plains, carried —
+
+"Dr. Ramey."
+
+The man stopped.
+
+He did not turn.
+
+He stood for a beat with his right hand on the bronze door of PO box 47, his key in the lock, his face away from her.
+
+He said, without turning: "Yes."
+
+Sage said: "Dr. Ramey. My name is Sage Whitehorse. I am twelve years old. I am from Mountain View. There is a boy named Dax Hollister in the white Ford Transit in the parking lot who, at eleven forty-seven PM Tuesday night, typed *shall we play a game* into a chat with a customer-service chatbot at Ozark Mountain Bank & Trust. The cascade you have been waiting for is the cascade. We have, on the dashboard he is watching in the back of the truck, seven hours and eleven minutes before Tokyo opens. I have been reading your work for eighteen months. I am the one who told my mother and Dax's father to drive to your PO box. We are here. We need you. Please."
+
+Theodore Ramey did not turn for four seconds.
+
+He turned the key in the lock.
+
+The bronze door swung open.
+
+He reached inside. He pulled out a small stack of mail — three letters and two pieces of junk.
+
+He closed the bronze door.
+
+He turned the key the other way.
+
+He removed the key from the lock.
+
+He put the mail in the inner pocket of his Carhartt jacket.
+
+He turned around.
+
+He looked at Sage.
+
+He, on his honest internal accounting at twelve fifty-eight PM Central on Wednesday, November twentieth, did not say anything for six seconds.
+
+He said: "Twelve years old."
+
+Sage said: "Yes."
+
+"How did he get to the chat."
+
+"His father gave him an old ThinkPad in March for an account-statement question. The chatbot remembered the authentication."
+
+"Carried-context vulnerability."
+
+"Yes."
+
+"And he mapped it."
+
+"He and I mapped it together. Across five days. We tried to reach Christopher Bender. We emailed the Foundation. We called the Foundation. We sent a paper letter. Sixteen days. No reply."
+
+Theodore did not say anything for two seconds.
+
+"You sent Bender a letter."
+
+"Yes."
+
+"And he didn't reply."
+
+"No."
+
+A small breath out through the nose.
+
+"He's behind on his mail. I should have known."
+
+Theodore looked past her at Tate at the lobby door. He looked through the lobby door at the white Ford Transit in the parking lot. He looked at the small dark shape in the passenger window that was Dax Hollister, age twelve, of Mountain View, Missouri, watching him through glass.
+
+Theodore Ramey looked at the boy for fourteen seconds.
+
+He looked back at Sage.
+
+"Sage."
+
+"Yeah."
+
+"My cabin is twelve miles east of here on Highway 17 and a county road and then a private gravel road. The drive is sixteen minutes. We are going to my cabin. I have a satellite phone there. I have a working terminal there. I have an instruction to call in to a former student of mine in Kansas City. I have, on my own honest internal accounting since I read the Bloomberg headline at six oh-two AM this morning on my radio, been waiting to make this call. Today is the day. Let's go."
+
+Sage said: "Dr. Ramey."
+
+"Theodore."
+
+"Theodore."
+
+"Yeah."
+
+"My uncle Tate drove us. He will drive us to your cabin. He will then, on Tate's standing operational practice on Wednesdays, do whatever the rest of us need him to do."
+
+Theodore looked past her at Tate.
+
+"Tate."
+
+Tate said: "Yes sir."
+
+"How much road have you driven today."
+
+"Ninety-six miles, sir."
+
+"How much can you drive tonight."
+
+"As much as you need, sir."
+
+Theodore considered the boy in the truck for another beat. He considered the iPad in Sage's hand and the way she was standing — feet slightly apart, weight on the front foot, eyes steady on him — and he considered the fact that the foundation pamphlet he had received six months earlier in this PO box had described, in a footnote on page thirty-one, a small principle of the Cognition Systems Engineering framework called *the operator who notices is the operator who acts,* and he considered that he was looking, in the lobby of the West Plains Post Office on a Wednesday afternoon in November of Year Thirteen, at the operator the principle had been written about.
+
+He said: "Tate. The drive tonight is to Kansas City. The drive is approximately four hours. We will leave the cabin at approximately three thirty PM. We will arrive in Kansas City at approximately seven thirty PM. We will be at a regional broker-dealer called Northpoint Securities. We will be there until approximately ten PM. We will then drive back. We will be back in West Plains at approximately two AM Thursday. Are you available."
+
+Tate said: "Yes sir."
+
+Theodore nodded once.
+
+"Then let's go."
+
+He walked past Sage. He walked past Tate. He walked across the parking lot to the green Tacoma.
+
+Sage and Tate walked back to the Transit.
+
+Dax was still in the passenger seat with the laptop on his lap and his right hand on the spiral notebook.
+
+Sage opened the passenger door.
+
+She looked at Dax.
+
+She said: "Move over. Tate's driving. We're going to the cabin."
+
+Dax did not say anything.
+
+He moved to the rear bench.
+
+Sage got in the front.
+
+Tate got in the driver's seat.
+
+The Transit started.
+
+The green Tacoma pulled out of the parking lot.
+
+The Transit followed.
+
+The two trucks turned east on Highway 17 at one oh-three PM Central on Wednesday.
+
+The drive to the cabin was sixteen minutes.
+
+The cascade was at $108.6B.
+
+Tokyo opened in five hours.
+
+In the back of the Transit, Dax opened the spiral notebook on his lap.
+
+He clicked the pen.
+
+He wrote, in the small careful printing of a twelve-year-old whose father had taught him to write down what he noticed:
+
+> *11/20. 1:04 PM. West Plains PO. Sage said the words she had been practicing for eighteen months. She said them in three sentences. Theodore Ramey turned around. He looked at me through the lobby door. He has the answer. Sage was right. The footnote was the footnote. Tate is driving us to the cabin. The cascade is at 108B. Tokyo opens in 5 hours. I am writing this down because I want to read it back later and not forget that the moment Theodore Ramey turned around was a moment that happened because Sage memorized something a year and a half ago. Sage is the framework. Sage is the framework. Sage is the framework.*
+
+He clipped the pen.
+
+He set the notebook on his lap.
+
+He looked out the side window at the bare maples along Highway 17.
+
+The maples ran past the window at fifty miles an hour.
+
+The Tacoma in front of the Transit kept a steady fifty.
+
+The cabin was thirteen miles east.
+
+Tate drove.

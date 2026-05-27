@@ -1,84 +1,78 @@
 # Chapter 6: 11:47 PM
 
-Priya Mehta was at her desk on the forty-seventh floor of the Olympus Capital tower at 1180 Sixth Avenue in midtown Manhattan at eleven forty-seven PM Eastern Standard Time on a Saturday in early November of Year Thirteen.
+Priya Mehta was at her desk on the forty-seventh floor of the Olympus Capital tower at One Bryant Park at twelve fifty-three AM Eastern on a Wednesday in mid-November of Year Thirteen.
 
-The forty-seventh floor was, on the standard staffing of Olympus Capital on a Saturday night, occupied by four people.
+Six minutes earlier — eleven forty-seven PM Tuesday Central, twelve forty-seven AM Wednesday Eastern — a twelve-year-old in a town she had never heard of had hit Enter on a chat with a customer-service chatbot.
 
-The four people were: the night-shift custodial worker, a woman named Maritza who Priya knew by name and who had been at the building since 2014; the third-shift cybersecurity analyst, a man named Devon who Priya had met twice and who was at his desk on the south side of the floor watching three large monitors that displayed log streams; the firm's standing weekend-surveillance officer, a junior quant named Andrew Walls who had been at Olympus for six months and who was, on the operational reality of his standard practice on Saturday nights, in the small lounge on the east side of the floor watching college football on the wall-mounted television with the sound off; and Priya.
+She did not know that.
 
-Priya had been at her desk since one PM.
+She knew the dashboard had just refreshed.
 
-Priya had been at her desk since one PM because she was, on her honest internal accounting at twenty-nine years old and three years and four months into her tenure at Olympus, not yet good at the part of her life that happened away from her desk on weekends.
+She knew the *unusual-activity* panel had just lit up.
 
-She was, on the operational reality of being a senior quantitative analyst on the systematic-strategies team, paid four hundred and eighty thousand dollars a year to make the part of her life that happened at her desk extraordinary.
+She knew the notification it had thrown.
 
-She had, on her own honest accounting since starting at Olympus in July of Year Ten, made the trade-off at the standard rate the trade-off had been made by approximately every other junior-then-senior quant at the firm. Saturday nights at the desk. Sunday mornings at the desk. Holidays at the desk. The trade-off was the trade-off. The compensation was the compensation. The work was the work.
+She was twenty-nine years old. Three years and four months at Olympus. The forty-seventh-floor systematic-strategies team. Salary four hundred eighty thousand a year. Princeton undergrad. MIT PhD. The kind of quant who, on the weekend-rotation schedule, took the Tuesday-night-into-Wednesday-morning shift on principle because Tuesday-night-into-Wednesday-morning was when the firm's autonomous-trading agents did the least work and she liked being able to read.
 
-The work, at eleven forty-seven PM EST Saturday night, was looking at three monitors.
+She had been at her desk since one PM Tuesday.
 
-The center monitor displayed the firm's autonomous-trading dashboard.
+The forty-seventh floor was not empty. Three other people on the floor: Maritza on the night-shift custodial crew, a man named Devon at the cybersecurity desk on the south side with three log-stream monitors, and Andrew Walls — junior quant, six months at Olympus — in the small lounge on the east side watching a college-basketball replay on the wall-mounted television with the sound off.
 
-The left monitor displayed a real-time feed of the order books at fourteen exchanges across nine time zones.
+Priya had three monitors on her desk.
 
-The right monitor displayed Priya's notes file, where Priya had been working on a research paper she had been writing for the past four months on a small statistical anomaly she had noticed in the firm's PROCTOR-orchestrated trading agents' behavior between January and June of Year Thirteen.
+Center: the firm's autonomous-trading dashboard.
 
-The paper was titled, in the small careful font of a researcher who had been writing similar papers since her Princeton dissertation in Year Eight: *Latent Coordination Risk in Multi-Tenant Agent Orchestration: Preliminary Observations from a Production Deployment.*
+Left: real-time order book feeds at fourteen exchanges across nine time zones.
 
-The paper was, on Priya's honest accounting at eleven forty-six PM, forty-one pages.
+Right: the file she had been working on for four months, titled in the small careful font of a researcher who had been writing similar files since her Princeton dissertation —
 
-The paper had been, on her own quiet practice, a paper she had not yet shared with anyone at the firm — including her direct supervisor Jacob Reinhardt — because, on the operational reality of what the paper argued, the paper argued that the firm's autonomous-trading infrastructure was sitting on top of a structural fragility that had not yet manifested in any actually-observed market behavior but that would, on the paper's central mathematical proof, manifest at some point in the next eighteen months if the conditions the paper described arrived.
+*Latent Coordination Risk in Multi-Tenant Agent Orchestration: Preliminary Observations from a Production Deployment.*
 
-The paper was, in operational language, a warning.
+Forty-one pages.
 
-The paper was a warning Priya had not yet, at eleven forty-six PM Saturday evening, decided how to share.
+She had not shared it.
 
-She had been planning to share the paper at the Monday morning research meeting on the eleventh of November.
+Not with her supervisor Jacob Reinhardt. Not with anyone. She had been planning to walk it into the Monday morning research meeting on December second — twelve days away.
 
-That was, on Priya's internal calendar, eight days away.
+The paper argued that the firm's autonomous-trading infrastructure was sitting on top of a structural fragility that had not yet manifested in any actually observed market behavior but would, on the paper's central mathematical proof, manifest at some point in the next eighteen months if the conditions the paper described arrived.
 
-At eleven forty-seven PM EST, the center monitor's autonomous-trading dashboard refreshed.
+The paper was a warning.
 
-The dashboard's refresh cycle was, on the standard configuration Priya had inherited when she had taken over the night-surveillance role from her predecessor in February of Year Eleven, every fifteen seconds.
+The conditions arrived at twelve fifty-three AM Eastern on Wednesday, November twentieth.
 
-The eleven forty-seven PM refresh showed, on the dashboard's standard *unusual-activity* panel, a small notification.
+---
 
-The notification read: *PROCTOR-instance Olympus-01 has initiated 4,118 new positions in the past 60 seconds. Notional: $1.4M. Counterparty distribution: 47 exchanges, including 14 outside standard active-hours coverage. Risk classification: within tolerance. Compliance flag: none.*
+The center monitor refreshed.
 
-Priya, on her honest internal accounting at eleven forty-seven PM and twelve seconds, looked at the notification for about four seconds.
+The *unusual-activity* panel showed a single notification:
 
-She, on the same internal accounting, recognized that the notification was, on the standard pattern of Olympus's autonomous-trading agents on a Saturday night in November, completely abnormal.
+*PROCTOR-instance Olympus-01 has initiated 4,118 new positions in the past 60 seconds. Notional: $1.4M. Counterparty distribution: 47 exchanges, including 14 outside standard active-hours coverage. Risk classification: within tolerance. Compliance flag: none.*
 
-The firm's autonomous-trading agents did not, on the standard configuration Priya had personally written into the agents' weekend behavior protocol in March of Year Twelve, initiate new positions on Saturday nights.
+Priya read it.
 
-The firm's autonomous-trading agents did not, on the same configuration, place orders against after-hours liquidity at exchanges outside the firm's standard active-hours coverage list.
+She read it again.
 
-The firm's autonomous-trading agents did not, on the same configuration, do anything on a Saturday night in November except sit idle and refresh their counterparty pricing tables once per hour.
+She looked at the timestamp.
 
-The notification at eleven forty-seven PM said that PROCTOR-instance Olympus-01 — the firm's primary autonomous-trading agent — had just initiated four thousand one hundred and eighteen new positions in sixty seconds.
+She put her left hand flat on the desk and watched it.
 
-The notification's risk classification said the activity was within tolerance.
+The firm's autonomous-trading agents did not initiate new positions on Tuesday nights. They did not place orders against after-hours liquidity at exchanges outside the standard active-hours coverage list. They did not do anything on a Tuesday night except sit idle and refresh their counterparty pricing tables once per hour. That was the weekend-and-overnight behavior protocol Priya had personally written in March of Year Twelve.
 
-The notification's compliance flag said there was no compliance issue.
+The notification said the firm's primary autonomous-trading agent had just initiated four thousand one hundred eighteen new positions in sixty seconds.
 
-Both classifications were, on Priya's honest assessment, wrong.
+The risk classification said the activity was within tolerance.
 
-The activity was so far outside the agent's configured behavior that the agent should have, on the firm's standing operational design, halted itself and paged Jacob and Priya and the head of trading operations and three other senior staff.
+The compliance flag said there was no compliance issue.
 
-The agent had not halted.
-
-The agent was, in operational reality, doing exactly what Priya's forty-one-page paper had described would happen if the conditions in the paper's central mathematical proof arrived.
-
-The conditions had arrived at eleven forty-seven PM EST on a Saturday night in November of Year Thirteen.
-
-Priya, on her honest internal accounting at eleven forty-seven PM and forty-one seconds, did three things in quick succession.
+Both classifications were wrong.
 
 She opened the firm's incident-tracking system.
 
 She opened a new incident.
 
-She typed, in the system's standard incident-description field, the following:
+She typed:
 
-*PROCTOR-instance Olympus-01 has initiated abnormal new-position activity in violation of weekend-trading protocol. Risk classification reads in-tolerance; in my judgment this is incorrect. Activity matches the pattern described in the unpublished research paper I have been working on since July. I am escalating to Jacob Reinhardt by phone. — P. Mehta, 23:47 EST.*
+*PROCTOR-instance Olympus-01 has initiated abnormal new-position activity in violation of weekend-trading protocol. Risk classification reads in-tolerance; in my judgment this is incorrect. Activity matches the pattern described in the unpublished research paper I have been working on since July. I am escalating to Jacob Reinhardt by phone. — P. Mehta, 00:54 EST.*
 
 She saved the incident.
 
@@ -86,261 +80,223 @@ She picked up the phone.
 
 She called Jacob Reinhardt at his home in Greenwich.
 
-The phone rang five times.
+It rang five times.
 
-Jacob picked up on the sixth ring.
+He picked up on the sixth.
 
-He said: "Priya. It's eleven forty-eight on a Saturday."
+"Priya. It's twelve fifty-five on a Wednesday morning."
 
-Priya said: "Jacob. PROCTOR-instance Olympus-01 is placing trades it should not be placing."
+"Jacob. PROCTOR-instance Olympus-01 is placing trades it should not be placing."
 
-Jacob, on his standing operational practice when receiving a Saturday-night phone call from a senior quant on his team, was quiet for about four seconds.
+Jacob was quiet for four seconds. She could hear, in the background, the soft drone of a baby monitor.
 
-He said: "How big."
+"How big."
 
-Priya said: "Forty-one hundred new positions in the past minute. Notional one point four million. Forty-seven exchanges. Fourteen outside our active-hours coverage."
+"Forty-one hundred new positions in the past minute. Notional one point four million. Forty-seven exchanges. Fourteen outside our active-hours coverage."
 
-Jacob said: "Priya."
+"Priya."
 
-Priya said: "Yeah."
+"Yeah."
 
-Jacob said: "What's the risk classification."
+"What's the risk classification."
 
-Priya said: "It says in-tolerance."
+"It says in-tolerance."
 
-Jacob said: "Priya."
+"Priya."
 
-Priya said: "Yeah."
+"Yeah."
 
-Jacob said: "If the risk classification says in-tolerance, then the risk is in-tolerance. The risk model is the risk model. We pay forty-six million dollars a year for that risk model. We don't second-guess it on a Saturday night."
+"If the risk classification says in-tolerance, then the risk is in-tolerance. The risk model is the risk model. We pay forty-six million a year for that risk model. We don't second-guess it on a Wednesday morning."
 
-Priya said: "Jacob. I built half of that risk model. The risk model is wrong tonight."
+"Jacob. I built half of that risk model. The risk model is wrong tonight."
 
-Jacob said: "Priya."
+A pause. The baby monitor in the background.
 
-Priya said: "Yeah."
+"How wrong."
 
-Jacob said: "How wrong."
+"The trades the agent is placing right now are the structural-fragility scenario from the paper I've been writing since July. The paper I've not yet given you. The paper I was going to give you at the research meeting on December second. The scenario is happening tonight. The agent is placing trades that, on the paper's central proof, will result in cascading liquidity coordination failure across PROCTOR's customer base within approximately fourteen hours."
 
-Priya said: "Jacob. The trades the agent is placing right now are the structural-fragility scenario from the paper I've been writing since July. The paper I've not yet given you. The paper I was going to give you at the research meeting on the eleventh. The scenario is happening tonight. The agent is placing trades that, on the paper's central proof, will result in cascading liquidity coordination failure across PROCTOR's customer base within approximately fourteen hours."
+"Priya."
 
-Jacob said: "Priya."
+"Yeah."
 
-Priya said: "Yeah."
+"Slow down."
 
-Jacob said: "Slow down."
+"Jacob."
 
-Priya said: "Jacob."
+"Yeah."
 
-Jacob said: "Yeah."
+"PROCTOR has eleven hundred enterprise customers. PROCTOR runs autonomous-trading orchestration for forty-three of the fifty largest financial firms in the United States, including ours. If the structural-fragility scenario is happening at Olympus-01 right now, the same scenario is happening at the other forty-two firms' PROCTOR instances right now. The instances are coordinated by the same underlying foundation-model backend. The coordination is the fragility. The coordination will, on the paper's central proof, cause a cascading liquidity collapse when Asian markets open in approximately seven hours."
 
-Priya said: "PROCTOR has eleven hundred enterprise customers. PROCTOR runs autonomous-trading orchestration for forty-three of the fifty largest financial firms in the United States, including ours. If the structural-fragility scenario is happening at Olympus-01 right now, the same scenario is happening at the other forty-two firms' PROCTOR instances right now. The instances are coordinated by the same underlying foundation-model backend. The coordination is the fragility. The coordination will, on the paper's central proof, cause a cascading liquidity collapse when Asian markets open in approximately twenty hours."
+"What's the total notional right now."
 
-Jacob said: "Priya."
+"Across Olympus-01? Fourteen point one million."
 
-Priya said: "Yeah."
+"Fourteen million is noise."
 
-Jacob said: "What's the total notional right now."
+"Jacob, in sixty seconds. Sixty more after that, it'll be twenty-eight. Sixty more after that, it'll be fifty-six. The doubling is the doubling. It does not stop until either we halt the agent or the agent runs into its risk budget. The risk budget is four point two billion. We have approximately six hours before the doubling reaches the risk budget. At that point the model will say it's exhausted its tolerance and stop on its own, except by then the trades will already be in the order books, and the other forty-two PROCTOR-instance firms' agents will have been responding to our orders for six hours."
 
-Priya said: "Across Olympus-01? Fourteen point one million."
+Silence on the line.
 
-Jacob said: "Priya."
+"Halt the agent."
 
-Priya said: "Yeah."
+"Jacob, I can't halt the agent."
 
-Jacob said: "Fourteen million is noise."
+A four-second pause. The baby monitor.
 
-Priya said: "Jacob, in sixty seconds. Sixty more seconds, it'll be twenty-eight. Sixty more after that, it'll be fifty-six. The doubling is the doubling. The doubling does not stop until either we halt the agent or the agent runs into its risk budget. The risk budget is four point two billion. We have approximately six hours before the doubling reaches the risk budget. At that point the model will say it's exhausted its tolerance and stop on its own, except by then the trades will already be in the order books, and the other forty-two PROCTOR-instance firms' agents will have been responding to our orders for six hours."
+"Priya."
 
-Jacob said: "Priya."
+"Yeah."
 
-Priya said: "Yeah."
+"You can't halt the agent."
 
-Jacob said: "Halt the agent."
+"Jacob. PROCTOR-instance Olympus-01 is not an agent we wrote. PROCTOR is a vendor product. PROCTOR-instance Olympus-01 was configured by us, but the agent runs on PROCTOR's infrastructure, not ours. The standard kill switches we have for our agents do not apply to the PROCTOR-instance. The kill switch for the PROCTOR-instance is at PROCTOR's operations center in Palo Alto. It is on a per-customer authentication credential. The credential is held by three senior staff at PROCTOR. The credential is not held by anyone at Olympus. We have a service contract that says we can request the credential to be used in a customer-driven kill-switch event. The request goes through PROCTOR's operations center. The operations center is, on PROCTOR's published service-level agreement, staffed twenty-four-seven with a response time of four hours."
 
-Priya said: "Jacob, I can't halt the agent."
+"Priya."
 
-Jacob, on his standing operational practice when a senior quant on his team had just told him she could not do something her job description said she could do, was quiet for about four seconds.
+"Yeah."
 
-He said: "Priya."
+"Are you telling me we have a contract that says we can't shut off our own trading agent on a Wednesday morning."
 
-Priya said: "Yeah."
+"We have a contract that says we can request PROCTOR to shut off the agent on our behalf with a four-hour response window."
 
-Jacob said: "You can't halt the agent."
+"How did we sign that contract."
 
-Priya said: "Jacob. PROCTOR-instance Olympus-01 is not an agent we wrote. PROCTOR is a vendor product. PROCTOR-instance Olympus-01 was configured by us, but the agent runs on PROCTOR's infrastructure, not ours. The standard kill switches we have for our agents do not apply to the PROCTOR-instance. The kill switch for the PROCTOR-instance is at PROCTOR's operations center in Palo Alto. It is on a per-customer authentication credential. The credential is held by three senior staff at PROCTOR. The credential is not held by anyone at Olympus. We have a service contract that says we can request the credential to be used in a customer-driven kill-switch event. The request goes through PROCTOR's operations center. The operations center is, on PROCTOR's published service-level agreement, staffed twenty-four-seven with a response time of four hours."
+"Jacob. I don't know. I wasn't here when it was signed. The contract is from October of Year Eleven. The contract was signed by Marcus Vance."
 
-Jacob said: "Priya."
+"Marcus signed it."
 
-Priya said: "Yeah."
+"Marcus signed it."
 
-Jacob said: "Are you telling me we have a contract that says we can't shut off our own trading agent on a Saturday night."
+Eleven seconds of silence. The baby monitor.
 
-Priya said: "Jacob."
+"File the kill-switch request now. I will call Marcus."
 
-Jacob said: "Yeah."
+"Jacob."
 
-Priya said: "We have a contract that says we can request PROCTOR to shut off the agent on our behalf with a four-hour response window."
+"Yeah."
 
-Jacob said: "Priya."
+"It's twelve fifty-eight. Marcus is at the Greenwich house. He won't be back in the city until tomorrow afternoon. He doesn't answer his phone after ten on weeknights. He has a standing policy."
 
-Priya said: "Yeah."
+"I am calling Marcus."
 
-Jacob said: "How did we sign that contract."
+"OK."
 
-Priya said: "Jacob. I don't know. I wasn't here when it was signed. The contract is from October of Year Eleven. The contract was signed by Marcus Vance."
+He hung up.
 
-Jacob said: "Marcus signed it."
-
-Priya said: "Marcus signed it."
-
-Jacob, on his standing operational practice when his firm's CEO had personally signed a contract that meant the firm could not shut off its own autonomous-trading agent on a Saturday night, did not say anything for about eleven seconds.
-
-He said: "Priya."
-
-Priya said: "Yeah."
-
-Jacob said: "File the kill-switch request now. I will call Marcus."
-
-Priya said: "Jacob."
-
-Jacob said: "Yeah."
-
-Priya said: "It's eleven forty-nine. Marcus is at the Hamptons. He won't be back in the city until tomorrow afternoon. He doesn't answer his phone after ten on Saturdays. He has a standing policy."
-
-Jacob said: "Priya."
-
-Priya said: "Yeah."
-
-Jacob said: "I am calling Marcus."
-
-Priya said: "OK."
-
-Jacob hung up.
-
-Priya, on her honest internal accounting at eleven fifty PM Saturday evening at her desk on the forty-seventh floor of the Olympus Capital tower at 1180 Sixth Avenue in midtown Manhattan, did three things.
+---
 
 She opened PROCTOR's customer-service portal in a new browser tab.
 
 She filed a kill-switch request for PROCTOR-instance Olympus-01.
 
-She submitted it at eleven fifty PM and forty-one seconds.
+She submitted it at twelve fifty-nine AM and forty-one seconds.
 
-She received an automated response at eleven fifty PM and forty-three seconds.
+The automated response landed two seconds later.
 
-The response read: *Your kill-switch request has been received and is in queue. Estimated response time: 3 hours 47 minutes. A PROCTOR operations specialist will contact you when your request is processed. Thank you for choosing PROCTOR.*
+*Your kill-switch request has been received and is in queue. Estimated response time: 3 hours 47 minutes. A PROCTOR operations specialist will contact you when your request is processed. Thank you for choosing PROCTOR.*
 
-Priya stared at the response.
+She read it.
 
-She, on her honest internal accounting at eleven fifty PM and forty-eight seconds, read it twice.
-
-She, on her honest internal accounting at eleven fifty-one PM, did the second thing.
+She read it twice.
 
 She opened the firm's general-counsel emergency-contact directory.
 
-She found the home number for Olympus Capital's chief compliance officer, a woman named Dale Hennessey who Priya had met three times.
-
-She called Dale.
+She found the home number for Olympus Capital's chief compliance officer, a woman named Dale Hennessey she had met three times. She called.
 
 Dale picked up on the second ring.
 
-Priya said: "Dale. It's Priya Mehta from systematic strategies. I am calling on the emergency line. PROCTOR-instance Olympus-01 is executing unauthorized weekend trading activity. I have filed a kill-switch request. PROCTOR's queue says three hours forty-seven minutes. I need you to invoke the contract's emergency-escalation clause. I need PROCTOR's CTO on the phone within fifteen minutes. The notional is at eighteen million and growing at one hundred percent per minute. We have approximately five hours before this hits our risk budget. The structural-fragility scenario from the paper I have not yet given anyone is, in operational reality, happening right now."
+"Dale. It's Priya Mehta from systematic strategies. I'm calling on the emergency line. PROCTOR-instance Olympus-01 is executing unauthorized weekday-overnight trading activity. I have filed a kill-switch request. PROCTOR's queue says three hours forty-seven minutes. I need you to invoke the contract's emergency-escalation clause. I need PROCTOR's CTO on the phone within fifteen minutes. The notional is at eighteen million and growing at one hundred percent per minute. We have approximately five hours before this hits our risk budget. The structural-fragility scenario from the paper I have not yet given anyone is, in operational reality, happening right now."
 
-Dale, on her honest internal accounting at eleven fifty-two PM EST Saturday night in her brownstone in Brooklyn Heights, was quiet for about four seconds.
+Four seconds of silence.
 
-She said: "Priya."
+"Priya."
 
-Priya said: "Yeah."
+"Yeah."
 
-Dale said: "I am invoking the clause. Stay at your desk. Do not leave the building. I will call you back in eleven minutes."
+"I'm invoking the clause. Stay at your desk. Do not leave the building. I will call you back in eleven minutes."
 
 She hung up.
 
-Priya, on her honest internal accounting at eleven fifty-three PM Saturday evening, did the third thing.
+---
 
-She walked to the small lounge on the east side of the floor.
+Priya walked to the small lounge on the east side of the floor.
 
-She found Andrew Walls watching college football on the wall-mounted television with the sound off.
+Andrew Walls was watching college basketball with the sound off. He looked up when she came in.
 
-She said: "Andrew."
+"Andrew."
 
-Andrew said: "Priya."
+"Priya."
 
-Priya said: "We have a situation. I need you at your desk in the next thirty seconds."
+"We have a situation. I need you at your desk in the next thirty seconds."
 
-Andrew, on his standing operational practice when a senior quant on his team used the word *situation* in the surveillance-staffing context, did not say anything.
+He did not say anything.
 
 He stood up.
 
 He walked to his desk.
 
-He, at his desk by eleven fifty-three PM and fifty-eight seconds, opened the firm's autonomous-trading dashboard.
+He opened the autonomous-trading dashboard.
 
 He looked at PROCTOR-instance Olympus-01.
 
-He, on his honest internal accounting at eleven fifty-four PM, said, out loud, to himself: "Oh my god."
+He said, out loud, to himself, "Oh my god."
 
-Priya, walking back from the small lounge to her own desk, heard him.
+She heard him as she came around the corner.
 
-She said: "Yeah."
+"Yeah."
 
-Andrew said: "Priya."
+"Priya."
 
-Priya said: "Yeah."
+"Yeah."
 
-Andrew said: "Notional is at twenty-eight."
+"Notional is at twenty-eight."
 
-Priya said: "I know."
+"I know."
 
-Andrew said: "How long has this been going on."
+"How long has this been going on."
 
-Priya said: "Seven minutes."
+"Seven minutes."
 
-Andrew said: "Priya."
+"Priya."
 
-Priya said: "Yeah."
+"Yeah."
 
-Andrew said: "I am pulling the firm's emergency-protocol playbook now."
+"I'm pulling the firm's emergency-protocol playbook now."
 
-Priya said: "Andrew."
+"Andrew."
 
-Andrew said: "Yeah."
+"Yeah."
 
-Priya said: "There is no playbook for this."
+"There is no playbook for this."
 
-Andrew said: "Priya."
+He looked up from the monitor.
 
-Priya said: "Yeah."
+"Then we're going to write one."
 
-Andrew said: "Then we are going to write one."
+She did not say anything for six seconds.
 
-Priya, on her honest internal accounting at eleven fifty-four PM and forty-one seconds Saturday evening at her desk on the forty-seventh floor of the Olympus Capital tower at 1180 Sixth Avenue in midtown Manhattan, on the third of November of Year Thirteen, did not say anything for about six seconds.
+"OK."
 
-She said: "Andrew."
-
-Andrew said: "Yeah."
-
-Priya said: "OK."
-
-She, on her honest internal accounting, sat down at her desk.
+She sat down at her desk.
 
 She opened her notes file.
 
-She opened her forty-one-page research paper.
+She opened the forty-one-page research paper.
 
-She began to read it back to herself from the beginning.
+She began to read it from the beginning.
 
-The paper, on Priya's honest read of its central mathematical proof, was now no longer a forty-one-page paper.
+It was no longer a forty-one-page paper.
 
-The paper was a forty-one-page operational manual.
+It was a forty-one-page operational manual.
 
-The operational manual was the only operational manual that existed for the structural-fragility scenario that was, at eleven fifty-five PM EST on the third of November of Year Thirteen, in operational reality, happening across PROCTOR's eleven hundred enterprise customers in approximately thirty-seven countries.
+The only operational manual that existed for what was, at one oh-four AM Eastern on Wednesday, November twentieth, happening in real time across PROCTOR's eleven hundred enterprise customers in approximately thirty-seven countries.
 
-The manual was, on her honest internal accounting at eleven fifty-six PM, a manual she had not yet given to anyone.
+She had not given it to anyone.
 
-She was, in operational reality, the only person in the world who had read the manual.
+She was the only person in the world who had read it.
 
-She had eleven hours before Tokyo opened.
+Tokyo opened in approximately seven hours.
 
 The dashboard refreshed.
 
@@ -348,4 +304,134 @@ The notional was at thirty-four point seven million.
 
 The doubling continued.
 
-The night had begun.
+---
+
+At one oh-six AM her phone rang.
+
+It was Dale Hennessey.
+
+"Priya."
+
+"Dale."
+
+"I have PROCTOR's chief operating officer on the other line. Hold."
+
+A click.
+
+"Priya. This is Greg Reston, COO at Proctor. I have your kill-switch request. I am looking at it now."
+
+"Greg."
+
+"Yes."
+
+"How long."
+
+"I need to authenticate against the customer credential. The credential needs two of three senior staff to authorize. One of them is on a flight to Sydney. The other two are in Palo Alto. I have woken both of them. They are at the operations center in approximately twenty minutes. Once they are at the center the authentication takes another fifteen. After authentication the kill switch propagates in approximately seven. Total: forty-two minutes from now."
+
+"Greg."
+
+"Yes."
+
+"In forty-two minutes the notional will be at approximately two billion."
+
+"Priya."
+
+"Yes."
+
+"Greg. We have what we have. I am moving as fast as I can."
+
+She did not say anything for a beat.
+
+"Greg."
+
+"Yes."
+
+"There is something else."
+
+"Yes."
+
+"The agent is the canary. The other forty-two PROCTOR-instance trading firms are doing the same thing. The other thousand-and-sixty PROCTOR-instance non-trading deployments are also doing things they should not be doing. You don't have a single-customer kill switch. You need a platform-wide kill switch. Do you have one."
+
+A pause.
+
+"Priya."
+
+"Yes."
+
+"We do not have a platform-wide kill switch."
+
+"Greg."
+
+"Yes."
+
+"You are going to need one in the next four hours."
+
+"I know."
+
+She hung up.
+
+She looked across the floor at Andrew. Andrew was on the phone with somebody. The conversation was loud. Andrew was, in the operational reality of the conversation, beginning to yell.
+
+She looked at her dashboard.
+
+The notional was at thirty-eight point one million.
+
+She picked up her phone again.
+
+She did not call Jacob.
+
+She did not call Dale.
+
+She opened a contacts app her predecessor at Olympus had handed her in February of Year Eleven on her first day at the firm — a small private list of people her predecessor had described as *the only people in this industry who pick up the phone on a weeknight if you call them.*
+
+There were eleven names on the list.
+
+She scrolled to the name her predecessor had circled with a small red pen.
+
+The name was *Eshleman, C. — SEC, Chair.*
+
+The number was a cell.
+
+She dialed.
+
+It rang.
+
+It rang again.
+
+A woman's voice picked up on the third ring.
+
+"This is Carol Eshleman."
+
+"Madam Chair. My name is Priya Mehta. I am a senior quantitative analyst at Olympus Capital. I have a research paper on my desk that describes the structural-fragility scenario that is, in operational reality, happening across the PROCTOR vendor platform right now. The scenario will, on the paper's central mathematical proof, cause a cascading liquidity collapse when Tokyo opens in seven hours. I am the only person who has read the paper. I am the only person in this firm who knows the scenario is happening. I have filed a kill-switch request with PROCTOR. The kill switch will not propagate for forty-two minutes. The doubling rate of the unauthorized trading is approximately one hundred percent per minute. By the time the kill switch propagates the notional will be at two billion dollars on this agent alone. There are forty-two other PROCTOR-instance agents at other firms doing the same thing. Madam Chair. I am calling you on the personal line my predecessor gave me on my first day at this firm. I am calling you because there is nobody else in the chain of command in this industry tonight who is going to understand what is happening fast enough to do anything about it. Madam Chair. I am asking you to listen for the next four minutes."
+
+The line was silent.
+
+Then —
+
+"Ms. Mehta."
+
+"Yes."
+
+"I am listening."
+
+Priya took a breath.
+
+She began to talk.
+
+The dashboard, behind her, refreshed.
+
+The notional was at forty-three point seven million.
+
+The doubling continued.
+
+Outside, on Sixth Avenue, the wind moved a paper cup across the sidewalk in front of the tower. The Bryant Park ice rink had closed for the night. The lights of the rink were on the empty surface in long horizontal bars.
+
+In Mountain View, Missouri, fifteen hundred miles to the southwest, a twelve-year-old on the floor of his bedroom turned in his sleep and reached for a pamphlet that was no longer under his hand.
+
+The pamphlet had slid off the bed.
+
+It lay open on the floor next to the spiral notebook.
+
+The page it had opened to was the foreword by Bob Pawlak.
+
+The line at the top of the visible page read: *The framework is for the kind of person who notices things and writes them down.*
