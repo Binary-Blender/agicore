@@ -35,6 +35,18 @@ export const TEMPLATES: Template[] = [
     description: 'Router picks one of three personas, each answers in voice, composer attributes. The Reality.AI pattern, workflow-shaped.',
     build: buildPersonaDispatchWorkflow,
   },
+  {
+    id: 'parallel_research',
+    name: 'Parallel research',
+    description: 'Fan out a topic to three concurrent angles (history / current / future), merge into one briefing. The all-of-N counterpart to persona dispatch.',
+    build: buildParallelResearchWorkflow,
+  },
+  {
+    id: 'iterate_refine',
+    name: 'Iterative refinement',
+    description: 'Draft, then loop critique-and-revise N rounds, then polish. The "make it better N times" creator pattern.',
+    build: buildIterateRefineWorkflow,
+  },
 ];
 
 export function getTemplate(id: string): Template | undefined {
@@ -209,6 +221,135 @@ function buildPersonaDispatchWorkflow(): Workflow {
       { id: 'e6', source: 'n4', target: 'n6' },
       { id: 'e7', source: 'n5', target: 'n6' },
       { id: 'e8', source: 'n6', target: 'n7' },
+    ],
+  };
+}
+
+function buildParallelResearchWorkflow(): Workflow {
+  // Mirrors examples/parallel_research.agi.
+  return {
+    name: 'research_topic',
+    description: 'Take a topic, research three angles concurrently, merge into a briefing.',
+    inputs: [{ name: 'topic', type: 'string' }],
+    outputs: [{ name: 'briefing', type: 'string' }],
+    nodes: [
+      { id: 'n1', name: 'start',          kind: 'start',            position: { x: 80,   y: 320 }, properties: {} },
+      { id: 'n2', name: 'fanout',         kind: 'parallel_fanout',  position: { x: 280, y: 320 }, properties: {} },
+      {
+        id: 'n3',
+        name: 'history_angle',
+        kind: 'ai_call',
+        position: { x: 540, y: 120 },
+        properties: {
+          prompt: 'Write 3-5 sentences on the historical context of {{input.topic}}. Focus on origins and key turning points.',
+        },
+      },
+      {
+        id: 'n4',
+        name: 'current_angle',
+        kind: 'ai_call',
+        position: { x: 540, y: 320 },
+        properties: {
+          prompt: 'Write 3-5 sentences on the current state of {{input.topic}}. What is happening right now, who are the major players.',
+        },
+      },
+      {
+        id: 'n5',
+        name: 'future_angle',
+        kind: 'ai_call',
+        position: { x: 540, y: 520 },
+        properties: {
+          prompt: 'Write 3-5 sentences on the likely future of {{input.topic}}. What trends are forming, what\'s plausible in 3-5 years.',
+        },
+      },
+      {
+        id: 'n6',
+        name: 'merge',
+        kind: 'ai_call',
+        position: { x: 840, y: 320 },
+        properties: {
+          prompt: 'Combine these three perspectives into one cohesive briefing on {{input.topic}}. Use clear headings (## History, ## Present, ## Future).\n\nHistorical: {{history_angle.text}}\nCurrent: {{current_angle.text}}\nFuture: {{future_angle.text}}',
+        },
+      },
+      { id: 'n7', name: 'end', kind: 'end', position: { x: 1100, y: 320 }, properties: {} },
+    ],
+    edges: [
+      { id: 'e1', source: 'n1', target: 'n2' },
+      { id: 'e2', source: 'n2', target: 'n3' },
+      { id: 'e3', source: 'n2', target: 'n4' },
+      { id: 'e4', source: 'n2', target: 'n5' },
+      { id: 'e5', source: 'n3', target: 'n6' },
+      { id: 'e6', source: 'n4', target: 'n6' },
+      { id: 'e7', source: 'n5', target: 'n6' },
+      { id: 'e8', source: 'n6', target: 'n7' },
+    ],
+  };
+}
+
+function buildIterateRefineWorkflow(): Workflow {
+  // Mirrors examples/iterate_refine.agi.
+  return {
+    name: 'refine_draft',
+    description: 'Generate a draft, refine it across N critique rounds, polish.',
+    inputs: [
+      { name: 'prompt', type: 'string' },
+      { name: 'rounds', type: 'number' },
+    ],
+    outputs: [{ name: 'final_text', type: 'string' }],
+    nodes: [
+      { id: 'n1', name: 'start', kind: 'start', position: { x: 80, y: 240 }, properties: {} },
+      {
+        id: 'n2',
+        name: 'initial_draft',
+        kind: 'ai_call',
+        position: { x: 280, y: 240 },
+        properties: {
+          prompt: 'Write a first draft on this prompt. Aim for roughly 200 words.\n\nPrompt: {{input.prompt}}',
+        },
+      },
+      {
+        id: 'n3',
+        name: 'rounds',
+        kind: 'loop',
+        position: { x: 540, y: 240 },
+        properties: { over: '{{range(input.rounds)}}', as: 'round' },
+      },
+      {
+        id: 'n4',
+        name: 'critique',
+        kind: 'ai_call',
+        position: { x: 780, y: 140 },
+        properties: {
+          prompt: 'Critique this draft. Be specific about what is weak — vague claims, awkward phrasing, missing structure. Round {{round}} of {{input.rounds}}.\n\nDraft: {{initial_draft.draft}}',
+        },
+      },
+      {
+        id: 'n5',
+        name: 'revise',
+        kind: 'ai_call',
+        position: { x: 780, y: 340 },
+        properties: {
+          prompt: 'Revise the draft to address this critique. Keep what works; fix what doesn\'t. Round {{round}}.\n\nDraft: {{initial_draft.draft}}\nCritique: {{critique.critique}}',
+        },
+      },
+      {
+        id: 'n6',
+        name: 'polish',
+        kind: 'ai_call',
+        position: { x: 1040, y: 240 },
+        properties: {
+          prompt: 'Final polish pass. Tighten sentences, fix any artifacts the iteration introduced, return the finished piece.\n\nDraft: {{revise.draft}}',
+        },
+      },
+      { id: 'n7', name: 'end', kind: 'end', position: { x: 1280, y: 240 }, properties: {} },
+    ],
+    edges: [
+      { id: 'e1', source: 'n1', target: 'n2' },
+      { id: 'e2', source: 'n2', target: 'n3' },
+      { id: 'e3', source: 'n3', target: 'n4' },
+      { id: 'e4', source: 'n4', target: 'n5' },
+      { id: 'e5', source: 'n5', target: 'n6' },
+      { id: 'e6', source: 'n6', target: 'n7' },
     ],
   };
 }

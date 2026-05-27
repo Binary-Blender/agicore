@@ -1,0 +1,70 @@
+// parallel_research.agi
+// Fan-out research pattern — same input feeds three parallel angles,
+// a composer merges them into a single briefing.
+//
+// Pair this with persona_dispatch.agi for the full branching tour:
+// persona_dispatch demonstrates 1-of-N (router selects exactly one
+// branch); this one demonstrates all-of-N (fanout runs every branch
+// in parallel and a single downstream node consumes the union).
+//
+// Why this fixture: parallel_fanout is the only node kind without an
+// example workflow. It's also the pattern that most clearly shows
+// off the workflow model's strength — humans naturally serialize
+// what should be three concurrent queries.
+
+APP parallel_research {
+  TITLE  "Parallel Research Briefing"
+  DB     parallel_research.db
+}
+
+WORKFLOW research_topic {
+  DESCRIPTION "Take a topic, research three angles concurrently, merge into a briefing."
+
+  INPUT  topic: string
+  OUTPUT briefing: string
+
+  NODE start {
+    TYPE start
+  }
+
+  NODE fanout {
+    TYPE parallel_fanout
+  }
+
+  NODE history_angle {
+    TYPE      ai_call
+    PROMPT    "Write 3-5 sentences on the historical context of {{input.topic}}. Focus on origins and key turning points."
+    OUTPUT    text: string
+  }
+
+  NODE current_angle {
+    TYPE      ai_call
+    PROMPT    "Write 3-5 sentences on the current state of {{input.topic}}. What is happening right now, who are the major players."
+    OUTPUT    text: string
+  }
+
+  NODE future_angle {
+    TYPE      ai_call
+    PROMPT    "Write 3-5 sentences on the likely future of {{input.topic}}. What trends are forming, what's plausible in 3-5 years."
+    OUTPUT    text: string
+  }
+
+  NODE merge {
+    TYPE      ai_call
+    PROMPT    "Combine these three perspectives into one cohesive briefing on {{input.topic}}. Use clear headings (## History, ## Present, ## Future).\n\nHistorical: {{history_angle.text}}\nCurrent: {{current_angle.text}}\nFuture: {{future_angle.text}}"
+    OUTPUT    briefing: string
+  }
+
+  NODE end {
+    TYPE end
+  }
+
+  EDGE start          -> fanout
+  EDGE fanout         -> history_angle
+  EDGE fanout         -> current_angle
+  EDGE fanout         -> future_angle
+  EDGE history_angle  -> merge
+  EDGE current_angle  -> merge
+  EDGE future_angle   -> merge
+  EDGE merge          -> end
+}

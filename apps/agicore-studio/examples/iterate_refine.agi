@@ -1,0 +1,71 @@
+// iterate_refine.agi
+// Iterative-refinement creator pattern. Initial draft → loop over a
+// critique-and-revise cycle → final polish.
+//
+// This is the canonical "make it better N times" loop that creator
+// tools spend most of their lives running. The loop node iterates a
+// downstream subgraph; in this fixture the subgraph is a critique +
+// revise pair. Once the loop exhausts, a final polish AI call cleans
+// up artifacts the iteration introduced.
+//
+// Why this fixture: loop is the last unexercised node kind, and the
+// iterative-refinement pattern is the one most likely to surprise a
+// new author — most people reach for a sequential chain when a loop
+// is clearly the right shape.
+
+APP iterate_refine {
+  TITLE  "Iterative Refinement"
+  DB     iterate_refine.db
+}
+
+WORKFLOW refine_draft {
+  DESCRIPTION "Generate a draft, refine it across N critique rounds, polish."
+
+  INPUT  prompt: string, rounds: number
+  OUTPUT final_text: string
+
+  NODE start {
+    TYPE start
+  }
+
+  NODE initial_draft {
+    TYPE      ai_call
+    PROMPT    "Write a first draft on this prompt. Aim for roughly 200 words.\n\nPrompt: {{input.prompt}}"
+    OUTPUT    draft: string
+  }
+
+  NODE rounds {
+    TYPE      loop
+    OVER      "{{range(input.rounds)}}"
+    AS        "round"
+  }
+
+  NODE critique {
+    TYPE      ai_call
+    PROMPT    "Critique this draft. Be specific about what is weak — vague claims, awkward phrasing, missing structure. Round {{round}} of {{input.rounds}}.\n\nDraft: {{initial_draft.draft}}"
+    OUTPUT    critique: string
+  }
+
+  NODE revise {
+    TYPE      ai_call
+    PROMPT    "Revise the draft to address this critique. Keep what works; fix what doesn't. Round {{round}}.\n\nDraft: {{initial_draft.draft}}\nCritique: {{critique.critique}}"
+    OUTPUT    draft: string
+  }
+
+  NODE polish {
+    TYPE      ai_call
+    PROMPT    "Final polish pass. Tighten sentences, fix any artifacts the iteration introduced, return the finished piece.\n\nDraft: {{revise.draft}}"
+    OUTPUT    final: string
+  }
+
+  NODE end {
+    TYPE end
+  }
+
+  EDGE start         -> initial_draft
+  EDGE initial_draft -> rounds
+  EDGE rounds        -> critique
+  EDGE critique      -> revise
+  EDGE revise        -> polish
+  EDGE polish        -> end
+}
