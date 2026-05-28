@@ -1,381 +1,457 @@
-# Chapter 14: Pancakes
+# Chapter 14: Pancakes on a Tuesday
 
-Jimmy woke up at six forty-one AM Eastern on a Saturday morning in the third week of October of Year Nine, in the bedroom of the house in Greenville, next to Thea, in the operational state his body had been arriving at every Saturday morning for the previous eleven weeks — which was the operational state of a man who had been getting eight hours of sleep on a consistent overnight schedule for the first time in nine years.
+Six months later.
 
-The sleep had, on Thea's quiet reading at the kitchen counter on Sunday mornings, taken about eleven pounds off the resting weight of his face.
+A Tuesday morning in February of Year Eleven.
 
-The eleven pounds had been, on her private characterization to her sister on a phone call in late September, *the eleven pounds of Jimmy I have been waiting since I met him to meet.*
+Seven forty-three AM Eastern.
 
-The baby was, on the obstetrician's projection from the appointment two weeks earlier, fourteen weeks away.
+The kitchen of the house in Greenville.
 
-The baby was, on the ultrasound from the same appointment, a boy.
+Jimmy was at the stove.
 
-The name was, on Thea's pitch at the counter on the previous Tuesday evening, Theodore.
+The stove was a six-burner gas range. The pan on the front-right burner was a small cast-iron skillet Jimmy had been seasoning across the past ten weeks. The skillet was, on Jimmy's own honest assessment of the seasoning, finally the way he wanted it. The pancakes today were buttermilk. The buttermilk was from the small dairy north of Greenville Thandi's office had connected the program's cooperative milk supply to in the fall, and which delivered to the house every Tuesday morning at six AM in a small glass bottle on the back porch.
 
-Jimmy had been thinking about it across the four days since.
+The bottle had been on the porch this morning at six oh-three AM.
 
-He got out of bed at six forty-three.
+Jimmy had brought it in at six oh-four.
 
-Walked to the kitchen.
+The first batch of pancakes was on the griddle at seven forty-three.
 
-Opened the fridge. Two large eggs, a quart of buttermilk from the small dairy ten miles east of Greenville Thea's mom had introduced them to on her July visit, a small jar of vanilla extract Sarah had given Jimmy on the Sunday morning he had left Ava in a small paper bag with no note, and a stick of unsalted butter.
+Thea was at the kitchen table.
 
-Set the ingredients on the counter.
+The first child Thea and Jimmy had together — born ten weeks earlier on a Friday evening at the small birth center on the south side of Greenville Thea had picked in her seventh month — was asleep in the bassinet by the south window of the kitchen. The bassinet was at the south window because the south window caught the late-morning light from approximately eleven AM and the baby slept best in the slow warming of the light across the bassinet's blanket. The baby was, by the small clock on the wall above the bassinet, at seven forty-three on a sleep cycle that had begun at six twenty-seven and was scheduled, on the small monitor app Thea kept open on her phone, to run to approximately eight oh-six.
 
-Opened the cupboard. Flour, baking powder, sugar, salt, and a small glass mixing bowl Thea had bought at a thrift store in downtown Greenville on the second Saturday of August because, on her own quiet read, the kitchen had been operating without it for eleven months and was going to need it for the next several decades.
+The baby's name was the baby's name.
 
-Measured.
+The name had been chosen.
 
-Mixed.
+The name was not, on Thea and Jimmy's own private agreement at the kitchen table on the Saturday night two weeks after the baby came home, going to be a topic of public discussion for at least the first year.
 
-Heated the cast-iron skillet Sarah had also given him, on a small package shipped to Greenville from Ava in October with a note in Sarah's handwriting that had read, in seven words: *For when the pancakes start happening. — S.*
+The name was the name.
 
-The pancakes had been, across the previous nine Saturday mornings, the breakfast he had been making for Thea.
-
-They were the second meal he had learned to cook reliably across the eleven years of his life he had been cooking at all.
-
-They were her favorite Saturday breakfast.
-
-They were, on Thea's characterization to her sister on the same phone call in late September, *the second-best operational decision Jimmy has made in the past nine years, behind only the one that produced the empire.app.*
-
-He poured the first pancake into the skillet at seven oh-six AM.
-
-Thea walked into the kitchen at seven oh-seven.
-
-She was in the bathrobe her mom had given her at the wedding shower because, on her mom's standing read of her daughter, every newlywed needed a bathrobe that was not the bathrobe she had owned in college. The bathrobe had, in the eleven months since, become the bathrobe Thea wore on Saturday mornings.
-
-She walked across the kitchen.
-
-Kissed Jimmy on the cheek.
-
-Walked to the counter.
-
-Sat down on the stool.
-
-"Jimmy."
-
-"Thea."
-
-"Pancakes."
-
-"Pancakes."
-
-"Day three hundred and twenty-eight of marriage."
-
-"Day three hundred and twenty-eight of marriage."
-
-"I have one question this morning."
-
-"Ask."
-
-"Theodore. Yes or no."
-
-He flipped the first pancake.
-
-"Thea."
-
-"Yeah."
-
-"I've been thinking about it for four days."
-
-"I know you have."
-
-"I have an answer."
-
-"Tell me."
-
-"You were right about it on Tuesday. The arena speech is the speech. Roosevelt was *in* the arena and *also* wrote the speech about the arena. The two things in the same person. I have been quoting the arena speech since I was fifteen years old. The line about the man who, at the worst, if he fails, at least fails while daring greatly. I have been quoting it because, on every honest reading of myself since I was fifteen, that's the line I have been trying to live to. The kid who's coming in fourteen weeks is going to have to choose, over the long arc, whether to be the kind of person who watches and comments or the kind of person who steps into the arena. I want him to know, on his own name, which one I think matters."
-
-"Jimmy."
-
-"Yeah."
-
-"Theodore."
-
-"Theodore."
-
-"I love you."
-
-"I love you."
-
-He flipped the second pancake.
-
-"Thea."
-
-"Yeah."
-
-"Eat the pancakes with me."
-
-"I'm eating the pancakes with you."
-
-He plated the first two pancakes, brought them to the counter, set one in front of Thea and the other in front of his own stool, and sat down.
-
-They ate the pancakes.
+The name was theirs.
 
 ---
 
-At seven forty-two AM Thea set her fork down.
+On the wall above the breakfast bar — installed there four months ago by Karim as a Christmas present — was a sixty-five-inch wall-mounted display.
 
-"Jimmy."
+The display was wired into a small Raspberry Pi running a live mirror of the Beast Philanthropy public ledger dashboard.
 
-"Yeah."
+The dashboard showed, at the top of the screen, in large black numerals on a white background, the operating-school count.
 
-"The Wharton speech is Wednesday."
+The count at seven forty-three AM Eastern this Tuesday morning read:
 
-"Wednesday."
+*578*
 
-"Have you written it."
+Underneath the count was a smaller line: *next disbursement window — 11 minutes.*
 
-"I've written it."
+Underneath that was a smaller line: *school 579 — Eastern Cape, ZA — break-ground date Friday March 12.*
 
-"Read me the closing line."
+Underneath that was a smaller line: *school 580 — Limpopo, ZA — break-ground date Friday March 19.*
 
-He set his fork down, took his phone out of his sweatpants, opened Notes, scrolled to the document titled *Wharton Distinguished Lecture — October Year Nine,* and read:
+Underneath that was a smaller line: *cumulative school-days funded — 2,143,072,418.*
 
-"Closing line. *The chocolate is the means. The schools are the end. The empire is the operational mechanism by which the chocolate funds the schools. The mechanism is not the point. The point is the schools. Thank you.*"
+Underneath that was a single line at the very bottom: *substrate uptime — 217 days.*
 
-He looked up.
+The dashboard was the dashboard.
 
-Thea was looking at him.
+The dashboard ticked.
 
-"Jimmy."
+---
 
-"Yeah."
+Jimmy flipped the first three pancakes at seven forty-six AM.
 
-"That's the line."
+He flipped them with a small wooden spatula his mother had given him for his twenty-second birthday, the year he had first moved into the small Greenville apartment that had become the first of the three houses he had owned in the town before this one.
 
-"That's the line."
+He flipped them on cadence.
 
-"Wharton invited you because they thought you were going to talk about the empire. You're going to give a speech in which you tell them, in twenty-eight minutes, that the empire is not the point."
+The first three pancakes were the first three pancakes.
 
-"Yes."
+He plated them on a small white plate.
 
-"Jimmy."
+He walked the plate to the kitchen table.
 
-"Yeah."
+He set it in front of Thea.
 
-"That's the speech I've been waiting nine months to hear you give."
+He poured warm syrup over the pancakes from the small ceramic pitcher on the table.
 
-"Thea."
+He sat down in the chair across from her.
 
-"Yeah."
+He watched her cut the first pancake.
 
-"It's the speech I have been waiting nine years to give. I just didn't know it was the speech until the past six months. I know it now. I'm going to give it Wednesday. I'm going to give it because — on the .agi spec, the joint entity, the cocoa hedge, the seven months of Eleanor Whitcomb's structural work, the three days in Ava, the four years of school-building, the eleven months of marriage, the fourteen weeks of pregnancy, the pancakes, this counter, and the name of the boy who's going to be born in January — it's the only honest speech I can give. The empire is working because the schools are the point. It's going to keep working as long as the schools remain the point. I'm going to keep them the point by giving a version of this speech, on every Wednesday for the rest of my life, to whatever audience the work puts in front of me. I love you, Thea."
+She cut the first pancake into approximately eleven small pieces.
 
-"I know you do."
+She speared one piece on her fork.
 
-She picked up her fork.
+She held it for a beat in front of her.
 
-She ate the rest of her pancakes.
+She said: *"Jimmy."*
 
-He ate the rest of his.
+Jimmy said: *"Thea."*
 
-He made a second batch.
+Thea said: *"This is the new thing."*
 
-They ate them too.
+Jimmy said: *"This is the new thing."*
 
-The Saturday morning ran out at eleven oh-seven AM when Thea stood up and said *morning sickness has, on its standard operational schedule, arrived* and walked to the bedroom and lay down on the bed in the bathrobe.
+She ate the piece.
 
-Jimmy cleaned the kitchen.
+She chewed it for nine seconds.
 
-Washed the cast-iron skillet by hand the way Sarah had taught him in the note she had not written but that had been implicit in the operational reality of giving a cast-iron skillet to a person she had never met.
+She swallowed.
 
-Dried it.
+She said: *"The pancake is the pancake."*
 
-Oiled it.
+He laughed.
 
-Put it back on the stovetop.
+She laughed.
 
-Walked to the bedroom.
+The baby did not, on the small monitor, stir.
 
-Thea was asleep.
+---
 
-He lay down next to her.
+Jimmy watched the dashboard from across the table.
 
-He did not, in the late morning of Saturdays in October of Year Nine, fall asleep right away.
+At seven fifty-four AM the dashboard ticked.
 
-He thought about the speech.
+The count moved from five hundred and seventy-eight to five hundred and seventy-nine.
 
-He thought about the schools.
+The disbursement window had closed.
 
-He thought about Eleanor Whitcomb at her kitchen table in Hummelstown.
+School five hundred and seventy-nine — Eastern Cape — had been added to the operating roster.
 
-He thought about Sarah's bread.
+The break-ground date on the next line dropped to *school 580 — Limpopo — break-ground date Friday March 19.*
 
-He thought about Karim Brock pulling the actual Andon Cord on the actual Camry line at the Georgetown plant in 2003.
+A new line appeared under it: *school 581 — Mpumalanga, ZA — break-ground date Friday March 26.*
 
-He thought about Thandi in the third classroom.
+The dashboard adjusted.
 
-He thought about the slope of the small valley and the southern Drakensberg foothills.
+The cumulative-school-days counter at the bottom ticked, in small increments, every nine seconds, as the Feastables sell-through transactions across the previous nine seconds posted to the substrate's ledger.
 
-He thought about the small smile of a nine-year-old girl named Ayanda.
+The dashboard was the dashboard.
 
-He thought about the Saturday morning, and the next Saturday morning, and the Saturday morning fourteen weeks out, when the boy whose name was going to be Theodore Donaldson would, on the obstetrician's projection, be about one week old, and the pancakes would still be the pancakes.
+The dashboard ticked.
+
+Jimmy looked at it for ninety seconds.
+
+He looked back at Thea.
+
+He said: *"Thea."*
+
+Thea said: *"Yes."*
+
+He said: *"I want to say something I have not said out loud yet."*
+
+Thea said: *"Say it."*
+
+Jimmy said: *"The chocolate is the means. The schools are the end. The empire is the means. This — what we are doing right now, in this kitchen, on a Tuesday morning, with the pancakes on the griddle and the counter on the wall ticking up while we eat — this is the end. The work is the work. The work is what AI is for. The work is what we are for. The work is what makes this possible. The work is not the answer. This is the answer. The work is the substrate that lets the answer be the answer. I have been doing the work for nine years to get to this Tuesday morning. I am going to do the work for thirty more years. The work is going to keep being the work. The Tuesday mornings are going to keep being the answer. I am sorry I missed the funeral. I am sorry I missed your brother's child. I am here now. I am going to be here for the rest of it. Five hundred and seventy-nine schools, Thea. The next five hundred are already in the ledger. The five hundred after that are going to be in the ledger by the end of the year. The counter is the answer. The work is the substrate. The substrate is the means. The means is the means. The end is in this room."*
+
+Thea did not respond.
+
+Did not need to.
+
+She set the fork down.
+
+She reached across the table.
+
+She placed her hand on his.
+
+The pancakes were the pancakes.
+
+The work continued on Wednesday.
+
+The counter ticked to five hundred and eighty at eight oh-three AM.
+
+Jimmy did not, at eight oh-three AM, look up at the wall.
+
+Jimmy was, at eight oh-three AM, flipping a second batch of pancakes for Thea on the cast-iron skillet that had finally come into its seasoning, with the small wooden spatula his mother had given him for his twenty-second birthday, in the kitchen of the house in Greenville on a Tuesday morning in February of Year Eleven, in the eleventh year of the empire, in the eighth month of his daughter's life inside Thea before she was born and the tenth week of her life outside Thea after, on the substrate's two hundred and seventeenth day of running the empire one Tuesday morning at a time.
+
+---
+
+The dashboard ticked.
+
+Thea ate the second batch of pancakes at eight oh-nine.
+
+She finished at eight twenty-one.
+
+The baby woke up at eight oh-six and Thea fed her at the table while Jimmy ate his own batch.
+
+Jimmy finished his pancakes at eight thirty-four.
+
+He cleaned the skillet at the sink.
+
+He washed the small white plates.
+
+He set the cast-iron skillet on the rack to dry.
+
+At eight forty-three AM the small kitchen clock above the bassinet read eight forty-three.
+
+The dashboard read *580.*
+
+Jimmy stood at the sink and looked out the window at the back garden.
+
+The back garden had, across the past three weeks, started showing the first early-spring growth. The small dogwood Thea had planted in October was beginning to bud. The grass had begun to come back from the winter brown. The small bench at the south end of the garden — the bench Thea had ordered from a small woodworker in Asheville the previous summer, the bench Thea had not been able to sit on across the winter because of the pregnancy and the cold and the rain — was visible from the kitchen window in the morning sun.
+
+He turned around.
+
+He looked at Thea.
+
+She was at the table with the baby in her arms.
+
+She was watching him.
+
+She said: *"Jimmy."*
+
+He said: *"Thea."*
+
+She said: *"Go to work."*
+
+He said: *"I have nothing on my calendar until eleven."*
+
+She said: *"I know. Go to work. The pancakes are over. The Tuesday morning is over. The Tuesday morning is going to be the same Tuesday morning next week. Go run the substrate that runs the empire that builds the schools that fund the kitchens we are not in. The kitchen we are in is the kitchen we are in. The kitchens we are not in are also kitchens. Go to work."*
+
+He laughed.
+
+He walked across the kitchen.
+
+He kissed the top of Thea's head.
+
+He kissed the top of the baby's head.
+
+He walked out of the kitchen.
+
+He picked up his jacket from the hook in the foyer.
+
+He walked out the front door.
+
+He got in the car.
+
+He drove to the studio.
+
+He arrived at the studio at nine oh-three AM.
+
+He walked through the front doors.
+
+He walked past the espresso machine on the main floor.
+
+The wall screen behind the espresso machine read, at nine oh-three AM Tuesday morning of the second week of February of Year Eleven: *Hours Saved This Week, Company-Wide: 73,418.*
+
+Karim was at the espresso machine.
+
+Karim said: *"Jimmy."*
+
+Jimmy said: *"Karim."*
+
+Karim said: *"How was Tuesday morning."*
+
+Jimmy said: *"Tuesday morning was the Tuesday morning."*
+
+Karim said: *"Good."*
+
+Karim handed him an espresso.
+
+Jimmy walked to his office.
+
+He sat at his desk.
+
+He opened the laptop.
+
+The OIE Tuesday-morning batch email was at the top of the inbox.
+
+He opened it.
+
+The email had three opportunities.
+
+He read the first one.
+
+He approved the first one.
+
+He read the second one.
+
+He approved the second one.
+
+He read the third one.
+
+He approved the third one.
+
+The three approvals went through at nine oh-six, nine oh-seven, and nine oh-eight AM Eastern.
+
+The substrate routed them into the production pipeline at nine oh-nine.
+
+The substrate began executing on the three opportunities at nine ten.
+
+By noon Tuesday the three opportunities had moved approximately fourteen million dollars of operational improvement into the empire's quarterly trajectory.
+
+Jimmy closed the laptop at noon.
+
+He walked to the espresso machine.
+
+He looked at the wall screen.
+
+The wall screen read, at noon Tuesday: *Hours Saved This Week, Company-Wide: 75,143.*
+
+He walked back to his office.
+
+He opened the laptop.
+
+He worked through the afternoon.
+
+He worked at, on the substrate's hours-tracked-by-role telemetry, approximately the throughput he had worked at for the previous nine months — which was approximately one-third the throughput he had worked at across the eighty-three days before he had found the README in the third week of May of Year Nine.
+
+He left the office at five thirty-six PM.
+
+He drove home.
+
+He arrived at the house at five fifty-three.
+
+Thea was at the kitchen table.
+
+The baby was in the bassinet at the south window.
+
+The dashboard on the wall above the breakfast bar read *582.*
+
+Jimmy said: *"How was the day."*
+
+Thea said: *"The day was the day."*
+
+He sat at the kitchen table.
+
+He watched the dashboard tick.
+
+The dashboard ticked.
+
+The chapter ended at five fifty-seven PM with Jimmy and Thea at the kitchen table and the baby asleep at the south window and the dashboard above the breakfast bar showing the count five hundred and eighty-two and the cumulative-school-days line ticking, every nine seconds, in the small increments of every Feastables bar sold at every retail location across the world over the previous nine seconds.
+
+The count was the count.
+
+The dashboard was the dashboard.
+
+The substrate was the substrate.
 
 The chocolate was the means.
 
 The schools were the end.
 
-The empire was working because the schools were the point.
+The empire was the means.
 
-It would keep working as long as the schools remained the point.
+The kitchen was the end.
 
-The schools would remain the point.
+The work continued.
 
-He fell asleep at eleven thirty-three AM.
+The Tuesday mornings were the answer.
 
-Slept fifty-one minutes.
-
-Woke up next to Thea at twelve twenty-four PM.
+The book ends here.
 
 ---
 
-*After the credits.*
+## Post-credits
 
----
+A small town in Missouri.
 
-In the small workshop in the back half of the detached garage on the property at the southwest edge of Ava, Missouri, at ten forty-one PM Central on the Wednesday of the third week of November of Year Nine — six weeks after the joint operational entity's specification had been signed in the converted feed store in Underberg, four weeks after Jimmy's Wharton speech had run on the standard university-distinguished-lecture publication schedule and had been viewed about forty-one million times across the subsequent fourteen days, and about ninety minutes after Sarah had brought Christopher a cup of coffee and an oatmeal cookie and asked him whether he was going to come to bed at any reasonable hour and he had said *another hour, Sarah* and she had said *another hour, then bed* — Christopher was at the desk in the workshop with the laptop open, the Agicore repository's *issues* tab on the screen, the small lamp on, the window closed against the November cold, and a small green plant on the corner of the desk Sarah had moved from the kitchen to the workshop two weeks earlier, on the theory that Christopher was going to need some additional visual evidence of life in the workshop across the eighteen-month runway he had negotiated with Jimmy in May.
+Christopher at his desk in the small home office at the back of the house.
 
-The issues tab showed at the top of the list a new issue that had been filed at ten thirty-four PM Central — seven minutes earlier — by a user whose GitHub account Christopher had not previously seen on the repository.
+Late at night.
 
-The user's account had three public-repo stars.
+Eleven fifty-three PM Central on the Tuesday night Jimmy had, four time zones east in Greenville, eaten the second batch of pancakes at the kitchen table at eight oh-nine that morning and was now, on the small monitor app the substrate had begun mirroring to the home dashboard in November, asleep at ten forty-four PM Eastern.
 
-No photograph.
+The laptop on Christopher's desk had three GitHub issues open in three tabs.
 
-No biography.
+Issue #43 was from a user named *coleisland.* The issue had been posted twenty-eight months earlier. The body was four paragraphs. The issue had been the first time, on Christopher's quiet count, a person Christopher had not expected to be operating in his orbit had shown up.
 
-No linked website.
+Issue #58 was from a user named *jimmydonaldson.* The issue had been posted sixteen months earlier. The body was eleven sentences. The issue had been the second time.
 
-One line of self-description in the *bio* field: *operating a midsize regional logistics company in the upper Midwest. found Agicore three weeks ago. have been reading.*
+Issue #211 was from a user named that, on the about page of the user's GitHub account, was a single capital letter followed by a four-letter surname Christopher had been reading in the business press for the previous six years. The issue had been opened twelve minutes ago. The body was nine sentences.
 
-The issue title: *Feature request — DSL extension for fleet-routing constraints with real-time weather-disruption pattern matching.*
+The repository, in the time since Jimmy had submitted his issue sixteen months earlier, had grown from one thousand and forty-seven stars to approximately three hundred and twelve thousand. The contributor count had grown from nineteen to approximately five thousand four hundred. The number of `.agi` specifications running production workloads in the world had, on the small public registry the project maintained, crossed approximately seventy-three thousand. The post-frontier-AI era was operating, in approximately forty-one percent of the consequential business contexts it had begun to reach, on top of the Agicore substrate.
 
-The body was about six hundred words.
+On Christopher's desk, in addition to the three open GitHub issues on the laptop screen, was the most recent quarterly case of Feastables Hazelnut Cups from Cole.
 
-The *context* section opened: *I am running a fleet of approximately seven hundred trucks across nine states in the upper Midwest. The fleet operates under approximately fourteen distinct categories of constraint — DOT compliance, driver-hour regulation, weather-disruption rerouting, customer-delivery-window discipline, fuel-cost optimization, and so on — each of which is, in the current operating model, enforced by a single dispatch operator in our control center who is, by the operational reality of the past eleven years, me. I would like to remove myself from the cord. Agicore looks like the architecture in which I can do this. I have been reading the documentation, the example specifications, and the issue history for the past three weeks. I am opening this issue because I have identified one specific gap in the current DSL that I believe is the gap I need closed in order to deploy this on my fleet. I am willing to fund the work directly, contribute code if my Rust is good enough, or wait if neither of those is the right path. I would like to know which.*
+Open.
 
-Christopher read the *context* section.
+Half gone.
 
-He read it twice.
+That was the only chocolate in the room.
 
-He recognized, at ten forty-three PM, that the *context* section he was looking at was structurally identical to the *context* section of issue number fifty-eight.
+The room was otherwise the same room it had been at the close of *Forward.*
 
-He recognized one additional specific fact.
+A new GitHub-notification email arrived in Christopher's personal inbox at eleven fifty-three PM Central.
 
-The third sentence of the *context* section he was looking at — *Each of which is, in the current operating model, enforced by a single dispatch operator in our control center who is, by the operational reality of the past eleven years, me* — was the same sentence structure as the third sentence of the *context* section of issue number fifty-eight, in which Jimmy had written: *Each of which has its own set of constraints that, in the current operating model, are enforced by a senior operator pulling what is, in effect, a manual Andon Cord. The senior operator is, on the operational reality, me.*
+The notification was the reply to a comment Christopher had posted nine minutes earlier on Issue #211.
 
-The match was not coincidence.
+The subject line, on the new email, was the subject line of the reply to Christopher's comment.
 
-It was the operational signature of an operator who had, in the past three weeks, read issue number fifty-eight in the project's public issue history, recognized himself in the sentence structure, and filed his own issue using the recognition as the template.
+The subject line read: *Re: Funding inquiry — from someone you have probably also been expecting.*
 
-Christopher set the coffee down.
+Christopher opened the email.
 
-He read the rest of the issue.
+He read it.
 
-It closed with the same six-section format Jimmy's issue had used.
+He read it again.
 
-The *willingness to contribute* section read: *Funding: yes, up to whatever the project would responsibly absorb without distorting the contributor structure. Code contribution: my Rust is below the bar this codebase deserves. Time: whatever it takes. I would prefer to wait for the right design rather than ship the wrong one.*
+He sat back in the chair.
 
-Verbatim Jimmy's sentence from May.
+He smiled.
 
-Christopher looked at the *username* field.
+He thought, in his own quiet count, the line he had been waiting to think for approximately sixteen months.
 
-Three words.
+He thought: *Hello. We have been expecting you too.*
 
-Read it twice.
+The third person had shown up.
 
-He did not, in the moment of reading, recognize the name.
+The third person was not in this book.
 
-He recognized that the operator who had filed the issue was the second member of the category Jimmy had been the first member of.
+The third person was the protagonist of the next book.
 
-The category, as of November of Year Nine, was now two.
+Christopher moved his cursor to the comment box at the bottom of Issue #211.
 
-Christopher opened the reply box.
+He typed seven words.
 
-Typed.
+He typed:
 
-About ninety seconds.
+*Welcome to the room. We have work to do. — C.B.*
 
-Read what he had typed.
+He clicked Comment.
 
-Did not delete it.
-
-Clicked *Comment.*
-
-The comment posted at ten forty-eight PM Central Wednesday of the third week of November of Year Nine.
-
-Four words. The same four words he had used in issue number fifty-eight in May.
-
-*[FirstName]. Come visit. — C.B.*
+The comment posted at eleven fifty-six PM Central.
 
 He closed the laptop.
 
-Picked up the coffee.
+He stood up.
 
-Drank what was left of it.
+He walked to the kitchen.
 
-Walked to the back door of the workshop.
+He unwrapped the next Hazelnut Cup from the open case on the counter.
 
-Turned off the lamp.
+He took a bite.
 
-Turned off the workshop lights.
+He chewed it for fourteen seconds.
 
-Walked across the small yard to the house.
+He swallowed.
 
-Walked into the bedroom.
+He looked out the small kitchen window above the sink at the small back yard, which was, in the February dark, mostly invisible.
 
-Sarah was reading.
+He thought: *The work continues.*
 
-She set the book down.
+He did not say it out loud.
 
-"Christopher."
+He went to bed at twelve oh-three AM Central.
 
-"Sarah."
+He slept seven hours.
 
-"How is it."
+He was at the kitchen table at seven oh-three AM Wednesday morning on the parser for the third revision of the SKILLDOC compression-block codegen.
 
-"It's happening again."
+The parser was at one thousand four hundred and forty-one lines.
 
-"Christopher."
+He worked.
 
-"Yeah."
+The substrate was the substrate.
 
-"Good."
+The work continued.
 
-He got into bed.
+The Tuesday morning had been the Tuesday morning.
 
-The lamp on Sarah's side was on.
+The Wednesday morning was the Wednesday morning.
 
-She turned it off.
+— end of *The Chocolate Wars* —
 
-The workshop across the small yard was dark.
-
-The plant on the corner of the desk was still alive.
-
-The issue on the GitHub repository at github.com/Binary-Blender/agicore was open.
-
-The category, on the operational reality of November of Year Nine, was two.
-
-By the November of Year Ten, the category was going to be about forty-seven.
-
-By the November of Year Eleven, about three hundred and eleven.
-
-By the November of Year Twelve, on the public-record evidence that no member of the public was yet in any operational position to recognize, it was going to be the operating system of about fourteen percent of operating companies above one hundred million dollars of annual revenue in the United States.
-
-The workshop in Ava was the workshop in Ava.
-
-The cord was the runtime.
-
-The schools were the schools.
-
-The chocolate was the means.
-
-The schools were the end.
-
-The operator in Missouri who had built the architecture across twenty-two years of trying to land the idea was, in November of Year Nine, asleep next to his wife in a small brick house on two acres in the southwest corner of a small town in southern Missouri, with the workshop dark, the laptop closed, and the plant on the corner of the desk still alive.
-
-He slept eight hours.
-
-The work continued in the morning.
-
-— end —
+(*The series continues.*)

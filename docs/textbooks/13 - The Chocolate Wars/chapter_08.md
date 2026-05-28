@@ -1,341 +1,415 @@
-# Chapter 8: The Issue
+# Chapter 8: Issue #58 and the Pallet
 
-The seven AM Wednesday meeting with Karim was, on Karim's framing at two fifty-one AM Tuesday on the phone, the most important meeting of the next phase of the empire.
+The seven AM Wednesday meeting with Karim was forty-five minutes.
 
-It was held at the small round table in the corner of Jimmy's office at the studio — the table Karim, in his standard ops taxonomy, classified as *Type 4: strategic-architecture conversations conducted at low volume between fewer than four people.* The Type 4 table had been used, on Karim's count, forty-three times across the previous six years.
+Karim arrived in Jimmy's office at six fifty-six AM with two coffees and a yellow legal pad.
 
-The forty-third use was this morning.
+Karim set one of the coffees on Jimmy's desk.
 
-It started at seven oh-two AM.
+Karim sat down across from Jimmy with the other coffee and the legal pad.
 
-The meeting was Jimmy, Karim, and a third chair that was empty.
+Karim said: *"Three rules. Then a fourth rule. Then we're done."*
 
-Karim had pulled up the third chair when he walked in at six fifty-eight. He had not, when he pulled it up, explained who the chair was for. Jimmy had not, when he sat down at seven oh-one, asked.
+Jimmy said: *"Three rules."*
 
-Karim took the first sip of his coffee.
+Karim said: *"One. Show up with the work, not the money. This guy has been committing fourteen times a week to an open-source repo for eleven months by himself. He has, on the public commit log, made approximately six hundred and three commits across that window. He has, on the project's GitHub Sponsors page, accepted no sponsors. He has, on the about page, refused to list a Patreon. He is not building this for money. The first thing you do not say to him is the first thing every other person who has emailed him in the past eleven months has said to him. You do not offer to fund the project. You do not offer to hire him. You do not offer to acquire the project. You show up with the work you have been doing on the same problem and you ask him questions about the work he has been doing on the same problem. The conversation is engineer to engineer, not patron to maintainer. The conversation is the work."*
 
-"Jimmy."
+Jimmy wrote *engineer to engineer* on the legal pad in front of him.
 
-"Karim."
+Karim said: *"Two. Ask before you offer. Do not, in the first conversation, propose anything. Do not propose a partnership. Do not propose a contract. Do not propose a deployment. Do not propose a beta program. Do not propose a case study. Ask him what he is working on this week. Ask him what he is stuck on. Ask him what he wishes existed in the repo that he has not yet had time to build. Listen to the answers. Do not, in the first conversation, propose. The first conversation is a listening conversation. The proposing comes in the second conversation, and only on his invitation."*
 
-"I've been at this studio six years and one month. In that time I've watched you make about fourteen hundred operational decisions of consequence. The decisions have, on the cumulative score of how the empire has performed, been the right ones. In the same six years and one month I've made about three hundred operational decisions of consequence on your behalf without checking with you. Those have, on the same score, also been the right ones. The combination has produced the empire as it currently exists."
+Jimmy wrote *no offers — only questions* on the pad.
 
-"Yeah."
+Karim said: *"Three. Bring chocolate."*
 
-"The empire as it currently exists is going to grow about threefold across the next thirty-six months. Driven by Beast Games expansion, the Walmart inflection, Thandi's forty-to-fifty-school program, the launch of two consumer brands we haven't announced, and the underlying compounding of the YouTube subscriber base. The threefold growth is, in the operational architecture we currently run, going to require about seventeen times the volume of Type 4 conversations we currently have per week. That's not achievable in the model we currently run. The model is going to break — between months four and eleven of the thirty-six. I have, in private, been doing the math on it for six months. I haven't raised it because, until two forty-seven AM Tuesday, I didn't have a credible suggestion for what to do about it. I do now."
+Jimmy looked up.
 
-"The README."
+He said: *"Karim."*
 
-"The README. I read it twice between three thirty and five forty-eight AM Tuesday after you hung up. Read the docs site between five forty-eight and seven AM. Read the codebase across the operational day Tuesday in forty-minute focus blocks. By this morning I have an opinion. The opinion is in three parts."
+Karim said: *"I am serious. I checked his commits last night. He's been committing fourteen times a week for eleven months alone. The man is doing this in his kitchen. The README's footer signs off as *C.* The about page says he lives in a small town in Missouri because the operating model the project encodes is, in his own words, the operating model AI-native organizations are going to be built around in the next decade. He's not in the Bay Area. He's not in Austin. He's not in New York. He's in a kitchen in a small town in Missouri shipping the next decade's substrate by himself. You do not show up at that kitchen with a check. You show up with a pallet of Hazelnut Cups and you ask if you can sit down."*
 
-"Tell me."
+Jimmy said: *"A pallet of Hazelnut Cups."*
 
-"One. The project is real. About fifty thousand lines of well-organized Rust, TypeScript, and a domain-specific language the author has designed himself, compiling to Tauri apps through a deterministic build pipeline that I have, in the course of Tuesday, been able to walk end-to-end on the example apps. The pipeline works. The deterministic guarantees work. The DSL is, on my honest read, the most operationally legible DSL I've seen in eleven years of looking at workflow-modeling systems. It is also, in its current form, not finished. Seventeen language features the author has documented as future work. Three architectural decisions he has not yet committed to. Forty-seven open issues on the repo — about twelve substantive, the rest documentation cleanup or low-priority feature requests."
+Karim said: *"A pallet of Hazelnut Cups."*
 
-"Two."
+Jimmy said: *"How do you know he likes chocolate."*
 
-"Two. The project is, by public-record evidence, maintained by one person. The one person has identified himself, on the website and a small personal blog, as Christopher, of an unspecified small town in Missouri, age unspecified, professional background described only as *twenty-some years of trying to make this idea land in production environments that were not yet ready for it.* He has a single blog post dated September of Year Eight titled *Why I Quit.* Twelve hundred words. The post is, on my honest read, the post of a man who, across a long career in enterprise software, recognized something the industry has not yet recognized, and who walked away from a senior position at a company he does not name in order to build, on his own, the thing he believes the next decade is going to be built on. The post does not, in twelve hundred words, mention money. Or an investor. Or an exit. The post is the post of a man who is doing this because he cannot, on his own internal accounting, *not* do it."
+Karim said: *"I do not know he likes chocolate. I know he has been committing fourteen times a week for eleven months alone in a kitchen. People who do that have, in my experience, snacks. The snacks tell you what the person is. If the snacks are not chocolate, the pallet becomes the gift you leave behind for the local elementary school and you and the maintainer have a different first conversation than the one I am scripting for you, and that is also fine. The pallet is not for him. The pallet is the offering. The offering is the offering. The offering says you took the trip seriously. The taking-the-trip-seriously is the message. The pallet is the medium."*
 
-"Three."
+Jimmy wrote *bring a pallet* on the legal pad.
 
-"The empty chair."
+Karim said: *"Fourth rule. The fourth rule is the rule the first three rules exist to make possible. The fourth rule is — when you sit down at his kitchen table, tell him the truth. The whole truth. Tell him about Thea. Tell him about the runway. Tell him about Thandi and the email and the cap. Tell him about the cease-and-desist and the Walmart aisle video and Marcus Whittaker searching for a leak. Tell him about the four Beast Games operational failures Karim could not, in eighteen months, find the common cause of. Tell him about Eleanor Whitcomb in Hummelstown that you do not yet know is going to call you. Tell him about the eighty-three days you have spent looking for the model. Tell him that his README is the model. Tell him you have seven days left. Tell him what you came to ask. The truth is the asset. The truth is what he is going to recognize. The truth, on what you have told me about how this guy writes a README, is what he writes for. He is going to take the meeting because the truth is the truth. He is not going to take the meeting because you are Jimmy Donaldson."*
 
-Jimmy looked at the chair.
+Jimmy wrote *the truth* on the legal pad.
 
-"The chair."
+He underlined it.
 
-"This morning's chair is the chair I have set up for Christopher. The chair is the chair I am asking you, on how you interact with this guy across the next thirty days, to keep empty for the next thirty days. The chair stays empty because the way you interact with him across that window is going to determine whether the architecture you have been looking for since the second of March is, in operational reality, available to you at the rate the empire needs to absorb it. The interaction is not a Jimmy-Donaldson-deploys-resources-at-the-thing interaction. The first one will fail. It's a Jimmy-Donaldson-becomes-an-ordinary-user-of-the-thing interaction. The second one will succeed. Christopher does not yet know who you are. He has not invited you to sit at this table. He has not, on his own assessment, decided whether the MrBeast empire is a user base he wants Agicore deployed on. The chair stays empty until he decides. That's his decision. Your job this morning is to file a GitHub issue."
+He looked up at Karim.
 
-"A GitHub issue."
+He said: *"Karim."*
 
-"A GitHub issue."
+Karim said: *"Yes."*
 
-"Karim."
+Jimmy said: *"How did you know to script this."*
 
-"Yeah."
+Karim said: *"I worked at Toyota for four years. The most important Toyota meetings I ever sat in were with the small machine-tool vendors out of the Midwest who were single-shop operators supplying a hundred and forty thousand vehicles a year of Camry production. The single-shop operators were the people who, at Toyota, were treated with the most operational seriousness of anyone at the table. Toyota understood that the people who built the tools that built the cars were, in operational terms, the load-bearing layer of the production system. The Toyota plant manager would, in the first meeting with a new single-shop tool supplier, bring sake from a brewery in his hometown in Aichi prefecture, and he would not, in the first meeting, ask the supplier for a single price. He would ask the supplier what the supplier was working on this week. He would ask what the supplier was stuck on. He would ask what the supplier wished existed in the production system that he had not yet had time to build. The conversation was the conversation. The conversation was the contract. I sat through eleven of those meetings in eighteen months on the line at Georgetown. I am scripting you for one of those meetings. Go to Missouri."*
 
-"Walk me through it."
+Jimmy stood up.
 
-"The issue is going to be a feature request. About four hundred words. Describes a specific operational problem you have on Beast Games that the current DSL is not expressive enough to model. The problem is going to be specific. It is not going to name Beast Games. It is going to be written in the standard six-section format the author has documented in the contribution guide — *context, problem, current behavior, desired behavior, suggested approach, willingness to contribute.* You file it under the GitHub account I set up for you in 2021 for the Linus Tech Tips collab. About fourteen public-repo stars on it across five years. To Christopher, the account looks like an ordinary user account. The issue looks like an ordinary feature request from a midsize-CPG operator. It does not identify you as Jimmy Donaldson. It does not identify the operation as MrBeast. It looks, on appearance, like the forty-eighth open issue on a small open-source project."
+He shook Karim's hand across the desk.
 
-"Karim."
-
-"Yeah."
-
-"He's going to recognize the issue."
-
-"He's going to recognize the issue."
-
-"How."
-
-"The specific operational problem you're going to describe is, on my four years at Toyota and on Christopher's own twenty years of trying to land this idea, a problem only an operator running an actual large-scale show-production system has. The shape of the problem is going to be the recognition. He won't know it's you. He will know it's somebody running a system at a scale most of his other users are not at. He's going to engage with the issue at a different level than the other forty-seven. The engagement is the conversation. The conversation is the architecture."
-
-"Help me draft it."
-
-"I have been waiting for that sentence for fifty-three minutes. Open your laptop."
-
-They drafted across the next ninety-four minutes.
+Karim walked out at seven forty-one AM.
 
 ---
 
-The issue was filed at nine forty-eight AM Eastern Wednesday at github.com/Binary-Blender/agicore.
+Jimmy posted the GitHub issue at ten oh-six AM Eastern.
 
-Filed under Jimmy's account, which had a profile photo Karim had taken in 2021 of Jimmy in a baseball cap that did not, on direct comparison to the standard Jimmy-Donaldson public-photo set, look immediately recognizable as Jimmy Donaldson to anyone who was not already looking for Jimmy Donaldson.
+The issue's title was: *I think we have been doing the same thing.*
 
-Next available issue number in the repo's sequence.
+The body was eleven sentences.
 
-The number was fifty-eight.
+The body opened: *Jimmy Donaldson. I have been running a manufacturing operation on YouTube and on the chocolate aisle for nine years. I have been doing it without knowing I was doing it. I read your README on Tuesday night. I recognize the Andon Loop. I have been doing the Andon Loop without knowing it had a name.*
 
-Title: *Feature request — runtime-emitted constraint violations in long-horizon production-cycle ACTION composition*
+The body closed: *I would like to talk. I would like to learn what your project does that my organization can use. I would also like to talk about what my organization does that your project can use. We have, in operational terms, been doing the same work in different rooms. Let us see if we should be in the same room. — Jimmy.*
 
-Body: four hundred and twenty-seven words.
-
-The *context* section read: *I am running a production-management system for a live competitive entertainment program that operates on a six-to-nine-month production cycle, with about eleven distinct operational sub-systems (casting, set construction, talent logistics, on-site safety, broadcast operations, sponsor compliance, and so on), each of which has its own set of constraints currently enforced by a senior operator pulling what is, in effect, a manual Andon Cord. The senior operator is me. I would like to remove myself from the cord. Agicore looks like the architecture in which I can do this. I have, across the past forty-eight hours of reading the documentation, identified one specific gap in the current DSL that I believe is the gap I need closed in order to deploy this on my system. I am willing to fund the work directly, contribute code if my Rust is good enough, or wait if neither of those is the right path. I would like to know which.*
-
-The *problem* section described, in about a hundred and twenty words, the specific operational pattern.
-
-The *current behavior* section described how the current DSL handled the equivalent pattern.
-
-The *desired behavior* section described what the DSL would need to support.
-
-The *suggested approach* section described, in three sentences, a proposed extension to the ACTION composition primitive Karim had identified as the minimum necessary change.
-
-The *willingness to contribute* section read: *Funding: yes, up to whatever the project would responsibly absorb without distorting the contributor structure. Code contribution: my Rust is below the bar this codebase deserves. Time: whatever it takes. I would prefer to wait for the right design rather than ship the wrong one.*
-
-Filed at nine forty-eight AM.
-
-Karim and Jimmy closed the laptop.
-
-"Christopher's commit pattern says he works on the project between about nine PM and two AM Central. He'll see the issue tonight."
-
-"What do we do until tonight."
-
-"Run the empire. Cease-and-desist video is still live. Walmart-aisle video is still live. Companion video drops Friday at ten. Beast Games ops review is at one. Feastables brand check-in at three. Thandi's call about the May twenty-eighth opening at five. We let Christopher see the issue tonight."
-
-"All right."
-
-Karim stood up.
-
-Pushed his chair under the table.
-
-Left the empty third chair where it was.
-
-Walked out.
-
-Jimmy stayed at the table for twenty seconds.
-
-Looked at the empty chair.
-
-Stood up.
-
-Walked to his desk.
-
-Worked through the day.
+The issue posted as #58 on the repository at ten oh-six AM Eastern, which was nine oh-six AM Central in the small town in Missouri.
 
 ---
 
-Christopher, in the small town in Missouri, sat down at his desk in the spare bedroom he had converted to his workspace in October of Year Eight, at nine eleven PM Central Wednesday evening, with a cup of coffee his wife had made him at eight forty-five PM that he had not yet finished, the laptop in front of him, the Agicore repository open in his browser, and the *issues* tab showing — at the top of the list, above the forty-seven previously open issues — issue number fifty-eight.
+Christopher saw the GitHub notification on his desk in his kitchen at nine oh-eight AM Central.
 
-He read the title.
+He was at the kitchen table.
 
-Clicked the issue.
+He was on his second cup of coffee of the morning.
 
-Read the body across nine minutes.
+He had been working on the parser for the SKILLDOC declaration since six AM. The parser was at five hundred and forty-three lines and was, on his honest assessment of the work, going to be done by Friday night. The next item on the issue queue after the parser was the codegen for the SKILLDOC governance manifest. The codegen was, on his estimate, about a week's worth of work. After that the next item was the ACTION codegen, which was three weeks at minimum and which he had been deferring for two months because the ACTION codegen was the hardest piece of work left in the compiler and he had not, in the previous nine weeks, had a clear enough head to take it on.
 
-Sat back in his chair.
+The kitchen was the kitchen.
 
-Did not say anything out loud for about forty seconds.
+The house was a small two-bedroom on a quiet street in the town.
 
-Read it a second time.
+The town was three thousand seven hundred and eleven people on the most recent census.
 
-Clicked the profile of the user who had filed it.
+The town was four hours south of St. Louis and three hours west of nothing in particular.
 
-The profile was a GitHub account with fourteen public-repo stars, no public repos of its own, no bio, no location, no linked website, and a profile photo of a person in a baseball cap that was, on Christopher's first three seconds of looking at it, not immediately recognizable.
+The town's diner had been the lunch spot for Christopher and three of the town's other regulars for the previous eighteen months. The diner's Wednesday-special was meatloaf. Christopher ate the meatloaf on Wednesdays.
 
-He clicked back to the issue.
+Today was Wednesday.
 
-Read it a third time.
+The notification on the laptop screen showed a new issue on the agicore repo. Issue #58. From a GitHub account named *jimmydonaldson.*
 
-Picked up the coffee.
+Christopher looked at the username.
 
-Drank it.
+He looked at it for nine seconds.
 
-Set the cup down.
+He clicked the issue.
 
-He recognized, at nine twenty-six PM Central Wednesday, that the issue was not the forty-eighth issue.
+He read the issue.
 
-It was the first issue from an operator who was running, in production, a system at the scale Agicore had been designed for, and that nobody had yet, in the eleven months Christopher had been building the project, brought a real instance of to him.
+He read the issue again.
 
-He had been waiting eleven months to receive this issue.
+He read the issue a third time.
 
-Christopher opened the reply box.
+He looked at the timestamp. The timestamp was nine oh-six AM Central, two minutes ago. The notification had hit his email within the same window.
 
-Sat in it for about seven minutes.
+He sat back in the kitchen chair.
 
-Typed. Deleted. Typed. Deleted. Typed a third time. Did not delete.
+He looked at the kitchen ceiling.
 
-Read what he had typed.
+He looked at the cup of coffee on the table.
 
-Clicked *Comment.*
+He looked at the parser open in the other window on the laptop.
 
-The comment posted at nine forty-one PM Central Wednesday.
+He thought, in the order he thought them, three things.
 
-Four words:
+One. Cole had sent the most recent quarterly case of Hazelnut Cups four weeks earlier. The case had been delivered by a freight carrier to the small post office in town, which had called Christopher to pick it up because the small post office did not deliver pallet-class freight to residential addresses. Christopher had walked to the post office. He had hand-trucked the case home. The case had been half-empty for the previous two weeks.
+
+Two. Cole's note in the most recent case had been the same note Cole's note in every case had been since the first one twenty-two months ago. The note had read, in its entirety: *For the work. — C.W.* Christopher had, on his own quiet count, exactly one other person in the world he had thought of as operating in his orbit on the strength of an unsolicited GitHub issue. The other person was Cole. Cole's issue had been #43. Cole's issue had been posted on the repo twenty-two months ago. The follow-up funding arrangement had been worked out across the three months that followed in a series of exchanges that had been engineered, on Cole's side, to leave Christopher's operational independence and the project's open-source license entirely untouched.
+
+Three. Jimmy Donaldson was, on his own honest read of the GitHub issue currently open on the screen in front of him, the second person to have shown up.
+
+Christopher typed four words into the comment box.
+
+He typed:
 
 *Jimmy. Come visit. — C.B.*
 
+He clicked Comment.
+
+The comment posted at nine eleven AM Central.
+
+He looked at the comment for nine seconds.
+
+He picked up the cup of coffee.
+
+He drank the rest of it.
+
+He stood up.
+
+He walked to the small kitchen window above the sink.
+
+He looked out at the small back yard, which had been mostly dirt and a single oak tree when he had bought the house in August and was now, on his own honest assessment of the past nine months of landscaping by-himself, mostly dirt and a single oak tree.
+
+He thought: *Hello, Jimmy. I have been expecting you too.*
+
+He did not say it out loud.
+
+He went back to the parser.
+
+He worked on the parser for another nine minutes.
+
+His phone, on the table next to the laptop, buzzed at nine twenty Central with a notification from GitHub that the user *jimmydonaldson* had reacted to his comment with a thumbs-up.
+
+He looked at the notification.
+
+He went back to the parser.
+
 ---
 
-Jimmy was at the kitchen counter of the house in Greenville at ten forty-three PM Eastern Wednesday evening, with Thea across the counter on her laptop working through Q2 financial models for a client her firm was about to file with, when his phone buzzed with a GitHub notification.
+Jimmy read the reply at ten fourteen AM Eastern.
 
-He picked up the phone.
+He read it three times.
 
-Read the notification.
+He picked up his phone.
 
-*Binary-Blender commented on issue #58 — Jimmy. Come visit. — C.B.*
+He texted Ana three words: *Springfield, Missouri. Friday.*
 
-He read it a second time.
+Ana's reply: *Charter or commercial.*
 
-Set the phone down on the counter.
+Jimmy: *Charter. Mid-morning landing.*
 
-Looked across at Thea.
+Ana: *Springfield-Branson National. Land at nine forty-three AM Central Friday. Black Suburban with driver on tarmac. Drive time to address depends on address. Need address.*
 
-"Thea."
+Jimmy: *Don't have address. He hasn't sent one. Will ping the issue.*
 
-"Yeah."
+Ana: *I'll handle the address. Don't ping the issue. I'll get it through the GitHub Sponsors page admin email since the repo doesn't list a public address. Will message him at a normal hour. By tonight Eastern.*
 
-"He knows."
+Jimmy: *Ana.*
 
-"Who knows."
+Ana: *Yes.*
 
-"The guy in Missouri."
+Jimmy: *One more thing. I need a pallet of Hazelnut Cups in the driveway of the address when I arrive on Friday morning.*
 
-"Knows what."
+Ana was quiet for thirty-one seconds.
 
-"That it's me."
+Ana: *A pallet.*
 
-"How does he know."
+Jimmy: *A pallet.*
 
-"I have no idea. The issue I filed this morning didn't identify me. The account doesn't identify me. Karim and I wrote it in the most generic operational terms we could. He responded *Jimmy. Come visit.* So he knows."
+Ana: *Forty-eight cases. Approximately twelve hundred pounds. We do not, by national freight regulations, ship pallet-class freight to a residential address in a town of three thousand people on one day's notice without chartering the truck. Cost to charter the truck for the freight, including the driver waiting at the address until you arrive: approximately twenty-three thousand dollars.*
 
-Thea closed her laptop.
+Jimmy: *Charter the truck.*
 
-Walked around the counter.
+Ana: *Twenty-three thousand dollars for the gift.*
 
-Sat down on the stool next to his.
+Jimmy: *The gift is the gift.*
 
-Picked up the phone.
+Ana was quiet for another fourteen seconds.
 
-Read the notification.
+Ana: *On it.*
 
-"Jimmy."
+Jimmy: *Ana.*
 
-"Yeah."
+Ana: *Yes.*
 
-"He said come visit."
+Jimmy: *I am going to come back from this trip a different operator than the one who left.*
 
-"He said come visit."
+Ana: *I know you are. I have been waiting for this trip for two years. Go.*
 
-"Are you going."
+---
 
-"Yeah."
+Christopher got an email from a *avasquez@mrbeastllc.com* address at four forty-three PM Central Wednesday.
 
-"When."
+The email was three paragraphs.
 
-"Friday. The Walmart-aisle-companion video drops Friday morning at ten. I want to be in Missouri Friday afternoon. Spend Friday afternoon, Saturday, and Sunday with him. Come back Sunday night. Draft the .agi spec for the empire across the three days. Bring it home Monday morning."
+The first paragraph introduced the sender as Ana Vasquez, chief of staff to Jimmy Donaldson.
 
-"Jimmy."
+The second paragraph asked, with care and precision, whether Christopher could share an address Jimmy could come to on Friday morning, and what time of day Christopher would prefer to meet, and whether there was anything Christopher would like the visit to include or exclude.
 
-"Yeah."
+The third paragraph asked whether there was a coffee Christopher preferred and a snack he liked, and apologized in advance for asking on short notice.
 
-"Go."
+Christopher read the email twice.
 
-"Thea."
+He replied in seven sentences.
 
-"Yeah."
+The first three sentences gave his street address, the time he would expect Jimmy (any time between ten AM and noon Friday would work; he would be working at the kitchen table either way and would have coffee on), and a confirmation that no further coordination was needed on his end. The fourth sentence said he drank his coffee black, with no preferred brand, and that he was the kind of person who ate whatever the local diner served on the day of the week he was eating at the local diner. The fifth sentence said he did not, on his own honest assessment, need anything else for the visit. The sixth sentence said that Jimmy should know that the visit would, on Christopher's planning side, be one person at a kitchen table with one cup of coffee and no schedule. The seventh sentence was:
 
-"Thank you."
+> *Tell Jimmy to come.*
 
-"Jimmy."
+Christopher sent the reply at four fifty-one PM Central.
 
-"Yeah."
+Ana acknowledged at four fifty-three.
 
-"Bring him a gift."
+Christopher went back to the parser.
 
-He looked at her.
+---
 
-"What kind."
+The pallet arrived at the address at eleven oh-two AM Central Friday.
 
-"Not a Jimmy-Donaldson gift. A normal gift. The kind of gift you bring when you're visiting somebody at their house for three days because they invited you. A bottle of something. A box of something. Something his wife will be glad you brought. You're going to his house. He's not coming to your studio. The interaction is on his ground. Bring something for his wife. Find out her name before you go."
+The truck driver was a man named Hector Ortega, fifty-six, twenty-nine years driving freight out of a depot in Joplin. Hector had been told by the dispatcher in Joplin at six AM that the pallet was to be delivered to the address at eleven AM Central, that the driver was to wait at the address until further instruction, and that the wait was paid at a rate Hector had, in twenty-nine years of driving freight, never been quoted at.
 
-"How did you know to say that."
+Hector backed the truck into the gravel driveway at eleven oh-two.
 
-"Jimmy. In eleven months I have watched you interact with about fourteen people who made things that mattered to you. On every single one of those, you brought a Jimmy-Donaldson gift. On twelve of those fourteen, the Jimmy-Donaldson gift was the wrong gift. The two times it was the right gift were the two times I picked it. I'm picking this one. Bring her something. Find out her name."
+He set the parking brake.
 
-"Thea."
+He got out of the cab.
 
-"Yeah."
+He walked up to the small front porch of the small house.
 
-"I love you."
+He knocked on the door.
 
-"I know you do."
+Christopher opened the door.
 
-She kissed him on the cheek.
+Christopher looked at Hector.
 
-Picked her laptop back up.
+Christopher looked at the truck.
 
-Walked into the bedroom.
+Christopher looked at Hector again.
 
-He sat at the counter another forty seconds.
+Christopher said: *"Sir."*
 
-Opened the phone.
+Hector said: *"I have a pallet for this address. From a Mr. Donaldson. I have been instructed to wait until Mr. Donaldson arrives. Mr. Donaldson is, on the dispatcher's last update at nine fifteen Central, scheduled to arrive at approximately eleven sixteen."*
 
-Typed a reply to issue number fifty-eight:
+Christopher said: *"What is on the pallet."*
 
-*Christopher. Thank you. I would like to come Friday afternoon through Sunday evening. Please tell me your home address, what time on Friday is best for you, and the first name of your wife so I can bring her something she'll like. — Jimmy.*
+Hector said: *"Approximately twelve hundred pounds of Feastables Hazelnut Cups. Forty-eight cases. Forty-eight bars per case. Two thousand three hundred and four bars total."*
 
-Clicked *Comment.*
+Christopher stood in the doorway.
 
-Posted at ten fifty-one PM Eastern.
+He looked at the truck.
 
-The reply from Binary-Blender came at eleven oh-eight PM Eastern. Four lines:
+He did not, in the next eleven seconds, speak.
 
-*Friday at two PM Central. Address sent to the email on your GitHub. Her name is Sarah. She likes nice tea. Don't bring chocolate.*
+He said, finally: *"Sir."*
 
-*— C.B.*
+Hector said: *"Yes."*
 
-Jimmy read it.
+Christopher said: *"You should come in. There is coffee. The wait is fourteen minutes."*
 
-Read the *don't bring chocolate* line a second time.
+Hector said: *"Mr. — what is your name."*
 
-Laughed.
+Christopher said: *"Christopher."*
 
-Second time he had laughed in two days.
+Hector said: *"Christopher. Thank you. I have not, in twenty-nine years of driving freight, been invited into the kitchen of a delivery address. I would like to take you up on the coffee."*
 
-Set the phone down.
+Hector took off his hat at the threshold and walked into the house.
 
-Walked into the bedroom.
+---
 
-Thea was already in bed.
+The Suburban with Jimmy in it pulled into the gravel driveway at eleven sixteen AM Central.
 
-"Her name's Sarah. She likes nice tea. He told me not to bring chocolate."
+Jimmy got out.
 
-"Jimmy."
+He walked up the porch.
 
-"Yeah."
+The front door opened before he knocked.
 
-"I like him already."
+Christopher was at the door.
 
-"I do too."
+Hector was at the kitchen table behind Christopher with a cup of black coffee in front of him.
 
-He got into bed.
+Christopher looked at Jimmy.
 
-Asleep at eleven forty-one PM.
+Christopher looked at the truck.
 
-Eight hours.
+Christopher looked at Jimmy again.
 
-He was on the charter to Missouri at one fifteen PM Eastern Friday — small overnight bag, a bound notebook Karim had bought him in 2022 that he had not, in three years, written in, and a wooden box containing one pound of high-grade Japanese sencha tea that the Greenville specialty grocer had identified, on Thea's call to the shop Thursday morning, as the right gift for a person who liked nice tea.
+Christopher said: *"A case of these is required just to get me to the table. You brought a pallet. Come in."*
 
-The chocolate was not on the plane.
+Jimmy walked in.
 
-Act 3 starts the moment the plane lands.
+The kitchen was a small kitchen.
+
+The table was a small wooden table.
+
+The laptop on the table was open to a parser file in a text editor.
+
+Hector stood up at the table when Jimmy walked in.
+
+Hector said: *"Mr. Donaldson. I am Hector. I have been Christopher's company for the past nine minutes. He makes a serious cup of coffee. I will be in the truck."*
+
+Hector picked up his hat.
+
+He walked out the back door.
+
+Christopher said: *"Sit."*
+
+Jimmy sat.
+
+Christopher poured a fresh cup of coffee from the pot on the counter.
+
+Christopher set the cup in front of Jimmy.
+
+Christopher walked out the front door to the truck.
+
+Christopher came back inside one minute later with a single Feastables Hazelnut Cup.
+
+He set the bar between the two coffees on the table.
+
+He sat down across from Jimmy.
+
+He unwrapped the bar.
+
+He broke it in half.
+
+He set half of it on Jimmy's side of the table.
+
+He took the other half himself.
+
+He took a bite.
+
+He chewed it for fourteen seconds.
+
+He swallowed.
+
+He said: *"That is, on my honest assessment of the past three years of Feastables product, the best chocolate bar Feastables has shipped. The hazelnut-paste-to-chocolate ratio is the right ratio. The bar holds together at room temperature without collapsing. The wrapper has, on the matte-black-with-gold-foil read, the discipline of a product that has been designed by people who care about the product. I have eaten approximately eleven hundred of these in the past nine months. They have been the snack."*
+
+Jimmy looked at his half of the bar.
+
+He took a bite.
+
+He chewed it.
+
+He said: *"Christopher."*
+
+Christopher said: *"Yes."*
+
+Jimmy said: *"I have eighty-three days of a ninety-day runway from my wife. We have seven days to write the first draft of the rebuild."*
+
+Christopher did not blink.
+
+Christopher said: *"Then we should start."*
+
+Christopher reached behind himself to the kitchen counter.
+
+He picked up a white legal pad and a black ballpoint pen.
+
+He set them between the two coffees.
+
+He picked up the pen.
+
+He wrote, at the top of the legal pad:
+
+*MrBeast — .agi v0.1 — Day 1 of 7*
+
+He looked up at Jimmy.
+
+He said: *"Start at the top. The empire. Thirteen LLCs. Walk me through them."*
+
+Jimmy started at the top.
+
+The clock on the wall above the kitchen sink read eleven thirty-one AM Central Friday.
+
+Hector, in the truck in the driveway, was beginning to move the first dozen cases of Hazelnut Cups into Christopher's small detached garage on a hand truck Christopher had pointed him at on the way out.
+
+The pallet was the pallet.
+
+The seven days had started.
+
+The model was on a legal pad on a small kitchen table in a small house in a small town in Missouri.
+
+The model was going home to Greenville on Sunday night on a USB drive in Jimmy's jacket pocket.
+
+The clock ticked to eleven thirty-two.
+
+Christopher wrote.

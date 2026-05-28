@@ -1,54 +1,124 @@
 # Chapter 7: The Andon Cord
 
-Jimmy was at the desk in his office at the Greenville studio at two oh-four AM Eastern on a Tuesday in the third week of May of Year Nine, at day sixty-five of the ninety-day clock Thea had started in bay number two on the second of March, with the studio silent for the first time in two weeks, with Karim having walked out at one twenty AM after a final handoff on the Friday rollout of the Walmart-aisle-companion video, with the small DSLR on the corner of the desk, with a half-finished glass of room-temperature water on the other corner, and with the Hacker News tab he had bookmarked four days earlier and finally clicked twenty-six minutes ago now open on the laptop, scrolled to a GitHub README he had been reading for the past thirty-eight minutes.
+Day eighty-three.
 
-The README opened with a single sentence in bold:
+Two AM Tuesday in the third week of May.
 
-***Agicore — A deterministic systems-authoring platform for AI-native organizations.***
+The studio was empty.
 
-He had read the sentence four times.
+Karim had walked out at one twenty AM after the last handoff on the Friday rollout video. The cleaning crew had finished at twelve fifty. The production interns had gone home at ten. Ana was at her house. The studio's HVAC made the small ticking noise the HVAC made when nobody was in the building.
 
-He had read the second paragraph six times.
+Jimmy was at his desk.
 
-The second paragraph was:
+He had not slept more than four hours in any of the previous nine nights.
 
-> *Agicore is built on the observation that the modern operational software stack — CRMs, ERPs, workflow engines, BPM platforms, and the dozen other layers of enterprise tooling an operating company sits inside of — treats the running of a company as a collection of unrelated processes that humans coordinate by paying attention. Agicore treats the running of a company as a single specification, written in a constraint-bounded domain-specific language, compiled deterministically at build time, with the AI sitting at the build-time layer rather than the runtime layer. The runtime is, by design, boring. The build time is, by design, where the intelligence lives. The result is an operating company whose every decision flows through a single specification that any human in the company can read, that no human in the company needs to be present in real time to enforce, and that the company's CEO can sign off on once per quarter rather than once per hour.*
+The wall calendar in the studio's main office four rooms away — the wall calendar he had not been able to walk past at any hour of any day for the past eleven weeks without looking at — read, on the small square for today: *83 / 90.*
 
-He had read the paragraph six times because, by the third reading, he had recognized what the paragraph was describing.
+Seven days left.
 
-It was describing the thing he had been trying to articulate to himself across the previous nine years of running MrBeast and had never, in those nine years, been able to put into words.
+He had not, in eighty-three days, found the model.
 
-It was the model.
+He had, in eighty-three days, won every external fight he had been in.
 
-The model Thea had asked him to find by the end of the ninety days was on the GitHub README in front of him.
+The Hershey cease-and-desist withdrawn at four eighteen PM on the Friday eleven weeks ago.
 
-He scrolled down.
+The Walmart shelf expanded by one SKU on the Thursday eight weeks ago.
 
-The README continued for about eleven thousand more words.
+The chocolate-aisle video at two hundred and forty-one million views.
 
-He read all of them across the next two hours and forty-one minutes.
+Marcus Whittaker still searching, on every internal-comms intercept Lin's research team had been picking up across the past three weeks, for a leak inside Hershey's that did not exist.
 
-It walked through the philosophical foundations of the project, the DSL layer, the build-time AI integration model, the runtime determinism guarantees, and the reasoning behind choosing Tauri as the runtime substrate. Then it walked through an explicit comparison to the Toyota Production System, in a section the author had titled, in plain text:
+Carla Hernandez promoted, the previous Monday, from senior vice president to executive vice president of food and consumables — David Yi's old job — on the strength of a recommendation from the chief merchant that David himself had written.
 
-***Section 4.2 — The Andon Cord as Constraint Boundary.***
+Thandi's eighth school in Underberg ribbon-cut on the Saturday morning of the week before, with Thandi in the front row and the regional officer from the provincial education department on the small stage and the head teacher Nomsa receiving the first thirty-two children of the first term at seven AM local time.
 
-He stopped at Section 4.2.
+The Beast Philanthropy ledger was sitting on three hundred and eleven thousand U.S. dollars of additional disbursement capacity above what it had held at the start of March, almost entirely on the back of the Walmart-aisle-video sell-through spike.
 
-Read it four times.
+He had, on every external metric the empire tracked, run the best eleven weeks of his nine years.
+
+He had not, on the small note in his phone that he had opened at four sixteen AM eleven weeks ago and added two-line entries to seven times since, written one usable sentence about what the model actually was.
+
+He was, at two oh-six AM Tuesday on day eighty-three, on Hacker News on his phone.
+
+He had been on Hacker News on his phone for forty-one minutes.
+
+The top of the front page was the usual mix — three AI-model release announcements, a writeup of a quantum-computing milestone, a postmortem of an outage at a major payments provider, a long-form essay on the history of typography on the iPhone.
+
+The eighth post on the page was something else.
+
+The eighth post was a link to a GitHub repository.
+
+The title of the post was: *Show HN: Agicore — deterministic systems-authoring platform for AI-native organizations.*
+
+The post had eighty-three points and forty-one comments.
+
+Jimmy noticed the post had eighty-three points.
+
+He noticed because the wall calendar four rooms away read eighty-three.
+
+He clicked the link.
+
+---
+
+The GitHub repository loaded at two oh-seven AM.
+
+The repository was owned by an account called *Binary-Blender.*
+
+The repository had, on the small bar at the top of the about page, one thousand and forty-seven stars and nineteen contributors and three hundred and forty-one open issues.
+
+The README began with one bold sentence at the top of the page:
+
+*Agicore — A deterministic systems-authoring platform for AI-native organizations.*
+
+Jimmy read the sentence.
+
+He read the second paragraph.
+
+The second paragraph said:
+
+> *Agicore separates AI intelligence from runtime execution. AI handles interpretation, planning, and generation. Deterministic runtimes handle execution, validation, and reliability. The boundary between them is a DSL.*
+
+He read the third paragraph.
+
+The third paragraph said:
+
+> *This is not an agent framework. It is not a chatbot. It is not no-code. It is infrastructure for building AI-generated systems you can actually trust.*
+
+He sat back in his chair.
+
+He read the next eleven thousand words in one hundred and eleven minutes.
+
+He read them without taking a single drink of water.
+
+He read them without checking his phone.
+
+He read them without standing up.
+
+The README walked through, in the order it walked them, the philosophical foundations of the project, the DSL layer, the build-time AI integration model, the runtime determinism guarantees, the reasoning behind choosing Tauri as the runtime substrate, and the architecture of the system the project's author had named *the Andon Loop.*
+
+The Andon Loop section was titled, in plain text:
+
+*Section 4.2 — The Andon Cord as Constraint Boundary.*
+
+Jimmy stopped at Section 4.2.
+
+He read it four times.
 
 The section opened:
 
 > *The Toyota Production System's central operational innovation is not, contrary to the popular reading, the just-in-time inventory model, the kanban card, or the kaizen culture. The central innovation is the Andon Cord. The Andon Cord is the physical cord any line worker on a Toyota assembly line can pull to stop the entire line the moment they observe a defect, a quality issue, or a constraint violation. The cord is the operational embodiment of a single architectural commitment: the line will not produce defective product, even if stopping the line is locally expensive. The cord is not a cultural artifact. The cord is a constraint boundary. The constraint boundary is the architecture.*
 
-He read it again.
+He read the paragraph again.
 
-He sat in his chair.
+He read it out loud.
 
-Looked at the ceiling.
+He read it out loud a fourth time at two thirty-one AM.
 
-Looked at the corner of the desk where the DSLR was.
+He looked at the ceiling.
 
-Looked at the laptop.
+He looked at the empty water bottle on the corner of the desk.
+
+He looked at the laptop screen.
 
 He read the next paragraph:
 
@@ -58,238 +128,314 @@ He read it a third time.
 
 He sat back.
 
-Stared at the laptop for about ninety seconds without saying anything out loud.
+He stared at the screen for ninety seconds.
 
-In the ninety seconds, he recognized four specific things about his own nine-year history of running MrBeast that he had never previously had the vocabulary to name.
+In the ninety seconds, four recognitions landed.
 
-One. Every video he had ever made had been, in operational structure, a small Toyota Production System with Jimmy himself as the cord. The cord had never been transferred to another human across nine years. It had never been transferred to a system. It had been Jimmy. That was the reason he had been at the studio for eighty-hour weeks for nine consecutive years.
+One. Every video the studio had ever shipped had been, in operational structure, a small Toyota Production System with Jimmy himself as the cord. The cord had never been transferred to another human across nine years. It had never been transferred to a system. It had been Jimmy. That was the reason he had been at the studio for eighty-hour weeks for nine consecutive years.
 
 Two. Feastables was a Toyota Production System with Karim as the line manager and Jimmy as the cord. Karim ran the line. Jimmy pulled the cord. That had been the company. It had also been the constraint.
 
-Three. Beast Philanthropy was a Toyota Production System with Thandi as the line manager and Jimmy as, until three weeks earlier, the cord. Thandi had taken the cord on the Tuesday morning of the photograph and the operations report. The forty-to-fifty-school expansion was, on his honest read of what had just happened in the past three weeks, possible because Thandi now had the cord. The expansion would not have been possible if the cord had still been Jimmy's. Thandi had taken the cord without using the words *Andon Cord* and probably without ever having heard them.
+Three. Beast Philanthropy was a Toyota Production System with Thandi as the line manager and Jimmy as the cord. Thandi was holding the line. Jimmy was, on Thandi's diagnosis from the email three weeks earlier, the cap. The cap was the cord stuck in Jimmy's hand. The program could not scale past fourteen schools with the cord still in his hand.
 
-Four. Beast Games was the system in which the absence of a cord had, across the previous eighteen months, produced four operational failures that had each, individually, cost the production between two and seven million dollars. In the post-mortems Karim had run with the Beast Games ops team, the four failures had been treated as unrelated. They had not, in eighteen months, found the common cause. The common cause was that nobody on Beast Games had a cord. Jimmy was too far from the line. The line managers weren't authorized to pull it. The cord defaulted to nobody. The line, with no cord, had run defective product four times.
+Four. Beast Games was the system in which the absence of a cord had, across the previous eighteen months, produced four operational failures that had each, individually, cost the production between two and seven million dollars. In the post-mortems Karim had run with the Beast Games ops team, the four failures had been treated as unrelated. They had not, in eighteen months, found the common cause. The common cause was that nobody on Beast Games had a cord. Jimmy was too far from the line. The line managers were not authorized to pull it. The cord defaulted to nobody. The line, with no cord, had run defective product four times.
 
-He looked at Section 4.2 a seventh time.
+He looked at Section 4.2 a fifth time.
 
-Picked up his phone.
+He picked up his phone.
 
-Called Karim.
+He called Karim.
+
+---
 
 Karim answered on the third ring.
 
 It was two forty-seven AM.
 
-"Jimmy."
+*"Jimmy."*
 
-"Karim."
+*"Karim."*
 
-"It's quarter to three. The Walmart-aisle-companion video is rendered, encoded, and scheduled. I checked it at one fifteen before I left and again at one fifty from the truck. Why are you calling me."
+*"It's quarter to three. The Friday rollout video is rendered, encoded, and scheduled. I checked it at one fifteen before I left and again at one fifty from the truck. Why are you calling me."*
 
-"Karim."
+*"Karim."*
 
-"Yeah."
+*"Yeah."*
 
-"I think I have been a Toyota guy this whole time and didn't know it."
+*"I think I have been a Toyota guy this whole time and didn't know it."*
 
 Karim was quiet for a beat.
 
-"Jimmy."
+*"Jimmy."*
 
-"Yeah."
+*"Yeah."*
 
-"Are you all right."
+*"Are you all right."*
 
-"I'm all right."
+*"I'm all right."*
 
-"Where are you."
+*"Where are you."*
 
-"The studio. I've been reading a GitHub README for the past three hours and seventeen minutes. Open-source project called Agicore. The README has a section in it called *The Andon Cord as Constraint Boundary.* Karim — for nine years, every business unit we run has been a small Toyota line and I have been the cord on every one of them. Videos. Feastables. Beast Games. Beast Phil until Thandi took it three weeks ago without anyone — me included — naming what she had just done. I have, in nine years, never once recognized this. This guy in the README — single guy in Missouri — has written eleven thousand words of plain English that describe the operating model I have been building in my head by accident since I was eighteen. He has also written a piece of software that takes the operating model and turns it into a deterministic spec I can write down once, sign off on once a quarter, and trust the system to enforce in real time without me. Karim. I'm looking at it. I've been looking at it for three hours and seventeen minutes. This is the architecture. This is what Thea has been asking me to find. This is going to fix Beast Games. This is going to fix every single thing I do not yet know is broken. I'm a Toyota guy. I just never had the word."
+*"The studio. I've been reading a GitHub README for the past two hours and forty-one minutes. Open-source project called Agicore. The README has a section in it called *The Andon Cord as Constraint Boundary.* Karim — for nine years, every business unit we run has been a small Toyota line and I have been the cord on every one of them. Videos. Feastables. Beast Games. Beast Philanthropy. I have, in nine years, never once recognized this. The README contains eleven thousand words of plain English that describes the operating model I have been building in my head by accident since I was eighteen. It also contains the spec for a piece of software that takes the operating model and turns it into a deterministic runtime I can sign off on once a quarter and trust the system to enforce in real time without me. Karim. I'm looking at it. I've been looking at it for two hours and forty-one minutes. This is the model. This is what Thea has been asking me to find. This is going to fix Beast Games. This is going to fix the cap Thandi told me about three weeks ago. This is going to fix every single thing in the empire I do not yet know is broken. I'm a Toyota guy. I just never had the word."*
 
 Karim was quiet for a longer beat.
 
-"Jimmy."
+*"Jimmy."*
 
-"Yeah."
+*"Yeah."*
 
-"I've been waiting for this phone call for six years."
+*"I have been waiting for this phone call for six years."*
 
-"Karim."
+*"Karim."*
 
-"Yeah."
+*"Yeah."*
 
-"What do you mean."
+*"What do you mean."*
 
-"Jimmy. I worked at Toyota Manufacturing North America in Erlanger, Kentucky for four years between college and the digital agency I was at before you hired me in 2019. The first eighteen months I was on the Camry line at Georgetown. I pulled the actual Andon Cord, on the actual Camry line, about eleven times in those eighteen months. I've recognized, from the day I started working for you in 2019, that you operate the way Toyota operates. I have not, in six years, mentioned it. I didn't mention it because, on my honest read of how you process operational frameworks, you'd figure it out faster on your own than you would by being told. I have been waiting for you to figure it out. You figured it out at two forty-seven AM on a Tuesday in May of Year Nine. I am, honestly, relieved."
+*"Jimmy. I worked at Toyota Manufacturing North America in Erlanger, Kentucky for four years between college and the digital agency that fed me to you in 2019. The first eighteen months I was on the Camry line at Georgetown. I pulled the actual Andon Cord, on the actual Camry line, eleven times in those eighteen months. I have recognized, from the day I started working for you, that you operate the way Toyota operates. I have not, in six years, mentioned it. I did not mention it because, on my honest read of how you process operational frameworks, you'd figure it out faster on your own than you would by being told. I have been waiting for you to figure it out. You figured it out at two forty-seven AM on a Tuesday in May of Year Nine on day eighty-three of ninety. I am, honestly, relieved."*
 
 Jimmy was quiet.
 
-"Karim."
+*"Karim."*
 
-"Yeah."
+*"Yeah."*
 
-"You worked at Toyota."
+*"You worked at Toyota."*
 
-"I worked at Toyota."
+*"I worked at Toyota."*
 
-"I did not know that."
+*"I did not know that."*
 
-"I did not tell you."
+*"I did not tell you."*
 
-"Karim."
+*"Karim."*
 
-"Yeah."
+*"Yeah."*
 
-"We are going to talk about this."
+*"We are going to talk about this."*
 
-"Yes we are."
+*"Yes we are."*
 
-"Wednesday at seven AM. I'm going to ask you what every operational decision in the past six years would have looked like if I had known you were at Toyota."
+*"Wednesday at seven AM. I'm going to ask you what every operational decision in the past six years would have looked like if I had known you were at Toyota."*
 
-"Jimmy."
+*"Jimmy."*
 
-"Yeah."
+*"Yeah."*
 
-"The same. Every decision you've made in six years, you've made the decision a Toyota operator would have made. The framework wasn't the missing piece — it was already in your head. The missing piece was the vocabulary. The vocabulary is, on your read of the README, now in your head too. From here forward the decisions are going to be the same decisions. They'll be faster. They'll be legible to the people who work for you. They'll be transferable to a system on your laptop. The system is the architecture. Welcome to the conversation I've been waiting six years to have."
+*"The same. Every decision you've made in six years, you've made the decision a Toyota operator would have made. The framework was already in your head. The missing piece was the vocabulary. The vocabulary is, on your read of the README, now in your head too. From here forward the decisions are going to be the same decisions. They'll be faster. They'll be legible to the people who work for you. They'll be transferable to a system on your laptop. The system is the model. Welcome to the conversation I've been waiting six years to have."*
 
 Jimmy laughed.
 
 First time he had laughed in about forty-one hours.
 
-"Karim."
+*"Karim."*
 
-"Yeah."
+*"Yeah."*
 
-"Go back to sleep. We'll talk Wednesday at seven. I'm going to read this README again tonight, read the docs site tomorrow, look at the example apps in the repo. By Wednesday morning I'll have a draft of the conversation. Go to sleep."
+*"Go back to sleep. We'll talk Wednesday at seven. I'm going to read this README again tonight, look at the example apps in the repo, draft a GitHub issue, sit on the issue overnight, and post it after we talk in the morning."*
 
-"Jimmy."
+*"Jimmy."*
 
-"Yeah."
+*"Yeah."*
 
-"One thing before I go."
+*"One thing before I go."*
 
-"Tell me."
+*"Tell me."*
 
-"Who wrote the README."
+*"Who wrote the README."*
 
-"I haven't checked. The author's name is on the repo's about page. Let me check now."
+*"I haven't checked the about page. Let me check now."*
 
-"Check now."
+*"Check now."*
 
 Jimmy clicked the about page.
 
-Three words.
+The page was three sentences.
 
-Read them twice.
+He read them twice.
 
-"Karim."
+*"Karim."*
 
-"Yeah."
+*"Yeah."*
 
-"The repo is owned by an account called Binary-Blender. The README author signs the footer as C. There's no further identifying info on the about page. By the commit history he's been committing at about fourteen commits a week for the past eleven months. By the contributors list, no other contributors. On the project's website — linked from the README — there's a small page that says the project is being built by one person in a small town in Missouri because the operating model it encodes is, in his own words, the operating model AI-native organizations are going to be built around in the next decade. Single person. Lives in Missouri. Calls himself an AI-native operator. Says he's *doing what he can with what he has.*"
+*"The repo is owned by an account called Binary-Blender. The README author signs the footer as *C.* There's no further identifying info on the about page. By the commit history he's been committing at about fourteen commits a week for the past eleven months. By the contributors list, no other consequential contributors. On the project's website — linked from the README — there's a small page that says the project is being built by one person in a small town in Missouri because the operating model it encodes is, in his own words, the operating model AI-native organizations are going to be built around in the next decade. Single person. Lives in Missouri. Calls himself an AI-native operator. Says he is *doing what he can with what he has.*"*
 
 Karim was quiet.
 
-"Karim."
+*"Karim."*
 
-"Yeah."
+*"Yeah."*
 
-"A single person in Missouri."
+*"A single person in Missouri."*
 
-"A single person in Missouri."
+*"A single person in Missouri."*
 
-"The architecture I've been looking for for nine weeks is being maintained by one guy in Missouri."
+*"The model I have been looking for for eighty-three days is being maintained by one guy in Missouri."*
 
-"On what the README says, yeah."
+*"On what the README says, yeah."*
 
 Karim was quiet again.
 
-"Karim."
+*"Karim."*
 
-"Yeah."
+*"Yeah."*
 
-"Whatever conversation we're having Wednesday — that conversation is going to have to include how *you* — a guy with seven hundred million in personal capital running an empire that touches three hundred and fifty million people — interact with one guy in Missouri building an open-source project that's, on your read, the next decade. The interaction isn't going to be a standard interaction. It's going to be the most important interaction of the next phase of the empire. Think about it tonight. We'll talk in the morning."
+*"Whatever we talk about Wednesday is going to have to include how a guy with seven hundred million in personal capital running an empire that touches three hundred and fifty million people interacts with one guy in Missouri building an open-source project that is, on your read, the next decade. The interaction is not going to be a standard interaction. It is going to be the most important interaction of the next phase of the empire. Think about it tonight. We'll talk in the morning."*
 
-"Karim."
+*"Jimmy."*
 
-"Yeah."
+*"Yeah."*
 
-"I'll think about it tonight."
+*"I'll think about it tonight."*
 
-"Good."
+*"Good."*
 
 Karim hung up.
 
+---
+
 Jimmy set the phone on the desk.
 
-Looked at the screen. Looked at the GitHub repo. Looked at the *issues* tab at the top.
+He looked at the screen.
 
-Forty-seven open issues.
+He looked at the *issues* tab at the top of the repo.
 
-Looked at the *new issue* button.
+Three hundred and forty-one open issues.
+
+He looked at the *new issue* button.
 
 He did not click it.
 
-He decided, on his own quiet sense of the right rhythm for the conversation he was about to start, not to file the issue tonight. He'd file it Wednesday after he and Karim talked — after Karim had walked him through what four years on a Toyota line had taught Karim about how to interact with a person who was doing what they could with what they had.
+He opened a separate text document on his laptop.
+
+He drafted the issue.
+
+The draft ran eleven sentences.
+
+The title was: *I think we have been doing the same thing.*
+
+The body opened: *Jimmy Donaldson. I have been running a manufacturing operation on YouTube and on the chocolate aisle for nine years. I have been doing it without knowing I was doing it. I read your README tonight. I recognize the Andon Loop. I have been doing the Andon Loop without knowing it had a name.*
+
+The body closed: *I would like to talk. I would like to learn what your project does that my organization can use. I would also like to talk about what my organization does that your project can use. We have, in operational terms, been doing the same work in different rooms. Let us see if we should be in the same room. — Jimmy.*
+
+He read the draft three times.
+
+He did not change a word.
+
+He saved the draft.
+
+He did not post it.
 
 He closed the laptop.
 
-Stood up.
+---
 
-Walked to the corner of the office.
+He stood up.
 
-Turned off the small lamp Karim had bought him for his thirty-first birthday.
+He walked to the corner of the office.
 
-Walked to the studio kitchen, filled a glass from the filtered tap, drank it.
+He turned off the small lamp Karim had bought him for his thirty-first birthday.
 
-Walked out of the studio.
+He walked to the studio kitchen.
 
-Drove home.
+He filled a glass from the filtered tap.
 
-Arrived at the house at three twenty-two AM.
+He drank the water.
 
-Walked into the bedroom.
+He set the glass in the sink.
+
+He walked out of the studio.
+
+He drove home in the dark.
+
+The Greenville streets were empty.
+
+He arrived at the house at three twenty-two AM.
+
+He walked into the bedroom.
 
 Thea was asleep.
 
-He didn't wake her.
+He undressed quietly.
 
-Undressed.
+He lay down next to her.
 
-Lay down.
-
-Closed his eyes.
+He closed his eyes.
 
 He did not, in the next twenty-eight minutes, fall asleep.
 
-He thought about the cord.
+He thought, in the twenty-eight minutes, about the cord, about Karim at Toyota, about the guy in Missouri, about Thandi in the third classroom, about Eleanor Whitcomb in the boardroom in Hershey, about the seven days left on the runway, about the eleven thousand words in the README, about the small note on his phone that had, between the last time he had touched it and now, become legible to him for the first time.
 
-He thought about Karim at Toyota.
+He thought, at the end of the twenty-eight minutes, one sentence.
 
-He thought about the guy in Missouri.
+The sentence was:
 
-He thought about Thea.
-
-He thought about Thandi in the third classroom.
-
-He thought about the ninety days.
-
-He thought about the architecture.
-
-He had found it.
-
-He fell asleep at three fifty-one AM.
-
-Slept until six oh-eight.
-
-Woke up next to Thea, still asleep.
-
-His first conscious thought of the morning was one sentence: *Thea. I found it.*
+*Thea. I found it.*
 
 He did not say it out loud.
 
-Got out of bed. Showered. Drove to the studio. In the office at six forty-seven AM.
+He fell asleep at three fifty-one AM.
+
+He slept until six oh-eight.
+
+He woke up next to Thea, still asleep.
+
+His first conscious thought of the morning was the same sentence:
+
+*Thea. I found it.*
+
+He did not say it out loud.
+
+He got out of bed.
+
+He showered.
+
+He drove to the studio.
+
+He was in the office at six forty-seven AM.
 
 The seven AM Wednesday meeting with Karim was twenty-four hours and thirteen minutes away.
 
 He was ready for it.
+
+The GitHub issue was in a saved draft on his laptop.
+
+The issue was going to post Wednesday at ten oh-six AM Eastern, the moment Karim walked out of the office at the end of their meeting.
+
+The runway had seven days left.
+
+Seven was the number.
+
+The model was in the README.
+
+The README was in Missouri.
+
+Missouri was the next stop.
+
+The cord was, on Jimmy's first honest read of his own life in the nine years of the empire, about to leave his hand for the first time in nine years.
+
+The cord was the cord.
+
+The cord was going on a USB drive.
+
+He sat down at his desk.
+
+He poured himself a cup of coffee from the office coffeemaker Karim had set to brew at six forty-five every weekday morning of the past four years.
+
+He drank the coffee.
+
+He waited for Karim.
+
+Day eighty-four started at midnight.
+
+Six days after that, the runway would be the runway.
+
+Six days after that, the model would be on Thea's kitchen table.
+
+He had it.
+
+He just had not built it yet.
+
+He drank the coffee.
+
+The studio woke up around him.

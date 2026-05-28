@@ -1,303 +1,411 @@
 # Chapter 5: Bentonville
 
-Carla Hernandez called Jimmy on the secure line at eight oh-six AM Eastern on a Wednesday in late April of Year Nine, four weeks after the cease-and-desist video, two weeks after Thandi had sent the photograph from the third classroom, and one week after Karim had walked into Jimmy's office on a Monday morning to tell him that Q1 Feastables sell-through numbers at Walmart had come in approximately seventeen percent above the operational forecast.
+Carla Hernandez called Jimmy on the secure line at eight oh-six AM Pacific on a Wednesday in late April.
 
-Jimmy was at his desk reading the printout.
+Carla had been at Walmart for nineteen years.
 
-The phone rang.
+Carla was, in operational title, the senior vice president of edible-grocery category management. Under that title sat, by Carla's most recent organizational-chart count from the Q1 internal roster, approximately one thousand four hundred and twelve associates across seventeen sub-categories that included, among others, the chocolate-bar category Carla had personally negotiated the first Feastables national-distribution deal in across three meetings in Bentonville in March of 2022.
 
-It was the encrypted-line phone Karim had set up two years earlier when the volume of sensitive Feastables calls had crossed the threshold the standard cell setup had stopped being adequate for.
+Carla had liked Jimmy since the first of those three meetings.
 
-The display read: *Carla Hernandez — Walmart.*
+Carla had told her husband, on the drive home from that meeting on March twelfth of 2022, the following sentence: *That kid is going to outlast every CEO in the chocolate aisle and he does not yet know it.*
 
-"Carla."
+Carla's husband had asked her how she knew.
 
-"Jimmy."
+Carla had said: *He thinks in velocity. The rest of them think in shelf space. The velocity beats the shelf space every time.*
 
-"Where are you."
+That had been three years and one month before the secure-line call this morning.
 
-"My office in Bentonville. I just walked across the corridor to the small office at the end of the floor without windows that Walmart category managers use when we're making calls we don't want our colleagues to overhear. I'm in that one. I'm going to be in it for the next ten minutes."
+---
 
-"OK."
+Jimmy picked up on the second ring.
 
-"Here's the situation in short form. Hershey has been running a pressure campaign against us for nine weeks. The campaign is explicitly aimed at getting Walmart to cut your shelf allocation at the Q3 planogram review."
+He was in his office in Greenville. The wall calendar was on the wall behind his desk. The square for today — the twenty-seventh of April, the forty-fourth day of the runway Thea had started in bay two on the fifteenth of March — had Thea's small red dot in the corner and the red-marker numerals *44 / 90.*
 
-She walked him through it across the next eight minutes.
+The bottom of the calendar, in a new annotation Thea had added to the May page over the previous weekend in the same red marker, read: *Tuesday June 14 — Day 90.*
 
-Marcus Whittaker, Hershey's CEO, had personally called Walmart's CEO three times in five weeks. Yvette Park, Hershey's chief category officer, had called Carla's boss twice in three weeks. Hershey had been offering Walmart deal terms it had never offered before — a fifteen-percent off-invoice allowance on the full chocolate-bar portfolio for Q4, a guaranteed twenty-eight-percent shelf-allocation increase across the chocolate aisle, a one-time fourteen-million-dollar marketing-investment payment to fund a Walmart-exclusive holiday activation. Each offer carried an informal ask attached — that Walmart cut Feastables' chocolate-bar facings by an amount Carla estimated at between thirty and forty-five percent.
+The marker had not been the marker Thea used for the household budget.
 
-Walmart had not accepted any of it.
+The marker had been a new marker Thea had bought at the small art-supply store in Greenville on the Saturday morning of the previous weekend.
 
-Walmart had also not told Hershey the offers were unacceptable.
+Jimmy had noticed the marker because the marker was the marker.
 
-Walmart had, on its standard protocol, deferred each conversation to the next quarterly review — which was the Q3 planogram review Hershey was trying to influence.
+He picked up the phone.
 
-Carla's boss's boss — Walmart's chief merchant — had made a single statement about it in a closed-door meeting Carla had been in the room for, on Tuesday of the previous week. Carla repeated the statement to Jimmy now in the words she remembered it:
+He said: *"Carla."*
 
-*Hershey's has, in the previous nine weeks, attempted to manipulate Walmart at a level Walmart has not been manipulated at by a single vendor in the previous twelve years. Walmart is not going to tolerate it. Walmart is also not going to publicly call it out, because publicly calling it out is not our protocol. Our protocol is to allocate shelf space on the basis of sell-through. Feastables' sell-through is, in Q1, approximately thirty-one percent above the chocolate-bar category benchmark. Feastables is going to get its shelf allocation in the Q3 review on the basis of the sell-through. Hershey's is going to be told what Hershey's is going to be told.*
+Carla said: *"Jimmy."*
 
-"OK."
+Jimmy said: *"You don't call before nine your time on a Wednesday unless something is wrong."*
 
-"I'm calling you against Walmart's internal-comms protocol. I'm telling you because I want you to know. I'm not telling you because I want you to do anything specific with it. This is a courtesy from one friend to another in an industry where courtesies of this kind aren't supposed to happen. Don't share with anyone at Walmart that I made the call."
+Carla said: *"Something is wrong. The wrong is not for you, it is for the company that is doing the wrong. I am calling you because I do not want to be the executive at this company who has to tell you, after the Q3 planogram review has run, what happened in the nine weeks before the planogram review ran. So I am telling you now. I am, on the record of the call I am about to have with you, breaking approximately three internal Walmart communications protocols by telling you this. I am, on the record of the protocols, choosing to break them. I want you to know I am breaking them. The reason I am breaking them is that what is being done to you, in the operational sense, is the kind of thing that does not get done to one of my supplier partners on my watch without my supplier partner knowing about it on the day I find out about it."*
 
-"I won't."
+Jimmy said: *"Okay."*
 
-"One more thing. Do you want to come to Bentonville tomorrow afternoon and meet with me, with my boss, and with the chief merchant in a sequence of meetings I have been pre-positioning across the last seventy-two hours?"
+Carla said: *"Hershey."*
 
-"Yes."
+Jimmy said: *"Hershey."*
 
-"Tomorrow afternoon. Two PM Central."
+Carla said: *"Marcus Whittaker has called our CEO four times in the past nine weeks. Yvette Park has called my boss eleven times in the same window. The two of them, jointly and separately, have walked into Bentonville with seven different co-marketing proposals. The proposals are at terms that, on my honest read of forty years of Hershey's relationship with Walmart, Hershey has never put on this table. Two of the proposals are unprecedented. The third one is the kind of proposal Hershey would not, three years ago, have put on this table for any price. The proposals are not what they look like. The proposals are the offer. The offer has a condition. The condition is not written down anywhere on the proposals. The condition is being communicated in the conversations. The condition is that Walmart, in the Q3 planogram review which begins the second week of July, reduces Feastables' shelf allocation across the chocolate-bar category by between twenty-two and thirty-one percent depending on the SKU. That is, on my count of the seven proposals, the through line. The proposals are the carrot. The condition is the carrot's price. The price is the price."*
 
-"I'll be there at one fifty."
+Jimmy was quiet.
 
-"Bring nobody. The meeting only works if you're in the room alone. The chief merchant is going to say something to you in the room that he won't say in front of anyone else. Trust me on the staging."
+He looked at the wall calendar.
 
-"I trust you on the staging."
+He looked at the *44 / 90.*
 
-"Good. I'm hanging up."
+He said: *"Carla."*
 
-"Hang up."
+Carla said: *"Yes."*
 
-She hung up.
+Jimmy said: *"You said the proposals are at terms Hershey has never offered. How aggressive."*
 
-Jimmy set the phone down. Sat at the desk for about a minute. Picked the phone back up. Called Karim.
+Carla said: *"Trade-spend offers at thirty-eight to forty-one percent above the category benchmark for a twenty-four-month commitment. Slotting-fee waivers on three new SKUs Hershey is launching in Q3, which Hershey has not, in twenty-six years of my industry awareness, ever waived for any retailer. Co-branded end-cap displays funded entirely by Hershey, including the labor for the changeover, in fourteen hundred of our largest stores for the Halloween and Christmas seasons of this year, which is a level of trade investment Hershey would normally distribute across nine retailers and is concentrating, in this offer, on Walmart alone. Jimmy. The offer is, on the dollar count, approximately one hundred and sixty-three million dollars of incremental trade investment in Walmart on a twelve-month window. The condition is a planogram shift that, on our category analytics, takes between forty and fifty-eight million dollars of annualized retail revenue away from your line."*
 
-"Karim. Charter to Bentonville tomorrow morning. I want to be at the Walmart Home Office at one fifty PM Central tomorrow. Going alone. No team. No security. Just me and the charter and the rental from the airport."
+Jimmy said: *"And what is Walmart going to do."*
 
-"Alone."
+Carla said: *"That is not my decision. That decision sits with my boss and with my boss's boss and with our chief merchant. I do not, on my role in this conversation, get to make that decision. I am calling you because the decision is being made, and because the decision is being made in a series of meetings I have personally been excluded from across the past three weeks, and because the exclusion, on my honest read of the politics of my own building, is not an accident. I am calling you because I am giving you a window in which to walk into our chief merchant's office and have a conversation with him before the decision is made on the wrong information."*
 
-"Alone."
+Jimmy said: *"Carla."*
 
-"Jimmy. The last time you flew alone to a major retailer was the Costco call in 2023. The call didn't go badly. It also didn't go the way you'd expected. I'm pushing back on the alone."
+Carla said: *"Yes."*
 
-"Karim. Carla pre-positioned the meeting. The meeting only works alone. Going alone."
+Jimmy said: *"Thank you."*
 
-"All right."
+Carla said: *"Do not thank me on this call. Thank me by being on a plane to Bentonville tomorrow morning. I have already booked your meeting with the chief merchant. The meeting is at three PM Central. The meeting is ninety minutes. The chief merchant does not yet know I have called you. The chief merchant will figure out that I have called you the moment you walk into his office, and the chief merchant will, on what I know of how he runs his office, respect that I called you more than he would have respected if I had not called you. I am also booking you a fifteen-minute meeting with my boss at one thirty PM and a thirty-minute meeting with me at noon. The three of us are going to walk you through what is going on in this building so that, when you walk into the chief merchant's office at three PM, you walk in knowing what you are walking into. That is the way this is going to go. Are you on the plane."*
 
-"Karim."
+Jimmy said: *"I am on the plane."*
 
-"Yeah."
-
-"Thanks for pushing back."
-
-"You're welcome."
-
-Karim hung up.
-
-Jimmy called Thea.
-
-She was at the firm.
-
-"Jimmy."
-
-"Hey. Flying to Bentonville tomorrow afternoon. Going alone. Back tomorrow night."
-
-"Bentonville. Walmart."
-
-"Walmart."
-
-"OK."
-
-"I'll be home tomorrow night."
-
-"OK."
-
-"Thea."
-
-"Yeah."
-
-"I'm calling you because I'm going to start telling you about trips before I'm on the plane instead of after I've landed. It's part of the thing I'm building."
-
-She was quiet for a beat.
-
-"Jimmy."
-
-"Yeah."
-
-"Thank you."
-
-"You're welcome."
-
-"Bring back the meeting."
-
-"I'll bring back the meeting."
+Carla said: *"Good."*
 
 She hung up.
 
 ---
 
-The charter lifted from Pitt-Greenville at six oh-eight AM Eastern Thursday morning. Three hours and eleven minutes to Northwest Arkansas Regional. Landed at eight nineteen AM Central.
+Jimmy looked at the phone for fourteen seconds.
 
-The rental was a black Suburban that, on Karim's quiet over-protocol Jimmy had not specifically authorized but that Karim had set up regardless because Karim was, on his honest assessment of Jimmy's solo-trip risk profile, not the kind of head of production who sent the CEO to a retailer's headquarters in a fully unmanaged rental car, had been pre-positioned at the airport by a small private security firm Karim had been quietly using since 2022.
+He picked it up.
 
-Jimmy drove the Suburban himself.
+He texted Ana three words: *Bentonville. Tomorrow. Charter.*
 
-Twenty-eight minutes to the Walmart Home Office complex.
+Ana's reply came back in eleven seconds. The reply was: *Plane leaves Greenville Downtown 5:42 AM. Land Bentonville 6:58 Central. Suburban with driver Mitch on the tarmac. Hotel booked, cancellable. Maritza on standby. Karim briefed.*
 
-He parked in the visitor lot. Walked into the lobby. Checked in. The receptionist did not, in any way Jimmy could observe, react to him beyond the standard visitor protocol. He got a badge and a small printed floor map.
+Jimmy said, out loud, in his office, to no one:
 
-The meeting was on the third floor.
+*"Ana is the best chief of staff in the United States and I have never told her this."*
 
-Small conference room at the end of the south corridor. Three chairs at a round table.
+He picked up his phone.
 
-Carla was at one of them. Her boss was at the second. The chief merchant was not yet in the room.
+He texted Ana one word: *Thanks.*
 
-Carla stood up. Crossed to him. Embraced him briefly.
+Ana's reply was one character.
 
-"Jimmy."
-
-"Carla."
-
-"Thank you for coming."
-
-"Thank you for the call."
-
-"Jimmy. This is my boss, Diane Tashiro, senior vice president of consumables category management. Diane, this is Jimmy."
-
-He shook Diane's hand.
-
-"Jimmy."
-
-"Diane."
-
-"Carla has told me what she told you. I'm in agreement with her read. I'm here this afternoon because the chief merchant asked me to be. He'll be in the room in about four minutes. He's going to say something to you when he arrives. Carla and I are not going to say anything during the conversation. The conversation is going to be his. When it's done, he'll leave, and Carla and I will walk you to the parking lot. That's the meeting."
-
-"Diane."
-
-"Yeah."
-
-"Thank you for the staging."
-
-"You're welcome."
-
-They sat.
+The character was a heart.
 
 ---
 
-The chief merchant walked in at one fifty-eight PM.
+He landed at Bentonville Regional at six fifty-eight AM Central Thursday.
 
-His name was Henry Calloway. Fifty-eight years old. Thirty-one years at Walmart, the last six as chief merchant. The single most influential individual in the U.S. consumer-packaged-goods retail ecosystem.
+Mitch was on the tarmac with the Suburban.
 
-He crossed the room. Shook Jimmy's hand.
+Mitch had been Jimmy's contracted Bentonville driver since the second Feastables trip in 2022. Mitch was sixty-one. Mitch had grown up in Rogers, Arkansas. Mitch had driven the Suburban for an executive-transportation service in Bentonville for twenty-three years, and he had driven, by his own count, fourteen of the CEOs of the world's twenty largest consumer-packaged-goods companies across the same window.
 
-"Mr. Donaldson."
+Mitch said: *"Jimmy."*
 
-"Mr. Calloway."
+Jimmy said: *"Mitch."*
 
-"Please call me Henry."
+Mitch said: *"Carla called me at four thirty this morning to tell me you'd be on the tarmac at seven. She did not tell me why. I have been driving in this town for twenty-three years. I know what it means when Carla calls me at four thirty AM. I want you to know I know."*
 
-"Please call me Jimmy."
+Jimmy said: *"Mitch."*
 
-He sat down in the third chair.
+Mitch said: *"Yes."*
 
-He did not, across the next ninety seconds, say anything.
+Jimmy said: *"What does it mean."*
 
-Jimmy did not say anything.
+Mitch said: *"It means somebody in a fifty-story building four hundred miles from here decided to lean on this building. This building does not like being leaned on. This building is going to push back. You are not going to have to push back yourself. The building will push back for you, and you, on what I know of how you operate, are going to walk out of this building today with more shelf space than you walked in with. Get in the truck. I am going to drive you to Carla's office. Coffee is in the cup-holder. Black, two sugars. You drank it black at first when I started driving you in '22 and you started taking sugars in October of '23 after the trip with your wife. I started bringing it with two sugars the second-to-last trip. You did not say anything when I started bringing it with sugars. I take that as the right read."*
 
-Carla and Diane did not say anything.
+Jimmy got in the truck.
 
-At the close of the ninety seconds Henry said:
+He took the coffee.
 
-"Jimmy. I'm going to say one thing. That one thing is the meeting. After I've said it, the meeting is over. I want you to listen. I want you to think about it across the next ninety days. I want you to come back to me, in person, at this office, ninety days from today, with whatever response you've decided to bring. Are we clear."
+He drank the coffee.
 
-"We're clear."
+The coffee was the way he drank it.
 
-He paused.
-
-"Walmart will not, under any circumstance, give Feastables less shelf space than your sell-through justifies. The Hershey pressure campaign of the past nine weeks has been an attempt to manipulate Walmart that Walmart will not tolerate. We are also not, on standard protocol, going to publicly call it out. I am, however, telling you, in this room, that the manipulation happened, that it will be remembered, and that in the Q3 planogram review Walmart is going to grant Feastables an additional category-position increase of one full SKU across the chocolate-bar facing in approximately seven thousand four hundred and twenty stores nationwide. The allocation is being granted not because of this conversation, but because your sell-through justifies it. This conversation is a different conversation."
-
-He paused again.
-
-"The conversation is about whether the relationship between Feastables and Walmart across the next ten years is going to be the relationship I want it to be. The relationship I want is the one in which Feastables keeps operating the way Feastables has been operating. The one I don't want is the one in which Feastables, having gained significant market share, starts to operate the way the legacy CPG companies operate. I'm not going to manage you any differently from this side than I'd manage any other vendor. I'm asking you to manage it from your side the way you've been managing it. Don't become, in the next five years, the company the Hershey Company has, across the previous fifteen, become."
-
-Beat.
-
-"The conversation is over."
-
-He stood.
-
-Shook Jimmy's hand.
-
-Walked out.
-
-The conversation had lasted four minutes and eleven seconds.
-
-Carla and Diane stood up. They walked Jimmy to the parking lot.
-
-At the Suburban, Carla said: "Jimmy."
-
-"Carla."
-
-"You got the SKU."
-
-"I got the SKU."
-
-"Don't, in the next ten years, become the Hershey Company."
-
-"I'm not going to become the Hershey Company."
-
-"Drive safely."
-
-He drove safely.
-
-Flew back to Greenville on the charter.
-
-Home at the house at six forty-six PM Eastern Thursday night.
+Mitch drove him to Walmart's corporate campus.
 
 ---
 
-Thea was at the kitchen table.
+The meeting with Carla at noon was thirty minutes.
 
-She had cooked.
+Carla walked him through the seven proposals. She walked him through the timeline. She walked him through the cast of internal Walmart executives who were going to be in the room or adjacent to the room across the next nine weeks. She walked him through what she could and could not say in the chief merchant's office in the afternoon meeting. She gave him a one-page document she had printed on her office printer that morning that was not, on any read of Walmart's records, an internal Walmart document, and which contained the seven proposals on one column and Walmart's typical historic terms in the comparable categories on the second column. The document was titled, in handwriting at the top: *for your own reference, please do not produce.*
 
-He sat across from her.
+Jimmy folded the document.
 
-He told her about the meeting. The SKU. Henry Calloway's closing.
+He put it in the inside pocket of his jacket.
 
-She listened.
+He said: *"Carla."*
 
-When he finished, she said: "Jimmy."
+Carla said: *"Yes."*
 
-"Yeah."
+Jimmy said: *"You are the reason this is going to go the way it is going to go."*
 
-"What did Henry Calloway tell you in the part you didn't just tell me."
+Carla said: *"I am one of the reasons. The other reasons are in this building and they are about to do their jobs. Sit through them. Trust them. The chief merchant is going to ask you, in the first ten minutes of the three PM meeting, what you would have done if I had not called you. Tell him the truth. Tell him you would have found out in July when the planogram changed and that you would have, on the strength of that finding-out, filmed a video the next day that would have gotten three hundred million views in seventy-two hours and that the video would have asked, in plain language, why Walmart had taken a hundred and sixty-three million dollars in trade investment from Hershey in exchange for cutting your shelf space. Tell him that. Tell him you are grateful you do not have to film that video. The chief merchant will respect the answer. The answer is the answer. Go."*
 
-He looked at her.
+He went.
 
-"He told me not to become the Hershey Company."
+---
 
-"I know he did."
+The one-thirty meeting with Carla's boss was fifteen minutes.
 
-"How did you know."
+Carla's boss was named David Yi. David was fifty-six. David had been at Walmart for thirty-one years, the last seven as executive vice president of food and consumables. David was, on any honest read of the industry's view of Walmart's bench, the person who would, in approximately two years, be Walmart's chief merchandising officer.
 
-"Because the meeting was a four-minute meeting in a small conference room at the end of a corridor with the chief merchant of the largest retailer in the country, who flew nobody else into the room. The meeting wasn't the SKU. The meeting was the warning. The SKU is what got announced. The warning is what got said."
+David said, in the first sentence of the meeting: *"Jimmy. Carla called me at five this morning to tell me she had called you yesterday. I want you to know that I told her, in that call, that she had done the right thing, and that I want you to know that I told her."*
 
-"Thea."
+Jimmy said: *"David. Thank you."*
 
-"Yeah."
+David said: *"I did not say that for thanks. I said that so that the next time someone in your organization is in a position to make the same call to one of our supplier partners, they know that they can. You are a supplier partner. Carla called you because we, as a building, do not run our supplier relationships through the leverage one of your competitors is trying to apply on us. We run our supplier relationships through velocity. Your line has the velocity. Your line is going to keep the shelf space your velocity has earned. The chief merchant is going to tell you that himself in ninety minutes. I am telling you in advance because I think it is important you know that what is going to happen in his office at three is not because of the meeting. The meeting is the ceremony. The decision was made in this building three weeks ago by my chief merchant in a conversation he had with me on a Friday afternoon. The conversation was sixteen minutes. The conclusion was reached at minute eight."*
 
-"How do you keep doing this."
+Jimmy said: *"David."*
 
-"Jimmy. I've been married to you for eleven months. I've watched you come home from sixty-two meetings. Sixty of them you told me about with the headline first. Two of them you told me about by reciting what the other person said and then waiting for me to ask. Tonight is the second one of those two. The first one was the call from Mark in December. You didn't tell me what Mark had said until I asked. I asked because, on the way you described the room, the room was the warning. The parking lot was the friendship. Carla in the parking lot saying *don't become the Hershey Company* — that's the friendship version. Henry in the room saying *don't operate the way the legacy CPG companies operate* — that's the warning. You got both today. Most CEOs in your position get one of those in a whole career. You got both in a single afternoon."
+David said: *"Yes."*
 
-He looked at her.
+Jimmy said: *"Thank you."*
 
-"Thea."
+David said: *"Go to the meeting. The meeting is what the meeting is."*
 
-"Yeah."
+---
 
-"I'm not going to become the Hershey Company."
+The chief merchant was a sixty-three-year-old man named Walt Frazier.
 
-"Good."
+Walt had been at Walmart for forty-one years.
 
-She picked up her fork.
+Walt was approximately five months from retirement.
 
-She kept eating.
+Walt had not, in forty-one years of merchandising, ever sat across a conference table from a supplier partner who was younger than his youngest grandchild.
 
-The chicken was good. The carrots were good. The potatoes were good.
+Jimmy was, by approximately thirteen months, younger than Walt's youngest grandchild.
 
-The ninety-day clock, on Thea's quiet count, was at day forty-one.
+Walt walked into the conference room at two fifty-eight PM Central, sat down across the table from Jimmy, and said, in the first sentence of the meeting: *"Mr. Donaldson. I have, in forty-one years here, sat in this chair across from fourteen CEOs of the Hershey Company. I want to tell you that, before we start, so that you and I both know what room we are in. The room is the room. Let us begin."*
 
-Jimmy did not yet have the architecture. He had thirteen days left before he would.
+The meeting ran ninety-three minutes.
 
-He didn't know that yet.
+In the meeting, Walt told Jimmy the following things in the following order.
+
+That Walmart had reviewed Hershey's seven proposals in detail.
+
+That Walmart had decided, on the chief merchant's authority, to decline the proposals that were conditioned on shelf-allocation changes against Feastables.
+
+That Walmart had decided, on the same authority, to accept three of the proposals — the slotting-fee waivers, the co-branded end-cap funding for the holiday seasons, and one of the trade-spend increases — under their stated terms, with the conditional shelf-allocation language struck.
+
+That Walmart had communicated this decision to Hershey's CEO on a phone call from Walmart's CEO to Marcus Whittaker on the previous Friday afternoon.
+
+That Walmart had, in the same call, communicated to Hershey's CEO that any future attempt by Hershey to condition trade investment in Walmart on retailer-channel-pressure tactics targeting Walmart's other supplier partners would be regarded by Walmart as a material breach of the partnership-trust framework Walmart had built across forty years and would be treated accordingly.
+
+That Walmart had, on the chief merchant's personal recommendation to the planogram-review committee, decided to expand Feastables' chocolate-bar category shelf allocation by one SKU position in the Q3 planogram review.
+
+That the new SKU position would, on the planogram-review committee's discretion, be filled by whichever Feastables product Jimmy's team recommended.
+
+That the chief merchant looked forward to seeing the new SKU on the planogram in July.
+
+That the chief merchant had three questions about Jimmy's organization that he wanted to ask, off the record, before Jimmy left the room.
+
+The three questions were:
+
+One: how did Jimmy run the Feastables product-velocity-feedback loop.
+
+Two: how did Jimmy decide which products to launch.
+
+Three: who was the operator inside Jimmy's organization Walt should be calling, when Jimmy was not available, on category-management matters across the next several years.
+
+Jimmy answered each of the three questions.
+
+The answer to the third question was: *Karim Brock.*
+
+Walt wrote *Karim Brock* on the small pad of paper next to his coffee cup at his right hand at the conference table.
+
+Walt looked up.
+
+Walt said: *"Mr. Donaldson. Thank you for coming to Bentonville on a day's notice. I want to tell you, in the privacy of this room, that in forty-one years here I have seen approximately seven CEOs of supplier partners do what you have just done. The seven are the seven you would expect them to be. Welcome to that company. The meeting is concluded."*
+
+Walt stood up.
+
+He shook Jimmy's hand.
+
+He walked out of the room.
+
+---
+
+Mitch was at the curb in the Suburban at four thirty-three PM.
+
+Mitch said: *"Jimmy."*
+
+Jimmy said: *"Mitch."*
+
+Mitch said: *"How did it go."*
+
+Jimmy said: *"Got an extra SKU on the planogram. Hershey lost a hundred and sixty-three million in conditional trade investment. The chief merchant called Karim by name on his way out. The whole thing took three meetings and twelve hours."*
+
+Mitch said: *"Get in the truck."*
+
+Jimmy got in the truck.
+
+Mitch drove him to Bentonville Regional.
+
+The drive was twenty-three minutes.
+
+Jimmy did not speak on the drive.
+
+He looked at his phone.
+
+He looked at the wall-calendar reminder Ana had set up for him in his calendar app the previous fall, which displayed the day's countdown against Thea's runway in the upper right corner of the lock screen every time he woke the phone.
+
+The reminder read: *Day 47 / 90.*
+
+Forty-three days left.
+
+He had the Walmart win.
+
+He had Hershey's CEO on the back foot.
+
+He had the chief merchant of the largest retailer on Earth calling his head of production by name.
+
+He still did not have the model.
+
+He thought, for the first time in the eleven hours since Carla's call, about the email Thandi had sent him the previous Tuesday at three thirty-one PM Underberg local time.
+
+He thought about the second paragraph.
+
+*Jimmy. The cap is not the money. The cap is you. Fix the cap.*
+
+He thought about the cap.
+
+The cap was the cap.
+
+The Walmart win had not, on his own honest accounting in the Suburban at four fifty-three PM Central on a Thursday afternoon in late April of Year Nine, moved the cap.
+
+The cap was still the cap.
+
+He had forty-three days.
+
+He looked at the phone.
+
+He opened the note he had been adding to since bay two on the fifteenth of March.
+
+He typed, on the next line under *Hershey folded:*
+
+*Walmart held.*
+
+*Cap is still the cap.*
+
+He saved the note.
+
+He looked out the window at the Bentonville office parks rolling past the Suburban at fifty-five miles an hour in the late-afternoon sun.
+
+Mitch said, without looking over: *"Jimmy."*
+
+Jimmy said: *"Mitch."*
+
+Mitch said: *"You are quiet for a man who just took a hundred and sixty-three million dollars off the table of the company that has owned this aisle for a hundred and sixteen years."*
+
+Jimmy said: *"Mitch."*
+
+Mitch said: *"Yes."*
+
+Jimmy said: *"The aisle was always going to be ours. The aisle is not the problem."*
+
+Mitch was quiet.
+
+Mitch said, after about thirty seconds: *"What is."*
+
+Jimmy said: *"I do not yet know."*
+
+Mitch drove him to the tarmac.
+
+The plane left Bentonville at five forty-one PM Central.
+
+The plane landed at Greenville Downtown at eight oh-six PM Eastern.
+
+Jimmy drove home from the airport in his own car.
+
+He arrived at the house at eight forty-four PM.
+
+Thea was at the kitchen table painting.
+
+She did not look up when he walked in.
+
+She said, without looking up: *"How was Bentonville."*
+
+Jimmy said: *"Won."*
+
+Thea said: *"Day forty-seven."*
+
+Jimmy said: *"Forty-seven."*
+
+Thea said: *"What did you bring back."*
+
+Jimmy said: *"An SKU."*
+
+Thea looked up.
+
+She looked at him for a long beat.
+
+She said: *"Jimmy. I am not asking what you brought back from Bentonville. I am asking what you brought back."*
+
+Jimmy stood in the doorway of the kitchen for nineteen seconds.
+
+He said: *"I don't have it yet."*
+
+Thea said: *"Forty-three days."*
+
+Jimmy said: *"Forty-three days."*
+
+Thea went back to the painting.
+
+Jimmy went upstairs.
+
+He showered.
+
+He came back downstairs at nine sixteen.
+
+He sat at the kitchen table across from her.
+
+He watched her paint.
+
+He did not speak.
+
+She did not speak.
+
+The painting was, on his read of it across the next hour and a half, a small watercolor of the back garden in the late spring light. She had been working on it, by what he could see of the layered washes, across multiple sittings.
+
+He did not, at any point in the hour and a half, ask her about the painting.
+
+She did not, at any point in the hour and a half, ask him about the model.
+
+At ten forty-seven PM she set the brush down.
+
+She said: *"Bed."*
+
+He said: *"Bed."*
+
+They went to bed.
+
+He did not sleep for forty-one minutes.
+
+He thought, in the forty-one minutes, about the cap, the SKU, Walmart, Hershey, Thea, the painting, the runway, the forty-three days, the email from Thandi, and the small ceramic canister on the counter next to the toaster.
+
+He fell asleep at twelve oh-eight AM.
+
+He woke at five forty-three AM.
+
+The day was Friday.
+
+Day forty-eight.
+
+He went to the studio.
+
+The model was not, on the morning of day forty-eight, on his desk.
+
+The model was, somewhere, still being written.
+
+He did not yet know by whom.

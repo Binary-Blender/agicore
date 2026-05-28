@@ -1,317 +1,301 @@
-# Chapter 3: KwaZulu-Natal
+# Chapter 3: Underberg
 
-Thandi Khoza was at the Beast Philanthropy operations site in Underberg, KwaZulu-Natal, on a Tuesday morning two weeks after the cease-and-desist video, in the small site office that had been a converted feed store before the program bought the building in Year Seven, with a cup of rooibos at her elbow and a small leather notebook open on the desk that was, by her own count of the notebooks she had filled since starting at Beast Philanthropy, the eleventh.
+Thandi Khoza was at the Beast Philanthropy operations site in Underberg, KwaZulu-Natal, on the last Tuesday of March, in the office trailer the program had parked on the school's gravel lot in November.
 
-Thandi was forty-three.
+The trailer was twenty-four feet long, eight feet wide, and had two windows along the south wall.
 
-Born in Pietermaritzburg. Structural engineer by training. Spent fourteen years on commercial-construction projects across South Africa before joining Beast Philanthropy in Year Seven for, in her own words on her first day, *the work I have, across the previous fourteen years, been waiting to be paid to do.*
+The wind came up off the southern Drakensberg foothills at about eleven AM most days and hit the trailer broadside hard enough to make the framed photograph on the south wall — a photograph of the third classroom of the first school, taken by Thandi herself in Year Six on a Saturday morning at seven AM with the morning light through the eastern windows — rattle gently against the panel board.
 
-She had built seven of the eight schools that were now operating.
+The photograph had been rattling against the panel board for ninety-three minutes this morning.
 
-This one — the eighth — was about seventy percent complete on the morning Thandi sat down at the converted feed store with the rooibos.
+The wind was, on the small weather station the program had mounted to the top of the trailer in January, gusting at thirty-eight kilometers an hour.
 
-Jimmy was not on the trip.
+Thandi was at the desk in the trailer, at the south end, with the photograph above her left shoulder.
 
-Jimmy was supposed to be on the trip.
+She had been at the desk since five fifty AM.
 
-Jimmy had, on the Sunday evening before, sent her a video he had filmed on his phone in the kitchen of the Greenville house at eleven PM Eastern. The video was forty-two seconds long. The video was Jimmy looking at the camera and saying, in roughly seven sentences, that he wasn't going to be on the trip because the cold-open of the response video to a separate Hershey pre-positioning move had landed in his lap Sunday afternoon and he was, on his honest read of the next thirty hours, the only person who could land it. The video closed with: *Thandi. I'm sorry. I'm going to be at the May opening. I'm going to be at every opening for the rest of my life. The May opening — that one I'll be at. Tell the team I'm sorry.*
+She was, at one fourteen PM local time, on the third pass of the contractor invoices for the third quarter of the construction year on the eighth school. The invoices ran to forty-one pages across nine contractors. Thandi had read the invoices twice and was, on the third pass, reconciling the labor-hour totals against the construction-week timesheets the foreman had handed her at six fifteen AM in a manila folder with the foreman's handwriting on the cover that read, in Zulu, *for Thandi, week 38.*
 
-Thandi had received the video at six twelve PM South Africa time.
+She was on labor-hour line item one hundred and forty-three of two hundred and seventy-one.
 
-Watched it once.
+She was reconciling at a rate of approximately one line item per minute.
 
-Did not, in the forty-six hours since, watch it a second time.
+She was going to be done at approximately three twenty-six PM, which would give her, before the four PM meeting with the head teacher and the new assistant head teacher and the regional officer from the provincial education department, approximately thirty-four minutes to finish the email she had been drafting for three weeks.
 
-She had been running this program for three years. She had heard *I'm sorry, I can't make this one* from Jimmy four times across those three years. She did not, on her own quiet professional accounting, hold any of the four against him. The empire was the empire. Jimmy was, on her read of him, the kind of CEO who showed up when he could and who, when he could not, sent the money and sent the camera crew and sent the trust. The trust was, on her own assessment of the past three years, more valuable than the showing up. The trust was the reason she had been allowed to build seven schools her own way.
+The email was on her laptop in a separate window, behind the invoice spreadsheet.
 
-She finished the rooibos.
+The email had been open in the window for fourteen days.
 
-She closed the leather notebook.
+The email was addressed to one recipient.
 
-She drove to the school site at seven forty AM.
-
----
-
-The site was three kilometers east of Underberg, on a small road that ran past two farms before it reached the property the program had bought from the municipality in Year Seven for thirty thousand rand. The school was a single-story building of about eight hundred square meters: four classrooms, an administrative office, a small kitchen, two bathrooms, a covered outdoor learning area, and a small library room.
-
-The library room was the room Thandi had been advocating for since the first school in Year Seven and had, until the eighth-school design review the previous February, been declined on cost-optimization grounds.
-
-She had won the eighth-school library room.
-
-She would, by her own quiet plan she had not yet articulated to anyone, win every subsequent school's library room.
-
-She walked the site with Sipho Mthembu, the regional operations director who had been with the program since the second school. They walked the foundation work on the south side. They walked the indoor wiring. They walked the kitchen. They walked through the third classroom — the one on the south side of the building, with two south-facing windows and one east-facing window — and stopped at the small built-in storage closet Thandi had added on her own design initiative in February because, after seven school builds, she had observed that the teachers in every school had ended up improvising storage solutions for classroom supplies that, in operational terms, would have been cheaper and more durable to design in from the start.
-
-The storage closet was the kind of small operational decision that distinguished this school-building program from about ninety percent of the school-building programs in southern and east Africa.
-
-Thandi sat down on the small chair built for a six-year-old in the third classroom at eight oh-six AM.
-
-She did not, when she sat down, intend to sit on the chair for any particular length of time.
-
-She sat on the chair.
-
-She looked out the south-facing window.
-
-The window looked at the slope of the small valley the school was built in. Dry winter grass. The horizon, the foothills of the southern Drakensberg, about forty kilometers to the west.
-
-She thought about the program.
-
-She thought about whether eight schools was the right number.
-
-She thought about whether eight schools was, on the operational reality of Feastables' Q4 numbers and the trajectory the brand was on, in fact a *very small* number compared to what the program could be funding at the rate the revenue was growing.
-
-She thought, in the small classroom in Underberg on the slope of the small valley, for about forty minutes.
-
-Sipho did not, in the forty minutes, interrupt her.
-
-He stayed outside in the corridor.
-
-He had been on three sites with Thandi when Thandi had sat in classrooms like this for forty minutes. He understood, by now, that Thandi sat in classrooms when Thandi was deciding things.
-
-The site continued around her.
+The recipient was Jimmy.
 
 ---
 
-At eight forty-six AM Thandi stood up.
+Jimmy was supposed to have been at the site this week.
 
-Walked to the doorway.
+Jimmy had been on the program's quarterly site-visit calendar since November, when the calendar had been published by Ana's office in Greenville, distributed to the program's in-country team via the program's shared drive, and discussed in three separate Tuesday-morning ten-AM-Eastern video calls between Greenville and Underberg across December, January, and February.
 
-"Sipho."
+Jimmy had been scheduled to land in Durban on a charter flight at six AM local time on Monday morning of this week.
 
-"Thandi."
+Jimmy had not landed in Durban on Monday morning.
 
-"I have been deciding something. The deciding is done. I am going to tell you in two sentences because the deciding is going to be in the next quarterly operations report and you and the team need to know it now."
+Jimmy had sent an apology video on Sunday night.
 
-"Tell me."
+The apology video had arrived in Thandi's email at eleven fifty-two PM South African time on Sunday. The video was three minutes and eleven seconds. Jimmy had filmed the video in his office in Greenville at five fifty-two PM Eastern Sunday. The video had been edited by a member of Karim's team and uploaded to the program's shared drive at six twenty-three PM Eastern. The video had then been transcoded, captioned, and emailed to Thandi at six thirty-one PM Eastern, which was eleven fifty-two PM in Underberg.
 
-"By the end of Year Eleven, this program is going to commit to building between forty and fifty additional schools in southern and east Africa, on top of the eight already operating and the two currently under construction. I am going to recommend to Jimmy on Saturday morning that he double our Feastables-revenue allocation, pursue a partnership I have been developing with two regional African development organizations that will add about eleven million dollars per year of additional capital across the next four years, and authorize a full reorganization of this program around an operational structure that can build at that rate."
+Thandi had watched the video on her laptop at the desk in the trailer at six oh-eight AM Monday morning.
 
-Sipho stood with that for a beat.
+The video had said, in the order it had said them, the following things.
 
-"Thandi."
+That Jimmy was sorry he was not on the trip.
 
-"Yeah."
+That a cease-and-desist had arrived from Hershey three weeks ago and that the response had taken up the previous twelve days of his calendar.
 
-"Will Jimmy say yes."
+That the response had gone well.
 
-"Sipho. On every measure I have to apply to the past three years of working with Jimmy, yes."
+That the response was not over.
 
-"And if he doesn't."
+That a follow-up wave of activity around the response was expected across the next ten days and that Jimmy, on his own honest read of his calendar, could not, in operational terms, be in Underberg this week without leaving an exposed flank in Greenville.
 
-"If he doesn't, I will be at this site every day for the next ten years and we will build the eight other schools we currently have funded for. The work is the work. The eight other schools are the eight other schools. The forty-to-fifty schools are what the program could be doing. Jimmy is going to say yes."
+That he would be on the next trip.
 
-Sipho nodded once.
+That he was sorry.
 
-"All right."
+Thandi had watched the video twice on Monday morning.
 
-"Sipho."
+She had not, on Monday morning, replied to the video.
 
-"Yeah."
+She had not, by Tuesday afternoon, replied to the video.
 
-"On Saturday morning, I am going to email him a photograph from this window. The photograph is going to be the recommendation. The two-paragraph email I am going to send with it is going to be the operations report. The photograph and the email together are the pitch."
-
-"Thandi."
-
-"Yeah."
-
-"Send the photograph."
-
-"I am sending the photograph."
-
-She walked back to the rental SUV at the front of the site.
-
-She drove to the small bed-and-breakfast in Underberg where she was staying.
-
-She sat at the small desk by the window.
-
-She opened her laptop.
-
-She drafted the email across the next ninety minutes.
-
-The email was two paragraphs.
-
-The first paragraph was the operations report.
-
-The second paragraph was the pitch.
-
-The attached photograph was the photograph she had taken from the south-facing window of the third classroom of the eighth school at eight forty-five AM that morning, looking out at the slope of the small valley and the southern Drakensberg foothills forty kilometers away.
-
-The photograph had no caption.
-
-She attached it.
-
-She clicked send.
-
-The email arrived in Jimmy's inbox at six oh-eight AM Eastern Tuesday morning.
+She had instead opened the email that had been sitting in her drafts folder for fourteen days and had started, on Monday afternoon between the foreman's site walk and the contractor-payment authorization run, to write the second paragraph.
 
 ---
 
-Jimmy was at the editing bay of bay number two when the email came in.
+She finished the invoices at three twenty-two PM.
 
-He saw the notification.
+She closed the invoice spreadsheet.
 
-Clicked it.
+She brought the email window to the front of the screen.
 
-Read the two paragraphs.
+The email had a subject line.
 
-Looked at the photograph for one minute and forty seconds.
+The subject line read: *Re: the cap.*
 
-He did not, in the one minute and forty seconds, type a response.
+The first paragraph of the email had been written across the previous fourteen days in fragments of fifteen to twenty minutes between the operational rhythm of the construction site, the program's three-year-scaling planning sessions Thandi held by video with the central office in Greenville on Wednesday and Friday mornings local time, and the weekly two-hour Saturday-morning walks Thandi took through the village with the head teacher to discuss the school's first-term enrollment.
 
-He closed the email.
+The first paragraph read, in its current draft:
 
-Went back to the editing bay.
+> *Jimmy.*
+>
+> *Beast Philanthropy is, by the operational count I closed at end of business last Friday, running eight schools in KwaZulu-Natal. The eighth school opens this May. The ninth school breaks ground in July. The tenth in November. The eleventh and twelfth in Q1 of next year. The site-selection memo I sent your office in December — which I am attaching to this email as the version you have not yet read — projects, on the funding pipeline Feastables' Q4 numbers and the program's reserve account are now capitalized for, twenty operating schools by the end of Year Ten and sixty operating schools by the end of Year Eleven. The funding is not the constraint. The construction calendar is not the constraint. My in-country team is not the constraint. The provincial education department's site-licensing process is not the constraint. The constraint, on my honest assessment of the past eight months of trying to scale the program, is operational coordination. The operational coordination is between my office in Underberg, your central program office in Greenville, the LLC structure that holds the program's charitable assets, the second LLC structure that holds the Feastables revenue-share that funds the disbursement pipeline, the legal entity that holds the South African operating-entity registration, the auditors who certify the program's annual filings, the bank in Johannesburg that holds the program's operating cash, the bank in Charleston that holds the U.S. dollar reserve, the contractors I authorize against the invoices I am reconciling on the desk in front of me right now, and you. You are in every site-selection commitment above five hundred thousand U.S. dollars. You are in every contractor-payment authorization above two hundred thousand. You are in every staffing decision at the deputy-head-teacher level and above. You are not in any of these because the program requires you to be. The program does not require you to be. You are in them because the LLC structure I described in paragraph two of the December memo — the structure that was set up in Year Six when the program was three schools and you were one person — has never been redesigned. The structure was designed for a one-person founder running a three-school pilot. The structure is now being asked to run an eight-school operating program scaling to sixty. The structure cannot run a sixty-school operating program with you in every signature line. The structure will, on my honest projection from the operational data of the past eight months, break at fourteen schools. Fourteen schools is March of next year. We have approximately eleven months before the structure breaks.*
 
-He thought about the photograph for the rest of the day.
+Thandi read the first paragraph twice.
 
-He thought about the forty-to-fifty schools.
+She did not change a word of it.
 
-He thought about the operating model.
+She moved the cursor to the line beneath the first paragraph.
 
-He thought about the architecture.
+She typed the second paragraph.
 
-The architecture was, by the close of the day, still not the architecture.
+The second paragraph took her four minutes to type.
 
-But the photograph was the photograph.
+The second paragraph was one sentence.
 
-The photograph was the reason he was looking for the architecture in the first place.
+The sentence read:
+
+> *Jimmy. The cap is not the money. The cap is you. Fix the cap.*
+
+She read the sentence three times.
+
+She did not change a word of it.
+
+She moved the cursor to the line beneath the second paragraph.
+
+She typed her name.
+
+She read the whole email one more time.
+
+She clicked Send.
+
+The email left her outbox at three thirty-one PM Underberg local time, which was nine thirty-one AM Eastern.
+
+She closed the laptop.
+
+She walked out of the trailer.
+
+The wind had died down.
 
 ---
 
-Thea got home from her firm at six forty PM Saturday.
+The four PM meeting with the head teacher and the new assistant head teacher and the regional officer from the provincial education department went forty-three minutes. The meeting was about the first-term enrollment plan. The plan had been drafted by the head teacher across the previous three weeks. The regional officer signed off on the plan with two small annotations Thandi accepted on the spot. The head teacher's expression as she walked out of the meeting was the expression of a person who had, on her own quiet read of the day, just had the best forty-three minutes of her professional year. Thandi shook the regional officer's hand. The officer drove away in the small white government Toyota Hilux. The head teacher walked back to the school building. The new assistant head teacher — a twenty-eight-year-old man named Bongani who had been hired in February out of a teacher-training program in Pietermaritzburg — followed her, three steps behind, with the binder of curriculum materials Thandi had handed him at the start of the meeting.
 
-Jimmy was at the house.
+Thandi watched them walk across the gravel lot to the school.
 
-He had cooked dinner.
+She watched until they had walked through the school's front door.
 
-He had cooked the only thing he had reliably been able to cook across the previous nine years of his life: a roast chicken with potatoes and carrots that Thea had taught him to make in the third month of dating.
+She walked back to the trailer.
 
-The chicken was on the kitchen counter.
+She sat at the desk.
 
-The potatoes were on the kitchen counter.
+She opened the laptop.
 
-The carrots were on the kitchen counter.
+The Sent folder showed the email to Jimmy at three thirty-one PM. The email's status was *delivered.*
 
-Thea walked into the kitchen.
+There was no reply.
 
-Set her bag down.
+Thandi had not expected a reply at four forty-three PM local time, which was ten forty-three AM Eastern. Jimmy, on the calendar Ana published every Sunday night, was in a standing all-hands meeting from ten to eleven AM Eastern on Tuesdays. Jimmy would, on the operational rhythm of the standing meeting and the rhythm of his between-meeting email-reading habits Ana had described in a Thursday-afternoon onboarding call to Thandi the week Thandi had taken over the program lead, read the email at approximately eleven oh-eight AM Eastern, which was five oh-eight PM Underberg.
 
-Looked at the kitchen.
+Thandi closed the laptop.
 
-"Jimmy."
+She picked up her notebook.
 
-"Thea."
+She walked out of the trailer.
 
-"The chicken."
+She walked across the gravel lot.
 
-"The chicken."
+She walked through the front door of the school.
 
-"You made the chicken."
+---
 
-"I made the chicken."
+The school had eleven classrooms.
 
-"Jimmy."
+The eleven classrooms ran along a single corridor on the building's east-facing side. The corridor was lit, in the late afternoon, by a row of small high windows the architect had specified in the original design. The light through the windows landed on the polished concrete floor in a series of long bright rectangles that moved, across the afternoon, from the east end of the corridor to the west end as the sun crossed the sky.
 
-"Yeah."
+It was four fifty-one PM.
 
-"You haven't cooked the chicken in eleven months."
+The light was approximately two thirds of the way down the corridor.
 
-"I know I haven't."
+Thandi walked past classroom one. Past classroom two. Past classroom three.
 
-"What's the occasion."
+She stopped at the door of classroom three.
 
-"Thandi sent me a photograph on Tuesday."
+She opened the door.
 
-"Show me."
+She walked in.
 
-He showed her on his phone.
+The third classroom was empty.
 
-She looked at it for about a minute.
+The children had left for the day at three thirty PM. The teacher who had been preparing the room — a woman named Nomsa who had taught first-year reading at three schools in the program before being assigned to this one in November — had locked the front cupboard at four forty PM and walked back to the village where she lived.
 
-She, without looking up, said: "Jimmy."
+The room was twenty-nine feet by twenty-three feet.
 
-"Yeah."
+The ceiling was twelve feet at the south wall and stepped up to fourteen feet at the north wall to clear the row of small high windows that brought in the light from the corridor.
 
-"How many."
+There were thirty-two small wooden chairs arranged in two arcs facing the front of the room.
 
-"Thandi is recommending forty to fifty additional schools by the end of Year Eleven. Doubling the Feastables-revenue allocation. A partnership with two African development orgs that adds about eleven million a year for four years. Reorganizing the program around an ops structure that can build at that rate."
+The chairs were not yet bolted to the floor.
 
-"Did you approve it."
+The chairs were going to be bolted to the floor on Saturday morning, the week before the school opened in May, by a two-man team from the contractor in Pietermaritzburg who had built the chairs over the previous nine weeks under a direct contract Thandi had signed in January for thirty-four thousand U.S. dollars.
 
-"I approved it Tuesday morning at six fifteen, fifteen minutes after I read the email."
+Thandi walked to the second chair in the front arc.
 
-"Without asking me."
+She sat down.
 
-"I emailed you at six sixteen. You replied at six forty-two."
+The chair was built for a six-year-old.
 
-She thought about that for a second.
+Her knees came up almost to her chest.
 
-She remembered the email.
+She set the notebook on the chair beside her.
 
-She had not, at the time, recognized that she was reading the email that approved a forty-to-fifty-school expansion of Beast Philanthropy.
+She did not open the notebook.
 
-She had read it on her phone in the dental office waiting room before her routine cleaning. It had said: *Thandi wants to scale to fifty. Doubling allocation. New partnership for $44M over four years. She's right. I'm approving. Tell me if I missed something. Love you.*
+She looked across the empty room.
 
-She had replied: *You didn't miss anything. Approve it. Love you.*
+She looked at the small chalkboard on the front wall.
 
-She looked at Jimmy across the counter.
+She looked at the row of small wooden hooks the carpenter had installed on the back wall for the children's coats.
 
-"OK."
+She looked at the spot on the polished concrete floor in the front center of the room where Nomsa would, on Saturday morning of the first week of May, stand to greet the thirty-two children who would walk into this room for the first day of the first term of the first year of the rest of those children's lives.
 
-"OK."
+She thought about her email.
 
-"Jimmy."
+She thought about the second paragraph of the email.
 
-"Yeah."
+She thought about the fact that the second paragraph was the entire email, and that the first paragraph was the work she had needed to do to give herself permission to write the second paragraph, and that the entire email was the work she had needed to do to give herself permission to think the thought she had been thinking for fourteen days and had not, until the moment she had clicked Send at three thirty-one PM, said out loud to anyone, including herself.
 
-"The chicken."
+The thought was the thought.
 
-"The chicken."
+The thought was: *the program is going to take this from eight schools to twenty next year. The program is going to take this from twenty to sixty the year after. The program is going to take this from sixty to whatever the next number is the year after that. The program is going to do this if and only if the cap breaks. The cap is Jimmy. Jimmy is the cap. The thing Jimmy is going to have to do, on the strength of the email I just sent him, is figure out how to stop being the cap on his own program. He does not yet know how to do this. He does not yet have the tool. The tool does not yet exist, on my honest reading of every operational software platform I have evaluated for the program in the past two years. The tool is going to have to be built. Jimmy is going to have to find the person who is building it. The person who is building the tool is, on the available evidence of the open-source landscape for organizational-deterministic-substrate platforms in the early months of Year Nine, no one I have yet identified. The person may not exist. The person may exist. If the person exists, Jimmy is going to find them, because Jimmy is twenty-six years old and has, in nine years, found every operational tool he has ever needed, and the cap is going to force the search. The cap is going to break. The break is going to be the architecture.*
 
-"Why now."
+She sat in the chair for a long time.
 
-He thought about it for about ten seconds.
+The light from the high windows moved.
 
-"Because Thandi just made a decision that's going to change the lives of about eleven thousand kids over the next decade, and she made it from a small chair in a classroom in Underberg looking out a window, and she made it because she sat in the chair for forty minutes, and the chair was the chair I should have been sitting in this week. I was at the response desk filming a video about a wrapper. Thandi was at the chair making a decision about the schools. I am not, in operational terms, the person who is going to make the decisions about the schools anymore. Thandi is. That's the right answer. I'm cooking the chicken because the chicken is a thing I should have been cooking for you for eleven months and have not been. Both of those things are the same realization."
+The bright rectangle that had been on the floor in front of the chalkboard at four fifty-one PM had moved to the spot under Nomsa's desk at five thirty-four PM.
 
-Thea sat with it for a beat.
+Thandi stood up.
 
-She walked across the kitchen.
+She walked across the room.
 
-Put her hand flat on his chest.
+She turned at the door.
 
-"Jimmy."
+She looked at the empty chair she had just been sitting on. She looked at the thirty-two chairs in the two arcs that, on the morning of the first day of the first term, would each hold one six-year-old. She looked at the spot where the bright rectangle would, tomorrow morning at seven AM, be back at the east end of the corridor when Nomsa walked in to set up for the day.
 
-"Yeah."
+She turned off the classroom light.
 
-"Eat the chicken with me."
+She closed the door.
 
-"I'm eating the chicken with you."
+She walked back down the corridor to the front door of the school.
 
-They ate the chicken.
+She walked across the gravel lot to the trailer.
 
-The dinner was the first dinner Jimmy had cooked for Thea in their kitchen in the eleven months of their marriage.
+She opened the laptop.
 
-It would not, in the future of the marriage, be the last.
+There was an email in her inbox.
 
-Day twenty-three of the ninety, by Thea's quiet count on the small notepad on the kitchen counter, was tomorrow.
+The email was from Jimmy.
 
-Jimmy did not, that night, find the architecture.
+The email had been sent at four eleven PM Eastern, which was eleven eleven PM Underberg.
 
-He found it forty-five days later at two AM on a Tuesday in early May, in his office at the studio, after Karim had walked out at one twenty AM, after the studio had gone quiet, after a Hacker News thread on his phone had linked to an open-source project he had not previously encountered.
+The email was three sentences.
 
-The project was the project.
+The three sentences were:
 
-The architecture was the architecture.
+> *Thandi.*
+>
+> *I read it. You are right. I am working on it.*
+>
+> *— J.*
 
-That night was the night the next chapter is about.
+Thandi read the three sentences.
 
-For now, in Chapter 3, the Saturday-night chicken is the Saturday-night chicken.
+She read them again.
 
-The schools are the schools.
+She did not, on her own honest read of three sentences from a twenty-six-year-old founder who had not yet, on the available evidence, found the tool that would let him fix the cap, take the three sentences as the answer to her email.
 
-The library rooms are the library rooms.
+She took the three sentences as the receipt.
 
-The chair in Underberg is the chair Thandi has been sitting in for the past three years and the chair Jimmy is not going to need to sit in.
+The receipt was the receipt.
 
-The work continues.
+She closed the laptop.
+
+She picked up the notebook from the desk.
+
+She walked out of the trailer.
+
+She locked the trailer behind her.
+
+She walked across the gravel lot to her car.
+
+She drove the eleven kilometers back to the small bed-and-breakfast in the village where she stayed during site weeks.
+
+She arrived at the bed-and-breakfast at six twenty-three PM Underberg local time.
+
+She ate dinner alone in the small dining room.
+
+She went to bed at seven forty PM.
+
+She slept ten hours.
+
+The next morning she was back at the trailer at five fifty AM.
+
+The cap was still the cap.
+
+The email had been sent.
+
+The work continued.
+
+Eleven months on the projection.
+
+She started, at five fifty-three AM Wednesday, on week thirty-nine.

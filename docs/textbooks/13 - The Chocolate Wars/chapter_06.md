@@ -1,287 +1,479 @@
 # Chapter 6: The Walmart Aisle Video
 
-Jimmy was at his desk in the office at the Greenville studio on a Monday afternoon in early May of Year Nine, three weeks after the Bentonville meeting, day fifty-eight of the ninety-day clock Thea had started in bay number two in March, when he opened the small private file on his laptop where, across the past six years of running Feastables, he had kept a list of video ideas he had not made yet.
+Jimmy made the decision on the morning of day sixty-eight.
 
-The file was titled, in the standard internal-documentation taxonomy Karim had set up in 2019, *Slow Burn.*
+He made it standing in his kitchen at six twelve AM with a mug of black coffee in his right hand, looking out the window at the small back garden Thea had been painting watercolors of for the past three weeks, with the wall calendar in the studio four miles away ticking through day sixty-eight as the morning sun came over the eastern fence line.
 
-The file had, as of that Monday, about three hundred and forty entries.
+He set the mug down.
 
-Entry two hundred and eleven had been added on a Saturday morning in January.
+He picked up his phone.
 
-The entry was one sentence: *Walk through the Walmart chocolate aisle on camera and say, on the record, exactly what the shelf allocation looks like.*
+He texted Karim five words: *Walmart Rogers. Aisle video. Today.*
 
-Jimmy had added it after a routine grocery run with Thea three months earlier. He had counted facings on the walk through the chocolate aisle. He had done the math in his head. He had not, in the months since, made the video.
+Karim's reply came back in twenty-seven seconds.
 
-He had not made the video because the video had not yet had the right context.
+The reply was: *Plane 1 PM. Director Ji-won. Two operators. Permits handled by Lin in legal en route. Carla pre-notified. Walmart store-manager pre-notified by Carla's office. Mitch picks you up Bentonville Regional 3:14 PM Central. Store is 41 minutes from the tarmac. Shoot window 4 PM to 6 PM. Back on plane 6:43. Home 9:51 Eastern.*
 
-The right context had now arrived.
+Jimmy looked at the reply.
 
-The right context was the Bentonville meeting, the SKU allocation Henry Calloway had committed to, the Hershey pressure campaign Walmart had quietly chosen not to publicly call out, and the cumulative effect of those three things on the underlying chocolate-aisle facing allocation across about seventy-four hundred Walmart stores nationwide.
+He typed back: *Karim.*
 
-Jimmy read the entry.
+Karim's reply: *Yes.*
 
-Read entry two-twelve, which he had added the Tuesday after Bentonville: *Companion video to #211, filmed three weeks after #211 drops, in the same aisle, same camera, same voice — but with the new SKU allocation in place. The math from #211 will have changed. The change is the second video.*
+Jimmy: *You had this booked already.*
 
-Nodded once.
+Karim: *Friday afternoon. Carla called me Thursday night to ask if you were going to shoot a Bentonville-followup video. Told her yes. Booked the plane Friday morning. Booked Ji-won Friday afternoon. Walmart Rogers store manager is a guy named Aaron Castellanos, six years at the store, big fan, said yes before the legal department finished the question. The store is yours from four to six.*
 
-Picked up the phone.
+Jimmy looked at the kitchen ceiling for nine seconds.
 
-"Karim. Charter to Northwest Arkansas Regional tomorrow morning. Single-day trip. Going to film a video in the Walmart on Pleasant Crossing in Rogers. Short video. The chocolate aisle. Going alone. Small camera. Back tomorrow night."
+He typed: *Karim. You are six steps ahead of me on this.*
 
-"Jimmy."
+Karim: *I have been six steps ahead of you for nine years. You have not asked me about it because I do not need you to. I will see you on the plane.*
 
-"Yeah."
+Jimmy: *On the plane.*
 
-"The Walmart aisle video. From entry two-eleven."
+He set the phone face-down on the counter.
 
-"Entry two-eleven."
+He drank the rest of the coffee.
 
-"I have been waiting for you to call about that entry for four months."
+He went upstairs.
 
-"I know you have."
+He woke Thea at six twenty-eight by sitting on her side of the bed.
 
-"I'll have the charter at six AM."
+She opened her eyes.
 
-Karim hung up.
+She said: *"What."*
+
+He said: *"Walmart Rogers today. Aisle video. I'll be home by ten."*
+
+She said: *"Ten."*
+
+He said: *"Ten."*
+
+She said: *"You eat dinner here."*
+
+He said: *"I eat dinner here."*
+
+She said: *"Day sixty-eight."*
+
+He said: *"Day sixty-eight. Twenty-two days."*
+
+She closed her eyes.
+
+She said, without opening them: *"Good shoot."*
+
+He kissed the top of her head and went to the studio.
 
 ---
 
-The charter landed at Northwest Arkansas Regional at eight thirty-six AM Central Tuesday morning. Jimmy was on board, alone except for the two pilots and the small flight attendant.
+The Walmart in Rogers, Arkansas, was the seventh Walmart Supercenter ever built. The store had opened in 1990. The store was approximately seventeen miles from Walmart's corporate campus in Bentonville. The store had, by the most recent annual ranking the company published, the highest per-square-foot grocery sell-through of any Walmart Supercenter in the United States.
 
-He drove the rental Suburban himself.
+The chocolate-bar aisle was aisle thirty-one.
 
-Seventeen minutes from the airport to the Walmart on Pleasant Crossing Boulevard in Rogers, Arkansas.
+Aisle thirty-one was thirty-seven feet long.
 
-He parked in the visitor lot.
+The aisle's chocolate-bar planogram had, on the most recent Q1 layout, four shelf rows running the full thirty-seven feet, divided into category sections that ran in the following order from north end to south end of the aisle: standard milk chocolate (Hershey's master brand, Mars, Mondelez), filled chocolate (Reese's, Kit Kat, Snickers, Twix, etc.), seasonal and novelty (rotating SKUs), premium and dark (Lindt, Ghirardelli, Hu, Theo, Tony's Chocolonely, etc.), and new and trend (the Feastables section).
 
-Walked into the store at nine twelve AM in a baseball cap, a charcoal hoodie, sunglasses he took off at the entrance, and a small DSLR he had bought in 2019 that had, on Karim's count, filmed about fourteen of the most-viewed videos in the MrBeast archive.
+The Feastables section ran six feet of the thirty-seven, at the south end of the aisle, in the new-and-trend bay.
 
-He walked the aisle once without filming to confirm the facing allocation against the operational data Karim had pulled the previous evening from the retail-tracking service Feastables subscribed to.
+The Feastables section held fourteen SKUs.
 
-The data and the aisle matched.
+The full aisle held approximately ninety-seven SKUs across all bays.
 
-Hershey's had fifty-one percent of the chocolate-bar facings. Feastables had fourteen. Mars had nineteen. Mondelez had eleven. The remaining five percent was distributed across regional and specialty players.
+Hershey-master-brand SKUs accounted for, on Jimmy's pre-flight read of Lin's syndicated-panel data, approximately fifty-one percent of the aisle's facing count.
 
-Jimmy walked the aisle a second time, filming.
+Feastables accounted for approximately fourteen percent.
 
-Seven minutes.
+The rest — Mars, Mondelez, Lindt, Ghirardelli, the small premium players — accounted for the remaining thirty-five.
 
-He narrated in the standard handheld walking-narration voice he had been using for nine years.
+Jimmy had memorized these numbers across the flight from Greenville to Bentonville. Ji-won, the director, had quizzed him on them three times in the air. By the time the plane landed Jimmy could recite the SKU count, the facing count, and the trailing-twelve-month sell-through rank for every product in the aisle without looking at the printout.
 
-He counted the facings.
+Ji-won said, on the descent into Bentonville Regional: *"You're going to shoot this in one take."*
 
-Named them.
+Jimmy said: *"I'm going to shoot this in one take."*
 
-Compared them.
+Ji-won said: *"You have three takes booked."*
 
-In the closing thirty seconds, he did the math.
+Jimmy said: *"You'll only need the first one."*
 
-He closed the video at the end of the aisle on a single shot of himself looking at the camera, with the chocolate aisle in soft-focus behind him, no music, no edit.
+Ji-won said: *"I have been directing your direct-to-camera videos for two years. You have never shot a five-minute video in one take. Why is today different."*
 
-"The reason Hershey's has fifty-one percent of this aisle and we have fourteen is that they have been here longer. The reason we have fourteen and not three is that the people who walk past these shelves are voting. The voting is going to keep going. We will see how this aisle looks in a year."
+Jimmy said: *"Because I have been thinking about it for twenty-one days."*
 
-Hit stop.
+Ji-won said: *"That's why."*
 
-Walked out of the Walmart at nine forty-three AM Central. Drove the Suburban back to the airport. Charter lifted at eleven fourteen. Back in Greenville at three twenty-two PM Eastern.
+---
 
-He was in the editing bay of bay number two at three forty-eight.
+Aaron Castellanos was at the front of the store at three fifty-six PM Central.
 
-Edited the video himself across the next two hours. Titled it *The Walmart Chocolate Aisle.* Thumbnailed it himself — Jimmy in the chocolate aisle, Hershey's on his left, Feastables on his right, his right index finger pointing at the math written in chalk-marker on a small sign he had brought in the morning specifically for the thumbnail (the sign had never been on camera in the actual video; Karim's call on the staging).
+Aaron said: *"Mr. Donaldson."*
 
-Scheduled the drop for the following Tuesday morning at ten AM Eastern.
+Jimmy said: *"Aaron."*
 
-Karim, on Wednesday morning, asked if Jimmy wanted to push the drop up to Saturday.
+Aaron said: *"The aisle is yours from four to six. I have two of my associates blocking the north end of the aisle and two of my associates blocking the south end. The signage is up. The signage says 'temporary aisle reset — please use aisle thirty-two.' Customers are using aisle thirty-two without complaint because I posted a coupon at the end of aisle thirty-two for ten percent off any item in the aisle and the coupon is going to cost my P&L approximately seven hundred dollars across the two-hour window. The seven hundred dollars is, on my own assessment of the marketing value of the video you are about to shoot in my store, the best seven hundred dollars I have ever spent. I want you to know that I want to be on camera at the end of the video for ten seconds at most. I want to be on camera because my mother in San Antonio watches your videos every Saturday morning and I would like her to see her son on a Saturday morning for a change."*
 
-"No."
+Jimmy said: *"Aaron. You will be on camera at the end of the video for ten seconds. You will say hi to your mother on camera. Your mother will see you on Saturday morning."*
 
-"Tuesday?"
+Aaron said: *"Mr. Donaldson. Thank you."*
 
-"Tuesday. The cease-and-desist video dropped Saturday. That one was for the news cycle. The Walmart-aisle video is for the analyst cycle. Analysts read it Tuesday morning. Financial Twitter quote-tweets it Tuesday afternoon. Bloomberg piece runs Wednesday. *Wall Street Journal* piece runs Friday. Tuesday is the right drop."
+Jimmy said: *"Jimmy."*
 
-"Tuesday."
+Aaron said: *"Jimmy."*
+
+They walked back to aisle thirty-one.
+
+---
+
+Ji-won set the camera at the north end of aisle thirty-one at four oh-two PM.
+
+Jimmy stood at the north end of the aisle in a black T-shirt and jeans, with a clip-on lavalier mic clipped to the collar of the T-shirt, with no notes in his hand, with the printout Ji-won had quizzed him on in the air folded into the back pocket of the jeans and unconsulted.
+
+Ji-won said: *"Speed. Sound. Rolling."*
+
+Jimmy looked at the camera.
+
+He said: *"This is aisle thirty-one of the Walmart Supercenter in Rogers, Arkansas. This aisle is thirty-seven feet long. This aisle holds approximately ninety-seven different chocolate-bar SKUs. Fifty-one percent of the facings on this aisle belong to the Hershey Company. Fourteen percent of the facings belong to Feastables. The rest belong to Mars, Mondelez, and about a dozen smaller players. Walk with me."*
+
+He walked.
+
+The camera walked with him.
+
+He walked south down the aisle. He stopped at the standard-milk-chocolate bay. He picked up a Hershey's standard milk chocolate bar in his left hand. He held it up to the camera. He said: *"This is the bar Milton Hershey started making in 1900. He started making it because he believed every American should be able to afford a chocolate bar. He sold it for a nickel for the first thirty-nine years it was on the market. In 1939 he raised the price to a nickel and a half. The bar is, in inflation-adjusted terms, more expensive today than it has ever been. The bar is also the bar. The bar is, in operational terms, the bar Milton Hershey would still recognize if he walked into this aisle this afternoon. The bar holds fifty-one percent of this aisle because the bar has been on this aisle longer than any other bar in this aisle. The bar deserves to be here. I want to be clear about this. The bar deserves to be here. The bar is, on every honest read of the chocolate-bar category, the most consequential product in American chocolate history."*
+
+He put the Hershey bar back on the shelf.
+
+He walked.
+
+He stopped at the filled-chocolate bay.
+
+He picked up a Reese's peanut butter cup.
+
+He said: *"This is the second-most consequential product in American chocolate history. Made in Hershey, Pennsylvania, by a man named H.B. Reese who worked at the Hershey factory before he started his own company in 1923. Reese's was acquired by Hershey in 1963. Reese's is, by category-revenue rank, the bestselling chocolate brand in the United States. Reese's is here. Reese's deserves to be here. I am not going to take Reese's facings away from Reese's."*
+
+He put the Reese's back on the shelf.
+
+He walked.
+
+He walked past the premium-and-dark bay without stopping.
+
+He arrived at the new-and-trend bay.
+
+He stopped.
+
+He looked at the Feastables section.
+
+He looked at the camera.
+
+He said: *"This is six feet of an aisle that is thirty-seven feet long. Six feet of ninety-seven SKUs. Fourteen of those SKUs. Fourteen percent of the facings. Four years ago this section was zero feet. Three years ago this section was three feet. Two years ago this section was four. Today this section is six. Why."*
+
+He picked up a Feastables Crunch bar.
+
+He held it up to the camera.
+
+He said: *"Because the people who walk past this section have been voting. They vote with the products they pick up. They pick up Feastables, the bars go off the shelf, the shelf gets restocked, the planogram team at Walmart's category-management office in Bentonville reviews the sell-through numbers four times a year, and the planogram gets adjusted. The voting moves the shelf. The shelf is the result of the voting. The voting is the system. The system is the system. The system is not new. The system has been the system since the first time a customer walked into a general store and chose between two bars on a shelf. The system rewards the bar the customer wants. The bar the customer wants gets the shelf space. The bar the customer does not want loses the shelf space. The voting is going to keep going."*
+
+He put the Crunch bar back.
+
+He turned to face the camera directly.
+
+He said: *"I want to tell you a story about what happened nine weeks ago. Nine weeks ago, the Hershey Company started doing something it has not, in the eighty-five-year history of its category-management relationship with Walmart, done before. Hershey started, on the testimony of people who have worked at Walmart for between nineteen and forty-one years, an attempt to bypass the voting. The attempt was a series of trade-investment proposals worth one hundred and sixty-three million dollars over twelve months. The proposals were conditioned on Walmart cutting Feastables' shelf allocation in the next planogram review by between twenty-two and thirty-one percent. The proposals were not about Hershey winning the voting. The proposals were about Hershey paying Walmart to skip the voting. The proposals were the kind of proposal a company makes when the company has stopped believing it can win the voting. Walmart said no. Walmart said no last week. Walmart told the chief executive officer of the Hershey Company on a phone call from Walmart's chief executive officer last Friday afternoon that the proposals were the kind of proposal Walmart would not, on the eighty-five-year relationship Walmart has built with the chocolate category, accept. Walmart then expanded Feastables' shelf allocation in the next planogram by one SKU."*
+
+He paused.
+
+He looked at the camera for a beat.
+
+He said: *"Hershey, I am not the enemy. I am the guy in the new-and-trend bay. I have six feet. You have nineteen. The other manufacturers have twelve. The voting is the voting. The voting is going to keep moving the shelf. The shelf is going to look, a year from today, the way the voting wants it to look. I am here to tell you that the way to keep your shelf is to make the bar people want to vote for. The way to keep your shelf is not to pay a hundred and sixty-three million dollars to skip the voting. The voting is the system. The voting is the way we run the chocolate-bar category in the United States in this century. I am going to keep voting. The people watching this video are going to keep voting. The bar that wins the voting is going to win the shelf."*
+
+He looked down the aisle to the north end.
+
+He looked back at the camera.
+
+He said: *"The reason Hershey's has fifty-one percent of this aisle and we have fourteen is they have been here longer. The reason we have fourteen and not three is that the people who walk past these shelves are voting. The voting is going to keep going. We will see how this aisle looks in a year."*
+
+He paused.
+
+He smiled at the camera.
+
+He said: *"This is Aaron. Aaron is the store manager here in Rogers. Aaron's mother in San Antonio watches our videos every Saturday morning. Say hi to your mother, Aaron."*
+
+Aaron stepped into the frame.
+
+Aaron looked at the camera.
+
+Aaron said: *"Hi, Mom. I'm at work."*
+
+Jimmy said: *"That's a wrap."*
+
+Ji-won said: *"That's the take."*
+
+It was four eleven PM Central.
+
+The shoot had taken nine minutes.
+
+---
+
+The plane left Bentonville Regional at six forty-three PM Central.
+
+Karim cut the video on the plane on a portable editing rig he kept in a case in the rear bench seat. The cut ran five minutes and forty-eight seconds. Karim showed it to Jimmy at seven fifty-one PM Central, somewhere over central Tennessee.
+
+Jimmy watched it.
+
+He said: *"Good cut."*
+
+Karim said: *"Drops tomorrow ten AM Eastern."*
+
+Jimmy said: *"Ten AM Eastern."*
+
+Karim said: *"Ana is briefing the comms team tonight. Maritza is on standby for any legal calls. Lin's team is monitoring the social channels. The Feastables PR firm has been told to expect inbound from every chocolate-trade-press outlet by tomorrow noon and from every major business outlet by tomorrow afternoon."*
+
+Jimmy said: *"Karim."*
+
+Karim said: *"Yes."*
+
+Jimmy said: *"What does the analytics team think the view count looks like."*
+
+Karim said: *"On the model the analytics team is running tonight on the plane on a borrowed laptop because the analytics team is, in operational terms, three people in Greenville who are on a group video call with me right now — the projection is somewhere between two hundred and twenty and two hundred and seventy million views in the first seventy-two hours."*
+
+Jimmy looked out the window.
+
+He said: *"Karim."*
+
+Karim said: *"Yes."*
+
+Jimmy said: *"This is going to break the camel's back at Hershey."*
+
+Karim said: *"Yes it is."*
+
+Jimmy said: *"Marcus is going to spend the next thirty days trying to figure out who at his own company leaked the campaign to me."*
+
+Karim said: *"Yes he is."*
+
+Jimmy said: *"He's not going to find the leak."*
+
+Karim said: *"There was no leak. Carla called you because Carla is Carla. The information was inside Walmart, not inside Hershey. Marcus is going to look for thirty days in the wrong building."*
+
+Jimmy said: *"Karim."*
+
+Karim said: *"Yes."*
+
+Jimmy said: *"This is the eighth chocolate-aisle-related video we have shot in three years."*
+
+Karim said: *"Yes it is."*
+
+Jimmy said: *"Each one has been bigger than the last."*
+
+Karim said: *"Yes."*
+
+Jimmy said: *"At some point we are going to be the company in the fifty-one-percent shelf-allocation position."*
+
+Karim said: *"Eight to ten years on the trend line."*
+
+Jimmy said: *"At that point I am going to be on the other end of the call Marcus is on right now."*
+
+Karim said: *"Yes you are."*
+
+Jimmy was quiet for forty seconds.
+
+He said: *"Karim."*
+
+Karim said: *"Yes."*
+
+Jimmy said: *"When I am on the other end of that call, I do not want to be running the operation the way Hershey is running it right now."*
+
+Karim said: *"No."*
+
+Jimmy said: *"I do not yet know what the operation needs to look like."*
+
+Karim said: *"No."*
+
+Jimmy said: *"Twenty-two days on the runway."*
+
+Karim said: *"Twenty-two days."*
+
+Karim closed the laptop.
+
+The plane landed at Greenville Downtown at nine forty-three PM Eastern.
+
+Jimmy was home at nine fifty-one.
+
+Thea was at the kitchen table.
+
+She had not, on her own assessment of the evening, expected him at nine fifty-one. She had set the kitchen timer for ten oh-three because Karim had texted her flight times by way of Ana on the assumption Jimmy would forget. Jimmy was twelve minutes early.
+
+She looked up at him from the painting.
+
+She said: *"You eat dinner here."*
+
+He said: *"I eat dinner here."*
+
+She got up. She went to the refrigerator. She took out the chicken and the rice and the broccoli she had cooked at seven thirty. She put a plate together. She put it in front of him at the table. She sat across from him.
+
+She watched him eat.
+
+She did not, in the twenty-three minutes it took him to eat the plate, ask him about the shoot.
+
+He did not, in the twenty-three minutes, talk about the shoot.
+
+At ten twenty-one he set the fork down.
+
+He said: *"It dropped tomorrow at ten."*
+
+She said: *"Tomorrow at ten."*
+
+He said: *"Going to be big."*
+
+She said: *"Always is."*
+
+He said: *"Day sixty-eight."*
+
+She said: *"Day sixty-eight."*
+
+He said: *"Twenty-two days left."*
+
+She said: *"Twenty-two."*
+
+He said: *"Thea."*
+
+She said: *"Yes."*
+
+He said: *"I do not have the model."*
+
+She said: *"I know you do not."*
+
+He said: *"I am going to find it."*
+
+She said: *"I know you are. The runway is the runway. The runway does not move. Whatever the model is is going to have to be on the table by Tuesday June fourteenth. I am not going to ask you about it again until then. Eat your dinner. We will go to bed."*
+
+He ate the last of the broccoli.
+
+They went to bed.
 
 ---
 
 The video dropped Tuesday at ten AM Eastern.
 
-Ten million views in three hours.
+The view count at noon was nine million.
 
-Fifty million in eighteen.
+The view count at midnight was forty-three million.
 
-A hundred million by Wednesday afternoon.
+The view count at noon Wednesday was eighty-eight.
 
-The closing line — *the voting is going to keep going* — became, within forty-eight hours of the drop, the top quote on financial Twitter.
+The view count at midnight Wednesday was one hundred and twenty-one.
 
-By Wednesday afternoon it was on the Bloomberg terminal's news-pane filter for most-cited executive statements in CPG in the past seventy-two hours.
+The view count at noon Thursday was one hundred and seventy-three.
 
-By Thursday morning it was in two separate analyst notes covering the U.S. chocolate-bar category — one from a Morgan Stanley analyst Jimmy had not previously been aware of, and one from a Bank of America analyst he had been aware of for three years because she had written a 2022 note about Feastables' projected market-share trajectory that had, in retrospect, been more accurate than Feastables' own internal forecasts.
+The view count at midnight Thursday was two hundred and eight.
 
-By Friday morning at six AM it was the headline of the *Wall Street Journal*'s front-page business section.
+The view count at noon Friday was two hundred and thirty-six.
 
-The piece was by a reporter named Adelaide Krug, who had been covering the Carrick-Lattice partnership for the previous year and who had, in February of Year Nine, started covering Feastables on her own initiative.
+The view count at four PM Friday was two hundred and forty-one.
 
-The piece was titled *The Voting Is Going to Keep Going: How a YouTube Aisle-Walk Re-Framed the Chocolate Industry in 72 Hours.*
+At four oh-six PM Friday a private number Jimmy did not recognize sent him a text. The text read, in its entirety: *Cleaner version this time. The aisle remark will be cited in the antitrust trade press for years. The voting line will be in business-school case studies. You did your homework on the eighty-five-year framing. Watching with continued interest. — L.M.*
 
-Twenty-three hundred words.
+Jimmy looked at the text.
 
-It walked through the cease-and-desist video, the withdrawal, the Hershey pressure campaign at Walmart that Krug had triangulated from three independent industry sources, the Q3 planogram review scheduled for July, and the underlying competitive dynamics between Feastables and Hershey across the previous three years.
+He saved the number.
 
-It closed with the paragraph that, in the long arc of the chocolate-industry trade press's coverage of the year, became the single most-quoted paragraph of any chocolate-industry piece across the previous two decades:
+He did not reply.
 
-> *Jimmy Donaldson is, by every measurable indicator of competitive dynamics in the U.S. chocolate-bar category, doing to Hershey's what no upstart has been able to do to a hundred-and-thirty-two-year-old CPG incumbent in the modern era of consumer packaged goods. The doing is not the result of capital, of distribution leverage, of celebrity endorsement, or of any of the standard mechanisms by which upstart CPG brands have historically gained market share. The doing is the result of one thing: Donaldson has a direct relationship with three hundred and fifty million people, and the Hershey Company has an institutional relationship with approximately one hundred and twenty retailers. The direct relationship is eating the institutional relationship. The eating is going to continue across the next decade. The Hershey Company has, on the public-record evidence of the past nine weeks, not yet figured out that the eating is happening. The Hershey Company is going to figure it out. The figuring out is going to be expensive.*
+At five eleven PM Friday — exactly two weeks after the Friday at five eleven PM when he had stood at the wall calendar reading *12 / 90* — he sat at his desk in his office and looked at the calendar for the second time in two weeks at the same time of day.
 
-Marcus Whittaker read the Krug piece on Friday morning at his desk in the Hershey Trust Company building.
+The square for today read: *72 / 90.*
 
-He did not, across the four hours after reading it, respond publicly.
+Eighteen days left.
 
-Yvette Park read it at her desk on the third floor of the same building. Read it three times. Did not respond publicly either.
+He had two hundred and forty-one million views.
 
-Eleanor Whitcomb read it at her kitchen table in Hummelstown at six twenty-two AM with her cup of tea, with Don across the table reading the *New York Times* sports section.
+He had Marcus Whittaker searching for an internal leak in his own company that did not exist.
 
-She read it across twelve minutes.
+He had Carla Hernandez on his side at Walmart corporate for the rest of her career.
 
-Set the *Wall Street Journal* down on the table.
+He had Walt Frazier calling Karim Brock by name to the planogram-review committee.
 
-Looked at Don.
+He had a senator's encouragement in a saved contact in his phone.
 
-"Don."
+He had, on the Beast Philanthropy ledger, one hundred and three thousand four hundred and seventeen U.S. dollars of additional Feastables-margin disbursement queued up to ship to Underberg as a direct consequence of the seventy-two-hour sell-through spike from the video.
 
-"Yes."
+He had not, on the small file open on his laptop, written one additional word about the model since the night of the Bentonville trip.
 
-"I'm going to need to think about something for the next three months."
+He looked at the calendar.
 
-"All right."
+He said, out loud, to no one, in the office at five thirteen PM Friday at the close of week ten of the runway:
 
-"I'm not going to tell you what it is until I have figured it out."
+*"Eighteen days."*
 
-"All right."
+He picked up his phone.
 
-"Thank you."
+He opened the note.
 
-"You are welcome."
+He typed, on the next line:
 
-She picked the tea back up. Drank it. Walked to her study. Closed the door.
+*Two hundred and forty-one million views.*
 
-She did not, in the next three hours, come out.
+*Hershey is broken.*
 
----
+*Cap is still the cap.*
 
-Jimmy read the Krug piece at six oh-eight AM Friday morning, at the kitchen counter of the house in Greenville, with Thea across the counter on her second cup of coffee.
+*Eighteen days.*
 
-He read it.
+He saved the note.
 
-Set the laptop down.
+He looked at the wall calendar.
 
-"Thea."
+He looked at the small red marker mark Thea had made in the corner of the square for Tuesday June fourteenth.
 
-"Yeah."
+He stood up.
 
-"Adelaide Krug just wrote the closing paragraph of the chapter we're in."
+He walked out of the office.
 
-"Read it to me."
+He went home.
 
-He read it to her.
+The model was not, on the evening of day seventy-two, on his desk.
 
-She listened.
+The model was, somewhere, still being written.
 
-"Jimmy."
+He did not yet know by whom.
 
-"Yeah."
+He drove home through Greenville in the late-spring light.
 
-"That piece is going to force Hershey to publicly respond. The public response is the inflection point. Are you ready for it."
+Thea was at the kitchen table.
 
-He looked at her.
+She did not look up.
 
-"No."
+She said: *"How was the day."*
 
-"Why not."
+He said: *"Two forty-one."*
 
-"I don't have the model yet."
+She said: *"Two forty-one."*
 
-"Jimmy."
+He said: *"Eighteen."*
 
-"Yeah."
+She said: *"Eighteen."*
 
-"Find it."
+He sat at the kitchen table across from her.
 
-"I'm going to."
+He watched her paint.
 
-"When."
+He thought, in the seventeen minutes before she set the brush down, about what he was going to look for between now and Tuesday June fourteenth that he had not, in the previous seventy-two days, found.
 
-"I don't know when."
+He did not, in the seventeen minutes, have an answer.
 
-"Find it this week. The piece changes everything. You're not going to be able to hold the empire together through the public response without the architecture in place. So find it. The Krug piece didn't ask you for permission. You don't get to ask the model for permission either. Look harder. This week."
+He had eighteen days.
 
-He looked at her.
+The model was somewhere.
 
-"OK."
+He was, on his own honest read of the seventy-two days, going to find it.
 
-"OK?"
+He did not yet know on what laptop, in what office, at what hour of what night.
 
-"I'll find it this week."
+He did not yet know in what state.
 
-"Good."
+The state, on Karim's quiet count of the open-source landscape Karim had been silently scoping for Jimmy for six years, was almost certainly Missouri.
 
-She picked up her coffee. Finished it. Walked to the bedroom. Got dressed for the firm. Out the door at seven oh-eight.
+But Karim had not, in six years, said so.
 
-Jimmy sat at the counter alone.
+The runway was the runway.
 
-He opened his laptop again.
+The model was somewhere.
 
-He looked at his open browser tabs.
-
-He had, on honest count, fourteen tabs across various small-business-AI tooling sites, three enterprise-CRM platform demos he had been evaluating for the past eleven weeks, and two academic papers on systems-engineering methodologies Ana Vasquez had emailed him in March that he hadn't read.
-
-He closed all fourteen.
-
-Opened a new tab.
-
-Typed three words into the search bar: *systems-authoring architecture.*
-
-Hit enter.
-
-The first result was a Wikipedia stub about a category of software-engineering methodologies he had not previously encountered. The second was a research paper from MIT's CSAIL group on the history of domain-specific languages. The third was a Hacker News thread from about three weeks earlier.
-
-The thread was titled: *Show HN: Agicore — a deterministic systems-authoring platform that compiles a DSL into Tauri apps.*
-
-He looked at the thread for about seven seconds.
-
-He did not click it.
-
-He bookmarked it.
-
-Closed the tab.
-
-Got dressed. Drove to the studio. Worked through Friday, all of Saturday, and all of Sunday on the response strategy to the Krug piece, in coordination with Ana, Priya, Karim, and the senior brand team.
-
-He did not, across the weekend, open the bookmark.
-
-Did not find the model.
-
-To bed eleven PM Sunday night. Up at five-thirty Monday morning. Drove to the studio. Worked through Monday. Worked through Monday night.
-
-By Tuesday at two AM he was in his office at the studio alone, with Karim having gone home twenty minutes earlier, with the studio silent for the first time in two weeks, with the small DSLR from the Walmart-aisle video on the corner of the desk, and with a Hacker News tab open on his phone that he had refreshed about seventeen times in the previous hour because he had been, on his own quiet sense of the situation, looking for something specific and hadn't yet recognized what.
-
-The bookmark from Friday morning was still in his bookmarks bar.
-
-He clicked it.
-
-The thread loaded.
-
-The top comment linked to the project's GitHub repo.
-
-The project was called Agicore.
-
-He clicked the repo link.
-
-The README loaded.
-
-The README opened with a single sentence in bold:
-
-***Agicore — A deterministic systems-authoring platform for AI-native organizations.***
-
-He started reading.
-
-The next chapter is the chapter.
-
-The architecture, by the close of the next chapter, is going to be the architecture.
+The eighteen days started at midnight.

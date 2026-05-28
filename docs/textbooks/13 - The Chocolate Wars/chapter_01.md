@@ -1,237 +1,261 @@
-# Chapter 1: Greenville
+# Chapter 1: Greenville, 4 AM Tuesday
 
-Jimmy Donaldson was at the editing bay of bay number two at four oh-six AM on a Tuesday in March of Year Nine — fifty-seven hours into a video that was supposed to drop Saturday at ten AM Eastern — with two empty Celsius cans on his left, three on his right, headphones playing a Slipknot track he had switched to at one twenty when his eye for cuts had started going, and the third re-edit of the cold-open on the timeline.
+The bay clock read four oh-two.
 
-The cold-open was eleven seconds.
+The render queue read fifty-eight percent.
 
-Seventy-three percent of every drop-off curve on every MrBeast video for the past six years had happened inside those eleven seconds.
+Jimmy was in bay number two, hunched over the editing console, sixteen hours into a cut that needed to be picture-locked by sundown Wednesday and on the master server in encoded H.265 by ten AM Saturday morning Eastern. Saturday was the drop. Saturday was always the drop. The drop was the drop. Everything else in the building, everything else in the empire, everything else in his life, organized itself around the Saturday drop.
 
-So Jimmy was on edit three.
+The video was nineteen minutes and forty-one seconds, currently. It needed to land at fifteen minutes flat.
 
-He hit play. Watched. Hit stop. Nudged the cut on the third frame of the second beat by four frames. Hit play. Watched. Hit stop. Took the headphones off. Opened a fourth Celsius. Drank half. Put the headphones back on. Hit play.
+Karim had walked him through the cuts at eleven PM Monday night. Cuts to the entrance sequence. Cuts to the explanation. Cuts to the long, slow reveal in the middle. Cuts to two of the three contestant reactions. Cuts to the final ascent on the slate-grey staircase the production team had built in warehouse number two off the second studio, the staircase that climbed forty-eight feet to a platform that held the prize money the audience had been watching contestants fight over for the previous eleven minutes. The cuts were the cuts. Karim's cuts were the cuts the analytics team had spent three years teaching the AI thumbnail tool to optimize against. Karim's cuts were, on the studio's own internal Lean Six Sigma report from Q4 of last year, the most consistently best-performing first-pass cuts of any production house operating in the long-form YouTube content category at any scale. Jimmy had not, in seven years of working with Karim, ever disagreed with one of Karim's cuts.
 
-Thea walked into bay two at four oh-eight.
+He was, at four oh-two AM on a Tuesday in March, disagreeing with three of Karim's cuts.
 
-She had a dark coat on over what looked like the t-shirt she had been wearing when he had kissed her on the head at noon Sunday on his way back to the studio, and her keys in her hand, and a tote bag over her left shoulder that he was about ninety percent sure had a thermos of coffee in it because that's what she did when she came to the studio at four in the morning, which she had now done twice in eleven months of marriage.
+The second contestant reaction, specifically.
 
-This was the second time.
+Karim wanted it gone.
 
-She stood in the doorway for about four seconds before he caught her in the monitor reflection.
+The contestant — a fifty-three-year-old man from Erie, Pennsylvania, who had lost his job at a paper mill in 2019 and had been driving Uber for the four years between then and his casting on the show — had, in the moment, looked at the prize money on the platform and said, on camera, a sentence that had run two seconds long against the cut Karim had drawn for it.
 
-He hit pause.
+Eight hundred and forty milliseconds long, on the precise measurement.
 
-Took the headphones off.
+The sentence was: *My son is going to graduate college without taking out a single loan.*
 
-Turned around.
+Karim wanted the sentence cut. Karim wanted the sentence cut because the sentence ran the segment two seconds long. Two seconds at minute eleven of a fifteen-minute video, at YouTube watch-time mechanics, was approximately a four-tenths-of-a-percent average-view-duration penalty. Four-tenths of a percent of average view duration was, on the studio's last twelve-month-rolling per-video median, roughly eleven million additional impressions in the recommendation engine.
 
-"Thea."
+Jimmy was, on the cut, six iterations in.
 
-"Hey."
+Six iterations of trying to find another two seconds, somewhere else in the eleven minutes leading up to it, to cut so that he could keep the sentence about the paper mill worker's son and the college loans. He had not, in six iterations, found the two seconds.
 
-"It's four AM."
+He had spent the past forty minutes on the cut.
 
-"I know it's four AM."
+The cut was, on every honest read of itself, Karim's cut. Karim's cut was the cut. The cut was costing the paper mill worker's son the sentence about the college loans.
 
-"You drove."
+Jimmy was about to spend another twenty minutes on the cut.
 
-"I drove. Karim texted me at three forty-eight. Said you were on the cold open. I drove from the house."
+He heard the door of bay two open at four oh-eight.
 
-She didn't put the bag down. Didn't sit. Stayed standing in the doorway. He noticed.
+He did not, in the first three seconds after the door opened, turn around.
 
-"I'm not asking you to come home," she said. "I'm asking you to listen to me for like ninety seconds. Seven things. Then I'm going to leave. After I leave you can stay on the cold open or you can come after me. Either one is fine. I just need to say the seven things."
+He thought it was Karim. Karim sometimes came back at four in the morning when Karim had been thinking about a cut. Karim's car was the kind of car that, on the gravel lot behind the studio at four AM, made a small specific sound Jimmy had come to recognize across six years.
 
-"OK."
+The sound had not been there.
 
-"You sure you can hear me."
+Jimmy turned around.
 
-"I can hear you."
+Thea was standing in the doorway of bay two in her coat.
 
-She told him in about ninety seconds.
+The coat was the navy wool coat she had worn to the funeral.
 
-She said it like she'd written it on her phone on the drive over, which she had.
+Jimmy knew this because Jimmy had, after the funeral, on a Wednesday three weeks earlier, watched her hang the coat on the hook in the foyer at three forty-seven PM Eastern, from a video clip the security camera at the front door of the house had auto-archived to the studio's shared drive, because Jimmy had been in the studio at the time of the funeral, on a scheduled call with a senior vice president at Walmart corporate in Bentonville about Walmart's spring planogram review for Feastables, a call Jimmy had told himself the morning of the funeral he could not move, even though the call had ended up moving on its own at twelve fourteen PM Eastern when the Walmart vice president had had a personal emergency of her own.
 
-The seven things were:
+Jimmy had stayed in the studio through the rescheduled time.
 
-One. Her sister's wedding had been Saturday in Asheville and Jimmy had missed it because the cold open on a different video had eaten the eleven hours before the flight and the flight had left without him.
+He had not gone to the funeral.
 
-Two. Her cousin's funeral had been three weeks before that, in Wilmington, and Jimmy had missed that one for a Feastables packaging review that ran twenty-six hours past when it was supposed to end.
+Thea had hung the coat on the hook in the foyer at three forty-seven PM and had not, in the twenty-one days between that moment and this one, said anything to Jimmy about the funeral.
 
-Three. Counting those two there had been four consequential family things in the eleven months they'd been married that Jimmy had missed for an operationally similar reason. She had been keeping a quiet count. She was not going to read the list.
+She was wearing the coat now.
 
-Four. The pattern wasn't the problem. The pattern was the *signal* of the problem.
+She was, on Jimmy's read of her face, not angry.
 
-Five. The problem was that the way Jimmy had built the company across nine years had baked Jimmy himself into every important decision the company made, and the only way for him to stop missing weddings and funerals was for him to come up with a different way of running it.
+She was carrying a thermos of coffee in her right hand and a closed manila folder in her left.
 
-Six. She was not going to be the person who got him to do that by nagging him. She had tried for eleven months. It didn't work. She wasn't going to try anymore.
+She walked into the bay.
 
-Seven. She was giving him ninety days. Inside ninety days she needed him to come back to her with a different way of running the empire. If he came back with one, they kept going. They started trying for a kid in the summer. They built a life. If he didn't come back with one — she stopped on the word *one*, looked at him, kept going — if he didn't come back with one, she was going to be honest with herself about what kind of marriage she'd actually signed up for, and so was he, and they would figure it out from there. She loved him. That was not the question. The question was the architecture. The architecture was on him.
+She set the thermos on the corner of the editing console. She set the folder next to the thermos. She unscrewed the thermos cap. She poured coffee into the empty mug Karim had left at the edge of the console at one twenty AM and forgotten when he had left.
 
-She stopped.
+She pushed the mug across the console to Jimmy.
 
-Jimmy looked at her.
+Jimmy took the mug.
 
-He didn't say anything for about four seconds.
+Thea sat down on the small stool by the door of the bay — the stool the colorist used during color-grade sessions — and looked at Jimmy for a beat.
 
-He took the fourth Celsius off the desk. Set it on the floor next to the trash can. Missed the trash can. The can rolled three feet across the polished concrete and came to rest against the leg of the chair Karim had been sitting in twelve hours earlier.
+Then she said the seven sentences.
 
-"Thea."
+The seven sentences took ninety-three seconds.
 
-"Yeah."
+Jimmy timed them on the bay clock without meaning to.
 
-"Ninety days."
+The first sentence was: *Jimmy.*
 
-"Ninety days."
+The second sentence was: *Three weeks ago Wednesday I buried my father.*
 
-"OK," he said. "I'll come back with one. Inside ninety days. If I don't, I'm the one who leaves the empire. Not you."
+The third sentence was: *Last Tuesday at four twelve PM my brother's wife gave birth to a boy named after him.*
 
-She stood in the doorway another beat.
+The fourth sentence was: *I was at the funeral. I was at the hospital. You were in the studio at the time of both of them and I knew you were going to be in the studio at the time of both of them before they happened and I told you, in advance of both of them, that I was going to be at the funeral and the hospital alone.*
 
-Then she crossed the three steps to the chair, put her palm flat on the back of his head, kissed the top of his head, and said: "Jimmy."
+The fifth sentence was: *Jimmy. I am not asking you to come home. I am not threatening to leave you. I am telling you what is true. The thing that is true is that you, at twenty-six years old, on the trajectory you are on, are going to be at your son's funeral in the studio. You are not, on the trajectory you are on, going to be alive at fifty. I have watched my father die at sixty-three of a heart attack he had at his desk at four PM on a Tuesday. I am not, on what I have observed of you in the eighteen months we have been married, willing to be the person who watches the same thing happen to you at thirty-eight.*
 
-"Yeah."
+The sixth sentence was: *I am giving you ninety days. The ninety days start at four eleven AM on the bay clock right now. At the end of ninety days you are going to come back to me with a different operating model for your life, or I am, on the strength of having watched my father die at his desk at the age he died at it, going to be the one who packs up the house in Greenville and moves back to my mother's in Charleston, because I am not going to sit in the house and watch you finish doing it.*
 
-"Do the work. I don't want to leave."
+The seventh sentence was: *That is what I came here to tell you. The thermos is for you. The folder is the obituary. I did not know if you had read it.*
 
-"I don't want you to leave either."
+Jimmy did not interrupt across the ninety-three seconds.
 
-"Then do the work."
+He did not, when she finished, speak for fourteen more seconds.
 
-She walked out of the bay.
+Then he said, in the order he said them:
 
-The door closed behind her.
+*"Thea."*
 
-The bay was quiet for about seven seconds.
+*"Ninety days."*
 
-Then Jimmy looked at the cold-open timeline.
+*"I am going to come back to you with a different operating model inside ninety days."*
 
-Then he picked up the can off the floor and carried it to the trash.
+*"The model is going to be the model."*
 
-Sat back down.
+*"If the model does not work, I am the one who leaves the empire, not you."*
 
-Took the headphones off the desk but didn't put them on.
+Thea looked at him for another beat.
 
-Opened his laptop.
+Then she stood up.
 
-Opened a new doc.
+She walked across the bay.
 
-Titled it *Operating Model — 90-day spec.*
+She kissed the top of his head.
 
-Typed for twenty-three minutes straight.
+She walked back to the door.
 
-What he typed was the first version of what would, across the next ninety days, become about four thousand lines of operational specification for an empire that, as of that Tuesday morning, ran thirteen LLCs under an informal corporate umbrella, four hundred and ten full-time employees, a hundred and forty-seven part-time contractors, four production stages in Greenville plus one in Hollywood plus one in London, a chocolate brand on track to do six hundred and twenty million in revenue that year, a philanthropy operation that had built eight schools in three years across two African countries, an Amazon-distributed reality competition show in pre-production for season three, and exactly one CEO who had not, in any of the previous nine years, slept more than four hours on a Tuesday.
+She turned at the door and said, in a voice that was not louder than the voice she had used for the seven sentences but was, on Jimmy's read of it, the voice of a person who had decided what she had decided across the previous twenty-one days and was not, in the next ninety, going to revise the decision: *"Day one starts now. The bay clock reads four eleven."*
 
-He saved the doc at five oh-one.
+She left.
 
-Closed the laptop.
+The door of bay two closed at four eleven AM and seventeen seconds.
 
-Stood up.
+Jimmy sat at the editing console.
 
-Walked out of bay two, down the corridor past bays three, four, and five, through the empty lobby, and out the front door into the cold March pre-dawn.
+He looked at the render queue. The render queue read sixty-one percent.
 
-The parking lot was empty except for his car and the security guard's car.
+He looked at the timeline. The timeline read nineteen minutes and forty-one seconds. The two seconds about the paper mill worker's son and the college loans were still there.
 
-The security guard was the night-shift guard, a forty-six-year-old former Marine named Reggie Anders who had been on the gate for four years and who had, in those four years, never once asked Jimmy why he stayed at the studio for fifty-seven consecutive hours at a time.
+He looked at the closed manila folder on the corner of the console.
 
-Reggie was in the small booth by the gate.
+He did not open it.
 
-Jimmy nodded. Reggie nodded back.
+He picked up the mug Thea had poured. He drank the coffee. The coffee was hot. The coffee tasted like Thea had made it from the beans they kept at the house, from the small ceramic canister on the counter next to the toaster, the canister Thea had bought at a market in Charleston on the trip the August after the wedding. He drank the coffee slowly.
 
-"Mr. Donaldson."
+He set the mug down.
 
-"Reggie."
+He turned to face the timeline.
 
-"Walking out before sunrise."
+He said, out loud, to no one, in the empty bay at four fourteen AM on a Tuesday in March in the third year of his marriage and the ninth year of the empire and the first one hundred and eighty seconds of the runway Thea had just started:
 
-"Walking out before sunrise."
+*"What model."*
 
-"Thea came by."
+The bay was silent.
 
-"She did."
+He said it again.
 
-"I don't generally comment on personal-life stuff with the principal."
+*"What model."*
 
-"I know you don't."
+The render queue ticked to sixty-two percent.
 
-"I'm going to comment now."
+Jimmy sat in the editor's chair and looked at the timeline for forty-seven more seconds.
 
-"Go ahead."
+Then he picked up his phone.
 
-"Mr. Donaldson, I've been on this gate four years. I've watched you leave this studio at four AM eleven hundred and forty times. I've watched Thea come through this gate forty-eight times. The forty-eight times are the only times I've seen you walk out of here for a reason that was not work. I am going to encourage you to drive home and listen to whatever she came to tell you. The forty-eight are the part that matter."
+He opened a new note.
 
-Jimmy looked at him for a beat.
+He typed three words at the top of the note.
 
-"Reggie."
+The three words were: *MODEL — 90 DAYS.*
 
-"Yes sir."
+Under the three words, on the next line, he typed one sentence.
 
-"Thank you."
+The sentence was: *I do not know what it is yet.*
 
-"You're welcome. Drive home, Mr. Donaldson."
+He saved the note.
 
-He drove home.
+He set the phone face-down on the console.
 
-The drive was eleven minutes.
+He turned back to the timeline.
 
-He pulled in at five fourteen AM Eastern.
+He found the two seconds.
 
-Thea's car was in the drive. The kitchen light was on.
+The two seconds were not in the eleven minutes leading up to the contestant reaction. The two seconds were in the entrance sequence at minute one. The entrance sequence had, on Karim's cut, a forty-second walk-up through the warehouse to the platform. The walk-up had a beat in it — a slow tracking shot across the contestants' faces at minute one fourteen — that ran two seconds long against the cadence the rest of the entrance sequence was on. Karim had left the two seconds in because Karim liked the rhythm of the beat. The beat was the beat. The beat was, on Karim's call, worth the two seconds.
 
-He walked in.
+Jimmy cut the two seconds out of the beat at minute one fourteen.
 
-She was at the kitchen counter in pajama pants and the same t-shirt with the thermos of coffee from the tote bag now poured into one of the two mugs they had bought at a flea market in Asheville the weekend they got engaged.
+The video timeline updated.
 
-She looked up.
+Fifteen minutes and zero seconds.
 
-Didn't say anything.
+The paper mill worker's son and the college loans stayed in.
 
-He walked across the kitchen and sat down on the stool next to hers.
+Jimmy looked at the cut for fourteen seconds.
 
-"Thea."
+He saved the project.
 
-"Jimmy."
+He picked up his phone.
 
-"I'm sorry I missed the wedding. I'm sorry I missed the funeral. I'm sorry I missed the two other things — and the embarrassing part is I don't even remember what they were, because the way my brain has been running for nine years is that the videos take up the part of the brain that's supposed to remember those things, and I let them. I am sorry. I am sorrier than I know how to tell you yet. I'm going to spend the next ninety days finding the model. I'm also going to spend the next ninety days every Sunday night sitting at this counter trying to actually tell you the sorry part. Not in one speech. In pieces. Because I think the pieces are what I owe you and I have been giving you the headlines instead. The model and the pieces are the same job. I'm going to do the job."
+He texted Karim three words: *Beat at 1:14.*
 
-She sat with it for a long beat.
+He sent the text.
 
-She didn't say anything for forty seconds.
+Karim's reply came back at four nineteen AM. The reply was two words.
 
-Then she said: "Jimmy."
+The two words were: *Good cut.*
 
-"Yeah."
+Jimmy set the phone down.
 
-"OK."
+He picked the mug back up. The coffee was now cool. He drank the rest of it.
 
-"OK?"
+He set the mug down.
 
-"OK. Drink some water. Sleep three hours. The cold open will still be there at eight. I have the firm at nine. I'll cook tonight."
+He looked at the closed manila folder.
 
-"You'll cook tonight."
+He opened it.
 
-"I'll cook tonight."
+The folder contained the printed obituary from the funeral home in Charleston. The obituary was eleven paragraphs. The obituary was for a man named James Garrison who had been sixty-three years old at the time of his death, who had been a marine biologist with the South Carolina Department of Natural Resources for thirty-four years, who had been preceded in death by his wife Margaret of forty-one years, who had been survived by his daughter Thea and his son David and his daughter-in-law Kate and his grandson Henry, who had been born twelve days before his grandfather's death, and who had been remembered, in the closing paragraph of the obituary, as a man who had, every Sunday morning of every weekend of his thirty-four years at the Department of Natural Resources, made pancakes for his children, and who had been remembered by his daughter Thea in the comments section under the funeral home's online guest book as *the gentlest man I have ever known.*
 
-She picked up her coffee and walked to the bedroom. The door closed behind her.
+Jimmy read the obituary three times.
 
-He stood at the counter for about a minute.
+The third time he read it, he read it out loud.
 
-Then he opened the fridge, took out a bottle of water, drank it, dropped the empty in the recycling under the sink, and went to the bedroom.
+When he finished reading it out loud, he set the obituary down on the editing console next to the empty mug.
 
-He lay down on the bed next to her in his clothes.
+He looked at the bay clock.
 
-He didn't sleep for the next three hours.
+The bay clock read four forty-six AM.
 
-He thought, for the three hours, about the operating model.
+Day one of ninety. Minute thirty-five.
 
-He didn't know how he was going to build it.
+He stood up.
 
-He knew, with the kind of certainty he had not, across the past nine years, ever had about anything that didn't have a YouTube thumbnail attached to it, that he was going to build it.
+He turned off the editing console.
 
-Ninety days.
+He picked up the obituary and the empty mug and the empty thermos.
 
-His wife was asleep on his shoulder for the first time in he could not remember how long.
+He walked out of bay two.
 
-The empire, for the first time in nine years, was on the other side of a door he was going to leave closed for three hours.
+He walked through the dark studio to the front office. He set the obituary on the corner of his desk, the corner Karim and Ana and the seven other people who got to the studio before seven AM walked past every morning on their way to the kitchen, the corner the obituary would be the first thing he saw when he walked back into the office at six fifteen AM after sleeping for ninety minutes on the small couch in the production lounge.
 
-He left it closed.
+He put the mug and the thermos on the kitchen counter.
 
-The work started at eight.
+He walked back to the production lounge.
+
+He set an alarm on his phone for six fifteen AM.
+
+He lay down on the couch.
+
+He closed his eyes.
+
+He thought, in the order he thought them, four sentences:
+
+*I do not know what the model is.*
+
+*Karim knew I would cut his beat at one fourteen before I sent the text.*
+
+*Thea read the obituary out loud at the service. I was not there.*
+
+*I have eighty-nine days and twenty-three hours and twenty-seven minutes.*
+
+He fell asleep at four fifty-one AM.
+
+He slept until six fifteen.
+
+The day started.
+
+Day one was the day.

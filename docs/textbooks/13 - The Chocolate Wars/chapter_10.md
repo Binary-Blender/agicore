@@ -1,287 +1,373 @@
-# Chapter 10: Beast Games
+# Chapter 10: The TAO Rollout
 
-The empire.app deployment ran Monday morning at nine eleven AM Eastern, on the dedicated Tauri-host server Karim had stood up across the previous weekend on the studio's own infrastructure, in a small data closet on the second floor of the Greenville facility that had been, before that morning, the room the studio's IT team called *the Closet Where We Keep the Thing Nobody Has Asked About Yet.*
+Monday morning. Eight AM. Conference room one.
 
-The deployment took one minute and forty-one seconds.
+Twelve people at the table.
 
-The empire.app — fourteen hundred and seventeen lines of .agi, compiled to a 47.3-megabyte Tauri application with a deterministic hash that matched the one Christopher had read off the terminal in his workshop on Sunday evening at six oh-four PM Central — came up on the host at nine twelve AM Eastern, listened on its assigned port, and began the work of being the operating system of the empire.
+Jimmy stood at the head of the table with the small USB drive in his right hand.
 
-Karim watched from his laptop in the doorway of the closet.
+He held it up.
 
-Jimmy watched from his desk in his office on a small browser window showing the dashboard the runtime exposed by default.
+He said: *"This is the model."*
 
-The deployment finished.
+The room was quiet.
 
-The dashboard showed sixty-three active constraint boundaries, four hundred and eleven scheduled operational checks, eleven distinct sub-system pipelines, and one banner across the top of the screen the runtime had auto-generated from the metadata in the .agi specification:
+He said: *"On this drive are two files. The smaller file is a playbook. The playbook is a thirty-day curriculum I am going to deploy to every one of the four hundred and ten of us starting Tuesday morning. The larger file is, in plain language, an operational specification for the entire MrBeast organization. The specification was written across the past seven days at a kitchen table in a small town in Missouri by a person I had not met before Friday morning. The specification covers the thirteen LLCs, the seventy-eight workflows, the forty-one entities, the cross-LLC packet routing, and the mutation policies we are going to deploy across the next eighteen months. The specification is the substrate. The substrate is going to run the empire as one operating system once the substrate is deployed. The substrate is not, on the recommendation of the person who wrote it with me, the first thing we deploy. The first thing we deploy is the playbook. The playbook is the people. The people are going to be ten-x'd before the substrate touches a single workflow. We are going to run the playbook starting Tuesday. We are going to finish the playbook in thirty days. Ana is the executive sponsor. Karim is the operational lead. Everyone at this table is going through the playbook this week, in the first cohort, before anyone else in the building sees it. By the end of the thirty days every one of the four hundred and ten of us is going to be operating at four times the throughput we are operating at this morning. By the end of the sixty days after that the substrate is going to be running underneath us. By the end of the year the empire is going to be a different empire. Questions."*
 
-*Empire — operational specification version 1.0.0 — deterministic hash a4f2c81d — operator: J. Donaldson — cord-holder schedule: see system/cord-holders.*
+Karim said: *"What is the playbook."*
 
-Jimmy looked at the banner.
+Jimmy plugged the smaller USB drive into the conference-room laptop.
 
-Karim, on the phone from the closet: "Jimmy."
+He opened the only file on the drive.
 
-"Karim."
+The file was a markdown document approximately fourteen thousand words long.
 
-"It's up."
+The first heading read: *Stop Being the Bottleneck — Enterprise Rollout Playbook v0.1.*
 
-"It's up."
+The second heading read: *Three courses. Thirty days. Four hundred and ten people. The transformation is the transformation.*
 
-"What do we do first."
+Jimmy said: *"Three courses. Mastering AI Prompts. Strategic AI for Operators. Stop Being the Bottleneck. Every employee runs all three in cohorts of forty across four weeks. Day-one materials are EPUB-format field manuals loaded onto Kindle Paperwhites. I am buying four hundred and ten Kindle Paperwhites today. Ana's office is going to have them in the building by Thursday."*
 
-"Beast Games."
+Ana said: *"Cost."*
 
-"Beast Games."
+Jimmy said: *"Approximately fifty-seven thousand for the Kindles plus four for the build script that turns the markdown into the EPUBs. Sixty-one thousand for the playbook deployment, end to end. The Kindles stay with the employees as personal property after the playbook ends."*
 
-"Beast Games has, in the past eighteen months, produced four operational failures that cost between two and seven million dollars each. The failures were, on Christopher's framing at four eleven PM Saturday in the workshop, the operational signature of a production line without a clear cord-holder. The empire.app — on the spec we wrote — identifies the Beast Games line, identifies the seventeen constraint boundaries it operates under, and assigns the cord to a single human to be named within four months. Until that hire, the cord is mine. For the next twelve to sixteen weeks. But the runtime is going to surface every constraint violation to my dashboard in real time and halt the line on any unresolved violation until I clear it. The runtime is going to do, on every constraint, every time, exactly what I've been doing in my head for eighteen months without me having to remember to do it. The runtime is more reliable than my own attention. So I'm going to be, in operational reality, *less* the cord than I've been, because the cord is now in the runtime. Karim. Beast Games starts production on the new season's casting cycle Friday. We run the Friday cycle through the empire.app. We find out Friday whether the architecture is the architecture."
+Ana wrote *Kindles — 410 — Thursday — $61K* on her notebook.
 
-"Friday."
+Karim said: *"Cohort logistics."*
 
-"Friday."
+Jimmy said: *"Cohort one: this room. Cohort two: forty people Karim picks from production and the editing bays. Cohort three: forty from Feastables ops, marketing, and category. Cohort four: forty from Beast Games. Cohort five: forty from Beast Philanthropy ops. Cohort six: forty from the chief-of-staff office, legal, finance, HR, facilities. Cohort seven: forty from the studio's general staff. Cohort eight: the rest. Each cohort runs the curriculum across seven days. Daily standups led by Karim at seven AM. Drop-in office hours by Ana in the studio lounge from noon to two. Weekly leadership review every Friday at three PM in this room."*
 
-"I'll brief the Beast Games ops team this afternoon."
+Maritza Pena said: *"Legal exposure."*
 
-"Good."
+Jimmy said: *"None I can see. The materials are open-source. The AI tooling we are going to teach people to use is, on Lin's pre-clearance overnight, on the approved enterprise list across every account we operate. The Kindles are personal hardware. No PHI, no client data, no privileged communication touches the curriculum. Maritza, you walk through the playbook this week and you flag anything I have not thought of. We address whatever you flag before Tuesday's first cohort kickoff."*
 
-Karim hung up.
+Maritza wrote *playbook review — Friday* on her notebook.
 
-Jimmy looked at the dashboard.
+Ana said: *"Throughput measurement."*
 
-He clicked into the *Beast Games* sub-system.
+Jimmy said: *"This is the part I am most serious about. We are going to install, on the wall of the studio's main floor, by Friday afternoon, a live counter. The counter is going to display, in real time, hours saved company-wide in the past seven days. Karim's analytics team is going to build the measurement methodology this week. The counter is not a dashboard nobody looks at. The counter is a physical screen mounted on the wall behind the espresso machine on the main floor. Everyone who walks past the espresso machine reads the counter. The counter is the scoreboard."*
 
-The view loaded.
+Karim said: *"I can have the wall screen up by Wednesday."*
 
-Seventeen constraint boundaries. Contestant medical clearance. Contestant background verification. Contestant insurance. Talent agency contract compliance. Set construction safety. On-site medical staff ratio. On-site security staff ratio. Broadcast clearance for filming locations. Sponsor compliance for product placement. Prize disbursement legal compliance. Child-labor compliance for any contestant under eighteen. Food service compliance for on-set catering. Transportation insurance for contestant transport. Set construction permits. Broadcast standards compliance for filmed content. Post-production legal review for filmed content. And a seventeenth boundary the spec had emitted under the label *operational integrity — show is the show.*
+Jimmy said: *"Wednesday."*
 
-The seventeenth boundary was, on Christopher's quiet articulation at three forty PM Sunday afternoon, the boundary that distinguished Beast Games from a generic large-scale entertainment-production line. It required the runtime to verify, on every operational decision, that the decision was consistent with the operational identity of the show as Jimmy had defined it in the .agi file. The boundary was a generative-AI-mediated check that ran every decision through a build-time-compiled adversarial prompt Christopher had designed specifically for the empire.app.
+Karim said: *"Wednesday."*
 
-It was the boundary Jimmy had spent the longest of the three days in Ava arguing with Christopher about.
+Jimmy looked at the room.
 
-The argument had not been about whether it should exist. It had been about whether it was, in operational terms, a cord Jimmy could hand off.
+He said: *"Eight people in this room have, at some point in the past two years, told me in private that the empire is operating beyond what the current architecture can sustain. Three people in this room have, in the past six months, told me in private that they were considering taking other offers because they did not see how the current architecture was going to change. I have not, in the past two years, been able to tell any of you what was going to change or when. I am telling you now. The change is starting Tuesday morning. The change is the playbook this week. The change is the substrate after that. The change is going to be the change. I am asking for thirty days. Trust me on the thirty days. At the end of the thirty days the company is going to be a different company. Are we doing this."*
 
-Christopher had said no. *Because the show is your show. The cord on the show's identity is not a cord any other human can pull on your behalf until the show has, in its operational evolution, become a show that is not, in any operationally meaningful sense, your show.*
+The room was quiet.
 
-Jimmy had said: I want the cord to be transferable.
+Ana said: *"Yes."*
 
-Christopher had said: it can be transferable. The transfer is going to be the operational milestone that signals the end of the founder phase of the empire. The transfer is not going to be in this version of the specification.
+Karim said: *"Yes."*
 
-Jimmy had said: when.
+Maritza said: *"Yes."*
 
-Christopher had said: I don't know when. The when is on you. The spec will have a hook for the transfer when you tell me you're ready. Until then, the hook is empty.
+The other nine said yes.
 
-Jimmy had said: the hook is empty.
+Jimmy said: *"Day one starts Tuesday at six AM. Get ready."*
 
-Christopher had typed the empty hook into the specification.
-
-The empty hook was, Monday morning at nine fourteen AM, the only TODO marker in the runtime.
-
-Jimmy looked at it.
-
-Clicked away from *Beast Games.*
-
-Clicked into the *Beast Philanthropy* sub-system.
-
-The Beast Philanthropy sub-system showed nine constraint boundaries, all of them currently assigned to a single cord-holder. The dashboard's cord-holder field, on every Beast Philanthropy boundary, read: *T. Khoza.*
-
-Jimmy looked at the field.
-
-Read it nine times.
-
-He recognized, at nine sixteen AM Monday morning, that the field reading *T. Khoza* on every Beast Philanthropy constraint was, in operational reality, the formal naming of what Thandi had been doing on her own initiative since the photograph from the third classroom.
-
-He picked up his phone.
-
-He called Thandi.
-
-It was nine seventeen AM in Greenville.
-
-Three seventeen PM in Underberg.
-
-She answered on the second ring.
-
-"Jimmy."
-
-"Thandi."
-
-"Is it up."
-
-"It's up."
-
-"What does it look like."
-
-"Your name is on every Beast Philanthropy constraint. Nine constraints. Nine instances of *T. Khoza.* The runtime is going to send you operational notifications when constraints fire. It will only escalate to me if you can't, within the configured response window, clear the notification. The window is, on the default Christopher and I set on Sunday, seventy-two hours. I'm the escalation. I am not the operator. You are the operator."
-
-She was quiet for a beat.
-
-"Jimmy."
-
-"Yeah."
-
-"Thank you."
-
-"Thandi."
-
-"Yeah."
-
-"I should have done this two years ago."
-
-"Jimmy."
-
-"Yeah."
-
-"You did it on the right day. Don't relitigate the date."
-
-He laughed.
-
-"Thandi."
-
-"Yeah."
-
-"Build the schools."
-
-"I'm building the schools."
-
-She hung up.
-
-Jimmy set the phone down.
-
-Looked at the dashboard.
-
-Worked through the day.
+The meeting ended at eight forty-three AM.
 
 ---
 
-The Beast Games Friday casting cycle ran on the empire.app starting at eleven AM Eastern Friday.
+The Kindles arrived at the studio's loading dock at eleven oh-eight AM Thursday on a single pallet from an Amazon distribution center in North Carolina. The pallet had four hundred and ten Kindle Paperwhites in white retail boxes. The build script Karim's lead engineer had written across Tuesday and Wednesday took the three EPUBs, copied them onto each Kindle via a USB hub Karim's facilities team had built out of nine fifty-port USB hubs and a small rack in the back of warehouse number one, registered each Kindle to a generic email address Lin had set up Wednesday afternoon, and labeled each Kindle with a small adhesive sticker bearing the assigned employee's name in Karim's handwriting.
 
-The cycle was, on the standard model of Beast Games' new-season casting, a single-day operational push that processed about fourteen hundred applicants through six review stages — initial-screen video review, application-form verification, background-check submission, medical-clearance submission, agent-contract negotiation triage, and final scheduling. The cycle had, across the past four seasons, produced about two operational failures per cycle on average, primarily in the agent-contract triage and background-check stages, where applicants who appeared qualified at the initial-screen stage turned out, forty-eight to ninety-six hours later, to have constraints that should have screened them out earlier.
+The labeling took Karim six hours.
 
-The two-failures-per-cycle had, on Karim's accounting, cost the production approximately three hundred thousand dollars per failure across the past four seasons.
+Karim labeled the Kindles by hand because, on Karim's read of the operational symbolism of the moment, the labels needed to be in Karim's handwriting.
 
-The Friday cycle on the empire.app ran the same fourteen hundred applicants through the same six stages.
+By Friday at six AM every desk in the building had a Kindle on it.
 
-The empire.app halted the line eleven times during the cycle.
+By Friday at nine AM the wall screen behind the espresso machine had been installed by a contractor Karim had called Wednesday night. The screen was a sixty-five-inch wall-mounted display. The display was wired into a small Raspberry Pi running a dashboard Karim's analytics-lead Priya had built in twenty-three hours of straight work. The dashboard read, at nine oh-six AM Friday, *Hours Saved This Week, Company-Wide: 0.*
 
-On Karim's review of the runtime logs at four PM Friday, the eleven halts were eleven applicants who, at the initial-screen stage, the runtime's seventeen-boundary check had identified as having one or more downstream constraint violations that would, in the pattern of the past four seasons, have surfaced as failures forty-eight to ninety-six hours later.
+The display was the scoreboard.
 
-The runtime did not reject the applicants.
+The week zero baseline was the baseline.
 
-The runtime, on the configured behavior of the check, halted the line, surfaced the specific constraint, and routed each applicant to a manual-review queue the casting team could process across the next four hours with full visibility into what had triggered the halt.
+The first cohort had finished the leadership materials at four PM Friday.
 
-The casting team processed the eleven across the next three hours and forty minutes.
+The second cohort kicked off at seven AM Tuesday of the following week.
 
-Eight cleared on additional documentation.
+---
 
-Three declined on the surfaced constraints.
+Day fourteen of the rollout was a Tuesday in the second week of June.
 
-The three declines were, on the cost-per-failure history of the past four seasons, about nine hundred thousand dollars of avoided downstream cost.
+The wall screen behind the espresso machine read, at noon Tuesday: *Hours Saved This Week, Company-Wide: 4,127.*
 
-The eight clears were, on the standing operational reality of how previous manual-review queues had disrupted casting cycles, about a hundred and forty hours of avoided casting-team labor.
+Karim was at the espresso machine at noon Tuesday.
 
-The Friday cycle finished at six twelve PM Eastern.
+Karim watched the counter for thirty seconds.
 
-Fourteen hundred and three applicants. One thousand three hundred and eighty-eight cleared to the on-site interview stage. Three declined. Zero escalated to Jimmy's dashboard.
+Karim picked up his phone.
 
-In the seven hours and twelve minutes of the cycle, Jimmy had received zero notifications.
+He texted Jimmy: *4,127.*
 
-In the same seven hours and twelve minutes he had filmed two cold-opens for the personal channel, recorded the audio for a podcast appearance scheduled for the following week, taken Thea on a forty-five-minute lunch in downtown Greenville, and read about sixty pages of a book on the history of the Erlanger Toyota plant Karim had handed him Wednesday morning with the note *read this on the plane to Missouri but don't tell Christopher I gave it to you.*
+Jimmy's reply: *Tell me about a specific.*
 
-He had not, in the same seven hours and twelve minutes, been the cord on Beast Games.
+Karim: *Thumbnail bay 3. Used to be 6 hours per thumbnail iteration cycle on a new video. As of Monday morning, 41 minutes. The bay shipped twenty-two iterations yesterday. Yesterday's record was the most thumbnails the bay has produced in a single day in the studio's nine-year history. The bay leads are happier than I have seen them.*
 
-The cord had been the runtime.
+Jimmy: *Tell me another.*
 
-At six fourteen PM Karim walked into the office.
+Karim: *Ana's office. Ticket queue at the chief-of-staff level was running at 47 open tickets a day average. As of yesterday: 11. Median ticket close time was 2.3 days. As of yesterday: 9 minutes. Ana sent me a screenshot of her open queue at 4 PM yesterday with a single sentence in the message: "Karim — what do I do with my afternoon."*
 
-Sat down at the Type 4 table.
+Jimmy: *Tell me a third.*
 
-"Jimmy."
+Karim: *Maritza. Legal triage. The cease-and-desist response would have taken her office about a week, end to end, two months ago. The cease-and-desist response Maritza shipped Monday afternoon to that new product-naming dispute from a small candy company in Vermont — Maritza did it in 41 minutes, alone, at her desk, between two other meetings. She walked into my office at 3 PM yesterday and said, in three sentences: "Karim. I just billed a week of work in 41 minutes. I do not know what to do with this. We need to talk about my role."*
 
-"Karim."
+Jimmy: *Karim.*
 
-"The Friday cycle finished two minutes ago. Cleared thirteen-eighty-eight. Declined three on surfaced constraints. Zero escalations to you. The cycle's operational performance, on every measure I can apply, is the best Beast Games casting cycle in four seasons. About nine hundred thousand of avoided downstream cost on the declines. About a hundred and forty hours of avoided casting-team labor on the transparency. The performance is, on my honest accounting at six fourteen PM Friday, the operational signature of an empire that has, for the first time in nine years, found its architecture."
+Karim: *Yes.*
 
-"Karim."
+Jimmy: *Day fourteen.*
 
-"Yeah."
+Karim: *Day fourteen.*
 
-"Send Christopher a screenshot of the dashboard."
+Jimmy: *We are not done.*
 
-"What do I caption it."
+Karim: *No.*
 
-"Don't caption it. Send the screenshot. He'll recognize what he's looking at."
+---
 
-Karim pulled out his phone, took the screenshot, sent it to Christopher's GitHub-public email at six fifteen PM Eastern.
+Day twenty-one. Tuesday third week of June.
 
-The reply came at eleven forty-one PM Central Friday night — about twenty-three minutes after Christopher had come back into the workshop after Sarah's Friday-night supper.
+The wall screen read, at noon: *Hours Saved This Week, Company-Wide: 11,432.*
 
-Three lines:
+Cohort three had finished the previous Friday.
 
-*Good.*
+Cohort four had kicked off Tuesday morning.
 
-*The cord is the runtime.*
+Karim's daily standup at seven AM was now attended by sixty people at the espresso machine instead of the original twelve. Ana's drop-in office hours had moved from the studio lounge to the main floor because the lounge could not hold the people who showed up.
 
-*— C.B.*
+Jimmy had not, in the past three weeks, slept fewer than seven hours in any night.
 
-Karim showed Jimmy.
+Thea had not, in the past three weeks, picked up a paintbrush.
 
-Jimmy read it three times.
+Thea had, instead, started running.
 
-"Karim."
+Thea had bought a pair of running shoes the second Saturday of the rollout and had been running in the small park three blocks from the house every morning at six fifteen AM. The runs were two miles at first. By the third week of the rollout the runs were four miles. Jimmy did not ask Thea about the runs. Thea did not ask Jimmy about the rollout. The runs were Thea's. The rollout was Jimmy's. The two of them ate dinner together at the kitchen table at seven PM every weekday and at noon every Saturday and Sunday.
 
-"Yeah."
+Day twenty-one was the first time in eleven weeks the runway had not, in some operational form, been the binding constraint of the marriage.
 
-"The cord is the runtime."
+Day twenty-one was day one hundred and four of ninety.
 
-"The cord is the runtime."
+Thea had not, in fourteen days past the runway, said anything about it.
 
-"Eighty-four days into the ninety. Closing the window six days early."
+---
 
-"Jimmy."
+Day twenty-eight. Tuesday last week of June.
 
-"Yeah."
+The wall screen read, at noon: *Hours Saved This Week, Company-Wide: 19,841.*
 
-"Go home."
+Cohort five and six had finished. Cohort seven was on day four. Cohort eight had kicked off the day before.
 
-"Going home."
+Karim walked into Jimmy's office at three PM Tuesday with a small portable speaker and a printed sheet.
 
-He grabbed his jacket and the bound notebook Karim had bought him in 2022 that he had, across the previous week, written about forty pages in.
+Karim set the speaker on the desk.
 
-Out of the office.
+Karim said: *"Jimmy. We are ahead of schedule. The eighth cohort is going to finish on day thirty-three, which is five days past the original target, but the per-cohort throughput numbers are coming in higher than the projection by about forty percent. We are going to land the rollout at approximately twenty-three thousand five hundred hours saved per week, company-wide, by the morning of day thirty-five. The projection was eighteen thousand. We are forty percent over."*
 
-Drove home.
+Jimmy looked at the printed sheet.
 
-At the house at six forty-eight PM Eastern Friday evening.
+The printed sheet had, at the top, the company's per-employee throughput by department in the week of June twenty-second compared to the week of March fifteenth — the week the runway had started.
 
-Thea was on the back porch.
+Every department was between three point one and five point three times the March-fifteenth baseline.
 
-She had two glasses of wine.
+The company-wide average was four point one.
 
-She handed him one.
+Jimmy said: *"Karim."*
 
-"Day seventy-six."
+Karim said: *"Yes."*
 
-"Day seventy-six. The model works. The cord is the runtime. We're closing the ninety-day window six days early."
+Jimmy said: *"This is the part where I film the video."*
 
-"Jimmy."
+Karim said: *"This is the part where you film the video."*
 
-"Yeah."
+Jimmy said: *"Bay three. Friday afternoon. The wall screen behind me, mirrored on the green-screen feed. I want the live counter ticking in the shot."*
 
-"I'm closing it tonight."
+Karim said: *"Friday at three. Ji-won is on it. I'll have the green-screen mirror of the wall screen rigged up by Friday morning."*
 
-He looked at her.
+Jimmy said: *"Karim."*
 
-"Close it."
+Karim said: *"Yes."*
 
-"Closed."
+Jimmy said: *"Title."*
 
-She drank the wine.
+Karim said: *"You tell me."*
 
-He drank the wine.
+Jimmy thought for nine seconds.
 
-The empire, for the first time in nine years, was running without Jimmy at the bottom of every constraint.
+He said: *"*I made every single one of my employees a superhuman in thirty days.*"*
 
-The Hershey Company was, at six forty-nine PM Eastern that same evening, in a conference room in the Trust building in Hummelstown, where Eleanor Whitcomb was in the eleventh minute of an eleven-minute speech she had been preparing across the previous three weeks.
+Karim wrote it down.
 
-That speech is the next chapter.
+Karim said: *"That's the title."*
 
-It is, on Eleanor Whitcomb's honest accounting, the speech that ends her thirty-eight-year career at the Hershey Trust Company.
+---
 
-Chapter 11 starts now.
+Day thirty-five. Tuesday first week of July.
+
+The video dropped at ten AM Eastern.
+
+The view count at noon was eleven million.
+
+The view count at five PM was thirty-four.
+
+The view count at noon Wednesday was eighty-seven.
+
+The view count at noon Thursday was one hundred and ninety-three.
+
+The view count at four PM Friday was three hundred and eighty-one.
+
+Jimmy was at his desk at four oh-six PM Friday looking at the view count when Ana walked in.
+
+Ana set a small envelope on the corner of his desk.
+
+Ana said: *"Read it."*
+
+Jimmy opened the envelope.
+
+The envelope contained a single sheet of paper. The sheet contained a list. The list was nineteen names — every name on the list was a senior executive at one of the world's largest media companies, technology companies, or consumer-packaged-goods companies. Each name had a phone number next to it. Each phone number was annotated, in Ana's small handwriting, with the executive's title and the company.
+
+Ana said: *"Inbound this week. Every one of them watched the video. Every one of them wants to know what the playbook is. Six of them have, in their messages to me, used the word *acquire.* Three have used the word *partnership.* Eleven have used the word *learn.* Two have used the word *invest.* I am not putting any of them on your calendar. I am giving you the list so that you know what the inbound is."*
+
+Jimmy said: *"Ana."*
+
+Ana said: *"Yes."*
+
+Jimmy said: *"The playbook is open-source. The playbook is on the Beast Philanthropy website as of nine AM yesterday morning. The playbook is free. The playbook is in markdown. Anyone with a Kindle and four dollars in cloud-build cost can deploy it to their organization tomorrow morning."*
+
+Ana said: *"I know. I posted it. The inbound is the inbound anyway. The inbound knows the playbook is free. The inbound wants you, not the playbook."*
+
+Jimmy said: *"What do you want me to do."*
+
+Ana said: *"I want you to not call any of them. I want you to not respond to any of them. I want you to keep running the empire. I want you to know that every one of these nineteen executives is, on the operational reality of what is about to land on their desks across the next six months, going to spend the next two years trying to figure out how to run their organizations the way you are about to run yours. That is the inbound. The inbound is not for you. The inbound is for the playbook. The playbook is going to spread. The playbook spreading is the playbook spreading. You are going to keep doing your work."*
+
+Jimmy said: *"Ana."*
+
+Ana said: *"Yes."*
+
+Jimmy said: *"You are the best chief of staff in the United States."*
+
+Ana said: *"Yes I am. Go home. It is four eleven PM Friday. Thea is making dinner at six thirty. Be there at six fifteen. You came home at six fifteen for the past nine consecutive Fridays. Do not break the streak."*
+
+Jimmy laughed.
+
+He stood up.
+
+He picked up his jacket.
+
+He looked at the wall calendar on the way out of the office.
+
+The square for today read *113 / 90.*
+
+Twenty-three days past the runway.
+
+Thea had not, in twenty-three days, said anything about it.
+
+He walked out of the office.
+
+He drove home in the late-afternoon light.
+
+He arrived at the house at six fourteen PM.
+
+Thea was at the kitchen counter cutting an onion.
+
+She did not look up when he walked in.
+
+She said: *"Six fourteen. One minute early."*
+
+He said: *"Six fourteen."*
+
+She said: *"How was the day."*
+
+He said: *"Video dropped. Three eighty-one million views by four PM. Inbound list nineteen names long. Counter on the wall hit twenty-three thousand four hundred and sixteen hours company-wide this week."*
+
+He pulled out his phone.
+
+He showed her the counter screenshot.
+
+She looked at it for nine seconds.
+
+She handed the phone back.
+
+She said: *"Jimmy."*
+
+He said: *"Yes."*
+
+She said: *"I do not know what any of those numbers mean."*
+
+He said: *"I know you don't."*
+
+She said: *"I know you came home at six fifteen on a Friday. That is the new thing. The new thing is the thing. Cut the carrots. Dinner is in twenty minutes."*
+
+He took the cutting board.
+
+He cut the carrots.
+
+He set the table.
+
+They ate dinner.
+
+The runway was, on the kitchen calendar that had replaced the studio wall calendar in Thea's tracking apparatus, no longer being tracked.
+
+The new thing was the new thing.
+
+The substrate was on a USB drive in the safe in the home office.
+
+The substrate was the substrate.
+
+The substrate had not yet been deployed.
+
+The substrate was the next phase.
+
+The next phase started Monday.
+
+The TAO rollout was, on the wall screen behind the espresso machine at the studio at six twenty-three PM Friday, at twenty-three thousand four hundred and sixteen hours company-wide for the week.
+
+The counter ticked to twenty-three thousand four hundred and twenty-one.
+
+The counter ticked again.
+
+The counter ticked.
+
+The empire was four times the empire it had been at the start of the rollout.
+
+The empire was on the same headcount.
+
+The empire had not yet started running on the substrate.
+
+The substrate was Monday.
+
+Monday was Monday.
+
+The new thing was the new thing.
+
+Jimmy and Thea finished dinner at seven forty-one PM.
+
+She went for a run in the small park.
+
+He cleaned up the kitchen.
+
+He read on the couch until she came back.
+
+She came back at eight thirty-four.
+
+They went to bed at ten oh-six PM.
+
+He slept eight hours and seventeen minutes.
+
+He woke up at six twenty-three AM Saturday.
+
+Saturday was the day before Sunday.
+
+Sunday was the day before Monday.
+
+Monday was the substrate.
+
+The substrate was the next phase.
+
+He was ready.
