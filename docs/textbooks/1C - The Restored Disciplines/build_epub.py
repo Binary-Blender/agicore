@@ -1,0 +1,408 @@
+#!/usr/bin/env python3
+"""
+Build script for: The Restored Disciplines of Software Engineering
+Author: Christopher Bender
+Publisher: Synmatic
+
+Volume 1C in the AI Computer Science series. Peer to 1A (Cognition Systems
+Engineering) and 1B (Semantic Systems Engineering).
+
+Builds gracefully against partial chapter sets — missing chapters are
+skipped with a warning so the EPUB can be assembled mid-drafting.
+"""
+
+import os
+import re
+import zipfile
+from ebooklib import epub
+
+BOOK_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_FILE = os.path.join(BOOK_DIR, "restored_disciplines.epub")
+
+TITLE = "The Restored Disciplines of Software Engineering"
+SUBTITLE = "Practices the Effort Tax Killed and AI Brings Back"
+AUTHOR = "Christopher Bender"
+PUBLISHER = "Synmatic"
+LANGUAGE = "en"
+IDENTIFIER = "agicore-restored-disciplines-textbook-001"
+
+PARTS = [
+    ("Part I: The Effort Tax Thesis", [1, 2, 3]),
+    ("Part II: Specification & Estimation", [4, 5, 6, 7, 8, 9]),
+    ("Part III: Quality & Verification", [10, 11, 12, 13, 14]),
+    ("Part IV: Knowledge & Documentation", [15, 16, 17, 18, 19]),
+    ("Part V: Architecture & Reuse", [20, 21, 22, 23, 24]),
+    ("Part VI: The Restored Practitioner", [25, 26, 27, 28]),
+]
+
+CHAPTER_TITLES = {
+    1:  "The Effort Tax",
+    2:  "No Silver Bullet, Inverted",
+    3:  "The Discipline Recovery Pattern",
+    4:  "Function Point Analysis",
+    5:  "COCOMO II",
+    6:  "Formal Methods I — TLA+",
+    7:  "Formal Methods II — Z, Alloy, B",
+    8:  "Design by Contract",
+    9:  "Software Cost Reduction",
+    10: "Cleanroom Software Engineering",
+    11: "Fagan Inspections",
+    12: "Zero Defects Software",
+    13: "Operational Profiles for Reliability",
+    14: "Statistical Process Control for Software",
+    15: "Literate Programming",
+    16: "The Ubiquitous Language",
+    17: "Architecture Decision Records",
+    18: "Requirements Traceability",
+    19: "Process Archaeology",
+    20: "The Software IC",
+    21: "CRC Cards",
+    22: "Aspect-Oriented Programming",
+    23: "Knowledge Graphs and Semantic Tagging",
+    24: "Behavior-Driven Development with Maintained Gherkin",
+    25: "Test Coverage Mapping at the Feature Level",
+    26: "Conceptual Integrity in Multi-Author Codebases",
+    27: "The Restored Practitioner's Workflow",
+    28: "The Trajectory — What Gets Restored Next",
+}
+
+CSS = b"""
+body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1em;
+    line-height: 1.7;
+    margin: 5%;
+    color: #1a1a1a;
+    text-align: justify;
+}
+h1 {
+    font-size: 1.6em;
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    font-weight: bold;
+    text-align: left;
+}
+h2 {
+    font-size: 1.25em;
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+    font-weight: bold;
+}
+h3 {
+    font-size: 1.05em;
+    margin-top: 1em;
+    margin-bottom: 0.3em;
+    font-style: italic;
+}
+p {
+    margin: 0.5em 0;
+    text-indent: 1.5em;
+}
+p.first { text-indent: 0; }
+p.chapter-num {
+    font-size: 0.85em;
+    color: #888;
+    text-indent: 0;
+    margin-bottom: 0.2em;
+    letter-spacing: 0.05em;
+}
+p.part-label {
+    font-size: 0.9em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #555;
+    text-indent: 0;
+    margin-bottom: 1em;
+}
+p.scene-break {
+    text-align: center;
+    text-indent: 0;
+    margin: 1.5em 0;
+}
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.78em;
+    background: #f5f5f5;
+    border-left: 3px solid #999;
+    padding: 0.8em 1em;
+    margin: 1em 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85em;
+    background: #f0f0f0;
+    padding: 0.1em 0.25em;
+}
+.title-page {
+    text-align: center;
+    margin-top: 15%;
+}
+.title-page h1 {
+    font-size: 2em;
+    margin-bottom: 0.4em;
+}
+.title-page h2 {
+    font-size: 1.1em;
+    font-style: italic;
+    font-weight: normal;
+    color: #555;
+    margin-bottom: 1.5em;
+}
+.copyright {
+    text-align: center;
+    margin-top: 20%;
+    font-size: 0.85em;
+    line-height: 2;
+}
+.colophon {
+    text-align: center;
+    margin-top: 12%;
+}
+.imprint-logo {
+    max-width: 85%;
+    margin: 2em auto;
+    display: block;
+}
+.imprint-tagline {
+    font-size: 0.85em;
+    letter-spacing: 0.25em;
+    text-indent: 0;
+    color: #555;
+    margin-top: 0.5em;
+}
+.imprint-note {
+    text-indent: 0;
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 1.5em;
+    line-height: 1.6;
+}
+"""
+
+
+def md_to_html(md_text: str) -> str:
+    lines = md_text.strip().split('\n')
+    html_parts = []
+    in_code_block = False
+    code_lines = []
+    first_para = True
+
+    def flush_code():
+        code_content = '\n'.join(code_lines)
+        code_content = code_content.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        html_parts.append(f'<pre>{code_content}</pre>')
+        code_lines.clear()
+
+    for raw_line in lines:
+        line = raw_line.rstrip()
+
+        if line.startswith('```'):
+            if not in_code_block:
+                in_code_block = True
+            else:
+                in_code_block = False
+                flush_code()
+                first_para = True
+            continue
+
+        if in_code_block:
+            code_lines.append(raw_line)
+            continue
+
+        if not line.strip():
+            first_para = True
+            continue
+
+        if line.startswith('### '):
+            content = inline_format(line[4:])
+            html_parts.append(f'<h3>{content}</h3>')
+            first_para = True
+            continue
+        if line.startswith('## '):
+            content = inline_format(line[3:])
+            html_parts.append(f'<h2>{content}</h2>')
+            first_para = True
+            continue
+        if line.startswith('# '):
+            content = inline_format(line[2:])
+            html_parts.append(f'<h1>{content}</h1>')
+            first_para = True
+            continue
+
+        if re.match(r'^---+\s*$', line):
+            html_parts.append('<p class="scene-break">* * *</p>')
+            first_para = True
+            continue
+
+        processed = line.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        processed = inline_format(processed)
+
+        cls = 'first' if first_para else ''
+        if cls:
+            html_parts.append(f'<p class="{cls}">{processed}</p>')
+        else:
+            html_parts.append(f'<p>{processed}</p>')
+        first_para = False
+
+    if in_code_block and code_lines:
+        flush_code()
+
+    return '\n'.join(html_parts)
+
+
+def inline_format(text: str) -> str:
+    text = re.sub(r'`([^`]+)`', lambda m: f'<code>{m.group(1).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</code>', text)
+    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+    text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
+    return text
+
+
+def make_item(uid, filename, title, body_html, style_item):
+    item = epub.EpubHtml(uid=uid, file_name=filename, title=title, lang='en')
+    item.content = body_html.encode('utf-8')
+    item.add_item(style_item)
+    return item
+
+
+def main():
+    book = epub.EpubBook()
+    book.set_identifier(IDENTIFIER)
+    book.set_title(TITLE)
+    book.set_language(LANGUAGE)
+    book.add_author(AUTHOR)
+    book.add_metadata('DC', 'publisher', PUBLISHER)
+    book.add_metadata('DC', 'description', f"{SUBTITLE}. Graduate-level textbook recovering software engineering disciplines (Function Point Analysis, Cleanroom, Fagan Inspections, Design by Contract, Literate Programming, the Software IC, and more) that produced documented results but were abandoned because their human-effort tax exceeded the perceived benefit. AI eliminates the tax. The disciplines return. Volume 1C in the AI Computer Science series; peer to 1A Cognition Systems Engineering and 1B Semantic Systems Engineering.")
+    for s in ('Software Engineering', 'Artificial Intelligence', 'Computer Science', 'Systems Engineering'):
+        book.add_metadata('DC', 'subject', s)
+    book.add_metadata('DC', 'rights', f'Copyright © 2026 {AUTHOR}. All rights reserved.')
+
+    style = epub.EpubItem(uid='style', file_name='style/main.css', media_type='text/css', content=CSS)
+    book.add_item(style)
+
+    logo_path = os.path.join(BOOK_DIR, 'synmatic_logo.jpg')
+    if os.path.exists(logo_path):
+        with open(logo_path, 'rb') as f:
+            logo_content = f.read()
+        logo_item = epub.EpubItem(
+            uid='synmatic_logo',
+            file_name='images/synmatic_logo.jpg',
+            media_type='image/jpeg',
+            content=logo_content,
+        )
+        book.add_item(logo_item)
+
+    spine = ['nav']
+    toc = []
+
+    title_body = f'''<div class="title-page">
+<h1>{TITLE}</h1>
+<h2>{SUBTITLE}</h2>
+<p><strong>{AUTHOR}</strong></p>
+<p>{PUBLISHER}</p>
+</div>'''
+    title_page = make_item('title_page', 'title.xhtml', 'Title Page', title_body, style)
+    book.add_item(title_page)
+    spine.append(title_page)
+
+    copyright_body = f'''<div class="copyright">
+<p>{TITLE.upper()}</p>
+<p><em>{SUBTITLE}</em></p>
+<p>&nbsp;</p>
+<p>Copyright &#169; 2026 {AUTHOR}</p>
+<p>All rights reserved.</p>
+<p>&nbsp;</p>
+<p>Published by {PUBLISHER}</p>
+<p>&nbsp;</p>
+<p>Volume 1C in the AI Computer Science series.</p>
+<p>Peer to 1A <em>Cognition Systems Engineering</em> and 1B <em>Semantic Systems Engineering</em>.</p>
+<p>&nbsp;</p>
+<p>Agicore is open-source software licensed under the MIT License.</p>
+<p>&nbsp;</p>
+<p>First Edition, 2026</p>
+</div>'''
+    copyright_page = make_item('copyright', 'copyright.xhtml', 'Copyright', copyright_body, style)
+    book.add_item(copyright_page)
+    spine.append(copyright_page)
+
+    chapters_present = 0
+    chapters_total = 0
+
+    for part_idx, (part_title, chapter_nums) in enumerate(PARTS, 1):
+        present_in_part = [n for n in chapter_nums if os.path.exists(os.path.join(BOOK_DIR, f'chapter_{n:02d}.md'))]
+        if not present_in_part:
+            chapters_total += len(chapter_nums)
+            continue
+
+        ch_list = ''.join(
+            f'<p>Chapter {n}: {CHAPTER_TITLES[n]}</p>' for n in chapter_nums
+        )
+        part_body = f'<p class="part-label">{part_title}</p>\n{ch_list}'
+        part_item = make_item(
+            f'part_{part_idx}', f'part_{part_idx}.xhtml', part_title, part_body, style
+        )
+        book.add_item(part_item)
+        spine.append(part_item)
+
+        part_toc_entries = []
+        for ch_num in chapter_nums:
+            chapters_total += 1
+            ch_path = os.path.join(BOOK_DIR, f'chapter_{ch_num:02d}.md')
+            if not os.path.exists(ch_path):
+                print(f"  [skip] chapter_{ch_num:02d}.md not yet drafted")
+                continue
+            with open(ch_path, 'r', encoding='utf-8') as f:
+                md = f.read()
+
+            ch_title = CHAPTER_TITLES[ch_num]
+            body = f'<p class="chapter-num">Chapter {ch_num}</p>\n<h1>{ch_title}</h1>\n' + md_to_html(md)
+
+            uid = f'chapter_{ch_num:02d}'
+            filename = f'chapter_{ch_num:02d}.xhtml'
+            ch_item = make_item(uid, filename, f'Chapter {ch_num}: {ch_title}', body, style)
+            book.add_item(ch_item)
+            spine.append(ch_item)
+            part_toc_entries.append(epub.Link(filename, f'Chapter {ch_num}: {ch_title}', uid))
+            chapters_present += 1
+
+        toc.append((epub.Section(part_title), part_toc_entries))
+
+    colophon_body = '''<div class="colophon">
+<img src="images/synmatic_logo.jpg" alt="Synmatic" class="imprint-logo"/>
+<p class="imprint-tagline">NEURAL SYSTEMS &nbsp;|&nbsp; AI WORKFLOWS</p>
+<p class="imprint-note">Published by Synmatic.</p>
+<p class="imprint-note">A research-lab imprint dedicated to AI-native systems engineering.</p>
+</div>'''
+    colophon = make_item('colophon', 'colophon.xhtml', 'Colophon', colophon_body, style)
+    book.add_item(colophon)
+    spine.append(colophon)
+
+    book.toc = toc
+    book.spine = spine
+    book.add_item(epub.EpubNcx())
+    book.add_item(epub.EpubNav())
+
+    epub.write_epub(OUTPUT_FILE, book, {})
+    print(f"EPUB written: {OUTPUT_FILE}")
+
+    with zipfile.ZipFile(OUTPUT_FILE, 'r') as z:
+        names = z.namelist()
+        print(f"Files in EPUB: {len(names)}")
+        assert 'mimetype' in names, "Missing mimetype"
+        assert any('content.opf' in n for n in names), "Missing content.opf"
+        print("Basic validation passed.")
+
+    total_words = sum(
+        len(open(os.path.join(BOOK_DIR, f'chapter_{n:02d}.md'), encoding='utf-8').read().split())
+        for _, chs in PARTS for n in chs
+        if os.path.exists(os.path.join(BOOK_DIR, f'chapter_{n:02d}.md'))
+    )
+    print(f"Chapters drafted: {chapters_present} / {chapters_total}")
+    print(f"Total words: {total_words:,}")
+    print(f"EPUB size: {os.path.getsize(OUTPUT_FILE) / 1024:.1f} KB")
+
+
+if __name__ == '__main__':
+    main()
