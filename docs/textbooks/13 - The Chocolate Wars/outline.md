@@ -177,6 +177,22 @@ The book ends here.
 
 ---
 
+## The epilogue — *From the Future*
+
+After the main fourteen chapters and the post-credits scene, the book closes with an **Epilogue** framed as a future-history excerpt — a "lightly condensed" reading from *Industrial Reorganization in the Post-Frontier Era: A Casebook*, edited by Linnea Mbeki and Theo Ortega-Reyes, AI WIN-WIN Institute Press, 2057 edition, Chapter Four: "The Chocolate Wars." The voice is dry-academic in Christopher's series cadence — declarative, numerical, fragment-friendly — with a quiet undercurrent of the textbook's own awareness that it is describing a turning point. The structure:
+
+- **The market chronology** — category-share trajectory across the Wars, the cross at Year Eleven, the inversion approximately seven decades faster than the precedent.
+- **The acquisition** — Feastables–Hershey deal announced November fourth, Year Twelve. Total deal value fifty-four-point-three billion dollars in stock and cash, ninety-one-percent premium to Hershey's Year Nine share price. The FTC declines to challenge on the grounds that the acquirer's substrate is open source and available to every prospective competitor at the cost of a `git clone`. Harold Brennan signs the resolution at three forty-seven PM Eastern. Eleanor Whitcomb is in the room. She stops at the Milton Hershey statue on the way to her car. She does not, on her own subsequent recollection, say anything to the statue.
+- **The structural inversion** — by acquisition close, four thousand two hundred Beast Philanthropy schools operating across ten African nations with 1.83M students enrolled, against the Milton Hershey School's residual 2,100. *The candy bar that fed two thousand children for a century became, under one substrate, the candy bar that feeds two million.*
+- **The substrate** — by the close of the Wars, agicore-main shows ~742K contributors, ~2.3M production `.agi` specifications, ~$8T of enterprise-software market cap displaced from SAP / Oracle / Salesforce / Workday / ServiceNow / Epic / Cerner across categories. The maintainer continues to commit fourteen times a week from his kitchen and accepts none of the Forbes-cover offers.
+- **What the period is known for** — the conventional four-reason curriculum: organizational-antibody collapse, the operating model freeing the operator, *"we are competing against a file format"* as the leaked epitaph, philanthropic infrastructure operationally indistinguishable from the operating company.
+- **The mirror** — the load-bearing universal lesson: **Hershey's was every company.** The lesson is not chocolate-specific. The lesson is not CPG-specific. The lesson is: *the existence of an open-source substrate that compresses your category's institutional knowledge into declarative code is not a vendor threat, not a startup threat, not a competitor threat — it is an organizational-design threat that the standard hiring practices of your industry have, across the previous four decades, structurally rendered you incapable of recognizing in time.* Every company that reads the Wars should see itself in Hershey's. The reader who concludes the lesson does not apply to their organization — because their category is different, their relationships deeper, their compliance moat structural, *something* — is the reader the discipline is most interested in, because that reader is, on the standard projection, three to eleven years from being the protagonist of the next casebook. The Wars are read for the mirror. The mirror is the lesson.
+- **The maintainer's quiet remark** — three hours after the acquisition announcement, Christopher posts a six-word comment on an unrelated GitHub issue: *"The work continues. The work continues. — C.B."* The comment is, on the discipline's consensus, the closing remark of the Chocolate Wars period and the opening remark of the era that followed.
+
+The epilogue file lives at `epilogue.md` and is wired into `build_epub.py` between the post-credits scene and the EPUB's terminal artifacts.
+
+---
+
 ## The post-credits scene
 
 Yes, there is one.

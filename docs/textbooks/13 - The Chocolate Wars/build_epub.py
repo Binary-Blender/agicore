@@ -189,6 +189,16 @@ the AI WIN-WIN Institute textbook shelf.</p>
         spine.append(pc_item)
         toc.append(epub.Link('post_credits.xhtml', 'Post-Credits Scene', 'post_credits'))
 
+    # Epilogue — future-history excerpt
+    ep_path = os.path.join(BOOK_DIR, 'epilogue.md')
+    if os.path.exists(ep_path):
+        with open(ep_path, encoding='utf-8') as f:
+            ep_md = f.read()
+        ep_item = make_item('epilogue', 'epilogue.xhtml', 'Epilogue: From the Future', md_to_html(ep_md), style)
+        book.add_item(ep_item)
+        spine.append(ep_item)
+        toc.append(epub.Link('epilogue.xhtml', 'Epilogue: From the Future', 'epilogue'))
+
     book.toc = toc
     book.spine = spine
     book.add_item(epub.EpubNcx())
