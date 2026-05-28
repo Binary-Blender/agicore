@@ -360,31 +360,31 @@ Ana said: *"Karim."*
 
 Karim said: *"Ana."*
 
-Ana said: *"Where is Jimmy."*
+Ana said: *"Coverage check."*
 
-Karim said: *"Missouri."*
+Karim said: *"Production floor is clean. Maritza is at temporary lift-up authority on the Friday rollout video. Devon is at temporary lift-up authority on the wrapper-batch QC. Both are inside the SKILLDOC bracket I would have signed off on if I were on the floor. The bracket holds through Sunday night. I will be on the floor Monday morning at six AM. How is the front office holding."*
 
-Ana said: *"Karim. Jimmy's calendar does not have Missouri on it."*
+Ana said: *"Front office is clean. I moved the Walmart quarterly to Tuesday. Marcus's outside counsel called on a separate matter and I sat the call myself. The board comms package for Friday is at draft three. Renata's HR review for Q2 is rescheduled to the week after Jimmy's back. Thea has been at the house. I checked in with her Thursday and Friday. She is painting. She knows where Jimmy is. She is, on her own honest read of the situation, fine."*
 
-Karim said: *"No it does not."*
+Karim said: *"Good."*
 
-Ana said: *"Karim."*
-
-Karim said: *"Ana. Jimmy is on a research trip he did not pre-clear with you. He is going to come back from the trip a different operator than the one who left. He is going to come back with a USB drive in his jacket pocket. The USB drive is going to be the next phase of the empire. The next phase is going to start on Monday morning at eight AM Eastern in the studio's main conference room. You are going to be the executive sponsor of the next phase. I am going to be the operational lead of the next phase. Jimmy is going to walk into the conference room on Monday morning, hold up the USB drive, and tell us we are running the next phase on every one of the four hundred and ten employees of this company in thirty days. The next phase is going to be the answer to every problem we have been managing around for the past three years. I have been waiting six years for the next phase. You have been waiting two. Both of us are about to get it. Trust me on this. Do not call Jimmy. Do not text him. Let him do the research trip. He will come back on Sunday night. The Suburban is going to pick him up at Greenville Downtown at nine fifteen PM Eastern Sunday. Be at the house at nine forty PM. Bring dinner. Thea is going to be at the kitchen table painting. Eat dinner with them. Do not, in the dinner, ask Jimmy what he brought back. Wait for Monday morning at eight AM. The waiting is the waiting. The waiting is going to be worth it."*
-
-Ana was quiet for fourteen seconds.
+A beat.
 
 Ana said: *"Karim."*
 
 Karim said: *"Yes."*
 
-Ana said: *"I have been waiting for this trip for two years."*
+Ana said: *"I have been waiting for this trip for two years. I am not going to be the one who interrupts it."*
 
-Karim said: *"I know you have."*
+Karim said: *"He's going to come back a different operator than the one who left."*
 
-Ana said: *"I will be at the house at nine forty Sunday."*
+Ana said: *"That's the point."*
 
-Karim said: *"Bring the Thai food. Thea likes the Thai place on Pendleton."*
+Karim said: *"Yeah. That's the point."*
+
+A beat.
+
+Karim said: *"Sunday night. Greenville Downtown. Nine fifteen PM Eastern. Suburban will pick him up. Be at the house at nine forty. Bring the Thai place on Pendleton — Thea likes their basil chicken. Do not, in the dinner, ask Jimmy what he brought back. Wait for Monday morning at eight AM in the conference room. The waiting is the waiting. The waiting is going to be worth it."*
 
 Ana said: *"On it."*
 
