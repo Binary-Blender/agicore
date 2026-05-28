@@ -156,22 +156,6 @@ The five of them filed out over the next ninety seconds. Cole was the last out, 
 
 He walked to his office. Set both on the desk.
 
-The Echo bud vase was on the credenza.
-
-He stopped in front of it. He picked it up. Turned it in his hands. The glaze was the irregular sea-foam green Iona's studio had been mixing in lot batches of forty since 2019. He set it back down.
-
-He sat at the desk. He opened the laptop. He opened a new document.
-
-He titled it: *To: Iona Tran. Date: April of Year Three.*
-
-He typed for nineteen minutes.
-
-The letter was three paragraphs. The first said that the Q1 Year Three earnings call had run from 2:00 PM to 3:36 PM Pacific that afternoon and that he had used her name on the record. The second said that he had used her name because the customer the pivot had been for was Iona, and because the customer the pivot was going to keep being for, across the next thirty years of the company's life, was the eleven million versions of Iona that the platform was going to serve. The third said that he was going to be in Portland the following Tuesday to walk through Lacquer & Cup with his wife Annika, who had asked him to bring her, and that he was going to introduce Annika to Iona, and that he was going to buy a second Echo bud vase to put on the desk in the study at home so that he would see one Echo at the office and a second at home, every day, for the rest of his professional life.
-
-He saved it. He printed it. He signed it in his own hand. He addressed an envelope, slid the letter in, set the envelope at the corner of the desk for Eliza to mail in the morning.
-
-He shut the laptop. He stood.
-
 He picked up the encrypted phone and texted Annika.
 
 *Call landed. Yoshida asked the question. Answer was the answer. Coming home.*
@@ -182,28 +166,28 @@ Her reply came inside thirty seconds.
 
 *On my way.*
 
-He took the elevator down.
+Before he killed the laptop he opened the Mara channel.
+
+*Mara. Brunner Event Capital filed Form 13G on Carrick Series B preferred at three eleven Eastern this afternoon. Position is eleven point one percent. Sourced on the secondary in March at a discount. Brunner is an event-driven fund out of Manhattan. They have not traded a Carrick instrument before. They are positioning for the seventh-tranche close at the end of Year Seven. I want the signals desk on Brunner from tonight. I want a profile on my desk inside seventy-two hours. I want every position movement against any Carrick instrument under Brunner's control flagged in the morning brief from tomorrow forward.*
+
+Mara replied at 4:09 PM.
+
+*On it.*
+
+He shut the laptop. He stood. He took the elevator down.
 
 The Suburban was at the curb.
 
----
+The Carrick stock closed at 14% above pre-memo level.
 
-The Carrick stock closed Friday morning at 14% above pre-memo level.
+The platform held at one thousand four hundred enterprise tenants and three hundred and eighty thousand small and mid-market businesses through the end of the quarter.
 
-The *Wall Street Journal* ran the Adelaide Krug piece on the front page of the Friday morning paper.
+Reese signed the twelfth top-twenty American retailer to Carry on the second Tuesday in May.
 
-The piece was titled *The Pivot That Worked.*
+The Senate antitrust bill cleared committee on the third Tuesday.
 
-It named Iona Tran in the second paragraph. Cole Westerlund in the third. The four point two billion in the fifth. Drew Sallinger's covered short position in the eleventh, with Sallinger quoted directly: *the most disciplined retreat of my career and the most consequential single client call any activist fund has made in twenty years.*
+The Brunner profile landed on Cole's desk at six fifteen AM Pacific the following Monday.
 
-The piece closed with a sentence Cole read three times that morning in the breakfast room of the Bainbridge house, the rain on the window glass behind Annika across the table from him.
-
-*Carrick, Inc., in the spring of Year Three, is more useful to American commerce than the company that received the all-employee memo at six fifteen on a Monday morning eighteen months earlier was. The customer the company was built to serve in 1995 is still being served. The customer the company began serving on October twenty-eighth of Year One — eleven million versions of Iona Tran, who run twelve-person studios on the high streets of small cities in every region of the United States and who, today, are running their businesses on a platform that no longer competes with them — is now being served too. The platform carries them. The platform does not own them. The platform does not compete with them. The platform is, in operational terms, what its founder said it was going to be in the memo eighteen months ago. That is rarer than it should be. This piece is, in journalistic terms, the moment of formal recognition. The recognition is overdue. The recognition is real.*
-
-Cole set the paper down.
-
-Annika set her coffee on top of it.
-
-Outside, somewhere across the water, the early ferry sounded its horn. Another ferry, further out, answered it.
+He read it once. He filed it in the encrypted folder he had been keeping for thirty months, in the subfolder he had labeled *Year Seven.*
 
 End of Act 3.

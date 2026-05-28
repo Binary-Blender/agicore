@@ -1,28 +1,248 @@
 # Chapter 9: The Floor
 
-Anjali Rao landed in Phoenix at five forty PM Pacific on a Sunday in February of Year Two. Picked up the rental from the executive lot at Sky Harbor. Drove the twenty-three miles to the Carrick fulfillment center in Goodyear, Arizona, in the dark with the windows down and the desert air at sixty-one degrees.
+Mara Quinn knocked on the study door at the Bainbridge house at 10:47 PM Pacific on a Saturday in February of Year Two.
 
-She had been on the road nineteen days.
+Cole opened the door in shirtsleeves.
 
-Seven warehouses across those nineteen days. Three of them twice. Goodyear was the eighth and the last of the first wave.
+"Mara."
 
-The first wave of warehouse conversions had begun on the second Monday of January. Eleven facilities being converted from Carrick Retail fulfillment to Carrick Carry platform fulfillment over a sixty-day window. Goodyear had been the eighth to start and was the last that would complete. Anjali had committed to being on the floor of every one of the eleven on the day the conversion went live and on every Sunday night during the conversion week. She had not missed a Sunday.
+"Cole. We have a problem at Goodyear. I need the room."
 
-Goodyear's conversion week began Monday at six AM.
+He stepped back. She closed the door behind her and walked to the desk and set a closed laptop on the leather blotter and did not open it.
 
-She drove past the entrance gate at six fifty-two PM Sunday.
+"Tell me the headline."
 
-The Goodyear facility was four million one hundred and twenty thousand square feet under one roof, on a parcel of one hundred and eight acres on the south side of the Phoenix Goodyear Airport. Opened 2017. Retrofitted 2022. One thousand four hundred associates across three shifts on a normal week. About nine point one million units a day. The largest single fulfillment site in Carrick's Western Region.
+"The first-wave conversion at Goodyear goes live Monday at oh-six-hundred. Somebody has been paying a sysadmin in the Goodyear IT cell to push a malicious patch into the warehouse-management cutover at the moment the Carry platform comes up. The patch is staged. The sysadmin is on the Sunday-night shift. The shift starts in twenty-seven hours."
 
-The lot was three-quarters full. Night shift had been working since six PM.
+Cole looked at the closed laptop.
 
-Anjali parked in the visitor section. Walked across the lot in her steel-toed boots, her jeans, her fourteen-year-old vest with her last name on the back. Pushed through the south employee entrance. Badge reader recognized her. Long corridor past the locker rooms to the floor.
+"How long have we had this."
 
-The general manager of Goodyear was Roberto Cordero, fifty-three. Former Frito-Lay supply-chain director. He had run Goodyear seven years. He was at the south end of the inbound dock with a clipboard in his hand and a coffee.
+"Ninety minutes. The signals desk caught a fragment off an encrypted relay we have been mapping since November. We pulled the thread for forty minutes. The thread held. I called the FBI cyber duty agent in Phoenix at ten-twelve. I called you at ten-forty-seven."
 
-He saw her.
+"Who is paying."
 
-He walked over.
+"A short-only fund out of Greenwich. Thane Bridgeport. Marcus Thane is the managing partner. Three-point-one billion under management, all short, all the time. He has a one-point-eight-billion-dollar short position open against Carrick as of Friday's close. He has been adding to it across the past nine sessions on roughly the schedule of the first-wave conversion announcements."
+
+"The intermediary."
+
+"A former Carrick corp-dev manager named Eliot Brennan. We let him go in November. Eight years at the company. He has been on the Thane payroll since the third week of December as an outside consultant on, quote, platform-strategy intelligence. He recruited the sysadmin at the end of January. The sysadmin is a thirty-four-year-old named Trent Halverson. Six years at Goodyear. Carries forty-six thousand dollars of credit-card debt across four cards. Wife just left him in October. He has been paid one hundred twelve thousand dollars to push the patch."
+
+"What does the patch do."
+
+Mara opened the laptop. She turned it so Cole could read.
+
+"The patch corrupts the tenant-coordination layer at the moment the Carry platform handshakes with the floor for the first time. From the outside it looks like the Carry platform itself failed to come up. The retail WMS would stay live. The tenant onboarding would fail every API call for the first ninety minutes. Press reads it as the pivot stalling at launch. Stock opens down fifteen at the bell."
+
+Cole read the screen.
+
+"And Thane's position."
+
+"Goes from one-point-eight billion to roughly four-point-three before the close on Monday. The fund would clear about two billion on a successful patch."
+
+Cole closed the laptop.
+
+"Where is Halverson right now."
+
+"At home. Glendale. The detail has him."
+
+"The patch."
+
+"Staged in his locker at the facility. We have eyes on the locker. He pulls it at the start of his Sunday-night shift."
+
+"FBI."
+
+"Cyber duty agent is in the Phoenix field office now. Special Agent Reyes. She has been briefed to the level she needs to be briefed to. She is waiting on a phone call from me."
+
+Cole stood at the desk for four seconds.
+
+"Mara."
+
+"Yes."
+
+"If we arrest Halverson tonight, Thane sees the position go quiet and pulls. We catch a sysadmin and a former corp-dev guy and lose the fund."
+
+"Yes."
+
+"If we let the patch run."
+
+"It runs into whatever environment we let it run into."
+
+He looked at her.
+
+"Get me Anjali. Get me Reese. Get the Gulfstream up at Boeing Field for an oh-one-hundred wheels-up. I want Phoenix-Goodyear Airport, not Sky Harbor. I want the small hangar at the south end that the Reese flew the Citation out of last March. I want the FBI in the hangar when I land. I want Halverson's badge access cloned by the time the Sunday-night shift starts. And I want a parallel WMS cutover branch standing in a clean partition by sunrise."
+
+"On it."
+
+"Mara."
+
+"Yes."
+
+"Annika is in Vancouver until Tuesday."
+
+"I know she is."
+
+"Good."
+
+She walked out.
+
+Cole picked up the encrypted satphone off the desk and dialed Anjali Rao.
+
+She picked up on the first ring.
+
+---
+
+The Gulfstream G700 broke ground at Boeing Field at 1:04 AM Pacific. Cole in the back-cabin conference seat with the laptop open and Anjali across from him in jeans and the fourteen-year-old vest she had pulled out of the closet at midnight. Mara up front with the operator. Bear behind, two seats back, awake, silent.
+
+Anjali had been reading the threat brief for thirty-one minutes. She closed the laptop.
+
+"Cole."
+
+"Yes."
+
+"We let the patch run."
+
+"We let the patch run."
+
+"Into a partition."
+
+"Into a partition Halverson cannot tell from production by looking at his console. The handshake telemetry has to look real. The API endpoints have to respond the way production responds. The patch has to think it landed."
+
+"Reese."
+
+"Reese is in the air out of Boeing. Different plane. He'll be on the hangar floor by oh-four-thirty Phoenix."
+
+"The conversion still goes live at oh-six-hundred."
+
+"The conversion goes live at oh-six-hundred. On the real branch. On the actual production WMS. The floor sees nothing. Roberto Cordero does not know any of this is happening. Roberto runs the conversion the way he was going to run it on Friday. The four hundred and seventy lay-off letters go out on the schedule HR finalized. The eight hundred get the new wage. The roster shifts at five fifty-eight. The platform comes up. The platform stays up."
+
+"And in the partition."
+
+"In the partition, Halverson's patch executes against a mirror that is wired to a packet capture and a court-admissible keystroke log. We watch the patch take down the tenant-coordination layer in a sandbox that nobody in the world except the six of us in this plane and Reyes in Phoenix knows exists."
+
+Anjali looked at the closed laptop for a moment.
+
+"Cole."
+
+"Yes."
+
+"You can't fly into Phoenix on the corporate jet manifest. Press tracks the tail. Halverson's people see it land."
+
+"The manifest is filed under the *Vector* program. Phoenix-Goodyear is a general-aviation field. The hangar at the south end is leased through the Mojave LLC. The tail rolls in dark. Press tracks Carrick aircraft on Carrick airfields. Carrick does not own Phoenix-Goodyear."
+
+"And me."
+
+"You drive out of the hangar in a rental at oh-four-fifty. You walk through the south employee entrance of the FC at oh-five-eighteen the way you walk through the south employee entrance of every conversion FC every Sunday night you have been doing this for eight weeks. Roberto sees you. The floor sees you. Nothing about your morning is different from any other conversion-week Monday morning."
+
+She nodded once.
+
+"Cole."
+
+"Yes."
+
+"If the partition fails."
+
+"If the partition fails, the patch lands in production and the pivot is on fire by oh-six-oh-three. Reese has built the partition. Reese does not build partitions that fail."
+
+"Reese."
+
+"Reese."
+
+She picked up the laptop. She opened it. She began reading the conversion runbook for the eighth time.
+
+The Gulfstream crossed into Nevada airspace at altitude forty-one thousand.
+
+---
+
+Wheels down at Phoenix-Goodyear at 3:52 AM Mountain.
+
+The hangar at the south end of the field was a single-bay general-aviation structure with the lights at seventy percent and the south doors closed against the wind off the desert. The Citation Reese had flown in twenty-two minutes ahead was already inside. Special Agent Pilar Reyes of the FBI Phoenix field office stood at the personnel door in a navy windbreaker with her badge on a lanyard and her phone in her hand.
+
+Cole walked across the apron with Mara on his left and Bear on his right.
+
+He stopped at the personnel door.
+
+"Agent Reyes."
+
+"Mr. Westerlund."
+
+"What do you need from me."
+
+"I need you to stay out of the operational frame. I need your COO at the facility running the conversion as if she does not know anything. I need your engineer to stand the partition up clean and to feed me the keystroke log in real time. I need you to not call your general counsel until oh-six-thirty Phoenix at the earliest, because if Halverson's handler is monitoring outbound legal traffic from Carrick HQ between now and the patch landing, the handler pulls and we lose the trade tape. After oh-six-thirty you can call anyone in the country."
+
+"Understood."
+
+"One more thing."
+
+"Yes."
+
+"The cleanest version of this case includes a contemporaneous decision by you, on the record, not to interfere with the patch execution. I have a recorder. I would like sixty seconds of your voice on it before you go inside."
+
+"Now."
+
+"Now."
+
+She held up the recorder. He spoke for fifty-three seconds. He named the threat. He named the decision. He named the time. He stepped back.
+
+"Inside, Mr. Westerlund."
+
+He went inside.
+
+---
+
+The hangar interior was cold and lit white. Reese Okonkwo was at a folding table with two laptops open and a single cable run to a portable battery on the floor. He had taken his suit jacket off. He was in shirtsleeves and the same tie he had worn to the office Friday morning.
+
+He looked up.
+
+"Cole."
+
+"Reese."
+
+"The partition is up. I built it on a clean instance of the Year-Two WMS image that I pulled from the Carrick Cloud snapshot library at one-eighteen AM Pacific. The handshake responder is wired to mirror the production handshake exactly. I have routed Halverson's badge-level API credentials to the partition. When he hits the cutover console at five fifty-eight, his console will read production. His commands will execute against the partition. Production will see none of his traffic."
+
+"The patch."
+
+"The patch was uploaded to the staging server in Halverson's locker partition at one fifty-three AM Phoenix. I have a copy. I have read it. It does what Mara said it does. It is sophisticated. It is not state-grade. It is Greenwich-grade. Whoever wrote it knows tenant-coordination architecture, which means whoever wrote it has read the architecture documents Eliot Brennan walked out of headquarters with in November."
+
+"Production."
+
+"Production runs the cutover at oh-six-hundred on the real WMS. The Carry tenant-coordination layer comes up clean. The eight hundred get the wage shift at five fifty-eight. The three hundred and twenty get the lay-off notice at six-fifteen the way Anjali walked it on Friday with HR. Nobody on the floor sees the second branch. The second branch lives in a partition that exists for ninety minutes and then is destroyed."
+
+"Telemetry."
+
+"Two consoles. One reads production. One reads the partition. Reyes gets the partition feed in real time. I get both. You get both."
+
+Cole walked around the table and looked at the two screens.
+
+"Reese."
+
+"Yes."
+
+"What is the failure mode."
+
+"The failure mode is that Halverson notices the partition. The partition is identical to production at the API surface. He cannot see the difference from his console. He could see the difference if he ran a low-level disk-IO trace against the WMS host and noticed that the host's I/O signature is virtualized rather than bare metal. He has done that trace once before, in October of Year Minus One, on a different host. He has not done it in sixteen months. The probability he does it tonight is non-zero."
+
+"Mitigation."
+
+"I have replicated the production host's I/O signature on the partition. The replication is not perfect. A determined sysadmin running a focused trace would notice in maybe forty seconds. A sysadmin executing a paid patch on a deadline does not run a focused trace, because the deadline is the trace."
+
+"All right."
+
+He turned to Anjali, who was standing six feet behind him with her arms crossed and her vest on over her flannel shirt.
+
+"Anjali."
+
+"Yes."
+
+"Go run the conversion."
+
+She walked to the rental. She drove out of the south hangar door at 4:51 AM and turned east on the access road toward the fulfillment center.
+
+---
+
+Roberto Cordero was at the south end of the inbound dock at 5:19 AM Mountain with a clipboard in his hand and a coffee. The lot was three-quarters full. The night shift had been working since six PM Sunday. The eight trailers in the eight doors were the eight trailers the rotation had called for. Two for Carrick Basics. Six for Retail. The unload crews were running at the rate Anjali had clocked for ten years.
+
+He saw her cross the floor.
 
 "Anjali."
 
@@ -32,350 +252,230 @@ He walked over.
 
 "I walked it on my own."
 
-"How does it look."
+"Cutover."
 
-"Looks like Goodyear. Eight trailers in eight doors. Two of the trailers are inbound for Carrick Basics. The other six are for Retail. Unload crews at the rate I've been clocking for ten years. Conveyors at the rate I've been clocking for ten years. The rate's going to be irrelevant by Wednesday."
+"Cutover at oh-six-hundred. Roster shift at five fifty-eight. HR walks the laid-off list at six-fifteen the way we mapped it Thursday. The eight hundred get the new wage on the same call. The two hundred and eighty roll into the slightly redefined roles. The twelve get the promotion at the four PM standup. The Carry tenant-coordination unit comes live at six-oh-three."
 
-He nodded.
+"On the WMS console you and I sat at on Friday."
 
-"Walk with me. I have something to show you in the back."
+"On the WMS console you and I sat at on Friday."
 
-She walked with him.
+"Trent Halverson is at the console tonight. He swapped the Sunday-night cutover slot with Mac Ramirez two weeks ago. I signed the swap."
 
----
+"I know you did. The swap is fine. Run it the way you were going to run it."
 
-What he had to show her was a long folding table set up at the rear of the picking floor, in the corner where the Level Two staging carts were normally lined up. On the table forty-three sealed white envelopes laid out in neat rows of seven and a partial row at the end. Each envelope had a name on the front in black sharpie. The names were the names of forty-three associates who had been at Goodyear since the building opened in 2017.
-
-Roberto said: "The conversion goes live Monday at six AM. The roster shifts at five fifty-eight. Three hundred and twenty associates get laid off. Eight hundred get retained at a higher wage. Two hundred and eighty get retained at the same wage in a slightly redefined role. Twelve get promoted into newly created mid-level positions. The lay-off list is the list HR finalized on Friday at four PM. The list is in the manila envelope on the chair under the table. I have not opened the envelope. I'm going to open it with you tomorrow morning at four AM. The forty-three envelopes on the table are something else."
-
-Anjali looked at the envelopes.
-
-"Roberto."
-
-"Yes."
-
-"What's in them."
-
-"Each envelope has a one-page letter from me to the associate whose name is on the envelope. The letter says that I have personally known this associate from the day they walked in here in 2017, and that regardless of which category the roster shift puts them in tomorrow morning, the letter is going to be in their personnel file as a record of the fact that they have been one of the foundational associates of this building, and that the building they have built will, after Monday, be a different building, but that the eight years of work they put into the building that came before are not erased by the conversion. Two hundred and forty words. I wrote it Sunday morning. I drafted it five times across the previous three weeks. The fifth draft is the letter in every envelope. The signature is in my own hand. The envelopes go out before shift change tomorrow morning whether the associate is in the laid-off three hundred and twenty or in any of the other groups."
-
-A pause.
-
-"I'm not asking your permission. I'm telling you because I want you in the room when I hand them out tomorrow morning at five fifteen. I'm going to stand in the break room at the south end of the floor at five fifteen and the forty-three associates are going to come in one at a time and I'm going to hand each of them their envelope and I'm going to shake each of their hands. I've asked the floor supervisors to pass word during the four-to-five shift transition. The forty-three know to come to the break room at five fifteen. They don't know what I'm going to give them. They know I'm going to give them something."
-
-Anjali looked at the envelopes a long moment.
-
-"Roberto."
-
-"Yes."
-
-"I'll be in the room."
-
-"Thank you."
-
-"Roberto."
-
-"Yes."
-
-"I'm going to write a similar letter for every one of the eleven facilities. I'm going to ask each general manager to write the letter for their facility. I'm going to make it a Carry standard. I'm going to file the language with HR by the end of the month. I'm going to ask the eleven general managers to coordinate on the format. You're going to be the lead general manager on that working group. I'm going to announce it on Tuesday."
-
-He looked at her.
+He looked at her one beat longer than he would have looked on a normal Sunday night.
 
 "Anjali."
 
 "Yes."
 
-"Thank you."
+"Is something happening I should know about."
 
-"Thank yourself. You did it first."
+"Run the conversion, Roberto. Run it clean. We talk at oh-seven-hundred."
+
+"All right."
+
+She walked past him onto the floor.
 
 ---
 
-Eric Salazar got to the Goodyear facility at three fifty-five AM Monday morning.
+Cole watched the production telemetry from the back of the Suburban at the south end of the FC lot at 5:54 AM Mountain. Mara in the front passenger seat. The driver was the operator she had pulled out of Tysons in November and parked in Phoenix for exactly this kind of night. Bear was in a second Suburban thirty yards behind them with two more operators and Reyes's number on a burner.
 
-He had been on the night shift for the past four years. He had been a Carrick associate for six years. He was twenty-eight years old. He had two children, a four-year-old daughter and a one-year-old son. His wife Maya was also a Carrick associate at Goodyear, on a different shift, in the consumer-electronics returns processing team on Level Three.
+On the laptop on Cole's knees the production console showed:
 
-The badge reader at the south employee entrance read Eric's badge at three fifty-six.
+- Retail WMS, green
+- Carry tenant-coordination layer, staged
+- Cutover sequence, armed
+- Operator, T. HALVERSON, console 3
+- Estimated handshake, 06:00:00.4
 
-He walked the long corridor to the locker room.
+Reese's voice came through the earpiece.
 
-He hung his jacket in his locker.
+"Halverson is at console three. He is logged in. He has the patch loaded in a separate window. He is watching the cutover clock."
 
-He pulled his vest on over his shirt.
+"Partition."
 
-He walked out of the locker room toward the pick-and-pack floor.
+"Partition is live. His credentials are routed. His console reads production."
 
-The floor supervisor for Level Two, Carmen Vega — Eric's direct manager for the past three years — was at the foot of the stairs that came down off the locker-room corridor.
+"Production."
 
-"Eric."
+"Production is also live. The real cutover will execute against the real WMS in five minutes thirty-one seconds. Both branches are armed."
 
-"Carmen."
+Cole watched the cutover clock count down.
 
-"Break room. South end. Five fifteen. Roberto wants to see you."
+5:58:00.
 
-"All of us."
+The roster shift fired on the HR system. Eight hundred associates received the new-wage notification on their badge readers as they hit the floor. Two hundred and eighty saw the role-update notification. Twelve saw the promotion notification. The three hundred and twenty lay-off letters sat in the south-end break room in the binder Anjali had carried in from the rental, ready for the six-fifteen walk with HR.
 
-"Forty-three of you. The originals from 2017. You're one of them."
+6:00:00.
 
-"All right."
+The Carry tenant-coordination layer handshake fired on the real WMS.
 
-"Eric."
+The handshake closed at 6:00:00.7.
 
-"Yes."
+The first three tenant onboarding API calls executed against the real WMS at 6:00:01.2, 6:00:01.4, and 6:00:01.9.
 
-"I don't know what he's going to say. I'm telling you what time and where. That's what I know. Go work the pre-shift. Come up at five fifteen."
+Reese's voice in the earpiece.
 
-"All right."
+"Production is up. Carry is live. Tenant calls are clean."
 
-He worked the pre-shift.
+Cole did not move his eyes from the screen.
 
-He came up at five fifteen.
+"Halverson."
 
-The break room at the south end of the floor was the largest break room in the building. Four long folding tables. Eighteen vending machines along the west wall. A coffee station nobody believed in. A wall of windows on the south side looking at the lot.
+"Halverson sees production on his console. His console says the platform came up the way the runbook said it would come up. He is now executing the patch against the partition. The patch is uploading. Upload completes in six seconds."
 
-The other forty-two original associates were already in the room.
+6:03:11.
 
-Eric knew thirty-six of them by name.
+"Patch landed in the partition. Tenant-coordination layer in the partition is corrupted. The partition is reading the way Halverson expected the production environment to read. He is seeing API failures on his console. His console says the pivot failed at launch."
 
-Roberto Cordero was at the front of the room.
+6:03:38.
 
-Anjali Rao was three steps behind him, in her vest, hands folded in front of her.
+"He has sent an outbound text from his personal phone to a Greenwich area code. Three words. *Patch landed clean.*"
 
-The forty-three envelopes were on the long folding table to Roberto's right.
+Cole exhaled once.
 
-"Good morning."
+"Reyes."
 
-"Good morning."
+Mara had already lifted the burner.
 
-"I'm going to do this fast. I'm going to call your name. You come up to the table. You take your envelope. You go back to your seat. You do not open the envelope until everyone has been called. Then I'm going to talk for two minutes. Then you read the envelope. Then we shake hands. Then you go to your shift station for the six AM call. Six AM is the roster shift. The roster shift is going to put you in one of four categories. The categories are not in the envelope. The envelope is something else. We're doing the envelope first. Then we're doing the roster shift."
+She said one sentence to Reyes.
 
-He read the names.
+She set the burner down.
 
-He read them in the order the associates had been hired in 2017, which was the order he had been hiring them across the eleven weeks of the original ramp-up.
+---
 
-The first name was Carmen Vega.
+Special Agent Reyes and four agents walked through the north employee entrance of the Goodyear fulfillment center at 6:14 AM Mountain. They badged through with credentials Roberto Cordero had pre-cleared on the Sunday-night manifest at Anjali's request at 5:21 AM under the cover of a routine cyber-compliance audit. They walked the long corridor past the north locker rooms. They walked the cross-aisle behind the picking floor. They walked to the WMS console bay at the rear of the building.
 
-The forty-third name was Eric Salazar.
+Trent Halverson was at console three with his phone face-down on the desk and the partition console open in front of him reading a cascade of red API failures.
 
-Each associate walked up to the table and took their envelope. The room moved through the forty-three in eight minutes. The associates returned to their seats.
+Reyes stopped beside him.
 
-Roberto then talked for two minutes.
-
-He talked about the eight years.
-
-He did not soften.
-
-He did not embellish.
-
-He named the things they had built together. The opening of the building in 2017. The first peak season in 2017. The retrofit in 2022. The second peak in 2022. The COVID surge in early 2020. The robot-rollout in 2019. The four times the building had broken a daily-volume record in eight years. The two times the building had been on the cover of the local newspaper for being the largest single employer in Maricopa County's southwest corridor. The fourteen marriages that had begun on the floor between two Carrick associates. The eleven funerals the building had paid for, out of the building's own associate-emergency fund, that he and the building's regional manager had each personally contributed to.
-
-"Open the envelope."
-
-The room opened the envelopes.
-
-Eric opened his.
-
-He read the letter.
-
-The letter was Roberto's. In Roberto's hand. The two hundred and forty words said what Roberto had told Anjali they would say. The letter said that Eric Salazar of Goodyear, Arizona, formerly of Yuma, had walked through the south employee entrance of this building on October 12, 2017, at three fifty-four AM Pacific time, in the dark, in a Carhartt jacket that was too big for him, with a hiring offer Roberto had signed three weeks earlier. The letter said that across the eight years that had followed Eric had become one of the associates the building was built on. The letter said the building Eric had helped build was, after the conversion that was about to happen at six AM, going to be a different building, but that the eight years of work Eric had put into the original building were not going to be erased by the conversion. The letter said it would be in Eric's personnel file as a permanent record of what Eric had done.
-
-The letter was signed *Roberto Cordero, General Manager, Goodyear, Year Minus Nine through Year Two.*
-
-Eric read the letter twice.
+"Mr. Halverson."
 
 He looked up.
 
-Roberto was at the front of the room.
+She walked him out the north door at 6:17.
 
-"Now we shake hands."
+Roberto Cordero, at the south end of the inbound dock, did not see it. The night-shift floor supervisors did not see it. The eight hundred associates collecting their new wage at their stations did not see it. The three hundred and twenty associates queuing for the HR walk did not see it. The forty-three original associates from 2017, who would learn later that morning which side of the roster they had landed on, did not see it.
 
-He stood at the door of the break room with Anjali three steps behind him. The forty-three came up one at a time. Roberto shook each hand. He said the associate's name. He looked them in the eye. The associate walked out of the break room toward the floor.
+The conversion went live clean.
 
-Eric was the forty-third.
-
-"Eric."
-
-"Roberto."
-
-Roberto shook his hand.
-
-"Roberto."
-
-"Yes."
-
-"Maya."
-
-Roberto looked at him.
-
-"Eric."
-
-"Yes."
-
-"Maya is at six AM the same as you are."
-
-"I know she is."
-
-"Maya is one of the three hundred and twenty."
-
-Eric stood at the door of the break room with Roberto's hand still in his.
-
-"Roberto."
-
-"Yes."
-
-"Did you write her a letter too."
-
-"I wrote her a letter too. The letter has not gone out yet. Anjali is going to walk to Level Three after the roster shift. Anjali is going to hand the letter to Maya in person. The forty-three on the original-associate list were from 2017. Maya started in 2018. The original list was the original list. The letter Maya gets is a different letter. The letter is the letter Anjali wrote on the plane from Seattle on Sunday afternoon. Anjali wrote letters for the four hundred and seventy associates in this building who are going to be in the three hundred and twenty lay-off group across all start years and all functions. She wrote them herself. She started writing them Wednesday. She finished writing them at two AM Monday on the plane. The letters are in a binder Anjali has in her car. The letters are going to be hand-delivered today by Anjali and me and four floor supervisors. The first one is going to be hand-delivered by Anjali to Maya at six twelve AM in the consumer-electronics returns processing area on Level Three. The reason it is going to be hand-delivered by Anjali is that Anjali asked me, on Sunday night when she got here, who the first letter should be hand-delivered to. I told her Maya. I told her about Maya. I told her about you. I told her about the kids. Anjali asked me to ask you, at this door, whether you'd prefer for her to hand-deliver the letter to Maya before the six AM roster shift or after. I'm asking you that question now."
-
-Eric stood in the doorway.
-
-He looked at Roberto.
-
-He looked at Anjali.
-
-"Anjali."
-
-"Yes."
-
-"Maya doesn't know yet."
-
-"Maya doesn't know yet."
-
-"If you tell her before the shift, she goes to the shift in the same condition you and I are in right now. If you tell her after the shift, she stands at her station for two hours not knowing. The other associates in her function are going to learn during the shift. The other associates are not going to know until they're at their stations. Maya is going to be told the same way the other associates are. The same way."
-
-"Eric."
-
-"Yes."
-
-"Are you asking me to tell her at her station the way every other associate in her function is going to be told."
-
-"I'm asking you to treat her the way you treat the other four hundred and seventy. I'll be at the gate at ten AM when she comes off the line. I'll take her home. We'll figure it out together. We have a four-year-old and a one-year-old. We have a mortgage. We have a Honda Pilot with two years left on the loan and twenty-three thousand miles on it. We have eight thousand four hundred dollars in the savings account at Desert Schools Credit Union. We're going to be fine. I don't want my wife to find out before the shift because the wife of an original associate from 2017 should not get a different version of the news than the wife of an associate who started in 2019. The conversion is the conversion. The conversion is going to be hard. We're going to take it the same as every other family is going to take it. The letter you wrote is the letter she should get the way every other affected associate is going to get the letter. Hand it to her at ten AM at her station the way the other floor supervisors are going to hand letters to the other associates in her function. That's what I'm asking."
-
-Anjali looked at him.
-
-"Eric."
-
-"Yes."
-
-"All right."
-
-"Thank you."
-
-"Eric."
-
-"Yes."
-
-"I'm going to be in the parking lot at ten AM when you and Maya come out. I'm not going to talk to you. I'm not going to interrupt. I'm going to be in the lot in case you want to ask me a question and you'd like me to be at a distance from the gate where the other affected associates can see me but where you don't have to ask the question in front of them. If you want to walk up to me you walk up to me. If you don't want to, you don't. I'll be in the lot for as long as you and Maya are in the lot. I'll leave when you leave."
-
-"Anjali."
-
-"Yes."
-
-"All right."
-
-He walked out of the break room.
-
-He went to his shift station.
-
-The six AM roster shift came.
-
-Eric was in the eight hundred. Eric's new wage was twenty-six dollars and forty cents an hour, up from twenty-two ten. His new title was Platform Operations Specialist, Tier 2. The new role was in the tenant-coordination unit that was going to be the central operating function of the Goodyear facility under the Carry platform.
-
-Maya was in the three hundred and twenty.
-
-At nine fifty-seven AM Maya came out of the south employee entrance. The letter from Anjali was in her hand. Eric was waiting at the curb of the visitor parking section.
-
-They walked to the Honda Pilot.
-
-They drove home in silence for the first eight minutes.
-
-At the corner of West Yuma Road and South Sarival Avenue Eric said: "Maya."
-
-"Eric."
-
-"We're going to be fine."
-
-"I know we are."
-
-"I'm working a different role at twenty-six forty starting in ten weeks."
-
-"Roberto told me on the way out. He came up to my station at nine forty-five. He told me everything you and Anjali talked about at the break room at five fifteen. He told me you asked her to hand-deliver the letter the way every other letter was being hand-delivered. He told me you did not want me to have a different version of the news than the other four hundred and sixty-nine. He thanked me for marrying you."
-
-"Maya."
-
-"Yes."
-
-"I'm sorry."
-
-"Don't be sorry. Drive. Take me home. We'll tell the kids together. We'll do the math at the kitchen table after the kids go to bed. We'll figure it out."
-
-He drove.
-
-He took her home.
-
-They told the kids together.
-
-That night, at eleven forty PM Pacific, with the kids in bed and the kitchen lamp on and the Honda Pilot's loan statement and Maya's last pay stub and the Desert Schools statement on the kitchen table in front of them, Eric and Maya Salazar did the math.
-
-They figured out what they could do.
-
-They figured out what they could not do.
-
-They wrote it down.
-
-Maya signed at the bottom.
-
-Eric signed at the bottom.
-
-They put the paper on the refrigerator.
-
-Maya went to wake their daughter, who had cried out in her sleep.
-
-Eric finished his coffee.
+The Carry tenant-coordination layer ran twelve thousand four hundred tenant API calls in the first hour without a fault.
 
 ---
 
-Anjali Rao left Goodyear at one twenty AM Tuesday morning.
+Owen Friedlander called Cole at 9:21 AM Mountain.
 
-She drove the rental back to Sky Harbor in the dark.
+Cole was on the Gulfstream airstairs at the south hangar. The G700 had been spinning up for nine minutes. Wheels-up was 9:28.
 
-She had been on the floor thirty-three hours.
+"Cole."
 
-She turned the rental in.
+"Owen."
 
-She walked to the Carrick corporate-jet terminal at the east end of the airport.
+"The trade tape."
 
-The Gulfstream was on the apron.
+"Tell me."
 
-She boarded at two oh-eight.
+"Thane Bridgeport executed a one-point-five-billion-dollar incremental short against Carrick between six-oh-one and six-oh-four Mountain this morning. Across three brokers. Off three separate desks. The order tickets are time-stamped to inside the four-minute window. The window opens one minute after the Carry tenant-coordination layer came up clean and closes one minute after Halverson's text to the Greenwich area code. There is no public information in that four-minute window that would justify a one-point-five-billion-dollar short. The SEC will see the tape inside seventy-two hours. They will open the inquiry inside ten days."
 
-She sat down in the seat at the back of the cabin.
+"And the position."
 
-She opened the laptop.
+"The position is now four-point-three billion against a stock that is going to open up at the bell because the conversion landed clean and the press release Reese is going to send at ten AM Mountain says the Carry platform's largest conversion to date executed without incident. Thane is going to spend the day covering into a rising tape. The fund clears a six-hundred-million-dollar loss minimum. The SEC inquiry costs him another two hundred and the firm. Investors pull within ninety days. Thane resigns inside six months."
 
-She opened the binder of letters she had written on the flight from Seattle on Sunday afternoon and through the night to Phoenix. Four hundred and seventy of them. She had hand-delivered the first one to Maya Salazar at six twelve AM Pacific. The other four hundred and sixty-nine had been delivered across the eleven hours of the day Monday by Roberto Cordero, four floor supervisors, and the regional HR director.
+"Owen."
 
-She closed the binder.
+"Yes."
 
-She opened a new document on the laptop.
+"Eliot Brennan."
 
-She titled it: *The Letter, Carry Standard, February of Year Two.*
+"Already in custody. Reyes coordinated with the New York field office. Brennan was picked up at his apartment in Tribeca at oh-nine-oh-four Eastern. He is cooperating. He is naming the Thane chain of approval. Marcus Thane personally signed the wire for Brennan's December retainer. The wire is in evidence."
 
-She began to write.
+"Halverson."
 
-She wrote the operational standard for the Letter — for the conversion-week letter every Carrick general manager was going to write to every laid-off associate on every floor for every conversion across the next forty-eight months. She wrote the standard the way she had written every operational standard at Carrick for fourteen years. She wrote it in the small fixed-width font she had been trained at McKinsey to use for operational documents. She wrote it for two hours and seventeen minutes.
+"Cooperating. Two years' probation plus restitution. He spends what is left of his life paying back the one hundred twelve thousand dollars."
 
-She finished at four twenty-five AM Pacific.
+"Mara."
 
-She closed the laptop.
+"Mara is the reason we caught it. The signals desk you funded in November of Year Minus One is the reason the desk caught the relay fragment in November of Year One. The chain runs back to the budget line you wrote on a Tuesday afternoon in your study at Bainbridge fifteen months ago."
 
-She slept for the rest of the flight.
+Cole did not respond to that.
 
-She landed at Boeing Field at six fifty-four AM.
+"Owen."
 
-The Letter was the Letter.
+"Yes."
 
-It went into the operating manual of Carrick Carry on the Friday of that week.
+"Goodyear is the eighth and last of the first wave. The second wave starts Monday. Sixteen facilities. We are going to assume Thane is not the only fund that ran this play. We are going to assume the play has been priced in to the short side of the book at every fund that has been adding against the pivot. We are going to harden the cutover protocol across all sixteen of the second wave before close of business Wednesday."
 
-It became, across the next thirty months of the first-wave and second-wave conversions, the document that, in eleven of the eleven facilities, was the document the floor remembered.
+"On it."
 
-The floor remembered.
+"And Owen."
+
+"Yes."
+
+"The press release at ten AM Mountain does not name the patch. The press release says the conversion executed without incident. The SEC inquiry will run on its own schedule. Reese and I will sit with Reyes on Thursday in Phoenix to walk through the cyber posture for the second wave. None of this is public until Reyes says it is public."
+
+"Understood."
+
+He killed the call.
+
+He walked up the airstairs.
+
+---
+
+Anjali walked the Goodyear floor for the next eighteen hours.
+
+She walked it with Roberto Cordero in the morning. She walked it with the night-shift floor supervisors in the evening. She sat in the south-end break room with the HR director for ninety minutes between two PM and three-thirty. She did the work the floor manager would have done on conversion day if the floor manager had been her, which was most of why she had taken the trip.
+
+She did not tell Roberto Cordero what had happened at console three.
+
+She told him at oh-seven-hundred the following morning, in his office, with the door closed, with the operational binder closed on his desk, in the four minutes between the night-shift handover and the day-shift call.
+
+Roberto absorbed it. He asked two questions. She answered both. He nodded.
+
+He said: "Anjali."
+
+She said: "Yes."
+
+He said: "Mac Ramirez is the cutover lead on every console at this facility from this morning forward. Trent Halverson's badge is voided. I will write a new sysadmin rotation for the second wave by Friday."
+
+She said: "Good."
+
+She walked out of his office.
+
+She drove to Sky Harbor.
+
+She boarded the corporate jet at three forty-eight PM.
+
+She was at her desk at Carrick HQ in Seattle by six-forty.
+
+---
+
+The Gulfstream lifted off Phoenix-Goodyear at 9:28 AM Mountain.
+
+Cole slept three hours of the two-hour flight, which he could do, and which he did.
+
+He woke over the Cascades.
+
+He went to the galley. He poured coffee. He carried it back to the conference seat. He opened the laptop.
+
+The production telemetry from Goodyear was on the screen. The Carry tenant-coordination layer had been live for four hours and twenty-six minutes. Twenty-eight thousand seven hundred tenant API calls. Zero faults.
+
+He read the number twice.
+
+He closed the laptop.
+
+The G700 banked over Puget Sound at 12:14 PM Pacific. The water was gray. The Olympics were the same black ridge they had been on the morning of the dinner at R Street.
+
+Boeing Field, 12:21.
+
+Mara opened the door. Cole walked down the airstairs. The Suburban took him to Bainbridge.
+
+He was in the home gym with Bear at 1:30.
+
+Bear had three-eighty on the trap bar.
+
+Cole pulled it for triples.
+
+He went to work.

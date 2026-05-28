@@ -114,7 +114,91 @@ The proof.
 
 The team in Cincinnati spent two days in conference rooms negotiating the final ten percent. The legal teams traded redlines across thirty-six hours. The platform-services pricing was the longest single line item. The carve-out language for Carry's never-compete-with-the-customer commitment was the most carefully drafted section of the contract.
 
-Marguerite Holloway signed at four-forty PM Eastern on a Wednesday in late November.
+At 11:14 PM Eastern Tuesday — eighteen hours before the scheduled signing — Marguerite Holloway called Reese on his cell. He was in the elevator at the Westin Cincinnati. He punched the door-open button and walked back into the lobby.
+
+"Reese."
+
+"Marguerite."
+
+"Walmart's CEO is on my private line. He has been on it for twenty-two minutes. He is offering me an exclusive five-year platform-services contract on Walmart's own infrastructure at three-quarters of Carry's pricing, with a one-billion-dollar make-good if the platform ever competes with Midcontinent. He has the term sheet on a Walmart letterhead. He is going to email it to me at midnight."
+
+"He cannot ship the platform."
+
+"He cannot ship the platform on the timeline he is naming. I know he cannot. My board's nervous half does not know he cannot. The nervous half is going to read the term sheet at midnight. They are going to ask me at seven AM why I am signing with the smaller balance sheet at a quarter-higher price when the bigger balance sheet has just offered me the make-good."
+
+"Marguerite."
+
+"Yes."
+
+"Send me the term sheet. I will be in your office at six AM. Cole will be on the satphone. We will walk your board through the platform-shipping math at seven. Walmart cannot ship in the window they are quoting. The make-good is not real money. The exclusivity language locks you to a competitor's roadmap."
+
+"Get Cole on the line tonight."
+
+"Tonight."
+
+He killed the call.
+
+He called Cole at 11:19 PM Eastern, 8:19 PM Pacific. Cole was in the home gym at Bainbridge. Bear had three-eighty on the trap bar.
+
+"Cole."
+
+"Reese."
+
+"Walmart is making a spoiler bid. Their CEO is on Marguerite's line with a counter-offer. Three-quarters pricing. One-billion make-good. Exclusivity. He is going to email her the term sheet at midnight Eastern."
+
+"He cannot ship the platform."
+
+"I told her."
+
+"Walmart's platform-services initiative is eleven months in. They have hired three hundred engineers. They have shipped two services. They cannot ship the seven Marguerite needs on the timeline they are quoting. The make-good is the only real thing in the term sheet and the make-good is structured to pay out in 2032 dollars on a 2026 commitment with a force-majeure carve-out that swallows the whole obligation."
+
+"Cole."
+
+"Yes."
+
+"You read the Walmart term sheet."
+
+"I read every term sheet Walmart has filed in any forum since the platform initiative went public eleven months ago. I have the structure of their make-good language in my head from a 10-Q footnote in March. The footnote was small. Walmart did not want anyone to read it. I read it."
+
+"What do I tell Marguerite's board at seven."
+
+"You tell them three things. One. Walmart cannot ship the seven products on the timeline they are quoting. Two. The make-good is a phantom liability priced to expire before it pays. Three. The exclusivity language gives Walmart a veto on every operational decision Midcontinent makes for the next five years, because every operational decision Midcontinent will make on a platform contract is a decision that can be argued to constitute material breach of the exclusivity. The first two are the math. The third is the cage. The cage is what they should not sign into."
+
+"Cole."
+
+"Yes."
+
+"Will you be on the satphone at seven AM Eastern."
+
+"I will be on the satphone at seven AM Eastern. Mara will have the line open. I will be at the gym. I will be on the bar. I will be on the satphone."
+
+"Thank you."
+
+"Reese."
+
+"Yes."
+
+"Marguerite is going to sign. She is going to sign at four-forty Wednesday. You are going to sign at four-forty-one. Walmart is going to sign with Carry inside forty-five days as the second tenant on the platform. The Walmart spoiler is the Walmart concession in two acts. Marguerite is the first act."
+
+He hung up.
+
+Reese went up to his room. He read the Walmart term sheet when it landed at 12:02 AM. The footnote on the make-good was where Cole had said it was. The exclusivity language was the cage Cole had said it was.
+
+He was in Marguerite's office at 6:00 AM. Cole was on the satphone at 7:00. The Midcontinent board absorbed the three points across forty-eight minutes. Marguerite ended the call at 7:51.
+
+"Reese."
+
+"Marguerite."
+
+"The board is with me. The signing is at four-forty."
+
+"Four-forty."
+
+She killed the satphone.
+
+She walked Reese to the elevator.
+
+Marguerite Holloway signed at four-forty PM Eastern on the Wednesday in late November.
 
 Reese signed at four-forty-one.
 
@@ -174,109 +258,41 @@ The *Wall Street Journal* ran the story on the front page of the Friday-morning 
 
 The profile was the first time Reese's name had been on the front page of the *Journal.*
 
-He read it at five-thirty AM Friday in his kitchen in Magnolia with Imani at the table next to him in her robe.
-
-Imani read it over his shoulder.
-
-"Reese."
-
-"Yes."
-
-"She got you right."
-
-"She did."
-
-"The CMU section is good."
-
-"It is."
-
-"The Argo Cloud section is good."
-
-"It is."
-
-"The line about the platform being the architecture you have been protecting against the political pressure of fifteen years is the line of the piece."
-
-"I know it is."
-
-"Cole's going to call you Monday morning."
-
-"He is."
-
-"Eat. The kids are going to be up in twenty minutes."
-
-He ate.
-
-The kids were up in twenty minutes.
+He read it at five-thirty AM Friday in his kitchen in Magnolia. Imani read three paragraphs over his shoulder, refilled his coffee, and went upstairs to get the kids ready.
 
 He drove them to school.
-
-He came back to the house at eight-fifteen.
-
-Imani was in her scrubs.
-
-She kissed him on the forehead at the door.
-
-"Tonight."
-
-"Tonight."
-
-She left for the hospital.
 
 He went to the office.
 
 ---
 
-Cole called him Monday morning at six twenty-seven AM Pacific.
+Cole called him Monday morning at 6:27 AM Pacific.
 
-Ninety seconds.
+Sixty seconds.
 
 "Reese."
 
 "Cole."
 
-"Midcontinent was the proof."
-
-"I know it was."
-
-"Walmart inside forty-five days."
+"Walmart's chief platform officer files a 13G on Carrick Cloud at the open. They are buying optics on the deal. Run the Walmart contract close inside forty-five days."
 
 "Inside forty-five days."
 
-"Reese."
+"Target inside ninety. Best Buy inside one-twenty. Kroger and Home Depot are sequencing behind them. The same play on the same compressed timeline. The play does not change."
 
-"Yes."
-
-"The Journal profile was right. The architecture is the architecture you have been protecting against the political pressure of fifteen years. I'm going to say that on the record at the Q4 earnings call. I'm going to use the line. I'm telling you now so that you know what I'm going to say."
-
-"Cole."
-
-"Yes."
-
-"Use the line."
-
-"Good."
-
-"Cole."
-
-"Yes."
-
-"You're going to be the CEO of this company for four more years. I'm going to be the CEO after that. You and I are not going to talk about the succession in public until Year Three. We're not going to talk about it inside the company until Year Three. We're not going to talk about it in this phone call. I'm telling you that we're not going to talk about it now because the only way the succession is going to work is if you and I are both running our jobs the way we are running them today, with no thought about whose job is whose. I'm going to run the platform. You're going to run the company. We're going to do that for four years. After four years you are going to walk down the hall to my office and you're going to give me the keys. I'm going to take them. We're not going to talk about it in the meantime. Is that the right deal."
+"The play does not change."
 
 "Reese."
 
 "Yes."
 
-"That's the right deal."
+"The Brunner profile."
 
-"Thank you."
+"I read it last night."
 
-"Reese."
+"Mara is going to want a thirty-minute brief with you Thursday on the threat posture for the platform-services side. Brunner is not the only fund that is going to look at Carry as a target. Walmart is not the only competitor that is going to make a spoiler bid on a closing customer. The next six months are going to be the most aggressive six months of the pivot. The platform is going to be tested on the close-customer side. Hold the customers. Sign the contracts. Run the play."
 
-"Yes."
-
-"Walmart inside forty-five days."
-
-"Inside forty-five days."
+"Run the play."
 
 They hung up.
 

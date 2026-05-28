@@ -1,102 +1,308 @@
 # Chapter 13: The Handover
 
-Diana Marquez walked into the boardroom of Carrick Retail Co. on the thirty-fourth floor of the Newark headquarters tower at 2:46 PM Eastern on a Wednesday in May of Year Seven. The framed photograph from her father's office in Tijuana was tucked under her left arm. The notarized letter from Hector Eladio Marquez was in her left hand. The closing-tranche transfer documents lived in a calfskin folio against her right hip.
+Priya Bhattacharya called Diana Marquez at 10:51 AM Eastern on the Wednesday in May of Year Seven that the final tranche was supposed to close.
 
-She was fifty-eight years old.
+Diana was in the boardroom of Carrick Retail Co. on the thirty-fourth floor of the Newark headquarters tower with the calfskin folio open in front of her and Don Bell across the table reading the morning's wire-confirmation packet.
 
-She had run the ESOP transition for sixty-six months.
+She picked up on the second ring.
 
-The transition was, at 2:58 PM Eastern that afternoon, going to complete.
+"Priya."
 
-The remaining 22% of the equity in Carrick Retail Co. was about to transfer from Carrick, Inc. — the parent that had owned the retail business for thirty-eight years — to the chartered ESOP trust that held the equity on behalf of the 468,000 Carrick Retail employees eligible at the close of Q1 of Year Seven.
+"Diana. We have a TRO motion filed in Chancery in Wilmington at ten forty-seven Eastern. The movant is Brunner Event Capital. The fund holds approximately eleven percent of Carrick's Series B preferred. They bought the position at a discount in March on the secondary. The motion claims the seventh-tranche valuation undervalues their liquidation preference by one point four billion dollars and asks the court to enjoin the closing until the valuation is recalculated under a methodology Brunner has attached as Exhibit C."
 
-The transfer was the final tranche.
+Diana set the pen down.
 
-The first had moved 8% on January 1 of Year Two, four months after the memo, when Diana had been forty-nine and had stood in a different boardroom in Manhattan and had signed the first set of transfer documents in the presence of Don Bell, the trustee, who was sixty-five then and was seventy-two now and was sitting at the head of the table in Newark on this Wednesday afternoon.
+"Hearing."
 
-Second tranche: 15%, January 1 of Year Three.
+"Hearing set for one-thirty PM Eastern in Wilmington. Chancellor Greco. The closing window in Newark is two fifty-eight to three. The Treasury wire is staged on the Fed pricing schedule for two fifty-seven. If the wire does not clear at two fifty-nine, the close is dead today. The next available Fed window is seven days out. If the SEC requires a re-clearance because of the TRO filing, the close pushes ninety days."
 
-Third: 15%, January 1 of Year Four.
+"Cole."
 
-Fourth: 15%, January 1 of Year Five.
+"I have a call out to Mara. Mara is reaching him on the *Coelacanth.* He is six hundred twenty miles southwest of Guam, ship time is plus seventeen, it is currently three fifty-one AM Thursday on the *Coelacanth.* He will be on the satphone in nine minutes."
 
-Fifth: 12%, January 1 of Year Six.
+"Counsel in Wilmington."
 
-Sixth: 13%, January 1 of Year Seven.
+"David Sterns. He is already in his car between Center City and Wilmington. He will be at the courthouse at twelve-ten. He has the Brunner filing on his phone. He is reading it now."
 
-Seventh and final: 22%.
+"Margot."
 
-At 2:58 PM Eastern this Wednesday afternoon, the final 22% would clear.
+"Margot is on the secure video from Belltown standing by. The full Carrick parent board is on standby. Owen is in his office. Reese is on the seventh floor of the Cloud building. Anjali is on a flight from Phoenix that lands at SeaTac at eleven-eighteen Pacific."
 
-At 3:00 PM, Carrick, Inc. would hold zero equity in any retailer.
+"Roberto Cordero."
 
-At 3:01 PM, Carrick Retail Co. — the legal entity that operated the consumer-facing retail business of what had been Carrick's largest division for thirty-one years, that ran the marketplace and the fulfillment and the customer service and the brand and the Prime-equivalent membership and the entire retail front-end of the company — would be, for the first time in its history, owned in full by its workforce.
+"What."
 
-468,000 people.
+"Roberto is the operational anchor at Goodyear. If we are running the wartime, I want every Carry general manager in the country to know nothing is wrong. The floor cannot read a closing delay as the pivot in trouble. The floor reads delays. Floors always read delays."
 
-The trust held the equity on their behalf.
+"Anjali will handle the field. She has been pre-briefed for exactly this contingency since January. The protocol is in her binder."
 
-The trustee at the head of the table was about to read the closing documents into the record.
-
-The first worker-elected board of Carrick Retail Co. was already in the room.
-
-Nine board members. Six elected by the workforce in a vote that had run from March of Year Six through November of Year Six — the largest worker-board election in U.S. corporate history. Two appointed by Diana from a list of fiduciaries vetted by the ESOP Association. One appointed by the trust as a continuing independent fiduciary.
-
-The chair of the new board was Maria Inocencia Salgado, fifty-four, former general manager of the Joliet fulfillment center. Carrick Retail since 2008. Six years running Joliet before the conversion. One of the eight hundred retained at higher wages in the first-wave conversion in February of Year Two. Promoted to Carry Tenant Operations in Year Four. Elected to the worker-board in November of Year Six with 43,000 of the 48,000 votes cast in the Pacific region. Elected chair by the new board on the morning of the closing in Newark by a vote of 8–1, with one abstention from Maria herself.
-
-Maria Salgado sat in the chair to Diana's left.
-
-Diana set the photograph, the notarized letter, and the leather folio on the table at her assigned seat.
-
-She sat.
-
-Maria looked at her.
-
-"Diana."
-
-"Maria."
-
-"Ready?"
-
-"Ready."
-
-"Don."
-
-At the head of the table, Don Bell opened the closing folder.
-
-"Two fifty-three PM. Transfer protocol begins at two fifty-six. Certificates are in the trust's secure folder. The Treasury wire to clear the residual obligations is staged at the Federal Reserve Bank of New York's pricing desk for two fifty-seven. I'm going to read the closing protocol into the record. After I finish, the four signatures — Diana for the parent, Maria for the worker-elected board, the trustee firm's senior partner Helen Greenstein for the trust, and Margot Halloran on the secure video from Belltown for the parent's board — go onto the closing documents. Timestamped at two fifty-eight. Transfer clears at three. Closing is on the record beginning now."
-
-He read the closing protocol.
-
-The closing protocol was eleven pages.
-
-He read it without looking up from the folder for fifteen minutes.
-
-At three minutes before three he stopped.
+"Good."
 
 "Diana."
 
 "Yes."
 
-She opened the leather folio. She took out the parent-company transfer authorization. She read the cover page. She turned to the signature page. She picked up the pen Helen Greenstein had laid on the table in front of her.
+"We have four hours and seven minutes to defeat the TRO. Cole's view will land in nine minutes. Hold the room."
 
-The pen was a black Pelikan M800.
+"I am holding the room."
 
-It was the pen Diana had bought at a stationery store in West Seattle in February of Year Two, eleven days after the memo, when she had walked in on a Saturday afternoon with Esteban and had said, *I want a pen I am going to use to sign the final ESOP transfer of Carrick Retail in five years.* The clerk had said, *Five years.* Diana had said, *Five years.* Esteban had laughed quietly. The clerk had walked her to the Pelikan case at the back of the store.
+She set the phone down on the leather blotter.
 
-She had bought the pen.
+Don Bell looked at her across the table.
 
-She had kept it in the top drawer of her desk for sixty-six months.
+"Diana."
 
-She had not signed any other document with it across those sixty-six months.
+"Don."
 
-At 2:58:00 PM Eastern on Wednesday in May of Year Seven, she signed the parent-company transfer authorization.
+"What."
+
+"We have a TRO motion in Chancery. Brunner Event Capital. Hearing one-thirty Eastern. We are going to defeat it. We are still closing at two fifty-eight."
+
+Don Bell, seventy-two, who had read more closing protocols across more transactions than any other living American trustee, looked at her for one beat.
+
+"Diana."
+
+"Yes."
+
+"Tell me what you need."
+
+"I need the room to stay sitting. I need the closing folder to stay on the table. I need the Treasury wire to stay staged. I need the worker-elected board to walk in at twelve forty-five the way the calendar has them walking in at twelve forty-five. I need none of them to know about the TRO until two-thirty Eastern. If we defeat the TRO at two-thirty, we close at two fifty-eight. If we lose the TRO, I walk into the room at two thirty-five and I tell them in person. I do not tell them by phone. I do not tell them by text. The worker-elected board of the first four-hundred-and-sixty-eight-thousand-person employee-owned American retailer learns about a closing delay from the woman who has run the transition for sixty-six months, in person, in the room, with the door closed."
+
+"Understood."
+
+"Don."
+
+"Yes."
+
+"Hold the room."
+
+"I am holding the room."
+
+---
+
+The satphone on the *Coelacanth* bridge console rang at 4:00 AM ship time.
+
+Cole picked it up at the second ring. He was at the chart table with the *Phantom* pre-dive checklist open in front of him and Bear at the espresso station behind him. The dive was at six. The submersible was on the deck cradle. Annika was below in the pressure-suit room with the dive medical officer.
+
+"Mara."
+
+"Cole. Priya is on the line. Diana is in the boardroom in Newark. Brunner Event Capital filed a TRO motion in Chancery at ten forty-seven Eastern to enjoin the close. Hearing one-thirty Eastern. We have four hours and ten minutes."
+
+"Put Priya on."
+
+The line clicked.
+
+"Priya."
+
+"Cole. The motion is twenty-eight pages. The argument is that the seventh-tranche valuation undervalues their Series B preferred liquidation preference by one point four billion because the methodology used by the trust is, quote, the methodology adopted by the parent under duress in the post-memo restructuring of November Year One, and that the Series B holders, who acquired their position on the secondary in March, did not consent to the methodology and are not bound by it."
+
+"They are bound by it."
+
+"They are bound by it. The 2022 amendment to the Series B governance documents — the amendment that ratified the post-memo restructuring — was approved by ninety-four percent of the then-holders. The amendment includes successor-in-interest language. Brunner bought a position whose governance was already amended. They are arguing the amendment is voidable because the consideration was inadequate."
+
+"Inadequate against what."
+
+"Against the same valuation methodology they are now challenging. The argument is circular."
+
+"Sterns."
+
+"Sterns is going into court at one-thirty with the circularity argument and a 2024 precedent — *Hendry v. Castellan Industries* — that forecloses a secondary-market acquirer from challenging a governance amendment ratified before the acquirer's purchase."
+
+"That precedent is clean."
+
+"Sterns says it is. He says it is the cleanest precedent he has been able to use in a Chancery emergency motion in eleven years of doing them. He says Chancellor Greco wrote a concurrence in *Hendry* that names the exact fact pattern Brunner is presenting."
+
+"Greco wrote the concurrence."
+
+"Greco wrote the concurrence."
+
+Cole walked the satphone to the bridge window. Outside, the Pacific was the same Pacific. The Phantom sat on the deck cradle under the launch lights. Bear had put the espresso down and was watching him.
+
+"Priya."
+
+"Yes."
+
+"The Brunner play is not the Chancery motion. The Chancery motion is the front. The Brunner play is the press release Brunner is going to issue at noon Eastern naming the TRO and naming the one point four billion. The press release is going to be on the wire ninety minutes before the hearing. The wire is going to move the parent stock down four to six percent on the day. The closing is not the target. The target is the optics on the closing. Brunner is going to short Carrick parent into the closing window. They are going to be wrong about the TRO. They are not going to be wrong about the optics in the ninety minutes between the press release and Greco ruling."
+
+"Cole."
+
+"Yes."
+
+"We pre-empt the wire."
+
+"We pre-empt the wire. Get Adelaide Krug at the *Journal* on the phone at eleven thirty Eastern. Give her the full Brunner filing. Give her the 2022 amendment vote tally. Give her *Hendry* and the Greco concurrence. Give her the trust valuation methodology and the underlying audit. Give her Don Bell on background. Tell her the *Journal* runs the story at noon Eastern alongside the Brunner press release or the *Journal* runs the story at noon Eastern alone, depending on whether Brunner moves the press release up. The *Journal* will run alone. Adelaide will not wait."
+
+"And the stock."
+
+"Owen runs the buyback authorization the board approved in March. He has discretionary authority up to four billion. He uses it between eleven forty-five and one-thirty Eastern. Brunner shorts into a buyback. Brunner does not get the optic. The stock holds inside two percent of the open through the hearing."
+
+"Owen."
+
+"Owen is going to want a verbal from me. I am giving him the verbal now. Tell him I authorized the buyback execution at four AM ship time, four AM Wednesday on the *Coelacanth*, which is eleven AM Eastern, on the satphone, with Priya on the line as witness. He has the authorization. He executes."
+
+"Got it."
+
+"Priya."
+
+"Yes."
+
+"One more. Greco's chambers."
+
+"Cole."
+
+"I am not asking you to call Greco's chambers. I am asking you to make sure David Sterns is in Greco's courtroom at twelve forty-five for the prior matter on the docket. Greco's twelve-thirty motion is a routine preliminary injunction in a contract dispute between two specialty-chemical companies in Delaware. Sterns argued a related matter in front of Greco in October. Greco knows Sterns. Sterns sits in the back of the courtroom for the twelve-thirty. Greco sees him. The hearing on Brunner at one-thirty starts with Greco having had forty-five minutes to remember David Sterns is the kind of lawyer who shows up at twelve-thirty for a one-thirty hearing."
+
+"Sterns will be in the back of the courtroom at twelve forty-five."
+
+"Good."
+
+"Cole."
+
+"Yes."
+
+"Diana is holding the room in Newark."
+
+"Diana is the reason the room is holding."
+
+"What do you want me to tell her."
+
+"Tell her the closing closes at two fifty-eight. Tell her I am going to be on the bridge of the *Coelacanth* at the moment the wire clears. Tell her the dive is at six AM ship time, which is one PM Eastern. I will be in the *Phantom* descending the line through the entire window of the Chancery hearing. I will be on the surface at two-fifteen Eastern. I will be back on the satphone at two-twenty. Mara will have the line open. I want the chancellor's ruling read to me on the satphone at the moment Greco gavels."
+
+"Cole."
+
+"Yes."
+
+"You are diving while the hearing runs."
+
+"I am diving while the hearing runs because the dive is on the manifest and the manifest does not move and the *Phantom* topside crew has been on this station for four days and the weather window holds till oh nine hundred. If we move the dive, the *Phantom* topside crew reads the move as a problem at the parent. Sterns argues *Hendry* and the Greco concurrence whether I am on the deck or on the trench floor. I am going to be on the trench floor. Mara is going to be on the bridge with the satphone. Greco rules. Mara hears it. The *Phantom* surfaces. I am on the satphone at two-twenty."
+
+"Understood."
+
+"Priya."
+
+"Yes."
+
+"Run it."
+
+He killed the call.
+
+He walked the satphone to Bear.
+
+"Bear."
+
+"Yes."
+
+"Pre-dive at five forty-five. Dive at six. Surface at eight-fifteen. Mara on the bridge with the satphone every minute I am under."
+
+"On it."
+
+He went down to the pressure-suit room.
+
+---
+
+Owen Friedlander began executing the buyback at 11:46 AM Eastern through Carrick's principal-trading desk at JPMorgan.
+
+The Carrick treasury team had pre-staged the buyback execution rails on the board's March authorization the previous Friday. Owen authorized the desk to deploy two point eight billion of the four-billion ceiling between 11:46 AM and 1:30 PM Eastern, with execution algorithms set to absorb sell-side flow on a half-million-share triggered ladder.
+
+Brunner Event Capital issued the press release at 12:01 PM Eastern.
+
+The release named the TRO. It named the one point four billion. It named the hearing. It named Chancellor Greco.
+
+The *Wall Street Journal* ran the Adelaide Krug story on the website at 12:01 PM Eastern. The Krug story named the TRO, named the *Hendry* precedent, named the Greco concurrence, named the 2022 amendment vote, named the trust valuation methodology, and quoted Don Bell on background to the effect that the trustee had executed the methodology under the same audit protocol the trust had used on each of the six prior tranches without challenge.
+
+The Krug story ran the headline *Activist Files Pre-Closing Motion in Carrick ESOP Transfer; Legal Path Narrow.*
+
+The Brunner release ran on three wires.
+
+The Krug story ran on the *Journal* website, on Bloomberg's pickup at 12:04, and on Reuters at 12:07.
+
+The Carrick stock opened the noon hour down one point one percent and held inside two percent of the open through 12:30.
+
+Brunner had built a short position of approximately four hundred million across the previous two trading sessions in advance of the press release. The short was absorbed by the buyback execution between 12:01 and 12:18. Brunner attempted to add at 12:22. The desk absorbed.
+
+The stock was down one point four percent at 1:30 Eastern.
+
+David Sterns was in the back of Chancellor Greco's courtroom at 12:42 PM.
+
+Chancellor Greco saw him.
+
+---
+
+The Brunner hearing opened at 1:32 PM Eastern.
+
+Brunner's counsel was Henry Ortlieb, sixty-one, a senior partner at a Wilmington firm that had argued seven of the previous nineteen TRO motions in the Chancery against ESOP transfers across the prior eight years and had lost six.
+
+Ortlieb opened with the valuation argument. He ran fourteen minutes. The argument was the argument that had been in the filing.
+
+Sterns opened the response with the *Hendry* citation.
+
+He named the Greco concurrence in the second sentence.
+
+Greco interrupted at the fourth sentence.
+
+"Mr. Sterns."
+
+"Your Honor."
+
+"You have read my concurrence."
+
+"I have read it. I have read it three times. It is dispositive on the secondary-market-acquirer point."
+
+"I wrote it because I thought it would be dispositive on the point. I am not going to ask Mr. Ortlieb to argue that I was wrong about my own concurrence in the eight months since I wrote it. Mr. Ortlieb. Do you have a *Hendry* argument."
+
+Ortlieb did not have a *Hendry* argument.
+
+He attempted the inadequate-consideration argument.
+
+Greco listened for six minutes.
+
+Greco denied the motion at 2:36 PM Eastern.
+
+The ruling was read into the record at 2:37.
+
+David Sterns walked out of the courthouse at 2:39 and called Priya from the steps.
+
+Priya called Diana at 2:40.
+
+Diana set the phone down on the leather blotter.
+
+She looked at Don Bell.
+
+"Don."
+
+"Yes."
+
+"We are closing."
+
+"We are closing."
+
+"Bring the worker-elected board in."
+
+He stood. He walked to the door. He opened it. The board members were in the conference room across the hall where they had been since 12:45. They walked in. Maria Salgado walked first. She sat in the chair to Diana's left.
+
+Helen Greenstein of the trustee firm walked in behind them and took the seat to Don's right.
+
+Margot Halloran came on the secure video from Belltown at 2:43.
+
+Don read the closing protocol.
+
+He read it for fifteen minutes.
+
+He stopped at 2:57:50.
+
+"Diana."
+
+"Yes."
+
+She opened the leather folio. She took out the parent-company transfer authorization. She turned to the signature page. She picked up a black ballpoint pen from the center of the table.
+
+She signed at 2:58:00.
 
 Maria Salgado signed the worker-elected-board acceptance at 2:58:12.
 
 Helen Greenstein signed the trustee receipt at 2:58:24.
 
-Margot Halloran, on the secure video from Belltown, signed the parent-board approval at 2:58:36.
+Margot Halloran signed the parent-board approval on the secure video at 2:58:36.
 
 The Treasury wire cleared the residual obligations at 2:59:18.
 
@@ -104,318 +310,218 @@ Don Bell looked at the room.
 
 "Transfer is complete at two fifty-nine and twenty-eight seconds. Carrick, Inc. holds zero equity in Carrick Retail Co. as of this timestamp. The first wholly-employee-owned major U.S. retailer in the modern era is the entity at this table. The closing is on the record."
 
-The room held its breath for a beat.
-
-Maria Salgado stood up.
-
-She walked around the table to Diana's chair. She picked the Pelikan M800 up off the document. She turned it once in her hand, looking at the gold band at the cap. She put it back in Diana's palm.
-
-"You keep the pen."
-
-"I keep the pen."
-
-"We have it from here."
-
-"I know you do."
+Maria Salgado looked at Diana.
 
 "Diana."
 
-"Yes."
+"Maria."
 
-"On behalf of the four hundred sixty-eight thousand of us. Thank you."
+"You held the room."
 
-"Thank yourself. You ran the floor."
+"Don held the room. I worked the phone."
 
-"We ran the floor together for sixty-six months."
+"You held the room."
 
-"Sixty-six months."
+The two women stood.
 
-The two women embraced.
+They shook hands.
 
-The room applauded. The applause ran twenty-eight seconds.
+The applause was three seconds.
+
+The new board went into session at 3:00 PM Eastern.
 
 ---
 
-After the closing, the new board went into its first independent working session, scheduled to run from 3:30 PM to 7:30 PM Eastern.
+The *Phantom* surfaced at 8:17 AM ship time.
 
-Diana left the building at 3:48.
+Cole came up the boarding ladder onto the deck of the *Coelacanth* at 8:24. Bear behind him. Annika behind Bear. The topside crew had the cradle ready. The submersible came out of the water on the winch at 8:31.
 
-She walked across Broad Street in the May sunshine to the car Esteban was driving.
+Mara was at the rail with the satphone open.
 
-She got in.
-
-He looked at her.
-
-"Diana."
-
-"Esteban."
-
-"It's done."
-
-"It's done."
-
-"Drive to the airport. We can be at LaGuardia in fifty minutes."
-
-"Drive."
-
-He drove.
-
-They did not speak for the first nineteen minutes. Diana watched Newark slide past the window — the brick walls, the brown brick walls, the tag-painted brick walls, the New Jersey sky going lilac at the top edge.
-
-At the corner of Bleecker and McCarter Highway she said, "I'm calling my father from the airport. Not yet. I want twenty minutes of not calling him first."
-
-"All right."
-
-"And I have to call Cole. He's on the *Coelacanth.* The window I have to reach him on the satphone is between five and six PM Pacific tonight. I'll call from the gate at LaGuardia."
-
-"All right."
-
-A long beat. The Holland Tunnel approach.
-
-"Esteban."
-
-"Yes."
-
-"I've been the interim CEO of a company that doesn't have me anymore. I don't know what I am yet. I'm not going to know until next week. I would like to go to Sicily for two weeks before I figure it out."
-
-"Sicily."
-
-"Sicily. The trip we've been postponing for nine years."
-
-"I'll book it on my phone from the gate."
-
-"Thank you."
-
-A longer beat. The white-tile gleam of the tunnel washed over the windshield.
-
-"Diana."
-
-"Yes."
-
-"You're going to be the executive the country is going to need an executive to be. The phone is going to start ringing in two weeks. You'll answer one of the calls. You won't answer it from Sicily. You'll answer it from the back porch in West Seattle in late June. Whatever it is, it's going to be the right one because the closing happened the way the closing happened. The country is going to know who you are."
-
-"Esteban."
-
-"Yes."
-
-"I love you."
-
-"I love you too."
-
-He drove.
-
-They went through the Holland Tunnel at 4:03.
-
-The traffic on the Manhattan side moved.
-
----
-
-At the gate at LaGuardia at 5:48 PM Eastern, with Esteban next to her on the bench reading a magazine, Diana opened the encrypted satphone Mara Quinn's office had couriered to her in Newark on Monday morning.
-
-She dialed the *Coelacanth.*
-
-The connection went through with the eight-second satellite hesitation she had come to know across sixty-six months of these calls.
-
-The voice on the line was the captain.
-
-"Henrik."
-
-"Diana."
+She walked it to him.
 
 "Cole."
 
-"Cole is on the deck. I'll walk it to him."
+"Mara."
 
-"All right."
+"Greco denied at two thirty-six Eastern. Sterns called Priya at two thirty-nine. Diana closed at two fifty-eight. The wire cleared at two fifty-nine eighteen. Don Bell read the closing into the record at three. Carrick, Inc. holds zero equity in any retailer as of three PM Eastern."
 
-She waited two minutes.
+He took the phone.
 
-She heard the wind off the Pacific.
+He looked at the horizon for one beat.
 
-She heard footsteps on a metal deck.
+"Mara."
 
-She heard Cole's voice come on, low and slightly out of breath.
+"Yes."
 
-"Diana."
+"Get me Diana."
+
+She dialed. The connection went through. Diana picked up on the first ring.
 
 "Cole."
 
-"The closing."
+"Diana."
 
-"Closed at two fifty-eight forty Eastern. Final clearance at two fifty-nine twenty-eight."
+"Closed at two fifty-eight."
+
+"Closed at two fifty-eight."
 
 "Maria signed."
 
 "Maria signed."
 
-"Margot signed."
+"Greco."
 
-"Margot signed."
-
-"Don read the protocol."
-
-"Don read the protocol."
-
-"Diana."
-
-"Yes."
-
-"I'm on the deck. The *Coelacanth* is anchored at the dive station. The dive is tomorrow morning at oh six hundred. Bear is in the pressure suit. Annika has been on the bridge with the captain for the last forty minutes watching the sun go down. The Pacific is the Pacific. The light is the light. I called the studio in Portland twenty minutes ago. Iona answered. I told her the closing was happening at two fifty-eight Eastern. She said she had a window open at eleven forty-eight Pacific to look at the inbound order log for the next three minutes. I told her I'd call her back at twelve oh-one Pacific. I am calling her back at twelve oh-one Pacific. I want her to know the closing closed before I get on the bridge."
-
-"Cole."
-
-"Yes."
-
-"I have the pen on my desk in Newark. The Pelikan M800. Maria gave it back to me. I'm going to put it in the front pocket of a small wooden box on the desk in the West Seattle house. I'm going to keep the box on the desk. The pen is going to be in the box for the rest of my professional life. When I die the pen goes to my daughter. When my daughter dies the pen goes to the daughter she does not yet have."
-
-"Diana."
-
-"Yes."
-
-"That is the right place for the pen."
-
-"I know it is."
-
-"Diana."
-
-"Yes."
-
-"Thank you."
-
-"Cole."
-
-"Yes."
-
-"It was the work I was made to do."
-
-"I know it was."
-
-"Land the dive."
-
-"I will."
-
-"Land it twice."
-
-He laughed — a short, surprised sound she had heard maybe four times in sixty-six months.
-
-"I'll land it twice."
-
-She hung up.
-
----
-
-She walked the satphone over to the airline counter to confirm the upgrade Esteban had booked. She walked back to the gate. She sat down.
-
-She set the satphone on her lap.
-
-"Esteban."
-
-"Yes."
-
-"Cole says he's going to land the dive twice."
+"Greco followed his own concurrence."
 
 "Good."
 
-"Sicily on Sunday."
+"Cole."
 
-"Sicily on Sunday."
+"Yes."
 
-She picked up her own phone. She called her father in Chula Vista. He answered on the second ring.
+"Brunner."
 
-"Mija."
+"Brunner is going to spend the next eleven days covering a four-hundred-million short into a buyback that absorbed them at the open. They are going to file an appeal. The appeal is going to fail at the Delaware Supreme Court inside sixty days. They are going to redeem the Series B at the trust's valuation in Q3. They are going to lose somewhere between three hundred and four hundred million on the trade. The fund will be down to half its assets by year-end. The fund will be wound down inside eighteen months."
 
-"Papa. Está hecho."
+"You knew."
 
-"Lo sé."
+"I knew the play. I have known the play since November. Mara's signals desk flagged the Brunner position-build in March. We pre-staged the buyback authorization in March. We pre-staged the Krug story in March. We pre-staged Sterns at twelve forty-five in the back of Greco's courtroom in March. Brunner ran the play we expected Brunner to run. The play we expected Brunner to run does not work against a defense that was pre-staged."
 
-"Papa."
+"Cole."
 
-"Sí."
+"Yes."
 
-"El bolígrafo está en mi escritorio."
+"You did not tell me."
 
-"Mija. El bolígrafo está donde debe estar."
+"You did not need to know on Monday. You needed to run the closing on Wednesday. The closing ran. The board is in session. You are stepping down at five."
 
-"Te amo, Papa."
+"At five."
 
-"Te amo, Mija. Buenas noches."
+"Maria takes the chair at five-oh-one. You walk out at five-fifteen. Esteban is at the curb at five-twenty. You are on the United flight at six forty-six Eastern. Anjali sent you the upgrade confirmation at three-oh-eight from the Sea-Tac arrivals lounge."
 
-She hung up.
+"Anjali."
 
-The boarding announcement came over the gate intercom.
+"Anjali."
 
-Esteban stood. She stood.
+"Cole."
 
-They walked to the gate.
+"Yes."
 
-The flight was United 1247, Newark to Seattle, scheduled departure 6:46 PM Eastern. It took off at 7:02.
+"The dive."
 
-Diana slept three of the five hours and forty minutes of the flight.
+"The dive went. Eighteen thousand feet. Annika watched the trench floor for forty minutes. Bear ran the camera. I ran the manifold. The *Phantom* held pressure. We surfaced clean."
 
-Sea-Tac at 9:44 PM Pacific.
+"Annika."
 
-She walked the C concourse with Esteban toward baggage claim and passed a small ceramics shop in the concourse with a wheel-thrown bud vase in the front window.
+"Annika is on the deck. She is going to write Diana an email from the satellite link tonight. She is going to tell Diana that the trench floor was the second most consequential thing she saw today."
 
-The vase was a moss-green Echo.
+"Cole."
 
-The signage above the window read: *LACQUER & CUP — Portland, Oregon — A Member of the Carrick Carry Platform — Wholly Independent.*
-
-Diana stopped.
-
-She looked at the vase for a moment.
-
-She walked into the shop.
-
-The shopkeeper, thirty-six, apron, name tag reading *DEVON*, looked up.
-
-"Good evening."
-
-"Good evening. I'd like to buy the Echo in the front window."
-
-"Forty-eight dollars."
-
-"I have cash."
-
-Devon took the vase out of the window. Wrapped it in tissue paper. Put the tissue paper in a small kraft-paper bag.
-
-"Are you from Portland?"
-
-"I'm from West Seattle. I've been in Newark for two weeks. I've known the studio for nine years. I have not bought an Echo before. I'm buying one tonight."
-
-"I'm glad you are."
+"Yes."
 
 "Thank you."
 
-"Have a good night."
+"Diana. You ran the work."
 
-"Have a good night."
+"You ran the wartime."
 
-She walked out.
+"You held the room. The wartime would have been wasted on an empty room. You held it. We closed."
 
-Esteban was waiting at the door.
+A beat.
 
-"Drive me home."
+"Cole."
 
-He drove her home.
+"Yes."
 
-She was in the kitchen of the West Seattle house at 11:08 PM Pacific. She set the Echo on the counter. Unwrapped it. Set it in the middle of the counter under the lamp from the table by the window.
+"Go shower. I have a board to step down from."
 
-She stood there a moment.
+"Go."
 
-She thought about the framed photograph from her father's office in Tijuana, checked into a separate piece of luggage at LaGuardia, that she would unpack on Sunday morning before the flight to Sicily.
+She killed the call.
 
-She thought about Maria Salgado in the Newark boardroom at 2:58 that afternoon, signing the worker-elected-board acceptance with a Bic pen Maria had picked up off the table.
+---
 
-She thought about the 468,000 workers who, on the morning the Pacific sun rose over the *Coelacanth* in twelve hours, would walk into one of the eleven hundred Carrick Retail Co. fulfillment centers and customer-service operations and stores and warehouses around the world as the owners of the company they had been showing up at for fifteen, twenty, twenty-five years.
+Diana walked back into the boardroom at 3:01 PM. The new board was in session. Maria Salgado was at the head of the table.
 
-She thought about the pen in the small wooden box on the desk in the study upstairs.
+Diana sat in the chair she had been in for sixty-six months.
 
-She filled a glass of water at the sink. She drank it. She turned off the lamp.
+She listened to the first independent working session of a worker-elected board of a four-hundred-and-sixty-eight-thousand-person company for one hour and fifty-eight minutes.
+
+She stood at 4:59.
+
+"Maria."
+
+"Yes."
+
+"At five-oh-one this chair is yours."
+
+"I know it is."
+
+"At five-oh-two this room is yours."
+
+"I know it is."
+
+"The keys are in the leather folio. The trust documents are on the cloud. The operating cadence is in the binder on the credenza. The Tuesday morning operating call is at seven-thirty Eastern. Roberto Cordero is in your contacts as the operational anchor on the platform side. Anjali Rao is in your contacts as the parent-side COO. Owen Friedlander is in your contacts as the parent CFO. Cole is in your contacts."
+
+"I have the contacts."
+
+"Good."
+
+"Diana."
+
+"Yes."
+
+"Go."
+
+She walked to the door.
+
+She did not look back.
+
+Esteban was at the curb at 5:20.
+
+She got in.
+
+He drove.
+
+They went through the Holland Tunnel at 5:48.
+
+The Manhattan side moved.
+
+The United flight took off at 7:02 PM Eastern.
+
+She slept three of the five hours and forty minutes of the flight.
+
+Sea-Tac at 9:44 PM Pacific.
+
+The Suburban was at the curb. Anjali Rao had sent it.
+
+Anjali was at the wheel.
+
+Diana got in.
+
+"Anjali."
+
+"Diana."
+
+"Drive."
+
+She drove.
+
+They went to the West Seattle house in silence.
+
+Esteban was already there. He had flown out two days earlier on his own ticket so the car at LaGuardia would not need to drive across town in evening traffic.
+
+Diana got out at 10:31.
+
+She walked into the house.
+
+The kitchen lamp was on.
+
+She turned it off.
 
 She went to bed.
 
-Esteban was already asleep.
-
 She slept nine hours.
 
-The Pacific dawn came in twelve.
+The Pacific dawn came in eleven.
