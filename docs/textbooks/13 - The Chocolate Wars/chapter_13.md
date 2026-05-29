@@ -16,9 +16,9 @@ The Beast Philanthropy public ledger at beastphilanthropy.org/ledger had, at six
 
 Each tick was a school-day.
 
-The school-days, on the deterministic disbursement schedule the substrate had been running since the September commissioning, compounded across Thandi's in-country team into the construction-and-operating budget of the next school.
+The school-days, on the deterministic disbursement schedule Accelerando had been running since the September commissioning, compounded across Thandi's in-country team into the construction-and-operating budget of the next school.
 
-The substrate funded the schools.
+The platform funded the schools.
 
 Thandi's team scoped them.
 
@@ -52,7 +52,7 @@ Jimmy and Thea had landed at Durban at six AM local time on Thursday morning.
 
 Thea was thirty-one weeks pregnant.
 
-Thea had, in the third trimester, been cleared by her OB in Greenville for the trip on the strength of a pre-flight medical review and the standby coverage of a Johannesburg-based maternal-fetal-medicine specialist Ana had arranged through the substrate's *Strategic-Planning-Mornings* opportunity-queue in February.
+Thea had, in the third trimester, been cleared by her OB in Greenville for the trip on the strength of a pre-flight medical review and the standby coverage of a Johannesburg-based maternal-fetal-medicine specialist Ana had arranged through Accelerando's *Strategic-Planning-Mornings* opportunity-queue in February.
 
 The trip was the first long international trip Jimmy and Thea had done together since the wedding eighteen months earlier.
 
@@ -280,7 +280,7 @@ Jimmy said: *"No."*
 
 She said: *"The cap is the substrate."*
 
-Jimmy said: *"The substrate has no cap. The cap of the substrate is, on the OIE's most recent capacity projection, somewhere in the range of one hundred and forty thousand operating schools at the cadence the program is going to be running at by Q3 of Year Eleven. The cap of the substrate is not the substrate. The cap of the substrate is the manufacturing capacity of Adwoa Mensah's cooperative and the regional capacity of Thandi's contractor network and the planet's capacity to grow cocoa. The substrate is not the cap. The substrate is the means."*
+Jimmy said: *"It has no cap. The cap of the platform is, on the OIE's most recent capacity projection, somewhere in the range of one hundred and forty thousand operating schools at the cadence the program is going to be running at by Q3 of Year Eleven. The cap is not the architecture. The cap is the manufacturing capacity of Adwoa Mensah's cooperative and the regional capacity of Thandi's contractor network and the planet's capacity to grow cocoa. The substrate is not the cap. The substrate is the means."*
 
 Thea said: *"The substrate is the means."*
 
@@ -358,4 +358,4 @@ The kitchen was, on Sunday afternoon's follow-up scan in Johannesburg, going to 
 
 The kitchen was going to be a kitchen of three by mid-May.
 
-The chapter ended at six fourteen PM Saturday in the small bed-and-breakfast dining room in Underberg, with Jimmy and Thea at the small table by the window eating the simple bobotie the manager had held for them, with Thandi and Sipho at the table behind them with Nomsa and the regional officer, with the door to the small garden open in the warm March evening, with the substrate, four time zones west in Greenville, processing the day's three thousand four hundred and eleven Feastables transactions and crediting the next four thousand school-days to the public ledger that would, by midnight local time, tick the operating-school count to five hundred and one.
+The chapter ended at six fourteen PM Saturday in the small bed-and-breakfast dining room in Underberg, with Jimmy and Thea at the small table by the window eating the simple bobotie the manager had held for them, with Thandi and Sipho at the table behind them with Nomsa and the regional officer, with the door to the small garden open in the warm March evening, with Accelerando, four time zones west in Greenville, processing the day's three thousand four hundred and eleven Feastables transactions and crediting the next four thousand school-days to the public ledger that would, by midnight local time, tick the operating-school count to five hundred and one.

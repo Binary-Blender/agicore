@@ -22,7 +22,7 @@ She removed the drive.
 
 She held it up.
 
-She said: *"This drive. This is the substrate. The drive contains a single `.agi` file. The file is three thousand nine hundred and seventy-two lines. The file specifies, in a deterministic domain-specific language, the operational substrate of the entire MrBeast organization — every entity, every workflow, every approval chain, every cross-LLC packet route, every mutation policy, every SKILLDOC scaffold. The file compiles, with one shell command, to a Tauri desktop app, a Postgres schema, eighteen separate web services, four Rust libraries, and a runtime ledger with a SHA-256 hash chain. Once the file is compiled and the eighteen services are deployed, the thirteen LLCs that constitute the MrBeast organization stop being thirteen LLCs that coordinate via the chief-of-staff office's morning standup and become one operating system that coordinates via deterministic packet routing on the substrate's Interchange layer."*
+She said: *"This drive. This is the substrate. The drive contains a single `.agi` file. The file is three thousand nine hundred and seventy-two lines. The file specifies, in a deterministic domain-specific language, the operational fabric of the entire MrBeast organization — every entity, every workflow, every approval chain, every cross-LLC packet route, every mutation policy, every SKILLDOC scaffold. The file compiles, with one shell command, to a Tauri desktop app, a Postgres schema, eighteen separate web services, four Rust libraries, and a runtime ledger with a SHA-256 hash chain. Once the file is compiled and the eighteen services are deployed, the thirteen LLCs that constitute the MrBeast organization stop being thirteen LLCs that coordinate via the chief-of-staff office's morning standup and become one operating system that coordinates via deterministic packet routing on the platform's Interchange layer."*
 
 The room was quiet.
 
@@ -44,13 +44,13 @@ Ana said: *"Going."*
 
 The meeting ended at eight thirty-one AM.
 
-By eight forty-five AM the substrate's build pipeline was running on a small kubernetes cluster Karim's lead engineer had stood up over the weekend in the studio's server room. By noon the first eight Accelerando services had compiled clean. By five PM the production data migration from the existing seven CRMs into the unified `accelerando_erp.agi` service was running on a parallel staging cluster. By midnight Monday the staging migration had completed without a single record loss.
+By eight forty-five AM the Accelerando build pipeline was running on a small kubernetes cluster Karim's lead engineer had stood up over the weekend in the studio's server room. By noon the first eight Accelerando services had compiled clean. By five PM the production data migration from the existing seven CRMs into the unified `accelerando_erp.agi` service was running on a parallel staging cluster. By midnight Monday the staging migration had completed without a single record loss.
 
 Week one was the data migration.
 
-Week one ended on a Friday afternoon with a clean migration of eleven million two hundred and forty-three thousand records across the empire's seventeen separate operational data stores into the single substrate ledger.
+Week one ended on a Friday afternoon with a clean migration of eleven million two hundred and forty-three thousand records across the empire's seventeen separate operational data stores into the single Accelerando ledger.
 
-The substrate's ledger, at six PM Friday of week one, held the company's entire institutional memory in one hash-chained append-only log.
+The ledger, at six PM Friday of week one, held the company's entire institutional memory in one hash-chained append-only log.
 
 The hash chain was the truth.
 
@@ -66,7 +66,7 @@ The wall calendar on the wall above her desk read *Tuesday, July 26.*
 
 Tuesday of week three was the morning the OIE intelligence layer ran its first scheduled batch.
 
-The OIE — `accelerando_oie.agi`, the intelligence layer — was, on the substrate's architecture, the component that ran on a scheduled cadence every Tuesday morning at three AM Eastern, ingested the previous week's operational telemetry from every Accelerando service across the empire, ran the cross-domain analysis Christopher had described in the README's section on the OIE as *the standing question of what the substrate has noticed that no human had time to,* and emailed the answers, in a structured three-opportunities-per-week format, to Ana's inbox at seven AM Eastern Tuesday morning.
+The OIE — `accelerando_oie.agi`, the intelligence layer — was, on the Accelerando architecture, the component that ran on a scheduled cadence every Tuesday morning at three AM Eastern, ingested the previous week's operational telemetry from every Accelerando service across the empire, ran the cross-domain analysis Christopher had described in the README's section on the OIE as *the standing question of what the system has noticed that no human had time to,* and emailed the answers, in a structured three-opportunities-per-week format, to Ana's inbox at seven AM Eastern Tuesday morning.
 
 The first batch had run at three AM Eastern that morning.
 
@@ -74,21 +74,21 @@ The email was in Ana's inbox at seven oh-one AM.
 
 Ana opened the email.
 
-The email was titled, in the small text the substrate's email template had been configured with: *OIE Batch Report — Week of 2026-07-19.*
+The email was titled, in the small text Accelerando's email template had been configured with: *OIE Batch Report — Week of 2026-07-19.*
 
 The email had three sections.
 
 Section one was titled: *Cross-LLC Margin Improvement Opportunity — Estimated Annual Value: $5.2M.*
 
-The section described, in approximately six hundred words of plain English, the OIE's observation that the Feastables Hazelnut Cup buyer base — segmented from the previous twelve months of retailer-loyalty data the substrate had ingested as part of the week-one CRM migration — was forty-three percent more likely to donate to the Beast Philanthropy school-funding campaign than the milk-chocolate buyer base. The opportunity, on the OIE's recommendation, was to separate the philanthropy call-to-action at the SKU level across the Feastables wrapper redesigns scheduled for Q4, route the Hazelnut Cup line's philanthropy CTA through a dedicated landing page that allowed direct donation matching at point of sale, and re-route the milk-chocolate line's CTA to a passive ledger-tick on the back-of-wrapper. The OIE estimated, on its own internal modeling, the change would surface approximately five point two million dollars of incremental philanthropy revenue across the next twelve months at no cost to the Feastables retail margin.
+The section described, in approximately six hundred words of plain English, the OIE's observation that the Feastables Hazelnut Cup buyer base — segmented from the previous twelve months of retailer-loyalty data Accelerando had ingested as part of the week-one CRM migration — was forty-three percent more likely to donate to the Beast Philanthropy school-funding campaign than the milk-chocolate buyer base. The opportunity, on the OIE's recommendation, was to separate the philanthropy call-to-action at the SKU level across the Feastables wrapper redesigns scheduled for Q4, route the Hazelnut Cup line's philanthropy CTA through a dedicated landing page that allowed direct donation matching at point of sale, and re-route the milk-chocolate line's CTA to a passive ledger-tick on the back-of-wrapper. The OIE estimated, on its own internal modeling, the change would surface approximately five point two million dollars of incremental philanthropy revenue across the next twelve months at no cost to the Feastables retail margin.
 
 Section two was titled: *Operational Risk Surface — Beast Games Contestant Pool Geographic Skew.*
 
-The section described the OIE's observation that the Beast Games contestant pool for the upcoming Season Four — which Karim's casting team had been assembling across the previous nine weeks under the existing protocol — was, on the OIE's cross-reference against the Beast Philanthropy site-region overlay Thandi's office had loaded into the substrate during week one, drawn from regions that overlapped with Beast Philanthropy's KwaZulu-Natal site footprint at a rate of zero percent. The opportunity, on the OIE's recommendation, was to allocate approximately fifteen percent of Season Four's contestant pool to candidates from the program's existing school catchment areas. The OIE estimated, on its own modeling, the change would surface approximately seventeen million dollars of incremental viewer engagement at no cost to production quality, and would route approximately three percent of Season Four's prize pool into the same regions Beast Philanthropy was building schools in, which would compound the program's local impact.
+The section described the OIE's observation that the Beast Games contestant pool for the upcoming Season Four — which Karim's casting team had been assembling across the previous nine weeks under the existing protocol — was, on the OIE's cross-reference against the Beast Philanthropy site-region overlay Thandi's office had loaded into the platform during week one, drawn from regions that overlapped with Beast Philanthropy's KwaZulu-Natal site footprint at a rate of zero percent. The opportunity, on the OIE's recommendation, was to allocate approximately fifteen percent of Season Four's contestant pool to candidates from the program's existing school catchment areas. The OIE estimated, on its own modeling, the change would surface approximately seventeen million dollars of incremental viewer engagement at no cost to production quality, and would route approximately three percent of Season Four's prize pool into the same regions Beast Philanthropy was building schools in, which would compound the program's local impact.
 
 Section three was titled: *Coordination-Tax Reduction — Chief-of-Staff Office.*
 
-The section described the OIE's observation that the chief-of-staff office's ticket-routing workflow had, since the substrate's commissioning at the end of week two, dropped median ticket-close time from nine minutes to two point one minutes, and that the open-ticket queue had stabilized at approximately three open tickets per day across the previous seven days. The opportunity, on the OIE's recommendation, was to reassign approximately sixty percent of the chief-of-staff office's existing weekly coordination capacity to strategic planning — a role the office's current organizational chart did not have a defined slot for, and which the OIE recommended Ana take on personally beginning in week four of the rollout.
+The section described the OIE's observation that the chief-of-staff office's ticket-routing workflow had, since Accelerando's commissioning at the end of week two, dropped median ticket-close time from nine minutes to two point one minutes, and that the open-ticket queue had stabilized at approximately three open tickets per day across the previous seven days. The opportunity, on the OIE's recommendation, was to reassign approximately sixty percent of the chief-of-staff office's existing weekly coordination capacity to strategic planning — a role the office's current organizational chart did not have a defined slot for, and which the OIE recommended Ana take on personally beginning in week four of the rollout.
 
 Ana read the email at seven oh-three AM.
 
@@ -104,9 +104,9 @@ The first two opportunities were operational opportunities. Real, large, and ins
 
 The third opportunity was a different thing.
 
-The third opportunity was the substrate's recommendation that Ana's job — the job she had been doing for two and a half years, the job she had come over from Disney in 2023 specifically to do, the job she had been quietly waiting for two years to be able to do properly — was, in operational terms, finished.
+The third opportunity was the system's recommendation that Ana's job — the job she had been doing for two and a half years, the job she had come over from Disney in 2023 specifically to do, the job she had been quietly waiting for two years to be able to do properly — was, in operational terms, finished.
 
-The substrate had, on its first scheduled batch run, recognized that Ana's job had been promoted into something else.
+The platform had, on its first scheduled batch run, recognized that Ana's job had been promoted into something else.
 
 The something else was the strategic role.
 
@@ -132,7 +132,7 @@ The runway had been the runway.
 
 The runway had taken two and a half years.
 
-The runway had ended at seven oh-one AM Eastern on a Tuesday morning in late July in week three of the Accelerando rollout, in the form of an email from a deterministic open-source substrate built by a single person in a small town in Missouri.
+The runway had ended at seven oh-one AM Eastern on a Tuesday morning in late July in week three of the Accelerando rollout, in the form of an email from a deterministic open-source platform built by a single person in a small town in Missouri.
 
 Ana sat at the desk for another nine minutes.
 
@@ -222,11 +222,11 @@ The SKILLDOCs were:
 
 *BeastGamesProductionStandards.skilldoc — 2,387 words, co-signed by JimmyDonaldson and KarimBrock and the Beast Games season-four executive producer (a woman named Reggie Vance who had joined the studio in February) Thursday afternoon.*
 
-By Friday of week four every SKILLDOC was compiled into the substrate.
+By Friday of week four every SKILLDOC was compiled into Accelerando.
 
-The substrate's AI-proposal pipeline began, on Monday morning of week five, returning proposals that wore Jimmy's taste.
+Accelerando's AI-proposal pipeline began, on Monday morning of week five, returning proposals that wore Jimmy's taste.
 
-The first thumbnail Karim's bay-three editor opened on the substrate Monday morning of week five was a thumbnail the AI had proposed for Saturday's video drop. The editor looked at it for nine seconds. The editor's first sentence, into the bay-three Slack channel, was: *"This thumbnail looks like Jimmy did it himself."*
+The first thumbnail Karim's bay-three editor opened on the platform Monday morning of week five was a thumbnail the AI had proposed for Saturday's video drop. The editor looked at it for nine seconds. The editor's first sentence, into the bay-three Slack channel, was: *"This thumbnail looks like Jimmy did it himself."*
 
 Karim, at his desk, read the Slack message.
 
@@ -244,7 +244,7 @@ The video hit a hundred and twenty million views by Tuesday.
 
 The thumbnail had been the thumbnail.
 
-The substrate was the substrate.
+The taste had been the taste.
 
 ---
 
@@ -288,7 +288,7 @@ The OIE batch email that had landed in Ana's inbox at seven oh-one AM Tuesday mo
 
 The section was titled: *Cost Reduction — Hershey Co-Marketing Channel Re-Routing.*
 
-The section described the OIE's observation that the substrate's Interchange layer had, across the previous week, surfaced an opportunity to re-route approximately five million two hundred thousand dollars of Feastables' Q3 trade-marketing spend through a channel partnership the substrate's cross-LLC packet routing had identified between Feastables, Beast Philanthropy, and the small West African cocoa cooperative Thandi's office had been vetting for two years. The opportunity, on the OIE's recommendation, would surface five point two million dollars of incremental margin improvement at no cost to brand visibility and would simultaneously route approximately seventy thousand dollars of additional revenue per month into the cocoa cooperative's farmer-pay pool.
+The section described the OIE's observation that Accelerando's Interchange layer had, across the previous week, surfaced an opportunity to re-route approximately five million two hundred thousand dollars of Feastables' Q3 trade-marketing spend through a channel partnership the cross-LLC packet routing had identified between Feastables, Beast Philanthropy, and the small West African cocoa cooperative Thandi's office had been vetting for two years. The opportunity, on the OIE's recommendation, would surface five point two million dollars of incremental margin improvement at no cost to brand visibility and would simultaneously route approximately seventy thousand dollars of additional revenue per month into the cocoa cooperative's farmer-pay pool.
 
 Ana read the recommendation.
 
@@ -298,7 +298,7 @@ Karim approved at seven oh-eight AM.
 
 Jimmy approved at seven oh-nine AM.
 
-The re-routing was, on the substrate's mutation-policy gate for trade-marketing-spend reallocations above five million dollars, an ordered three-of-three approval that required Ana, Karim, and Jimmy. The third approval went through at seven oh-nine AM Tuesday. The substrate's compiler validated the re-routing at seven ten AM. The re-routing went live at seven eleven AM.
+The re-routing was, on the mutation-policy gate for trade-marketing-spend reallocations above five million dollars, an ordered three-of-three approval that required Ana, Karim, and Jimmy. The third approval went through at seven oh-nine AM Tuesday. The Accelerando compiler validated the re-routing at seven ten AM. The re-routing went live at seven eleven AM.
 
 Five million two hundred thousand dollars of trade-marketing spend was, by seven twelve AM Tuesday of week eight, re-routed.
 
@@ -416,11 +416,11 @@ He read.
 
 They went to bed at ten oh-six.
 
-Saturday morning the substrate processed three thousand four hundred and eleven Feastables sell-through transactions across the previous twenty-four hours and routed forty-seven cents of every bar's margin into the Beast Philanthropy ledger.
+Saturday morning Accelerando processed three thousand four hundred and eleven Feastables sell-through transactions across the previous twenty-four hours and routed forty-seven cents of every bar's margin into the Beast Philanthropy ledger.
 
 The Beast Philanthropy ledger ticked.
 
-Thandi's office in Underberg woke up to a Saturday-morning report showing four thousand one hundred and twenty school-days funded across the previous twenty-four hours by the substrate.
+Thandi's office in Underberg woke up to a Saturday-morning report showing four thousand one hundred and twenty school-days funded across the previous twenty-four hours by the platform.
 
 Thandi looked at the report at seven AM Underberg local time.
 
@@ -436,7 +436,7 @@ The cap was broken.
 
 The work continued.
 
-The substrate was the substrate.
+The platform was the platform.
 
 The empire was one operating system.
 
@@ -464,7 +464,7 @@ The work continued.
 
 The realization came at four eleven AM Eastern on Friday of week nine.
 
-Jimmy had not slept. The substrate's nine-week dashboard had been open on his laptop screen at the kitchen table since two AM. The dashboard showed, on its top row, the bar-sell-through-to-school-day conversion ratio that Karim's instrumentation team had wired the previous Tuesday. The ratio was the same ratio it had been at two AM. The ratio was the same ratio it would be at six AM. The ratio was deterministic. The ratio was the ratio.
+Jimmy had not slept. The Accelerando nine-week dashboard had been open on his laptop screen at the kitchen table since two AM. The dashboard showed, on its top row, the bar-sell-through-to-school-day conversion ratio that Karim's instrumentation team had wired the previous Tuesday. The ratio was the same ratio it had been at two AM. The ratio was the same ratio it would be at six AM. The ratio was deterministic. The ratio was the ratio.
 
 The realization was not about the ratio.
 
@@ -620,7 +620,7 @@ Jimmy said: *"I have not asked my team. I asked Ana not to coordinate this meeti
 
 Tony said: *"What do you want to do instead of make chocolate."*
 
-Jimmy said: *"Three things. First, I want to walk the shop floors of the joint operations and do Kaizens. The substrate ingests the Kaizen observations into the operating SKILLDOC and propagates the improvements across the empire's other operating companies. That is the work I am good at. I have not gotten to do enough of it in five years. Second, I want to endorse food products I like instead of trying to create them. I have been talking to Jack Link's about a beef jerky endorsement for the past three months. The deal is small. The deal is honest. The work is one day a quarter. The deal is the right shape for what I am actually selling, which is taste preference, not formulation. Third, I want to focus what is left of my operating attention on the schools. The schools are the work. The chocolate was always the means. The means is your specialty. The end is what I am for."*
+Jimmy said: *"Three things. First, I want to walk the shop floors of the joint operations and do Kaizens. The system ingests the Kaizen observations into the operating SKILLDOC and propagates the improvements across the empire's other operating companies. That is the work I am good at. I have not gotten to do enough of it in five years. Second, I want to endorse food products I like instead of trying to create them. I have been talking to Jack Link's about a beef jerky endorsement for the past three months. The deal is small. The deal is honest. The work is one day a quarter. The deal is the right shape for what I am actually selling, which is taste preference, not formulation. Third, I want to focus what is left of my operating attention on the schools. The schools are the work. The chocolate was always the means. The means is your specialty. The end is what I am for."*
 
 Tony picked up a piece of chocolate from the bowl.
 

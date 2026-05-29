@@ -6,7 +6,7 @@ The clock above the sink read eleven thirty-two AM Central when Christopher wrot
 
 The clock read seven oh-four PM Central when Christopher set the pen down.
 
-The legal pad had, by seven oh-four PM, fifty-three pages of small block printing, in the order Jimmy had walked Christopher through the empire. Thirteen LLCs. Four hundred and ten employees. Seven CRMs. Four ERPs. The QMS spreadsheet Karim maintained by hand. The legal-hold tool the GC bought in 2022 and never deployed. The Beast Philanthropy charitable-disbursement pipeline that was being reconciled by Thandi's office in Underberg against the Feastables revenue line in Greenville on a Tuesday-morning manual operation involving two spreadsheets, one Slack channel, and a Wednesday-afternoon video call. The Beast Games contestant-treatment protocols that were, on Christopher's quiet third-pass note in the margin, the operational gap Karim had not been able to close because Jimmy had not yet given Karim the substrate to close it on.
+The legal pad had, by seven oh-four PM, fifty-three pages of small block printing, in the order Jimmy had walked Christopher through the empire. Thirteen LLCs. Four hundred and ten employees. Seven CRMs. Four ERPs. The QMS spreadsheet Karim maintained by hand. The legal-hold tool the GC bought in 2022 and never deployed. The Beast Philanthropy charitable-disbursement pipeline that was being reconciled by Thandi's office in Underberg against the Feastables revenue line in Greenville on a Tuesday-morning manual operation involving two spreadsheets, one Slack channel, and a Wednesday-afternoon video call. The Beast Games contestant-treatment protocols that were, on Christopher's quiet third-pass note in the margin, the operational gap Karim had not been able to close because Jimmy had not yet given Karim the scaffolding to close it on.
 
 Christopher set the pen down.
 
@@ -232,7 +232,7 @@ Christopher said, at noon: *"This is where it gets interesting."*
 
 Jimmy said: *"This is where what gets interesting."*
 
-Christopher said: *"The SKILLDOCs are how the substrate wears your taste. The substrate's AI proposes work — every thumbnail, every wrapper revision, every contestant-meal substitution, every site-selection commitment, every line of marketing copy, every charitable-disbursement schedule. The proposals come back already wearing your taste, because the SKILLDOC that governs that decision class has, in its signed content, the seventeen hundred words of declarative prose you and Ana and Karim dictate to a recording app on a Saturday afternoon and edit into the SKILLDOC across the following Sunday. Once the SKILLDOCs are deployed, your taste is on the ledger. The ledger is the truth. The truth is the truth that lets the substrate run at your taste without your hands."*
+Christopher said: *"The SKILLDOCs are how the substrate wears your taste. The compiler's AI proposes work — every thumbnail, every wrapper revision, every contestant-meal substitution, every site-selection commitment, every line of marketing copy, every charitable-disbursement schedule. The proposals come back already wearing your taste, because the SKILLDOC that governs that decision class has, in its signed content, the seventeen hundred words of declarative prose you and Ana and Karim dictate to a recording app on a Saturday afternoon and edit into the SKILLDOC across the following Sunday. Once the SKILLDOCs are deployed, your taste is on the ledger. The ledger is the truth. The truth is the truth that lets the platform run at your taste without your hands."*
 
 Jimmy was quiet.
 
@@ -310,7 +310,7 @@ Christopher said: *"Yes."*
 
 Jimmy said: *"I have been running the empire for nine years on the operational assumption that the thirteen LLCs were thirteen LLCs. The assumption was the assumption. The assumption was wrong."*
 
-Christopher said: *"The assumption was right for nine years. The assumption was right because, in operational terms, there was no substrate that could run thirteen LLCs as one operating system without introducing a coordination tax that would have been higher than the tax of holding the coordination in your head. Now there is a substrate. The substrate is the change. The change does not retroactively make the previous nine years wrong. The change makes the next nine years different."*
+Christopher said: *"The assumption was right for nine years. The assumption was right because, in operational terms, there was no architecture that could run thirteen LLCs as one operating system without introducing a coordination tax that would have been higher than the tax of holding the coordination in your head. Now there is one. The substrate is the change. The change does not retroactively make the previous nine years wrong. The change makes the next nine years different."*
 
 Jimmy was quiet.
 
@@ -410,7 +410,7 @@ Christopher said: *"The rebuild is not the architecture. The rebuild is the peop
 
 Jimmy said: *"How do you know that."*
 
-Christopher said: *"Because I have, in the past eleven months, watched four companies do this in the wrong order. I do not want you to be the fifth. The TAO playbook is on the smaller drive. The substrate is on the larger drive. Run the playbook first. Deploy the substrate second. Sequence is the work."*
+Christopher said: *"Because I have, in the past eleven months, watched four companies do this in the wrong order. I do not want you to be the fifth. The TAO playbook is on the smaller drive. The compiler is on the larger drive. Run the playbook first. Deploy the substrate second. Sequence is the work."*
 
 Jimmy said: *"Christopher."*
 

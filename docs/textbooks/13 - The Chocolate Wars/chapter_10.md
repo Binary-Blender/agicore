@@ -12,7 +12,7 @@ He said: *"This is the model."*
 
 The room was quiet.
 
-He said: *"On this drive are two files. The smaller file is a playbook. The playbook is a thirty-day curriculum I am going to deploy to every one of the four hundred and ten of us starting Tuesday morning. The larger file is, in plain language, an operational specification for the entire MrBeast organization. The specification was written across the past seven days at a kitchen table in a small town in Missouri by a person I had not met before Friday morning. The specification covers the thirteen LLCs, the seventy-eight workflows, the forty-one entities, the cross-LLC packet routing, and the mutation policies we are going to deploy across the next eighteen months. The specification is the substrate. The substrate is going to run the empire as one operating system once the substrate is deployed. The substrate is not, on the recommendation of the person who wrote it with me, the first thing we deploy. The first thing we deploy is the playbook. The playbook is the people. The people are going to be ten-x'd before the substrate touches a single workflow. We are going to run the playbook starting Tuesday. We are going to finish the playbook in thirty days. Ana is the executive sponsor. Karim is the operational lead. Everyone at this table is going through the playbook this week, in the first cohort, before anyone else in the building sees it. By the end of the thirty days every one of the four hundred and ten of us is going to be operating at four times the throughput we are operating at this morning. By the end of the sixty days after that the substrate is going to be running underneath us. By the end of the year the empire is going to be a different empire. Questions."*
+He said: *"On this drive are two files. The smaller file is a playbook. The playbook is a thirty-day curriculum I am going to deploy to every one of the four hundred and ten of us starting Tuesday morning. The larger file is, in plain language, an operational specification for the entire MrBeast organization. The specification was written across the past seven days at a kitchen table in a small town in Missouri by a person I had not met before Friday morning. The specification covers the thirteen LLCs, the seventy-eight workflows, the forty-one entities, the cross-LLC packet routing, and the mutation policies we are going to deploy across the next eighteen months. The specification is the substrate. The substrate is going to run the empire as one operating system once it is deployed. It is not, on the recommendation of the person who wrote it with me, the first thing we deploy. The first thing we deploy is the playbook. The playbook is the people. The people are going to be ten-x'd before the substrate touches a single workflow. We are going to run the playbook starting Tuesday. We are going to finish the playbook in thirty days. Ana is the executive sponsor. Karim is the operational lead. Everyone at this table is going through the playbook this week, in the first cohort, before anyone else in the building sees it. By the end of the thirty days every one of the four hundred and ten of us is going to be operating at four times the throughput we are operating at this morning. By the end of the sixty days after that the substrate is going to be running underneath us. By the end of the year the empire is going to be a different empire. Questions."*
 
 Karim said: *"What is the playbook."*
 
@@ -320,9 +320,9 @@ The substrate was on a USB drive in the safe in the home office.
 
 The substrate was the substrate.
 
-The substrate had not yet been deployed.
+It had not yet been deployed.
 
-The substrate was the next phase.
+It was the next phase.
 
 The next phase started Monday.
 

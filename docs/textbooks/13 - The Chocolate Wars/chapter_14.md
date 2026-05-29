@@ -126,7 +126,7 @@ A new line appeared under it: *school 581 — Mpumalanga, ZA — break-ground da
 
 The dashboard adjusted.
 
-The cumulative-school-days counter at the bottom ticked, in small increments, every nine seconds, as the joint-marked sell-through transactions across the previous nine seconds posted to the substrate's ledger.
+The cumulative-school-days counter at the bottom ticked, in small increments, every nine seconds, as the joint-marked sell-through transactions across the previous nine seconds posted to the platform's ledger.
 
 The dashboard was the dashboard.
 
@@ -164,7 +164,7 @@ The counter ticked to five hundred and eighty at eight oh-three AM.
 
 Jimmy did not, at eight oh-three AM, look up at the wall.
 
-Jimmy was, at eight oh-three AM, flipping a second batch of pancakes for Thea on the cast-iron skillet that had finally come into its seasoning, with the small wooden spatula his mother had given him for his twenty-second birthday, in the kitchen of the house in Greenville on a Tuesday morning in February of Year Eleven, in the eleventh year of the empire, in the eighth month of his daughter's life inside Thea before she was born and the tenth week of her life outside Thea after, on the substrate's two hundred and seventeenth day of running the empire one Tuesday morning at a time.
+Jimmy was, at eight oh-three AM, flipping a second batch of pancakes for Thea on the cast-iron skillet that had finally come into its seasoning, with the small wooden spatula his mother had given him for his twenty-second birthday, in the kitchen of the house in Greenville on a Tuesday morning in February of Year Eleven, in the eleventh year of the empire, in the eighth month of his daughter's life inside Thea before she was born and the tenth week of her life outside Thea after, on Accelerando's two hundred and seventeenth day of running the empire one Tuesday morning at a time.
 
 ---
 
@@ -276,7 +276,7 @@ He approved the third one.
 
 The three approvals went through at nine oh-six, nine oh-seven, and nine oh-eight AM Eastern.
 
-The substrate routed them into the production pipeline at nine oh-nine.
+The platform routed them into the production pipeline at nine oh-nine.
 
 The substrate began executing on the three opportunities at nine ten.
 
@@ -296,7 +296,7 @@ He opened the laptop.
 
 He worked through the afternoon.
 
-He worked at, on the substrate's hours-tracked-by-role telemetry, approximately the throughput he had worked at for the previous nine months — which was approximately one-third the throughput he had worked at across the eighty-three days before he had found the README in the third week of May of Year Nine.
+He worked at, on the platform's hours-tracked-by-role telemetry, approximately the throughput he had worked at for the previous nine months — which was approximately one-third the throughput he had worked at across the eighty-three days before he had found the README in the third week of May of Year Nine.
 
 He left the office at five thirty-six PM.
 
@@ -352,7 +352,7 @@ Christopher at his desk in the small home office at the back of the house.
 
 Late at night.
 
-Eleven fifty-three PM Central on the Tuesday night Jimmy had, four time zones east in Greenville, eaten the second batch of pancakes at the kitchen table at eight oh-nine that morning and was now, on the small monitor app the substrate had begun mirroring to the home dashboard in November, asleep at ten forty-four PM Eastern.
+Eleven fifty-three PM Central on the Tuesday night Jimmy had, four time zones east in Greenville, eaten the second batch of pancakes at the kitchen table at eight oh-nine that morning and was now, on the small monitor app the platform had begun mirroring to the home dashboard in November, asleep at ten forty-four PM Eastern.
 
 The laptop on Christopher's desk had three GitHub issues open in three tabs.
 
