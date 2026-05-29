@@ -126,7 +126,7 @@ A new line appeared under it: *school 581 — Mpumalanga, ZA — break-ground da
 
 The dashboard adjusted.
 
-The cumulative-school-days counter at the bottom ticked, in small increments, every nine seconds, as the Feastables sell-through transactions across the previous nine seconds posted to the substrate's ledger.
+The cumulative-school-days counter at the bottom ticked, in small increments, every nine seconds, as the joint-marked sell-through transactions across the previous nine seconds posted to the substrate's ledger.
 
 The dashboard was the dashboard.
 
@@ -320,7 +320,7 @@ He watched the dashboard tick.
 
 The dashboard ticked.
 
-The chapter ended at five fifty-seven PM with Jimmy and Thea at the kitchen table and the baby asleep at the south window and the dashboard above the breakfast bar showing the count five hundred and eighty-two and the cumulative-school-days line ticking, every nine seconds, in the small increments of every Feastables bar sold at every retail location across the world over the previous nine seconds.
+The chapter ended at five fifty-seven PM with Jimmy and Thea at the kitchen table and the baby asleep at the south window and the dashboard above the breakfast bar showing the count five hundred and eighty-two and the cumulative-school-days line ticking, every nine seconds, in the small increments of every Tony's-Feastables joint-marked bar sold at every retail location across the world over the previous nine seconds.
 
 The count was the count.
 
