@@ -364,7 +364,7 @@ Issue #211 was from a user named that, on the about page of the user's GitHub ac
 
 The repository, in the time since Jimmy had submitted his issue sixteen months earlier, had grown from one thousand and forty-seven stars to approximately three hundred and twelve thousand. The contributor count had grown from nineteen to approximately five thousand four hundred. The number of `.agi` specifications running production workloads in the world had, on the small public registry the project maintained, crossed approximately seventy-three thousand. The post-frontier-AI era was operating, in approximately forty-one percent of the consequential business contexts it had begun to reach, on top of the Agicore substrate.
 
-On Christopher's desk, in addition to the three open GitHub issues on the laptop screen, was the most recent quarterly case of Feastables Hazelnut Cups from Cole.
+On Christopher's desk, in addition to the three open GitHub issues on the laptop screen, was a single bar of Tony's Chocolonely milk caramel sea salt.
 
 Open.
 
@@ -420,7 +420,7 @@ He stood up.
 
 He walked to the kitchen.
 
-He unwrapped the next Hazelnut Cup from the open case on the counter.
+He broke a fresh square off the Tony's Chocolonely bar on the counter.
 
 He took a bite.
 

@@ -1,4 +1,4 @@
-# Chapter 8: Issue #58 and the Pallet
+# Chapter 8: Issue #58 and the Box
 
 The seven AM Wednesday meeting with Ana and Karim was forty-five minutes.
 
@@ -34,13 +34,13 @@ Jimmy looked up.
 
 He said: *"Karim."*
 
-Karim said: *"I am serious. I checked his commits last night. He's been committing fourteen times a week for eleven months alone. The man is doing this in his kitchen. The README's footer signs off as *C.* The about page says he lives in a small town in Missouri because the operating model the project encodes is, in his own words, the operating model AI-native organizations are going to be built around in the next decade. He's not in the Bay Area. He's not in Austin. He's not in New York. He's in a kitchen in a small town in Missouri shipping the next decade's substrate by himself. You do not show up at that kitchen with a check. You show up with a pallet of Hazelnut Cups and you ask if you can sit down."*
+Karim said: *"I am serious. I checked his commits last night. He's been committing fourteen times a week for eleven months alone. The man is doing this in his kitchen. The README's footer signs off as *C.* The about page says he lives in a small town in Missouri because the operating model the project encodes is, in his own words, the operating model AI-native organizations are going to be built around in the next decade. He's not in the Bay Area. He's not in Austin. He's not in New York. He's in a kitchen in a small town in Missouri shipping the next decade's substrate by himself. You do not show up at that kitchen with a check. You show up with a box of Hazelnut Cups and you ask if you can sit down."*
 
-Jimmy said: *"A pallet of Hazelnut Cups."*
+Jimmy said: *"A box of Hazelnut Cups."*
 
-Karim said: *"A pallet of Hazelnut Cups."*
+Karim said: *"A box of Hazelnut Cups."*
 
-Ana, deadpan, from the side chair: *"A pallet is sixty-four cases. Sixty-four cases is approximately forty-six thousand Hazelnut Cups. Jimmy. Bring the pallet."*
+Ana, deadpan, from the side chair: *"A box is twelve cups. Jimmy. Bring the box."*
 
 Jimmy looked at Ana.
 
@@ -48,9 +48,9 @@ Ana looked at Jimmy.
 
 Jimmy said: *"How do you know he likes chocolate."*
 
-Karim said: *"I do not know he likes chocolate. I know he has been committing fourteen times a week for eleven months alone in a kitchen. People who do that have, in my experience, snacks. The snacks tell you what the person is. If the snacks are not chocolate, the pallet becomes the gift you leave behind for the local elementary school and you and the maintainer have a different first conversation than the one I am scripting for you, and that is also fine. The pallet is not for him. The pallet is the offering. The offering is the offering. The offering says you took the trip seriously. The taking-the-trip-seriously is the message. The pallet is the medium."*
+Karim said: *"I do not know he likes chocolate. I know he has been committing fourteen times a week for eleven months alone in a kitchen. People who do that have, in my experience, snacks. The snacks tell you what the person is. If the snacks are not chocolate, the box becomes the thing you leave on his counter on the way out and you and the maintainer have a different first conversation than the one I am scripting for you, and that is also fine. The box is not for him. The box is the offering. The offering is the offering. The offering says you took the trip seriously. The taking-the-trip-seriously is the message. The box is the medium."*
 
-Jimmy wrote *bring a pallet* on the legal pad.
+Jimmy wrote *bring a box* on the legal pad.
 
 Karim said: *"Fourth rule. The fourth rule is the rule the first three rules exist to make possible. The fourth rule is — when you sit down at his kitchen table, tell him the truth. The whole truth. Tell him about Thea. Tell him about the runway. Tell him about Thandi and the email and the cap. Tell him about the cease-and-desist and the Walmart aisle video and Marcus Whittaker searching for a leak. Tell him about the four Beast Games operational failures Karim could not, in eighteen months, find the common cause of. Tell him about Eleanor Whitcomb in Hummelstown that you do not yet know is going to call you. Tell him about the eighty-three days you have spent looking for the model. Tell him that his README is the model. Tell him you have seven days left. Tell him what you came to ask. The truth is the asset. The truth is what he is going to recognize. The truth, on what you have told me about how this guy writes a README, is what he writes for. He is going to take the meeting because the truth is the truth. He is not going to take the meeting because you are Jimmy Donaldson."*
 
@@ -148,9 +148,9 @@ He looked at the parser open in the other window on the laptop.
 
 He thought, in the order he thought them, three things.
 
-One. Cole had sent the most recent quarterly case of Hazelnut Cups four weeks earlier. The case had been delivered by a freight carrier to the small post office in town, which had called Christopher to pick it up because the small post office did not deliver pallet-class freight to residential addresses. Christopher had walked to the post office. He had hand-trucked the case home. The case had been half-empty for the previous two weeks.
+One. Cole had become the project's largest single GitHub Sponsor twenty-two months earlier on the strength of a single unsolicited issue and a quiet, careful exchange across the three months that followed. The recurring monthly Sponsor note had read, every month since the first one, the same five words: *For the work. — C.W.* Cole's funding arrangement had been engineered, on Cole's side, to leave Christopher's operational independence and the project's open-source license entirely untouched. Cole had never asked for a meeting. Cole had never asked for a call. Cole had funded the work and let the work be the work.
 
-Two. Cole's note in the most recent case had been the same note Cole's note in every case had been since the first one twenty-two months ago. The note had read, in its entirety: *For the work. — C.W.* Christopher had, on his own quiet count, exactly one other person in the world he had thought of as operating in his orbit on the strength of an unsolicited GitHub issue. The other person was Cole. Cole's issue had been #43. Cole's issue had been posted on the repo twenty-two months ago. The follow-up funding arrangement had been worked out across the three months that followed in a series of exchanges that had been engineered, on Cole's side, to leave Christopher's operational independence and the project's open-source license entirely untouched.
+Two. Christopher had, on his own quiet count, exactly one other person in the world he had thought of as operating in his orbit on the strength of an unsolicited GitHub issue. The other person was Cole. Cole's issue had been #43.
 
 Three. Jimmy Donaldson was, on his own honest read of the GitHub issue currently open on the screen in front of him, the second person to have shown up.
 
@@ -214,23 +214,17 @@ Jimmy: *Ana.*
 
 Ana: *Yes.*
 
-Jimmy: *One more thing. I need a pallet of Hazelnut Cups in the driveway of the address when I arrive on Friday morning.*
+Jimmy: *One more thing. I need a box of Hazelnut Cups in my carry-on when I get on the plane Friday morning.*
 
-Ana was quiet for thirty-one seconds.
+Ana was quiet for four seconds.
 
-Ana: *A pallet.*
+Ana: *A box.*
 
-Jimmy: *A pallet.*
+Jimmy: *A box. The retail one. Twelve cups. Karim's note: the box is the medium.*
 
-Ana: *Forty-eight cases. Approximately twelve hundred pounds. We do not, by national freight regulations, ship pallet-class freight to a residential address in a town of three thousand people on one day's notice without chartering the truck. Cost to charter the truck for the freight, including the driver waiting at the address until you arrive: approximately twenty-three thousand dollars.*
+Ana: *I'll have one on the jet by five AM Friday.*
 
-Jimmy: *Charter the truck.*
-
-Ana: *Twenty-three thousand dollars for the gift.*
-
-Jimmy: *The gift is the gift.*
-
-Ana was quiet for another fourteen seconds.
+Jimmy: *Thanks Ana.*
 
 Ana: *On it.*
 
@@ -380,9 +374,9 @@ Ana said: *"Yeah."*
 
 Jimmy said: *"This trip just got easier."*
 
-Ana said: *"This trip got easier. The trip is also still the trip. Go to Missouri. Bring the pallet. Sit at the kitchen table. Ask the questions. Let the conversation be the conversation. We will hold the building."*
+Ana said: *"This trip got easier. The trip is also still the trip. Go to Missouri. Bring the box. Sit at the kitchen table. Ask the questions. Let the conversation be the conversation. We will hold the building."*
 
-Jimmy said: *"Bring the pallet."*
+Jimmy said: *"Bring the box."*
 
 He hung up.
 
@@ -410,61 +404,11 @@ Day eighty-five had, on the day's most honest read, already been the day the run
 
 ---
 
-The pallet arrived at the address at eleven oh-two AM Central Friday.
-
-The truck driver was a man named Hector Ortega, fifty-six, twenty-nine years driving freight out of a depot in Joplin. Hector had been told by the dispatcher in Joplin at six AM that the pallet was to be delivered to the address at eleven AM Central, that the driver was to wait at the address until further instruction, and that the wait was paid at a rate Hector had, in twenty-nine years of driving freight, never been quoted at.
-
-Hector backed the truck into the gravel driveway at eleven oh-two.
-
-He set the parking brake.
-
-He got out of the cab.
-
-He walked up to the small front porch of the small house.
-
-He knocked on the door.
-
-Christopher opened the door.
-
-Christopher looked at Hector.
-
-Christopher looked at the truck.
-
-Christopher looked at Hector again.
-
-Christopher said: *"Sir."*
-
-Hector said: *"I have a pallet for this address. From a Mr. Donaldson. I have been instructed to wait until Mr. Donaldson arrives. Mr. Donaldson is, on the dispatcher's last update at nine fifteen Central, scheduled to arrive at approximately eleven sixteen."*
-
-Christopher said: *"What is on the pallet."*
-
-Hector said: *"Approximately twelve hundred pounds of Feastables Hazelnut Cups. Forty-eight cases. Forty-eight bars per case. Two thousand three hundred and four bars total."*
-
-Christopher stood in the doorway.
-
-He looked at the truck.
-
-He did not, in the next eleven seconds, speak.
-
-He said, finally: *"Sir."*
-
-Hector said: *"Yes."*
-
-Christopher said: *"You should come in. There is coffee. The wait is fourteen minutes."*
-
-Hector said: *"Mr. — what is your name."*
-
-Christopher said: *"Christopher."*
-
-Hector said: *"Christopher. Thank you. I have not, in twenty-nine years of driving freight, been invited into the kitchen of a delivery address. I would like to take you up on the coffee."*
-
-Hector took off his hat at the threshold and walked into the house.
-
----
-
-The Suburban with Jimmy in it pulled into the gravel driveway at eleven sixteen AM Central.
+The Suburban pulled into the gravel driveway at eleven sixteen AM Central Friday.
 
 Jimmy got out.
+
+He had a small black retail box in his left hand. The box was the standard twelve-cup Feastables Hazelnut Cup carton off the Walmart shelf, lifted from the studio's storeroom by Ana at four fifty-three AM Eastern, set on the jet at five oh-six, ridden three hours west across the country in the seat next to Jimmy's, and carried up the gravel walk of the small house on the small lot in the small town in Missouri at eleven sixteen AM Central in the left hand of a man whose chief of staff had, on the phone the previous night, said *Bring the box.*
 
 He walked up the porch.
 
@@ -472,15 +416,23 @@ The front door opened before he knocked.
 
 Christopher was at the door.
 
-Hector was at the kitchen table behind Christopher with a cup of black coffee in front of him.
-
 Christopher looked at Jimmy.
 
-Christopher looked at the truck.
+Christopher looked at the box in Jimmy's hand.
 
 Christopher looked at Jimmy again.
 
-Christopher said: *"A case of these is required just to get me to the table. You brought a pallet. Come in."*
+Christopher said: *"No thanks. I prefer Tony's Chocolonely."*
+
+Jimmy looked at the box in his hand.
+
+Jimmy looked at Christopher.
+
+Jimmy laughed.
+
+It was, on Jimmy's own honest read in the moment, the first time he had laughed in eleven days.
+
+Christopher said: *"Come in. There is coffee."*
 
 Jimmy walked in.
 
@@ -490,13 +442,7 @@ The table was a small wooden table.
 
 The laptop on the table was open to a parser file in a text editor.
 
-Hector stood up at the table when Jimmy walked in.
-
-Hector said: *"Mr. Donaldson. I am Hector. I have been Christopher's company for the past nine minutes. He makes a serious cup of coffee. I will be in the truck."*
-
-Hector picked up his hat.
-
-He walked out the back door.
+Jimmy set the box on the counter next to the toaster.
 
 Christopher said: *"Sit."*
 
@@ -506,21 +452,19 @@ Christopher poured a fresh cup of coffee from the pot on the counter.
 
 Christopher set the cup in front of Jimmy.
 
-Christopher walked out the front door to the truck.
+Christopher walked to the cupboard above the sink, opened it, took down a single bar of Tony's Chocolonely milk caramel sea salt, and walked back to the table.
 
-Christopher came back inside one minute later with a single Feastables Hazelnut Cup.
-
-He set the bar between the two coffees on the table.
+He set the bar between the two coffees.
 
 He sat down across from Jimmy.
 
 He unwrapped the bar.
 
-He broke it in half.
+He broke it along the uneven-tile fault lines the wrapper had been advertising for fifteen years.
 
-He set half of it on Jimmy's side of the table.
+He set the larger half on Jimmy's side of the table.
 
-He took the other half himself.
+He took the smaller half himself.
 
 He took a bite.
 
@@ -528,7 +472,7 @@ He chewed it for fourteen seconds.
 
 He swallowed.
 
-He said: *"That is, on my honest assessment of the past three years of Feastables product, the best chocolate bar Feastables has shipped. The hazelnut-paste-to-chocolate ratio is the right ratio. The bar holds together at room temperature without collapsing. The wrapper has, on the matte-black-with-gold-foil read, the discipline of a product that has been designed by people who care about the product. I have eaten approximately eleven hundred of these in the past nine months. They have been the snack."*
+He said: *"That is, on my honest assessment of every chocolate bar I have eaten in the past thirty years, the right chocolate bar. The cocoa comes from a supply chain the company will tell you, in print, the names of the farms in. The wrapper has, on the uneven-tile-in-five-colors read, the discipline of a product that has been designed by people who care about the product the product is. I have eaten approximately eleven hundred of these in the past nine months. They have been the snack."*
 
 Jimmy looked at his half of the bar.
 
@@ -566,9 +510,7 @@ Jimmy started at the top.
 
 The clock on the wall above the kitchen sink read eleven thirty-one AM Central Friday.
 
-Hector, in the truck in the driveway, was beginning to move the first dozen cases of Hazelnut Cups into Christopher's small detached garage on a hand truck Christopher had pointed him at on the way out.
-
-The pallet was the pallet.
+The box of Feastables Hazelnut Cups sat unopened on the counter next to the toaster.
 
 The seven days had started.
 

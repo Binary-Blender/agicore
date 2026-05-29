@@ -422,11 +422,11 @@ Christopher said: *"Jimmy."*
 
 Jimmy said: *"Yes."*
 
-Christopher said: *"I asked you for one thing the moment you walked through my door on Friday morning."*
+Christopher said: *"I told you one thing the moment you walked through my door on Friday morning."*
 
-Jimmy said: *"What did you ask me for."*
+Jimmy said: *"What did you tell me."*
 
-Christopher said: *"You brought it. A pallet of it. We have not, in seven days, finished the first case. Go home. Sequence the rollout. The contribution is the contribution. Send me the SKILLDOCs when they are ready. I want to read the wrapper-aesthetic one."*
+Christopher said: *"You set the box on the counter. I said 'no thanks, I prefer Tony's Chocolonely.' The box is still on the counter. Take it home. Give it to the office. Go home. Sequence the rollout. The contribution is the contribution. Send me the SKILLDOCs when they are ready. I want to read the wrapper-aesthetic one."*
 
 Jimmy laughed.
 
@@ -448,7 +448,7 @@ The legal pad was on the table.
 
 The whiteboard was on the kitchen wall.
 
-The pallet, by his hand count earlier in the morning, was at forty-six cases.
+The box, still unopened on the counter where Jimmy had set it Friday morning, sat between the toaster and the breadbox.
 
 He opened the laptop.
 
