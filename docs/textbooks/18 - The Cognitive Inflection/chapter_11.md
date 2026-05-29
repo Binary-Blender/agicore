@@ -34,7 +34,7 @@ The aggregate count is six of six categories positive. The convergence is unambi
 
 The chapter closes Part II by handing the strategist the instrument and the working examples. The strategist who has built the instrument, who is operating it at weekly cadence, and who has the response readiness of Parts III and IV in place will detect inflections in time to respond. The strategist who has not built the instrument will detect inflections only through trailing indicators — customer losses, revenue declines, analyst downgrades — and the trailing indicators print after the response window has closed. The instrument is the difference between the two outcomes.
 
-The book proceeds to Part III, in which the strategist's response posture is developed in full. The boil has been read. The diagnosis is in. The next part is the action.
+The instrument the chapter has handed the strategist reads the inflection at the present moment. The next chapter closes Part II by extending the reading across the dimension the present chapter has not addressed: the dimension of time. The disruption's mechanics, the chapter that follows demonstrates, do not stand still while the strategist deliberates. They compound. The strategist who has finished Chapter 12 has the diagnosis in full, including the trajectory the diagnosis is following. The book then proceeds to Part III, in which the strategist's response posture is developed. The boil has been read. The diagnosis will be complete at the close of Part II. The next part is the action.
 
 ---
 

@@ -108,7 +108,7 @@ McGrath's *Seeing Around Corners* register. The thesis of Part I: a strategic in
 
 ---
 
-## Part II — The Disruption Mechanics (Chapters 6–11)
+## Part II — The Disruption Mechanics (Chapters 6–12)
 
 The technical-economic core of the book. Cognition Systems Engineering as a discipline; Agicore as a representative substrate; the cost collapse as the economic engine; the one-person operator as the disruptor's vehicle; the incumbent's structural inability to respond.
 
@@ -189,83 +189,97 @@ Treatment is **MBA-readable** throughout — analogies, diagrams, named framewor
 - The convergence test: when multiple categories light up simultaneously, the phase transition has begun
 - Two worked readings: a fictional ERP incumbent in Q4 of Year 0 (boil clearly visible) and a fictional CRM incumbent in Q1 of Year 1 (fins breaking the surface)
 - What to do when the dashboard lights up: trigger conditions for the Part IV response playbook
-- Transition: knowing the threat and being able to read it does not save you. Acting saves you. Part III is the acting.
+- Transition: the reading the chapter has produced is the present-tense reading. The next chapter extends the reading into the future tense.
+
+### Chapter 12: The Corpus Compounding
+**Word target:** 3,300
+**Summary:** Closes Part II by extending the substrate analysis across the dimension of time. Each completed artifact in the operator's corpus becomes production substrate for the next, accelerating the next cycle and accelerating the cycle after that. The disruption's economics worsen for the incumbent at an accelerating rate. The chapter develops the mechanism, names the mountain-not-moat framing the operator's accumulated corpus deserves, and revisits the Chapter 1 forecast in light of the compounding.
+
+**Key beats:**
+- The penny-doubled question sharpened: classical compound vs. super-exponential, where the doubling rate itself increases with the corpus's size
+- Five historical precedents: Disney's library (1928-1955), Bloomberg's data corpus (1981-present), Christensen's franchise (1997-2020), Caro's LBJ biography (1976-present), the medieval scriptorium
+- Three features the AI-era case has that no precedent had: cycle time compression (months not decades), solo operation (no team or capital), format fluidity (single corpus emits multiple formats at production speed)
+- The moat-mountain distinction: a moat is defensive, hidden, secrecy-dependent, erodes if not maintained; a mountain is accumulative, visible, pace-dependent, grows with use. The corpus is a mountain.
+- The five compounding categories: written content, skill documents and prompt libraries, operational scaffolding, judgment and taste, audience and reputation
+- The forecast revisit: the 10,000-at-100x figure is conservative under compounding; the steady-state position is higher and arrives faster
+- The response window compression: the static calculation overstates the window; the corrected window shortens with each quarter of delay
+- The closing image: the mountain being climbed at accelerating pace, the watcher in the valley still drafting the plan to start climbing, the plan for the mountain as it was no longer fitting the mountain as it is
 
 ---
 
-## Part III — The Strategic Inflection (Chapters 12–17)
+## Part III — The Strategic Inflection (Chapters 13–18)
 
 Grove's *Only the Paranoid Survive* register. The thesis of Part III: knowing the inflection is happening and reading the boil are insufficient. Management must act, and the action must be commensurate with the threat. The chapter sequence walks from board-level response down through executive action, with the Hartwell vs. Stillwater case as the recurring contrast.
 
-### Chapter 12: 10x Force or Going-Out-of-Business Sale
+### Chapter 13: 10x Force or Going-Out-of-Business Sale
 **Word target:** 3,000
 **Summary:** Grove's central insight applied. The reader's firm is either responding to a 10x force or holding a going-out-of-business sale. The chapter forces the executive to choose explicitly, and gives the board the questions it should be asking.
 
-### Chapter 13: The Labor Market Untying
+### Chapter 14: The Labor Market Untying
 **Word target:** 3,000
 **Summary:** What happens to the labor market when senior individual contributors can do enterprise-class work alone. The Untied thesis, in textbook register. The exodus dynamics, the four archetypes, and the structural implications for every firm whose value depends on retaining senior talent.
 
-### Chapter 14: The Hartwell Case
+### Chapter 15: The Hartwell Case
 **Word target:** 3,000
 **Summary:** A formal case study of the Boston firm that did not adapt. Drawn from the Untied case material, recast as MBA-classroom case. Includes the timeline, the board's responses, Karen Voss's Year-2 memo (reproduced), the failure to act, and the post-mortem. End-of-chapter discussion questions in the Harvard case-method tradition.
 
-### Chapter 15: The Board's Failure to Read
+### Chapter 16: The Board's Failure to Read
 **Word target:** 3,000
 **Summary:** A structural analysis of why boards systematically fail to detect cognition-systems inflection — director-selection biases, board-meeting cadence vs. phase-transition cadence, the trailing-indicator orientation of standard financial reporting. The chapter ends with a proposed instrument: the AI-Substrate Quarterly, a one-page board dashboard.
 
-### Chapter 16: What Davis Hartwell Should Have Done
+### Chapter 17: What Davis Hartwell Should Have Done
 **Word target:** 3,000
 **Summary:** A counterfactual analysis. Given the information Davis Hartwell had at the start of Year 1, what set of decisions would have produced a different outcome? The chapter walks through the decision tree branch by branch, showing where each fork actually fell and what the alternative looked like.
 
-### Chapter 17: The Stillwater Choice
+### Chapter 18: The Stillwater Choice
 **Word target:** 3,000
 **Summary:** Introduces Maya Holm-Russo's response as the contrasting case and bridges into Part IV. The chapter sketches Maya's two moves (perks first, partners second) at the strategic level, leaving the operational detail for Part IV. Ends with the proposition that the choice Davis declined to make was the same choice Maya made; the difference was reading the boil.
 
 ---
 
-## Part IV — The Transformation (Chapters 18–23)
+## Part IV — The Transformation (Chapters 19–24)
 
 The constructive heart of the book. The reader has, by Part IV, the diagnosis, the substrate analysis, and the urgency. Part IV gives the response: Transformative AI Operations as the transformation toolkit, and the perks-then-partners organizational pivot as the leadership template.
 
-### Chapter 18: Transformative AI Operations — The Framework
+### Chapter 19: Transformative AI Operations — The Framework
 **Word target:** 3,000
 **Summary:** Introduces TAO as the named framework for taking an existing organization from its current state to AI-native. The four-step process (Book Creation Skills, AI WIN-WIN, Training Courses, NovaSyn Chat Lite) presented as the integrated transformation toolkit. The chapter establishes TAO as a graduate-level operations framework on par with the Toyota Production System or Six Sigma.
 
-### Chapter 19: The Multiplication Doctrine
+### Chapter 20: The Multiplication Doctrine
 **Word target:** 3,000
 **Summary:** The first of the three TAO frameworks. The doctrine that AI multiplies people rather than replacing them, and the per-role multiplication math. Why this framing wins internal alignment battles that "AI will replace headcount" framings lose. The 10x test for every role in the organization.
 
-### Chapter 20: The Blueprint Audit
+### Chapter 21: The Blueprint Audit
 **Word target:** 3,000
 **Summary:** The department-by-department audit methodology for examining current operations and designing the AI-augmented version. The artifact the audit produces (the implementation plan). The audit as a board-presentable deliverable. The 90-day rollout that begins where the audit ends.
 
-### Chapter 21: Perks First — The Stillwater First Move
+### Chapter 22: Perks First — The Stillwater First Move
 **Word target:** 3,000
 **Summary:** Maya's first move analyzed in operations-research detail. Pay restructure, profit sharing, four-day weeks, flexible schedules, doubled parental leave, sabbatical at five years. What each component cost, what it returned, what it admitted (that it was insufficient), and why the admission mattered. The chapter establishes that perks-first is necessary but not sufficient, and names why.
 
-### Chapter 22: Partners Not Resources — The Stillwater Second Move
+### Chapter 23: Partners Not Resources — The Stillwater Second Move
 **Word target:** 3,000
 **Summary:** The deeper move. The Senior Partner tier as a genuine post-industrial organizational innovation. Profit-sharing, autonomy over engagements, no billable-hour quotas, equity-style compensation, seat at strategic decisions, open to current employees and returnees alike. The chapter names this as the single most important organizational design innovation since the Toyota cell.
 
-### Chapter 23: The Ecosystem Posture
+### Chapter 24: The Ecosystem Posture
 **Word target:** 3,000
 **Summary:** The strategic shift from competing with solos to coexisting with the solo economy. The referral economy, the ex-employee network, the senior-partner pipeline, the small-partnership ally network. Why the firm that adopts the ecosystem posture wins both the talent battle and the customer battle. Why the firm that treats the solo economy as a threat keeps losing both.
 
 ---
 
-## Part V — Cases and Practice (Chapters 24–26)
+## Part V — Cases and Practice (Chapters 25–27)
 
 The applied closing of the book. Worked cases the reader will return to.
 
-### Chapter 24: The ERP Disruption — A Worked Case
+### Chapter 25: The ERP Disruption — A Worked Case
 **Word target:** 3,000
 **Summary:** An end-to-end worked case of an ERP incumbent disrupted by one-person operators. Adapted from the SAS Ch. 24 material, recast for the MBA reader. The case includes the incumbent's pre-disruption financial profile, the disruptor's deployment economics, the customer's switching decision, the incumbent's response sequence, and the three-year outcome. End-of-chapter discussion questions and a quantitative exercise.
 
-### Chapter 25: The Solo Ecosystem — A Typology
+### Chapter 26: The Solo Ecosystem — A Typology
 **Word target:** 3,000
 **Summary:** The four operator archetypes (Priya, Ben, Damon, Aliyah) as a formal typology. For each: the operating model, the financial profile, the firm's relationship strategy, the failure modes. The chapter doubles as a recruiting and partner-tier-design reference for the firm that has adopted the Stillwater response.
 
-### Chapter 26: The New Equilibrium
+### Chapter 27: The New Equilibrium
 **Word target:** 3,000
 **Summary:** The closing chapter. The state of the enterprise software industry three years post-inflection. The firms that survived. The firms that didn't. The new equilibrium of solo operators, small partnerships, senior-partner firms, and salaried roles — each finding the form that fits. The book closes with the boil metaphor returned for the last time: the surface is calm again, the water is full of fish, and the firms still standing are the ones that read the boil when it was visible.
 
@@ -277,6 +291,8 @@ The applied closing of the book. Worked cases the reader will return to.
 - **The Piranha:** The one-person firm as disruption vehicle. Individually negligible, lethal in aggregate, invisible until present.
 - **The Phase Transition:** The propagation pattern of AI capability — discontinuous, sudden-onset, with no gradient warning. Distinguishes cognition-systems disruption from classical Christensen disruption.
 - **The 10,000-at-100x Forecast:** The book's load-bearing prediction. Within six months of publication, ten thousand operators will be running at hundred-times-baseline output. The appearance to the rest of the industry will be that they materialized at once.
+- **The Corpus Compounding:** The super-exponential mechanism by which each completed AI-augmented artifact accelerates the next. Each operator's productive capacity itself grows over time, not just the operator population's headcount.
+- **The Moat-Mountain Distinction:** A moat is defensive, hidden, secrecy-dependent; a mountain is accumulative, visible, pace-dependent. The operator's corpus is a mountain.
 - **Cognition Systems Engineering (CSE):** The design discipline for systems that coordinate humans, AI models, workflows, and validation subsystems into stable production systems. The 1968-NATO-conference moment of the AI era.
 - **The Determinism Contract:** The architectural commitment that AI is paid for at build time and never executes per user request at runtime. Closes the last enterprise objection to AI-built software.
 - **Transformative AI Operations (TAO):** The named transformation framework — Book Creation Skills, AI WIN-WIN, Training Courses, NovaSyn Chat Lite — for taking an existing organization from its current state to AI-native.

@@ -207,10 +207,10 @@ book.add_item(copyright_page)
 # --- Part title pages ---
 PARTS = [
     ("I", "Seeing the Inflection", (1, 5)),
-    ("II", "The Disruption Mechanics", (6, 11)),
-    ("III", "The Strategic Inflection", (12, 17)),
-    ("IV", "The Transformation", (18, 23)),
-    ("V", "Cases and Practice", (24, 26)),
+    ("II", "The Disruption Mechanics", (6, 12)),
+    ("III", "The Strategic Inflection", (13, 18)),
+    ("IV", "The Transformation", (19, 24)),
+    ("V", "Cases and Practice", (25, 27)),
 ]
 
 part_pages = []
@@ -353,7 +353,7 @@ chapters = []
 spine = ["nav", title_page, copyright_page]
 toc = []
 
-CHAPTER_COUNT = 26
+CHAPTER_COUNT = 27
 
 current_part_idx = 0
 for i in range(1, CHAPTER_COUNT + 1):

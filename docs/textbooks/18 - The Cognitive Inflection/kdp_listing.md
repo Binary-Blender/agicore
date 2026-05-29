@@ -60,7 +60,7 @@ The book's load-bearing forecast: **within six months of publication, ten thousa
 
 **Part I — Seeing the Inflection.** Why the standard MBA toolkit produces blindness in the face of cognition-systems disruption. The boil metaphor as the controlling image of strategic foresight. McGrath, Christensen, and Grove sharpened for the new substrate.
 
-**Part II — The Disruption Mechanics.** Cognition Systems Engineering as a named discipline. The determinism contract that closes the last enterprise objection to AI-built software. The cost collapse of approximately 100x — including a documented case at 693x. The one-person firm as the disruption vehicle. The seven structural traps that defeat incumbent responses.
+**Part II — The Disruption Mechanics.** Cognition Systems Engineering as a named discipline. The determinism contract that closes the last enterprise objection to AI-built software. The cost collapse of approximately 100x — including a documented case at 693x. The one-person firm as the disruption vehicle. The seven structural traps that defeat incumbent responses. The corpus compounding — the super-exponential mechanism that makes the disruption's economics worsen for the incumbent at an accelerating rate, with the operator's corpus framed not as moat but as mountain.
 
 **Part III — The Strategic Inflection.** Grove's *only the paranoid survive* register applied with severity. The labor-market untying that distributes senior practitioners across four archetypes. The Hartwell case — a Boston consultancy that did not respond — recast as MBA-classroom case material. The Stillwater contrast — a Minneapolis consultancy whose CEO read the boil and responded.
 
