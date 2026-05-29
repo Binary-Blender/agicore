@@ -202,6 +202,32 @@ She paused again.
 
 She said: *"One more thing. I will not lecture you. I will not call you an heir to anything. The schools are the schools. The trust is going to figure out the schools or it is not. That is not on you. You did your part. Thandi is doing hers. Five hundred is a number. The number is going to keep going up. That is enough. Milton would, on the four hundred pages of his biography I have re-read since the resignation, have liked the number more than any other expression of the trust's mission across the past century. I am not telling you that as praise. I am telling you that as observation. Observation is the work. The work is the work."*
 
+Jimmy listened.
+
+He did not, in the next eleven seconds, speak.
+
+He said: *"Eleanor."*
+
+She said: *"Yes."*
+
+He said: *"The joint operating company Tony and I signed the LOI for on Tuesday October fourteenth has been operating in Amsterdam for the past five months without a chair of the board. The two existing operating boards — Tony's old board and the Beast Industries operating board — have, on the operating-structure document Tony's general counsel finalized in November, agreed that the joint operating company is going to have a chair of the board, that the chair is going to be an independent voice, and that the chair is going to be a manufacturer or a person with the operating posture of a manufacturer. The chair sets the cultural posture of the joint mark for the next twenty years. The chair sits in the room when the joint board considers the next iteration of the school-funding mechanism. The chair is on the cocoa-cooperative governance side of every consequential operating decision. I would like the chair to be you. The offer is on the table. The offer has been on the table since the morning after Marcus walked out of the Westerdoksdijk lobby with the wire alert on his phone. The offer has been on the table for five months. I have not, in the five months, told you about the offer because Thandi and Ana and Tony agreed on the Saturday-after-Amsterdam call that the right morning to put the offer in front of you was the morning of the five-hundredth school. The morning of the five-hundredth school is this morning. The offer is on the table."*
+
+Eleanor did not, in the next fourteen seconds, speak.
+
+She said: *"Jimmy."*
+
+He said: *"Yes."*
+
+She said: *"The consulting practice I was, on the spreadsheet I kept in red ink in June, planning to start in November of last year did not, on the eleven phone calls I did not receive across the seventy-two hours following Marcus's plane landing back at Philadelphia, start. I have spent the eleven months since the call I made to you on the Sunday evening before your Amsterdam trip reading. I have read the four hundred pages of Milton's biography twice. I have read the Andon Loop section of the README eleven times. I have read every Beast Philanthropy monthly disbursement report Thandi's office has published since the September commissioning. I have not, in the eleven months, written a memo for anyone but myself. I have, on the small leather notebook in my left hand, written approximately one hundred and seventy-three pages of observations. The observations are observations. The observations are not, on my honest read of them, ready for a publication of any kind. The observations are ready for an operating role. I have been waiting eleven months to be asked. I was not, on my own honest assessment of who would do the asking, expecting you to do it. I was expecting to ask myself, in eleven more months, whether the road I walked on top of in October had been the right road. I am not, on this Saturday morning in this schoolyard, going to need to ask. The answer is yes."*
+
+Jimmy said: *"Eleanor."*
+
+She said: *"Yes."*
+
+He said: *"Tony will fly to Philadelphia next Friday. He would like to take you to dinner."*
+
+She said: *"Tell him I will cook. The kitchen in Hummelstown is a smaller kitchen than the kitchen the joint board is going to meet in. He should see the smaller one first."*
+
 She extended her hand.
 
 Jimmy shook it.
@@ -216,7 +242,7 @@ She drove back to Underberg.
 
 She flew back to Philadelphia the following morning.
 
-She began, on the Monday morning of the week after the trip, the consulting practice she would spend the rest of her professional life on — advising trusts and foundations on the structural alignment between their operating philosophy and their named missions. The practice would, across the next four years, take on eleven clients and produce, in addition to its consulting work, a series of small monographs that would be read at every major foundation in the United States across the decade that followed.
+She began, on the first business Monday of the month after the trip, as inaugural chair of the board of Tony's & Beast Operating Company B.V., the operating role she would hold for the remainder of her professional life. Her first standing motion at the inaugural board meeting was, on the joint board's records, the adoption of the 1909 founding sentence of the Milton Hershey Company — *that the manufacture of chocolate, on a footing that lets people afford it, is the proper means by which a chocolate company funds the education of the children whose families work in its supply chain* — as the operating mission of the joint mark. The motion carried unanimously. The trust, on a small wire-service note in the Hershey Pennsylvania *Patriot-News* the morning after the motion, noticed.
 
 ---
 

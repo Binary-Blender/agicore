@@ -508,13 +508,119 @@ The first sentence acknowledged the email. The second sentence offered Tuesday, 
 
 Jimmy booked the flight at three fifty-one PM Eastern.
 
-He flew Delta out of RDU on the evening of Monday, October thirteenth.
-
 He flew commercial, in coach, on his own credit card, without telling the team where he was going.
 
-He told Thea at the kitchen table on Monday morning. He told Thea everything.
+---
 
-Thea said: *"You should go."*
+The plane ticket sat in Jimmy's email for nine weeks.
+
+The realization sat with him for the same nine weeks. The realization did not, across the nine weeks, change. He had been thinking about the bar in the wooden case for nine years. He had been thinking about Tony for nine months. He had, on the Friday of week nine of the rollout, written the four sentences down. He had booked the Monday-evening flight. He had not, in the nine weeks, told the team. He had told Thea. Thea had told him to go.
+
+The Sunday evening before the trip, the phone rang at eight oh-seven PM Eastern.
+
+Jimmy was in the kitchen. Thea was in the living room. The bag for the trip was in the front hall.
+
+The caller ID read *Whitcomb, E.*
+
+Jimmy had not, since reading Eleanor's resignation-night email at eleven twelve PM Eastern on the last Tuesday of July, heard from Eleanor by phone. He had exchanged two follow-up emails with her across August — a six-sentence acknowledgement on his side, a nine-sentence reply on hers to a question Eleanor had asked about the Andon Loop's regression-sandbox semantics. The exchange had been, on Jimmy's read of it, the conversation between two operators who recognized each other and were waiting for one of them to need the other.
+
+One of them needed the other.
+
+Jimmy picked up on the second ring.
+
+He said: *"Eleanor."*
+
+Eleanor said: *"Jimmy."*
+
+She did not, after the name, pause.
+
+She said: *"I am calling about a memo a friend on the trust's investment-policy professional staff showed me at three forty this afternoon. The memo is a recommendation, signed by Marcus Whittaker and Yvette Park of the strategic-review committee, to authorize an acquisition of Tony's Chocolonely B.V. of Amsterdam at a target valuation of three point eight billion dollars. The vote is Wednesday morning. The trust will, on every honest read of the eleven members' standing positions, approve the recommendation eleven to zero. Marcus's team is flying to Amsterdam on Monday evening Eastern. The meeting with Tony's leadership — which Marcus's office requested Thursday and which Tony's office accepted Friday — is scheduled for Tuesday morning at nine AM Amsterdam time. Marcus is bringing a signed letter of intent. Marcus is planning to leave Amsterdam by Tuesday evening with the LOI in his briefcase. The memo names the Beast Philanthropy school-funding ledger, in the second paragraph of the strategic-rationale section, as a fundraising mechanism that 'requires a manufacturing partnership the Hershey Company is in a position to preempt.' I am, on my honest read of the memo, telling you what is in it. I am telling you nothing else."*
+
+Jimmy was quiet.
+
+Eleanor was quiet.
+
+Jimmy said, after fourteen seconds: *"Eleanor."*
+
+Eleanor said: *"Yes."*
+
+Jimmy said: *"My meeting with Tony is also Tuesday. Eleven AM."*
+
+Eleanor said: *"I am aware. The eleven AM slot is on Tony's public booking calendar. The nine AM slot is, on Tony's calendar, marked private."*
+
+Jimmy said: *"Marcus is going to be in the room two hours before me."*
+
+Eleanor said: *"Marcus is going to be in the room two hours before you. Marcus is going to leave the room with a signed LOI. You are going to land at Schiphol at eight AM and be told, at eleven AM, that the company you flew across the ocean to partner with is no longer available for partnership. The calendar is yours. I am not telling you what to do with it. I am telling you what is on it."*
+
+Jimmy was quiet again.
+
+Eleanor said: *"Jimmy."*
+
+Jimmy said: *"Yes."*
+
+Eleanor said: *"You can move your meeting up. Tony does not, on what I know of Tony, refuse a courteous request from an honest operator. You can be in Amsterdam by Monday evening. Tony will see you Monday evening if you ask. Marcus will arrive Tuesday morning to a deal that has been done eleven hours before he walks in the door."*
+
+Jimmy said: *"Eleanor."*
+
+Eleanor said: *"Yes."*
+
+Jimmy said: *"Will this cost you."*
+
+Eleanor said: *"The friend on the professional staff will, on Marcus's return Tuesday evening, be asked whether she shared the memo. She will say no. The leak-discovery process will not identify her. It will, on the trust's institutional memory of these processes, identify me. Marcus is going to know who I have lunch with. Marcus is going to make the call before the process closes. The call is going to be to the eleven consulting prospects on the spreadsheet I have been keeping in red ink since June. The eleven prospects are going to become my former prospects across the seventy-two hours after Marcus's plane lands back at Philadelphia. The practice I was planning to start in November is going to, on a quiet count, not be the practice I was planning. I am telling you this so that you understand what road my call walks on top of. The road is mine. The choice is mine. The seventy-six hours between now and Marcus's plane landing are yours. Use them. Go."*
+
+The call ended at eight twenty-two PM Eastern.
+
+Jimmy stood at the kitchen counter.
+
+He looked at the bag in the front hall.
+
+Thea walked into the kitchen.
+
+She looked at Jimmy.
+
+She said: *"Who was that."*
+
+He said: *"Eleanor Whitcomb."*
+
+Thea said: *"What did she tell you."*
+
+He said: *"Marcus is coming to Amsterdam Tuesday at nine. Marcus is bringing four billion dollars and a signed LOI. Marcus is going to be in the room before me."*
+
+Thea said: *"What are you going to do."*
+
+He said: *"I am going to fly tomorrow morning. I am going to ask Tony to see me Monday evening. I am going to be in the room twelve hours before Marcus."*
+
+Thea said: *"Then pack heavier. The flight is going to be longer if you sleep on it."*
+
+He said: *"Yes."*
+
+He went upstairs.
+
+He repacked.
+
+He came back down at eight forty-one PM.
+
+He opened his email.
+
+He drafted a new message to Tony's at eight forty-three PM Sunday evening.
+
+The message was four sentences.
+
+*Tony. The Tuesday eleven AM meeting needs to be Monday evening. The reason is on a phone call I will tell you about when I see you. I am, on the strength of one sentence I am not going to put in this email, asking for any hour you can take me Monday. — Jim.*
+
+The reply came at nine eleven AM Amsterdam local time Monday morning — three eleven AM Eastern.
+
+The reply was four sentences.
+
+*Jim. The phone call you are not going to put in the email is a phone call we, on our own quiet read of the past forty-eight hours, were waiting for one of two people to make. The other person did not call. You did. Come at six PM Monday. — Tony.*
+
+Jimmy rebooked the flight at three twenty-two AM Eastern Monday.
+
+He flew Delta out of RDU on the morning of Monday, October thirteenth, departing nine forty-two AM Eastern on a connection through Atlanta, arriving Schiphol at four forty-one PM Amsterdam local time on Monday afternoon.
+
+He had told Thea on the kitchen table on Sunday evening. He had told Thea everything.
+
+Thea said, before he left for the airport on Monday morning: *"You should go."*
 
 Jimmy said: *"Yes."*
 
@@ -522,31 +628,35 @@ Thea said: *"You should also let go of the bar."*
 
 Jimmy said: *"Yes."*
 
+Thea said: *"And the next time Eleanor Whitcomb calls, you take the call wherever you are."*
+
+Jimmy said: *"Yes."*
+
 ---
 
 The Tony's Chocolonely office occupied the third floor of a converted warehouse on the Westerdoksdijk waterfront in Amsterdam.
 
-Jimmy arrived at Schiphol at eight AM Tuesday Amsterdam time.
+Jimmy arrived at Schiphol at four forty-one PM Monday Amsterdam time.
 
 He took the train into Amsterdam.
 
-He walked from the central station along the harbor to the Westerdoksdijk.
+He walked from the central station along the harbor to the Westerdoksdijk in the late-afternoon light.
 
-He was at the office at ten fifty-two AM.
+He was at the office at five fifty-two PM.
 
-The lobby was small. The receptionist was a woman in her early thirties named Marlou. Marlou knew who Jimmy was. Marlou did not, on her own quiet read of the morning, mention it.
+The lobby was small. The receptionist was a woman in her early thirties named Marlou. Marlou knew who Jimmy was. Marlou did not, on her own quiet read of the evening, mention it.
 
 She said: *"Mr. Donaldson."*
 
 Jimmy said: *"Yes."*
 
-Marlou said: *"Tony will be down at eleven. There is coffee. Take a seat anywhere you like."*
+Marlou said: *"Tony will be down at six. There is coffee. There is also a sandwich, if you would prefer the sandwich. The flight from the United States is, on our staff's quiet count, an eight-hour flight. Take a seat anywhere you like."*
 
 Jimmy sat on a small couch by the window.
 
-The window looked out at the Houthavens.
+The window looked out at the Houthavens in the dusk.
 
-At ten fifty-nine, Tony came down the open staircase from the third floor.
+At five fifty-nine PM, Tony came down the open staircase from the third floor.
 
 Tony was sixty-one. Tony wore jeans and a t-shirt with the Tony's wordmark on the left chest. Tony had been the operating CEO of Tony's Chocolonely for the past nine years. Tony had been involved in the company in some operational capacity since the company's founding. Tony's hands were the hands of a person who had spent at least a decade in actual chocolate factories.
 
@@ -560,7 +670,7 @@ Jimmy stood up.
 
 Jimmy said: *"Tony."*
 
-Tony said: *"Come up. There is more light upstairs."*
+Tony said: *"Come up. The light is going. We will catch the last of it from the third floor."*
 
 They walked up the open staircase.
 
@@ -610,9 +720,25 @@ He said: *"Tony."*
 
 Tony said: *"Yes."*
 
-Jimmy said: *"I came here to ask for a partnership. I came here to ask if you and I can take the Feastables shelf space, the retail relationships, the Walmart planograms, the Target endcaps, the convenience-store distribution, and the school-funding pipeline that has been routing through the Feastables ledger, and put it all under one operating arrangement where Tony's makes the bar, the bar carries the joint mark, the ledger keeps routing margin into the Beast Philanthropy schools, and I get to walk the shop floor and do the work I am actually good at instead of trying to formulate a hazelnut paste."*
+Jimmy said: *"I came here to ask for a partnership. I came here to ask if you and I can take the Feastables shelf space, the retail relationships, the Walmart planograms, the Target endcaps, the convenience-store distribution, and the school-funding pipeline that has been routing through the Feastables ledger, and put it all under one operating arrangement where Tony's makes the bar, the bar carries the joint mark, the ledger keeps routing margin into the Beast Philanthropy schools, and I get to walk the shop floor and do the work I am actually good at instead of trying to formulate a hazelnut paste. I came here a day earlier than I was scheduled to come because Marcus Whittaker of the Hershey Company arrives in your lobby at nine AM tomorrow morning with a signed letter of intent and a four-billion-dollar offer for the company. I was told this last night by Eleanor Whitcomb, who sat on the Hershey trust for fourteen years and resigned in July, and who has, on her own honest count, paid for the call she made to me with the consulting practice she was going to start in November. I am asking, on the strength of her call and her cost, for the meeting we are in to be the meeting that decides what Tony's Chocolonely does next."*
 
 Tony looked at Jimmy.
+
+Tony did not, in the next eleven seconds, speak.
+
+Tony said: *"Eleanor Whitcomb."*
+
+Jimmy said: *"Yes."*
+
+Tony said: *"I met her once, at a fair-trade-certification conference in Brussels in 2016. She asked me a question at lunch about the cocoa-cooperative governance model. The question was the question of a person who was not asking the question for the first time. I remember the question."*
+
+Jimmy said: *"She is the reason I am sitting here at six PM Monday instead of eleven AM Tuesday."*
+
+Tony said: *"I know."*
+
+He pointed at the laptop on the desk.
+
+Tony said: *"Marcus Whittaker's office called my office at four PM Friday Amsterdam time to confirm the nine AM Tuesday meeting. I had, on my own quiet read of the past forty-eight hours, been waiting to see whether you knew about it. You did not, on Friday, know about it. You knew about it by Sunday evening. The road you walked between Friday and Sunday — which I do not, in this office at six PM on a Monday, need to know the details of — is the road I was waiting to see whether you would walk. You walked it. Marcus, on every honest read of Marcus across the eleven years I have watched him operate, would not have walked it. That is also the answer to your question."*
 
 Tony said: *"What does your team think about this."*
 
@@ -646,7 +772,7 @@ Jimmy stood up.
 
 Jimmy shook Tony's hand.
 
-Tony said: *"Now go eat lunch. There is a small herring stand at the end of the canal. Tell the man behind the counter that Tony sent you. Come back at one PM. We will start on the operating structure with the two people on my team who handle structure."*
+Tony said: *"Now go eat dinner. There is a small herring stand at the end of the canal. Tell the man behind the counter that Tony sent you. Come back at seven AM tomorrow morning. We will sign the letter of intent at eight. Marcus Whittaker will arrive in our lobby at nine. I would like you to be in the building when he arrives. You will not be in the room. You will be on the third floor in the small conference room across the hall from the open staircase. You will hear me tell him no through the staircase. That is the meeting I am asking you to attend. It is not, on the operating structure we will sign at eight, going to be a long meeting."*
 
 Jimmy walked out of the office.
 
@@ -662,13 +788,205 @@ Marlou said: *"Jim. I would like to thank you, on behalf of the company, for ask
 
 Jimmy walked out of the lobby.
 
-He walked to the herring stand at the end of the canal.
+He walked to the herring stand at the end of the canal in the dark.
 
 He ate the herring with the onion and the pickle.
 
 The man behind the counter refused his money.
 
 Jimmy put twelve euros in the small jar marked *schoolfonds* on the corner of the counter anyway.
+
+He walked back to a small hotel two blocks from the Westerdoksdijk office.
+
+He slept five hours and forty-one minutes.
+
+---
+
+Tuesday morning. Six fifty-three AM Amsterdam local time. The Westerdoksdijk office.
+
+Marlou let Jimmy in at six fifty-three.
+
+Tony came down the open staircase at seven oh-two.
+
+The two-person operating-structure team was upstairs at seven oh-four.
+
+The letter of intent was a two-page document Tony's general counsel had drafted across Sunday night on the assumption that one of two operators would call.
+
+The letter named *Tony's & Beast Operating Company B.V.* as the working name for the joint operating entity.
+
+The letter ran to four operating clauses, one governance clause, one mission clause, and three signature blocks.
+
+The mission clause was one sentence.
+
+The sentence read: *The Joint Operating Company exists to manufacture chocolate so that people can afford it and so that the school-funding ledger compounds.*
+
+Jimmy read the sentence.
+
+He looked at Tony.
+
+He said: *"Tony."*
+
+Tony said: *"Yes."*
+
+Jimmy said: *"Milton Hershey wrote a sentence like this in 1909."*
+
+Tony said: *"I know."*
+
+Jimmy said: *"Tony. One more thing before I sign."*
+
+Tony said: *"Yes."*
+
+Jimmy said: *"The bar. The joint mark. The wrapper. The name on the wrapper."*
+
+Tony said: *"Yes."*
+
+Jimmy said: *"Tony's Chocolonely was, on the four-paragraph history I read in the lobby last night while I was waiting for you to come down the staircase, named for the founder feeling — in the year the company was founded — that he was the only person in the chocolate business who cared about the children in the cocoa-supply chain. The 'lonely' part was the truth of the founding moment. The 'lonely' part is not, on the LOI I am about to sign, the truth of the operating company we are starting tomorrow. The lonely part is going to be over. The joint mark needs a name that lets the lonely part be over. I have, on the small notebook on the third floor across the hall from the staircase where I was sitting at four AM this morning, written one suggestion. The suggestion is: Tony's Chocoloney. The drop is one letter. The sound is the same sound. The 'lonely' is not on the wrapper anymore."*
+
+Tony was quiet for nine seconds.
+
+Tony said: *"Jim."*
+
+Jimmy said: *"Yes."*
+
+Tony said: *"The drop is one letter. The sound is the same sound. The 'lonely' is not on the wrapper anymore. The joint mark is going to be Tony's Chocoloney."*
+
+Tony picked up the pen.
+
+He struck the brand name in the LOI's exhibit one and wrote the new name in by hand.
+
+The general counsel initialed the change at seven fifty-two.
+
+Jimmy signed at seven fifty-three.
+
+Tony signed at seven fifty-six.
+
+The general counsel signed as witness at seven fifty-eight.
+
+The letter was on Tony's PR director's desk at eight oh-one.
+
+The PR director sent the joint statement to AP, Reuters, Bloomberg, the *Financial Times,* and the small fair-trade-industry trade press the cooperative had relationships with at eight fifty-one AM Amsterdam local time.
+
+The wire services published at eight fifty-three.
+
+The *Financial Times* live blog picked it up at eight fifty-seven.
+
+---
+
+At nine oh-four AM, a black Mercedes pulled up at the curb outside the Westerdoksdijk office.
+
+Marcus Whittaker walked into the lobby at nine oh-six.
+
+He was carrying a small leather briefcase. He was wearing the Savile Row suit. The Savile Row suit was, on Marlou's quiet read of the gentleman from her desk, the wrong cut for the canal-side warehouse architecture of the Houthavens but the right cut for the boardroom of the Hershey Trust.
+
+Marlou stood up.
+
+She said: *"Mr. Whittaker."*
+
+Marcus said: *"Marlou."*
+
+Marlou said: *"Tony will be down at nine fifteen. There is coffee. Take a seat anywhere you like."*
+
+Marcus sat on the small couch by the window — the same couch Jimmy had sat on at five fifty-four PM Monday afternoon.
+
+He pulled out his phone.
+
+He opened his email.
+
+The email at the top of his inbox was a six AM Eastern alert from his Bloomberg terminal, titled: *Tony's Chocolonely and Beast Industries announce joint operating company; new entity to be domiciled in Amsterdam under name "Tony's & Beast Operating Company B.V."; joint mark to retail under new brand name "Tony's Chocoloney" beginning Q1; Beast Philanthropy ledger to remain primary disbursement mechanism.*
+
+The email had been sent to Marcus's Bloomberg subscription at eight fifty-three AM Amsterdam local time.
+
+Marcus had been, at eight fifty-three AM Amsterdam local time, on the runway at Schiphol on the Lufthansa connection from Frankfurt, with his phone in airplane mode.
+
+Marcus read the email.
+
+Marcus read it again.
+
+Marcus stood up.
+
+He walked across the lobby to Marlou's desk.
+
+He said: *"Marlou."*
+
+Marlou said: *"Yes."*
+
+Marcus said: *"The meeting at nine fifteen."*
+
+Marlou said: *"Mr. de Wit is not available for the meeting at nine fifteen."*
+
+Marcus said: *"Mr. de Wit confirmed the meeting at four PM Friday."*
+
+Marlou said: *"Mr. de Wit signed a letter of intent at seven fifty-six AM this morning with a different operator. The joint statement was on the wire at eight fifty-three. The statement is in your email. The meeting at nine fifteen does not, on Mr. de Wit's current calendar, exist."*
+
+Marcus did not, in the next nine seconds, speak.
+
+Marcus said: *"Who was the operator."*
+
+Marlou said: *"The name is in the statement."*
+
+Marcus opened his phone.
+
+He read the name.
+
+He looked up.
+
+He looked at Marlou.
+
+He said: *"How long has he been in the building."*
+
+Marlou said: *"Sixteen hours."*
+
+Marcus did not, in the next eleven seconds, speak.
+
+He picked up his briefcase.
+
+He walked out of the lobby.
+
+The black Mercedes pulled away from the curb at nine eighteen.
+
+Tony came down the open staircase at nine twenty-one.
+
+Tony did not, on his own subsequent recollection, look at the door.
+
+Tony said, to Marlou: *"Thank you, Marlou."*
+
+Marlou said: *"You are welcome, Tony."*
+
+Tony walked back up the staircase.
+
+Jimmy, who had been on the third floor in the small conference room across the hall from the staircase since seven AM, came out of the conference room.
+
+He met Tony at the top of the staircase.
+
+Tony said: *"Jim."*
+
+Jimmy said: *"Tony."*
+
+Tony said: *"Now go eat lunch. There is a small herring stand at the end of the canal. Tell the man behind the counter that Tony sent you, and tell him this is the second time you have come in two days. The man will, on the two visits, recognize you. Take the bench by the water. Come back at two PM. We will start on the operating structure with the two people on my team who handle structure."*
+
+Jimmy walked down the open staircase.
+
+He walked past Marlou at the front desk.
+
+Marlou said: *"Mr. Donaldson."*
+
+Jimmy said: *"Jim."*
+
+Marlou said: *"Jim. I would like to thank you again, on behalf of the company, for asking the question yesterday."*
+
+Jimmy walked out of the lobby.
+
+He walked to the herring stand at the end of the canal in the noon light.
+
+He ate the herring with the onion and the pickle.
+
+The man behind the counter, on his second sight of Jimmy in two days, said: *"You are the one Tony was waiting on this weekend."*
+
+Jimmy said: *"I am the one."*
+
+The man refused his money for the second time.
+
+Jimmy put twelve euros in the *schoolfonds* jar.
 
 He sat on the bench by the water.
 
@@ -679,6 +997,10 @@ He thought, for the first time in nine years, about a Tuesday afternoon a long t
 He had decided, on that Tuesday afternoon, to do the work he was good at.
 
 He was, on the bench by the water in Amsterdam at twelve forty-one PM local time on Tuesday October fourteenth of Year Nine, deciding the same thing.
+
+He thought, for a quieter beat, about Eleanor Whitcomb at her kitchen table in Hummelstown, Pennsylvania, at six forty-one AM Eastern that same Tuesday morning, reading the wire on her phone with her first cup of coffee, looking out the small window above her sink at the maple tree in her yard, and not — on Jimmy's honest guess of how Eleanor took the news — smiling.
+
+The smile was, on Jimmy's honest guess, going to come later.
 
 The flight home was Tuesday evening.
 
