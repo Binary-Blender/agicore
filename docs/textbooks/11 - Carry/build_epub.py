@@ -29,8 +29,8 @@ IDENTIFIER = "ai-win-win-carry-novel-002"
 PARTS = [
     ("Act 1: The Boil", [1, 2, 3, 4]),
     ("Act 2: The Strike", [5, 6, 7, 8]),
-    ("Act 3: The Platform", [9, 10, 11, 12]),
-    ("Act 4: The New World", [13, 14]),
+    ("Act 3: The Platform", [9, 10, 11, 12, 13]),
+    ("Act 4: The New World", [14, 15]),
 ]
 
 CHAPTER_TITLES = {
@@ -44,10 +44,11 @@ CHAPTER_TITLES = {
     8:  "The First Customer",
     9:  "The Floor",
     10: "The Senator",
-    11: "The Crisis",
-    12: "The Earnings Call",
-    13: "The Handover",
-    14: "The Coelacanth",
+    11: "The Snatch",
+    12: "The Quiet",
+    13: "The Earnings Call",
+    14: "The Handover",
+    15: "The Coelacanth",
 }
 
 CSS = b"""
