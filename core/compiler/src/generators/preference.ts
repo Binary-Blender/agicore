@@ -12,9 +12,11 @@ function tsDefaultLiteral(val: unknown): string {
 
 function tsPreferenceType(agiType: string): string {
   switch (agiType) {
-    case 'number': return 'number';
-    case 'bool':   return 'boolean';
-    default:       return 'string';
+    case 'number':  return 'number';
+    case 'float':   return 'number';
+    case 'bool':    return 'boolean';
+    case 'boolean': return 'boolean';
+    default:        return 'string';
   }
 }
 

@@ -59,7 +59,11 @@ export interface MeshVerdict {
 }
 
 export interface QcMeshEngine {
-  evaluate(output: string, criteriaPrompt: string): Promise<MeshVerdict>;
+  evaluate(
+    output: string,
+    criteriaPrompt: string,
+    invokeAi: (model: string, prompt: string) => Promise<string>,
+  ): Promise<MeshVerdict>;
   activeCount(): number;
   driftRate(): number;
 }

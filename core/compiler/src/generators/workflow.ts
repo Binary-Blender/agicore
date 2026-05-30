@@ -34,10 +34,8 @@ function isEnabled(ast: AgiFile): boolean {
   return hasWorkflows && telemetryOn;
 }
 
-function hasWorkflowConsumers(ast: AgiFile): boolean {
-  const hasWorkflows = ast.workflows && ast.workflows.length > 0;
-  const hasMutationPolicies = ast.mutationPolicies && ast.mutationPolicies.length > 0;
-  return hasWorkflows && hasMutationPolicies;
+function hasMutationPolicies(ast: AgiFile): boolean {
+  return !!ast.mutationPolicies && ast.mutationPolicies.length > 0;
 }
 
 export function generateWorkflow(ast: AgiFile): Map<string, string> {
@@ -46,10 +44,11 @@ export function generateWorkflow(ast: AgiFile): Map<string, string> {
   if (isEnabled(ast)) {
     files.set('src-tauri/src/commands/workflow.rs', buildWorkflowRs(ast));
     files.set('src/lib/workflow.ts', buildWorkflowTs(ast));
-  } else if (hasWorkflowConsumers(ast)) {
-    // MutationConsole and other downstream UI imports `../lib/workflow` for
-    // andon-event types and listing — emit the TS wrapper even when full
-    // telemetry-driven runtime isn't enabled.
+  } else if (hasMutationPolicies(ast)) {
+    // MutationConsole and other downstream UI import `../lib/workflow` for
+    // andon-event types and listing — emit the TS wrapper whenever a
+    // MUTATION_POLICY is declared, even without WORKFLOW declarations or
+    // TELEMETRY auto. The Andon Loop substrate needs these types.
     files.set('src/lib/workflow.ts', buildWorkflowTs(ast));
   }
 

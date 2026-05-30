@@ -1817,7 +1817,9 @@ function generateNavRailSidebar(ast: AgiFile): string {
   return `import { ${iconImports} } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 
-const NAV_ITEMS = [
+type NavItem = { view: string; icon: any; title: string };
+
+const NAV_ITEMS: NavItem[] = [
 ${items.map(i => `  { view: '${i.name}', icon: ${i.icon}, title: '${i.title}' },`).join('\n')}
 ];
 

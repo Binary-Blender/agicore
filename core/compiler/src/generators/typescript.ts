@@ -60,7 +60,13 @@ function fieldTsType(field: FieldDef): string {
 function generateInterface(entity: EntityDecl): string {
   const lines: string[] = [];
   lines.push(`export interface ${entity.name} {`);
-  lines.push('  id: string;');
+  // Always-present primary key. Skip if the entity declared 'id' explicitly
+  // in its fields list — the explicit declaration takes precedence and we
+  // emit it through the field loop below instead.
+  const hasExplicitId = entity.fields.some(f => f.name === 'id');
+  if (!hasExplicitId) {
+    lines.push('  id: string;');
+  }
 
   for (const field of entity.fields) {
     const name = toCamelCase(field.name);
@@ -235,7 +241,16 @@ function generateEntityInvokes(entity: EntityDecl, ast: AgiFile): string {
 function generateActionInvoke(action: ActionDecl): string {
   const lines: string[] = [];
   const fnName = toCamelCase(action.name);
-  const params = action.input.map(p => {
+  // TypeScript requires that all optional parameters come AFTER all required
+  // parameters. The .agi declared order may interleave them. The argObj is
+  // built positionally from input names, but resolved by-key at invoke, so
+  // reordering the parameter list is safe — only the function signature
+  // is affected; runtime semantics are object-key-based.
+  const sortedInputs = [
+    ...action.input.filter(p => p.defaultValue === undefined),
+    ...action.input.filter(p => p.defaultValue !== undefined),
+  ];
+  const params = sortedInputs.map(p => {
     const optional = p.defaultValue !== undefined ? '?' : '';
     return `${toCamelCase(p.name)}${optional}: ${tsTypeOrEntity(p.type)}`;
   }).join(', ');
@@ -250,7 +265,7 @@ function generateActionInvoke(action: ActionDecl): string {
     returnType = toPascalCase(action.name) + 'Result';
   }
 
-  const argObj = action.input.map(p => toCamelCase(p.name)).join(', ');
+  const argObj = sortedInputs.map(p => toCamelCase(p.name)).join(', ');
 
   lines.push(`export const ${fnName} = (${params}) =>`);
   lines.push(`  invoke<${returnType}>('${action.name}', { ${argObj} });`);
@@ -581,8 +596,22 @@ export function generateStore(ast: AgiFile): string {
   lines.push('}');
   lines.push('');
 
+  // Determine whether the body will reference `get()`. tsc strict
+  // noUnusedParameters flags an unused `get` parameter on the lambda; only
+  // emit `(set, get)` when the body actually uses it.
+  const bodyUsesGet =
+    currentEntities.length > 0 ||
+    ast.entities.some(e => {
+      if (e.singleton) {
+        const ops = e.crud === 'full' ? ['update'] : e.crud;
+        return ops.includes('update');
+      }
+      const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
+      return ops.includes('create') || ops.includes('update') || ops.includes('delete');
+    });
+
   // Build the store
-  lines.push('export const useAppStore = create<AppState>((set, get) => ({');
+  lines.push(`export const useAppStore = create<AppState>(${bodyUsesGet ? '(set, get)' : '(set)'} => ({`);
   const firstView = ast.views[0]?.name ?? 'Dashboard';
   lines.push(`  currentView: '${firstView}',`);
   lines.push("  setCurrentView: (view) => set({ currentView: view }),");

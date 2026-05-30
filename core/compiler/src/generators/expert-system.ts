@@ -60,7 +60,7 @@ function generateFactStore(facts: FactDecl[]): string {
     '  }',
     '',
     '  retract(factId: string): AnyFact | undefined {',
-    '    for (const [type, list] of this.facts) {',
+    '    for (const [, list] of this.facts) {',
     '      const idx = list.findIndex(f => f._id === factId);',
     '      if (idx !== -1) {',
     '        const removed = list.splice(idx, 1)[0]!;',
@@ -76,7 +76,7 @@ function generateFactStore(facts: FactDecl[]): string {
     '    if (!filter) return list;',
     '    return list.filter(f => {',
     '      for (const [key, val] of Object.entries(filter)) {',
-    '        if ((f as Record<string, unknown>)[key] !== val) return false;',
+    '        if ((f as unknown as Record<string, unknown>)[key] !== val) return false;',
     '      }',
     '      return true;',
     '    });',
@@ -106,12 +106,18 @@ function generateFactStore(facts: FactDecl[]): string {
   // Add factory functions for each fact type
   for (const fact of facts) {
     const name = fact.name;
-    const params = fact.fields.map(f => {
+    // TS requires optional params after required params. The .agi field order
+    // may interleave; sort required-first for the generated signature.
+    const sortedFields = [
+      ...fact.fields.filter(f => f.defaultValue === undefined),
+      ...fact.fields.filter(f => f.defaultValue !== undefined),
+    ];
+    const params = sortedFields.map(f => {
       const opt = f.defaultValue !== undefined ? '?' : '';
       return `${toCamelCase(f.name)}${opt}: ${tsTypeFor(f.type)}`;
     }).join(', ');
 
-    const fieldAssignments = fact.fields.map(f => {
+    const fieldAssignments = sortedFields.map(f => {
       const camel = toCamelCase(f.name);
       if (f.defaultValue !== undefined) {
         const def = typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : String(f.defaultValue);
@@ -337,7 +343,11 @@ function generateStateMachine(states: StateDecl[]): string {
 // ---------------------------------------------------------------------------
 
 function generatePatternMatcher(patterns: PatternDecl[]): string {
-  if (patterns.length === 0) return '';
+  // Always emit the PatternDef/PatternMatcher type and class shell, even when
+  // top-level patterns are empty. Modules may add patterns at activation
+  // (allPatterns = [...ast.patterns] in generateExpertSystem deliberately
+  // omits module-scoped patterns) and ModuleManager / Orchestrator code
+  // downstream references both the types and the class.
 
   const lines: string[] = [
     '// --- Pattern Matcher ---',
@@ -447,7 +457,8 @@ function generatePatternMatcher(patterns: PatternDecl[]): string {
 // ---------------------------------------------------------------------------
 
 function generateRuleEngine(rules: RuleDecl[]): string {
-  if (rules.length === 0) return '';
+  // Always emit the RuleDef/RuleEngine type and class shell, even when
+  // top-level rules are empty. Modules may add rules at activation.
 
   const lines: string[] = [
     '// --- Rule Engine (Forward Chaining) ---',
@@ -693,8 +704,11 @@ function generateOrchestrator(ast: AgiFile): string {
 
   if (hasScores) lines.push('  readonly scores = new ScoreEngine();');
   if (hasStates) lines.push('  readonly states = new StateMachineEngine();');
-  if (hasPatterns) lines.push('  readonly patterns = new PatternMatcher();');
-  if (hasRules) lines.push('  readonly rules = new RuleEngine();');
+  // PatternMatcher and RuleEngine are needed when MODULEs are present (they
+  // register module-scoped patterns and rules at activation time), even if
+  // there are no top-level patterns/rules.
+  if (hasPatterns || hasModules) lines.push('  readonly patterns = new PatternMatcher();');
+  if (hasRules || hasModules) lines.push('  readonly rules = new RuleEngine();');
   if (hasModules) lines.push('  readonly modules: ModuleManager;');
 
   lines.push('  private turnCount = 0;');
@@ -754,15 +768,15 @@ function generateOrchestrator(ast: AgiFile): string {
     lines.push('      result.response = match.response;');
     lines.push('      result.matchedPattern = match.pattern.name;');
     lines.push('');
-    lines.push('      // Apply score changes');
-    lines.push('      if (match.pattern.score) {');
-    lines.push('        const { name, delta } = match.pattern.score;');
     if (hasScores) {
+      lines.push('      // Apply score changes');
+      lines.push('      if (match.pattern.score) {');
+      lines.push('        const { name, delta } = match.pattern.score;');
       lines.push('        const triggered = this.scores.increment(name, delta, match.pattern.name);');
       lines.push('        result.scoreChanges[name] = delta;');
       lines.push('        result.actions.push(...triggered);');
+      lines.push('      }');
     }
-    lines.push('      }');
     lines.push('');
     lines.push('      // Assert facts');
     lines.push('      if (match.pattern.assertFact) {');

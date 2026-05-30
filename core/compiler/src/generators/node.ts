@@ -126,8 +126,6 @@ function generateDashboard(nodes: NodeDecl[], zones: ZoneDecl[]): string {
 // Agicore Generated — customize this component freely.
 // Hardware node and zone monitoring dashboard.
 
-import React from 'react';
-
 export default function DeviceDashboard() {
   return (
     <div className="p-6 space-y-6">

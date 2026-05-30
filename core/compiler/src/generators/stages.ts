@@ -28,7 +28,8 @@ export function generateStages(ast: AgiFile): Map<string, string> {
     }));
 
     tsLines.push(`// ${s.entity}.${s.field} state machine`);
-    tsLines.push(`export const ${s.entity.toLowerCase()}${capitalize(s.field)}Transitions = ${JSON.stringify(transitionData, null, 2)} as const;`);
+    tsLines.push(`type ${s.entity}${capitalize(s.field)}Transition = { from: string; to: string; match: 'all' | 'any'; conditions: string[] };`);
+    tsLines.push(`export const ${s.entity.toLowerCase()}${capitalize(s.field)}Transitions: ${s.entity}${capitalize(s.field)}Transition[] = ${JSON.stringify(transitionData, null, 2)};`);
     tsLines.push(``);
     tsLines.push(`export function ${fnName}(`);
     tsLines.push(`  from: string,`);
