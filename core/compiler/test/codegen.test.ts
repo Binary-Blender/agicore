@@ -3383,7 +3383,7 @@ PREFERENCE FontSize {
   const { files } = compile(src);
   assert(files.has('src/lib/preferences.ts'), 'Should generate preferences.ts');
   const prefsFile = files.get('src/lib/preferences.ts')!;
-  assert(prefsFile.includes("import { useState, useEffect } from 'react'"), 'preferences.ts should import React hooks');
+  assert(prefsFile.includes("import { useState } from 'react'"), 'preferences.ts should import React hooks');
   assert(prefsFile.includes('export function usePreferenceState'), 'preferences.ts should export usePreferenceState');
   assert(prefsFile.includes("export const useAppTheme = ()"), 'preferences.ts should export useAppTheme hook');
   assert(prefsFile.includes("bka_app_theme"), 'useAppTheme should use the correct key');
