@@ -1060,3 +1060,73 @@ PortalAccount, SecureMessage, ResultRelease, AppointmentRequest, RefillRequest, 
 | Lines of DSL | ~24,000 |
 
 One enterprise platform. Zero runtime hallucination. Every decision traceable.
+
+---
+
+## The Backbone Pattern — what makes Accelerando the killer app
+
+The architecture above describes the eighteen apps. The pattern below describes what they share. This is the layer the fiction names directly — Cole reading the README at 11:31 AM in *Carry* Ch 8, Ana mapping forty-three million in SaaS rent at 2:47 AM in *The Chocolate Wars* Ch 7. Adoption of this pattern is what turns a "suite of integrated apps" into "one operating system that eats the apps it replaces."
+
+### The four contracts every module ships
+
+| Contract | What the module declares | Where the substrate lives |
+|---|---|---|
+| **Spine emission** | `ACTION Emit<X>Packet` + `WORKFLOW emit_<x>_packet` firing on state transitions | Canonical `PACKET` + `CHANNEL` + `AUTHORITY` declared once in `accelerando_interchange.agi` |
+| **Spine consumption** | `TRIGGER` on a spine `CHANNEL` + matching `PACKET` + filter, `FIRES WORKFLOW` | Same canonical interchange schema |
+| **Operator taste** | One `SKILLDOC` per module encoding judgment that survives staff turnover, `SIGNED_BY AccelerandoAuthority`, `AUDIT all_actions` | Markdown body lives in `skilldocs/<module>_<surface>.md` |
+| **Andon governance** | One `MUTATION_POLICY` per module: TIER 1 NBVE shadow auto-deploy, TIER 3 reviewed, TIER 5 ORDERED `[cfo, cto, board_chair]` | Andon Loop substrate from `agicore` core; reference [`ANDON_LOOP.md`](ANDON_LOOP.md) |
+
+### The cross-Accelerando packet catalog (canonical in Interchange)
+
+| Packet | Publishers | Consumers |
+|---|---|---|
+| `PurchaseOrderPacket` | ERP (approval), Interchange (inbound X12 850) | Billing, OIE, Interchange-outbound |
+| `InvoicePacket` | ERP (vendor invoice), Billing (claim assembly) | Billing, OIE, ERP (AR) |
+| `ClaimAcceptedPacket` | Billing | ERP (AR), OIE |
+| `PaymentRecordedPacket` | Billing | ERP (close receivable), OIE (DSO) |
+| `IntelligenceOpportunityPacket` | OIE | Eliza, ES, operator dashboards |
+| `EscalationPacket` | Chatbot, Eliza | OIE, ES |
+
+Every spine packet carries `tenant_id`, `source_module`, `PROVENANCE`, `LINEAGE`, `SIGNATURES`, `ADMISSIBILITY`, and a TTL appropriate to its domain. The `AccelerandoBus` LEDGER is the hash-chained audit log for the whole spine.
+
+### Reference implementation status
+
+| Module | Emits | Consumes | SKILLDOC | MUTATION_POLICY | Status |
+|---|---|---|---|---|---|
+| `interchange` | (spine declarations, REASONERs) | (spine REASONERs) | `accelerando_spine_routing` | `accelerando_spine_policy` | **Reference** |
+| `erp` | `PurchaseOrderPacket`, `InvoicePacket` | `PaymentRecordedPacket`, inbound `PurchaseOrderPacket` | `erp_procurement_taste` | `erp_policy` | **Reference** |
+| `billing` | `InvoicePacket` (claim), `ClaimAcceptedPacket`, `PaymentRecordedPacket` | `InvoicePacket` (start-claim) | `billing_collections_stance` | `billing_policy` | **Reference** |
+| `oie` | `IntelligenceOpportunityPacket` (via `cross_module_opportunity_reasoner`) | All spine channels | `oie_insight_standards` (pre-existing) | `oie_policy` | **Reference** |
+| `clinical` | `NewEncounterPacket`, `PrescriptionPacket`, `ReferralPacket`, `CriticalResultPacket`, `CCDPacket` (local, pre-existing) | `AppointmentConfirmedPacket`, `PDMPHighRiskPacket`, `FinalReportPacket`, `CriticalFindingAlertPacket`, `CareGapAlertPacket`, `HCCRecapturePacket`, `DispenseConfirmationPacket` | `clinical_documentation_taste` | `clinical_policy` (4-of-4 TIER 5: CMO/CFO/CTO/board chair) | **Reference** |
+| `scheduling` | `AppointmentConfirmedPacket`, `AppointmentCancelledPacket`, `RecallDuePacket`, `NoShowAlertPacket` (local, pre-existing) | `AppointmentRequestPacket`, `HighRiskNoShowPacket` | `scheduling_discipline` | `scheduling_policy` | **Reference** |
+| `pharmacy` | `DispenseConfirmationPacket`, `PDMPHighRiskPacket`, `PriorAuthRequestPacket` (local, pre-existing) | `PrescriptionPacket` (from Clinical), `RefillRequestPacket` (from Patient Portal) | `pharmacy_dispensing_stance` | `pharmacy_policy` (4-of-4 TIER 5) | **Reference** |
+| `radiology` | `ModalityWorklistPacket`, `FinalReportPacket`, `CriticalFindingAlertPacket`, `DoseAlertPacket` (local, pre-existing) | `ImagingOrderPacket` (from Clinical) | `radiology_reading_discipline` | `radiology_policy` (4-of-4 TIER 5) | **Reference** |
+| `population-health` | `CareGapOpenedPacket`, `HighRiskPatientPacket`, `QualityMeasureReportPacket`, `HCCRecapturePacket` (local), `HighRiskNoShowPacket` | `InboundEncounterSignalPacket`, `InboundNoShowSignalPacket` | `population_health_attribution` | `population_health_policy` (4-of-4 TIER 5) | **Reference** |
+| `patient-portal` | `PortalMessagePacket`, `RefillRequestPacket`, `AppointmentRequestPacket`, `ResultViewedPacket` (local, pre-existing) | Appointment confirmations, final reports, care gaps, dispense confirmations | `patient_portal_release_discipline` | `patient_portal_policy` (4-of-4 TIER 5) | **Reference** |
+| `es` | `GovernanceDecisionPacket` | `InboundIntelligenceOpportunityPacket` (from OIE) | `es_governance_stance` | `es_policy` (4-of-4 TIER 5: GC/CFO/CTO/board chair) | **Reference** |
+| `eliza` | `MacroPacket` (every operator action) | — | `eliza_operator_taste` | `eliza_policy` | **Reference** |
+| `legal` | `LegalHoldNoticePacket`, `HygieneAlertPacket` (local, pre-existing) | — | `legal_hold_discipline` | `legal_policy` (4-of-4 TIER 5: GC/CFO/CTO/board chair) | **Reference** |
+| `lms` | `ComplianceScorePacket` (to ES governance) | — | `lms_curriculum_taste` | `lms_policy` | **Reference** |
+| `qms` | `CAPAToPICoEPacket`, `AuditReadinessPacket` (local, pre-existing) | `NCRFromPICoEPacket` (from PI CoE) | `qms_root_cause_discipline` | `qms_policy` (4-of-4 TIER 5: QD/CFO/CTO/board chair) | **Reference** |
+| `pi-coe` | `ReplicationPacket`, `KaizenRegressionAlert`, `NCRTriggerPacket` (local, pre-existing) | `CAPAToPICoEPacket` (from QMS) | `pi_coe_kaizen_discipline` | `pi_coe_policy` | **Reference** |
+| `chatbot` | `EscalationPacket` (local, pre-existing, matches escalation_spine) | — | `chatbot_de_escalation_taste` | `chatbot_policy` | **Reference** |
+| `config` | `ConfigurationAppliedPacket` (to every reconfigured module) | — | `config_advisor_taste` | `config_policy` | **Reference** |
+
+### All 19 modules now ship the four contracts
+
+Every module in the suite — `interchange`, `erp`, `billing`, `oie`, plus the EMR stack (`clinical`, `scheduling`, `pharmacy`, `radiology`, `population-health`, `patient-portal`) plus the enterprise governance/operator/admin tier (`es`, `eliza`, `legal`, `lms`, `qms`, `pi-coe`, `chatbot`, `config`) — declares its own `SKILLDOC`, `MUTATION_POLICY`, `REASONER` pair, and at least one spine-channel emit or consume.
+
+Across the 18 wired modules plus the interchange spine: 18 `SKILLDOC` declarations, 18 `MUTATION_POLICY` declarations (each with the canonical TIER 1 NBVE auto / TIER 3 reviewed / TIER 5 ORDERED `[..., cfo, cto, board_chair]` pattern; healthcare-tier modules add a CMO/Medical-Director seat at TIER 5; legal and ES add a General-Counsel seat), 41 `REASONER` declarations on the spine, 32 inbound `TRIGGER` declarations, and 17 canonical spine PACKETs + 17 spine CHANNELs in `accelerando_interchange.agi`. The suite is no longer a collection of integrated apps. It is one operating system.
+
+This is what *Carry* Ch 8 names when Cole reads the README at 11:31 AM Wednesday and says *"This is the substrate."* It is what *The Chocolate Wars* Ch 9 names when Ana finishes the eighteen-`.agi`-file Accelerando build sprint at MrBeast LLC and the empire stops being thirteen LLCs holding hands by force of Jimmy's attention.
+
+### How a module owner adopts the pattern
+
+1. **Identify which spine packets your module produces and consumes.** Use the catalog above. If you need a new spine PACKET, declare it canonically in `accelerando_interchange.agi`, not in your module file.
+2. **Add `ACTION Emit<Packet>` + `WORKFLOW emit_<packet>`** per outbound packet, fired on the right `STAGES` transition.
+3. **Add a `TRIGGER`** per inbound packet, `WHEN` clause filtering on `source_module` or payload predicates, `FIRES WORKFLOW <handler>`.
+4. **Declare one `SKILLDOC`** for your module's load-bearing judgment surface (procurement-taste, collections-stance, scheduling-discipline, etc.). Body in `skilldocs/<module>_<surface>.md`. `SIGNED_BY AccelerandoAuthority`, `AUDIT all_actions`.
+5. **Declare one `MUTATION_POLICY`** with TARGETS = your module's WORKFLOWs, TIER 1 NBVE auto, TIER 3 reviewed `[<your_lead>, <peer_lead>]`, TIER 5 ORDERED `[cfo, cto, board_chair]`, `LEDGER AccelerandoBus`.
+6. **Optional: add a module-scoped `REASONER`** that consumes its own spine traffic and emits `IntelligenceOpportunityPacket` for cross-domain findings.
+
+That's the pattern. The fiction does this in 45 days at Carrick (*Carry* Ch 8) and 12 weeks at MrBeast LLC (*Chocolate Wars* Ch 8–10). The reference implementation lives in the four modules above; the other fifteen are a straight propagation pass.
