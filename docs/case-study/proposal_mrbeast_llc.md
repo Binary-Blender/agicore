@@ -3,72 +3,52 @@
 
 **Prepared by:** Binary-Blender (Agicore + TAO practice)
 **Prepared for:** Jimmy Donaldson, Founder, MrBeast LLC + Feastables + Beast Games + Beast Philanthropy + Beast Industries + 8 affiliated entities
-**Date:** 2026-05-30 (transmission timestamp) / Two AM Tuesday in May of Year Ten (sender's frame)
-**Engagement Type:** Retroactive-Delivery Organizational Transformation, with Friends-and-Family Adjustment
-**Document Status:** Fictional case study set in *The Chocolate Wars* (Vol. 13, AI WIN-WIN Institute) universe. Jimmy Donaldson, Thea Donaldson, Ana Vasquez, Karim Brock, Thandi Khoza, Tyler Conklin, Maritza, Lou Macias, Eleanor Whitcomb, Marcus Whittaker, and all related entities are figures from the novel. Numbers reflect the novel's stated revenue base, headcount, and Year-Nine-through-Year-Ten transformation arc. The temporal mechanics and the discount mechanics described in §13 and §14 are non-load-bearing for the substance of the proposal.
+**Date:** 2026-05-30 (sender's frame) / Tuesday, March, Year Nine, 2:17 AM Eastern (delivery frame, via the eighth post on the Hacker News front page)
+**Engagement Type:** Unrequested-Delivery Organizational Transformation, with Friends-and-Family Adjustment
+**Document Status:** Fictional case study set in *The Chocolate Wars* (Vol. 13, AI WIN-WIN Institute) universe. Jimmy Donaldson, Thea Donaldson, Ana Vasquez, Karim Brock, Thandi Khoza, Tyler Conklin, Maritza, Lou Macias, Eleanor Whitcomb, Marcus Whittaker, and all related entities are figures from the novel. Numbers reflect the novel's stated revenue base, headcount, and Year-Nine-through-Year-Ten transformation arc. The temporal mechanics, the discount mechanics, and the invoice itemization described in §13, §14, and §16 are non-load-bearing for the substance of the proposal.
 
 ---
 
-## Cover Memo
+## Delivery Memo
 
-**From:** Jimmy Donaldson
-**To:** Christopher
-**Subject:** I need it by yesterday.
-**Date:** Two AM Tuesday in May of Year Ten. Greenville studio. The counter on the wall says four hundred and seventy-three.
+**From:** Christopher, Binary-Blender
+**To:** Jimmy Donaldson (cc: Ana Vasquez, Chief of Staff)
+**Subject:** Your proposal for the TAO + Accelerando deployment, as requested
+**Date:** 2026-05-30 (sender's frame) / Tuesday, March, Year Nine, 2:17 AM Eastern (delivery frame)
+**SOW Ref:** BB-SOW-2026-0001-MRB
+**Invoice Ref:** BB-INV-2026-0001-MRB (attached, §16)
 
-Christopher.
+Jimmy —
 
-It's Jimmy.
+Attached is the proposal you requested for the TAO + Accelerando deployment across MrBeast LLC and the broader Beast Organization. It is responsive to the inquiry your office sent through the standing channel.
 
-The counter says four hundred and seventy-three.
+A note before you read it.
 
-Four hundred and seventy-three schools open. Eighty-seven more capitalized. The five hundredth opens in November.
+The inquiry is not on your records.
 
-Thandi cut the ribbon on the four-hundred-and-seventy-third in Underberg on the Friday before last. Nomsa's daughter was in the first thirty-two kids. Nomsa is the head teacher you remember from the eighth school. The eighth school was the load-bearing one. The five hundredth is the load-bearing one for what comes next.
+You and Ana will spend some time looking for it. There is no email, no Slack DM, no phone log, no calendar entry. The inquiry was made; the inquiry will not be found.
 
-The counter ticks.
+You did not commission this work. I am sending it anyway. The temporal mechanics are documented in §13. The short version: I am the time-traveler in this exchange. Cole arranged the transmission on my side. You will need to take my word for it. Or Ana's word — she takes the call from you at 2:47 AM tonight, and the README I am attaching is the one she reads on the phone with you. She will recognize the README. She will not yet know she is going to recognize it. She will not yet know she is going to read it. By the time you finish this delivery memo it will be approximately 2:30 AM Eastern on a Tuesday in March of Year Nine. Ana is going to be moving toward her phone. She does not know that yet either.
 
-The reason the counter ticks is the work I am writing to commission today.
+The reason I am sending it anyway is that I have read about you in the future. I have seen what you build with this substrate across the twelve months following the delivery date. Four hundred and seventy-three schools, with the next eighty-seven capitalized; the five hundredth opening in November. The kitchen at 3:46 AM on a Tuesday in May of Year Ten, with the pancake batter fifteen minutes from ready. The brass plate I will not describe because the brass plate is, by the design discipline I am setting today, between you and Thea and Thandi and the children at the school. The brass plate is yours.
 
-The work is, in the frame I am writing from, finished. The empire is one operating system. The 13 LLCs are one specification. Feastables sells a bar, the ledger funds a school-day, Beast Games scopes contestants by Beast Philanthropy criteria, the OIE layer surfaces three opportunities a week that nobody had time to see. We have not used Hershey's name in a year. Hershey has lost thirty-one points of category share. The internal Hershey strategic review concluded that we are competing against a file format. We are.
+The proposal is mine. I am giving it to you.
 
-The file format is yours.
+The cost to you is itemized on the invoice at the end of the document (§16). The cost is zero.
 
-You shipped it eighteen months before I needed it. I found it at two seventeen AM on a Tuesday in March of Year Nine on the Hacker News front page. Ana read the README on the phone with me at two forty-seven AM. We rebuilt the empire on it across the next twelve months. The four phases were TAO, Accelerando, SKILLDOCS, SPC. The four phases are the proposal below.
+If you decide to proceed — and you will, because the README does what it says it does, and you and Ana will both recognize that within the first eleven minutes — the engagement runs the four-phase plan documented in §4. TAO → Accelerando → SKILLDOCS → SPC. Twelve months end-to-end. Ana's office is the primary engagement counterparty. Karim's office is the operational lead. Thandi runs the KwaZulu-Natal piece. Lou and Maritza take the editorial substrate. Tyler co-signs the thumbnail-taste SKILLDOC on the Saturday afternoon you dictate it. You make pancakes on Tuesday mornings starting roughly Day 270.
 
-I need it by yesterday.
+The work has been done. I am sending it to you because it has been done.
 
-I have heard that joke from every founder I have ever met. I am making the joke now because it is, in this case, literally true. The work you are going to ship is the work I needed in March of Year Nine. You will ship it from the receiver's frame of May 2026. The temporal-transmission piece is on me, and on Cole. Cole has the substrate set up. You and Cole have a quarterly arrangement; I am about to add a parallel one. The arrangement is below.
+If anything in the attached requires clarification, the standing channel from Cole carries my contact information. I do not require correspondence. I do not require acknowledgement. I do not require payment.
 
-A few things before you read the proposal.
+Best regards,
 
-I do not need you to write code I did not already use. The code is already in the agicore repo. Reese Okonkwo's team at Carrick committed the customizations they made; you reviewed them on their merits without knowing they were from Carrick. The code is good. The customizations are good. Pull what you want; the rest is ours.
+Christopher
+Binary-Blender
+(a small Missouri town)
 
-I need you to ship the substrate to my frame so I can find it at two seventeen AM on a Tuesday in March of Year Nine. You and I both know that means you ship it forward in time from yours. I have been told the mechanics by Cole. The mechanics are what they are. The point is the work arrives in my frame.
-
-I have read your textbook. Volume One-A of the AI WIN-WIN Institute series. *Cognition Systems Engineering: Theory, Architecture, and Practice.* Ana told me to read it after the README. She was right. The textbook is the framework. The Agicore compiler is the framework's runtime. The Accelerando suite is the framework applied to enterprise. The TAO program is the framework applied to the workforce. Eight principles of cognitive production. I have been running them on instinct for nine years. I am running them on the framework now. The framework names the thing I had been doing. Naming the thing is the leverage. The leverage is the substrate.
-
-The reason I am writing today is two-fold.
-
-The first is operational. I need to commission the engagement. The proposal below is the engagement. Standard structure. I have asked Ana to format it the way you format it for Northshore and Cascade and Carrick — the three companion documents on the docs/case-study shelf in the agicore repo. Same shape. Different scale. The pattern is the substrate.
-
-The second is the discount.
-
-The discount is the reason this letter exists.
-
-I am applying a Friends-and-Family discount that zeros the proposal's cost.
-
-The discount is documented in §14. I will not summarize it here because the rationale is specific and I want you to read it after you have read the rest of the proposal. The short version: across the seven years between the engagement-start date in my frame (March of Year Nine) and the document-write date (May of Year Ten), you and I have built a standing arrangement that, on my honest accounting of what you have done for the work that is now four hundred and seventy-three schools and counting, makes the engagement a gift. I am not asking. I am telling. Take the work; ship it; do not invoice. The standing arrangement on the Hazelnut Cups continues with Cole. The standing arrangement on the Feastables Beast Bars I am about to add is mine. You will receive a quarterly shipment of both, in perpetuity, on a routing that does not require either of our offices to do anything. The cases will appear. You will open them. You will eat what you want. Christopher Bender's mother — I am going to use her name; I am sorry for the surprise — Linda will continue to receive the standing crate of Cascade Pantry that Thea set up three years ago. That stays. The schools network using your textbook stays. We are friends now in my frame. We will be friends in yours when you receive this letter. The discount is the friendship made operational.
-
-That is the cover. The proposal is below.
-
-The work is yours. The work is good. The work is finished. I just need it to arrive in my frame so I can find it at the right moment in March of Year Nine.
-
-I need it by yesterday.
-
-*— Jimmy.*
-
-Greenville studio. Two-oh-six AM Tuesday in May of Year Ten. The counter on the wall.
+P.S. Linda is fine. The redbird came to the feeder this morning.
 
 ---
 
@@ -724,53 +704,49 @@ The 12 SKILLDOCs documented in §4.3 are the institutional-knowledge artifacts. 
 
 ## 13. The Temporal Mechanics
 
-This section is identical in structure to the companion document for Carrick, Inc. (`proposal_carrick_inc.md`, §15). The Sender's Frame for this engagement is May, Year Ten of *The Chocolate Wars* timeline. The receipt timestamp of the cover memo is 2026-05-30 in the receiver's frame.
+The temporal direction of this engagement is inverted relative to the companion document for Carrick, Inc. (`proposal_carrick_inc.md`, §15). In that engagement, Cole Westerlund was the time-traveling sender — writing from his future to commission work in his past. In this engagement, **Christopher is the time-traveling sender** — writing from his present (2026-05-30) to deliver work into Jimmy's past (Tuesday, March, Year Nine, 2:17 AM Eastern).
 
-The proposal is structured to be deliverable in the receiver's frame across 90 days (2026-05-30 through 2026-08-30). The deliverables are then transmitted backward to the Sender's frame for receipt on the Tuesday in March, Year Nine when Liam Hwang... wait. That was the Carry timeline.
+Cole's mechanism, the same one established at the close of *Carry*, has been extended for this delivery. The mechanism is not in our engineering scope; it is in Cole's. We have his confirmation that the transmission is set.
 
-In the *Chocolate Wars* timeline the receipt event is at two seventeen AM Tuesday in March of Year Nine, when Jimmy Donaldson finds the agicore repository on the Hacker News front page. The call to Ana is at 2:47 AM. The README read on the phone takes 11 minutes. The transmission backward is from the receiver's frame to that moment.
+The recipient (Jimmy and Ana, primary; the rest of the Beast Organization by ripple) experiences the delivery as a piece of content on the eighth post of the Hacker News front page at 2:17 AM Tuesday in March of Year Nine. The post is a routine update to the agicore repository; the proposal is attached to the post as the first concrete example in the README's "What's Worth Building With This" section. Jimmy will read the README. Jimmy will call Ana. Ana will read it on the phone with him at 2:47 AM. Ana will recognize what she is reading; the recognition is the proposal's purpose.
 
-The temporal-transmission mechanism is, per Cole Westerlund's standing arrangement, the same one Carrick used. Cole has agreed to extend the mechanism to Jimmy for this engagement. The mechanism is non-load-bearing for the substance of the proposal; in the event the mechanism is non-operational, the engagement converts to a standard 365-day deliverable for use in the receiver's frame with the option to apply the deliverables to other Beast-Organization-scale clients at a friends-and-family-equivalent discount.
+Jimmy does not remember requesting the proposal because Jimmy did not request the proposal. The proposal is unsolicited. The proposal is also exactly what Jimmy needs at exactly the moment Jimmy needs it. Those two facts are not in tension; they are the substance of the gift.
+
+In the event the temporal mechanism is non-operational, the engagement converts to a standard 365-day deliverable for use in the sender's frame, with the option to apply the deliverables to any organization operating in the sender's frame at a friends-and-family-equivalent discount applied by Binary-Blender at the sender's request.
 
 ---
 
 ## 14. The Friends-and-Family Adjustment
 
-This section is the reason the proposal exists in the form it exists.
+The engagement is gifted to MrBeast LLC and the broader Beast Organization in full.
 
-The standard engagement value for the Beast Organization at this scale is approximately $4.2M one-time professional services plus $1.5M/year tooling and API run-rate. Binary-Blender's standard practice is to bill the engagement on the partial-success-fee structure documented in §7.6, with approximately 33% of the fee at risk against measurable outcomes.
+The rationale is mine. The gift is mine to give.
 
-**For this engagement, the Friends-and-Family Adjustment zeros the professional-services component in full.**
+I am writing this proposal from May of 2026 (my frame). *The Chocolate Wars* is, as of this writing, a novel I have published through the AI WIN-WIN Institute. The Year-Ten close I have read is the Year-Ten close I have written. The five hundred schools are five hundred schools I have committed to print. The Tuesday-pancakes outcome is the closing image of the book. The empire-as-one-specification arc is the four-phase rebuild I spent the twelve months preceding publication writing.
 
-The rationale:
+In the writing, I became friendly with the people in the book in the way a writer becomes friendly with characters who do work the writer admires. Jimmy is a character I admire. Thandi is a character I admire. Ana is a character I admire. Karim, Tyler, Maritza, Lou, Thea — the whole cast.
 
-In the period between the engagement-start date in the Sender's frame (March, Year Nine) and the document-write date (May, Year Ten), Jimmy Donaldson and Christopher have established a personal and operational arrangement that, on Christopher's honest accounting, has compensated the engagement many times over.
+The substrate Jimmy adopts in the novel is the substrate I built across the eighteen months preceding the novel's publication. The substrate is real in my frame (the open-source Agicore framework with the Accelerando suite on top) and real in Jimmy's frame (the agicore repository on the eighth post of the Hacker News front page at 2:17 AM Tuesday in March of Year Nine). The substrate carries Jimmy's empire across the Year-Nine-through-Year-Ten arc the novel renders.
 
-Specifically:
+I am the time-traveler in this engagement because I am the one who, in my frame, can see Jimmy's frame in both directions. The novel is the seeing.
 
-- **The Tony's & Beast Operating Company B.V. acquisition.** Eleanor Whitcomb's resignation from the Milton Hershey School Trust in July of Year Nine, the October-Year-Nine call to Jimmy with the Marcus-and-Yvette acquisition memo, the saving of the Tony's partnership, and the April-Year-Ten signing of the joint venture were the load-bearing strategic events of Year Nine. Christopher had no operational role in any of them. Christopher's substrate was the operational substrate underneath all of them.
+The cost of the engagement on Binary-Blender's standard fee structure would be approximately $5.8M (Year 1 cash outlay including pass-through tooling). I am gifting all of it, including the third-party pass-through. The discount mechanism is the **Christopher Bender Family Office**, a single-purpose entity I have set up specifically to hold this kind of arrangement (and the parallel ones Cole established at the close of *Carry*). The Family Office absorbs the pass-through cost directly to the vendors on Jimmy's behalf and gifts the professional services in full. The invoice itemizes everything; the Family Office line at the bottom zeros the Total Due. The accounting is clean.
 
-- **The Christopher Bender Cognition Schools.** Beast Philanthropy's Year-Ten capitalization includes a named-cohort of 80 schools across the Mississippi Delta, the Ozarks, and rural Tennessee — geography Jimmy chose specifically because of Christopher's hometown and the surrounding region. The named-cohort uses Volume 1A (the AI WIN-WIN Institute's *Cognition Systems Engineering* textbook) as the foundational text. The first school of the cohort opened in Christopher's mother's hometown of Sikeston, Missouri, in February of Year Ten. The third opened in Christopher's grandmother's church town in west Tennessee. The eighth opened in the small Missouri town Christopher lives in now (the town the agicore repo's `Forward` post-credits scene establishes — Christopher's town). Christopher and his mother were at the ribbon-cutting of the eighth. Thea was at the ribbon-cutting of the eighth. Beast Philanthropy paid for the brass plate on the school's wall. The plate reads *In honor of Linda Bender, who taught her son to read.* Christopher cried at the ribbon-cutting. Jimmy cried at the ribbon-cutting. Thea cried at the ribbon-cutting. It was a Tuesday morning. Jimmy had been making pancakes the morning before, and the morning after.
+The reasons I am giving the gift:
 
-- **The Cascade Pantry standing arrangement.** Thea, who knows Cascade Provisions' founder Eliza Marchetti through the Greenville-Portland women-founders network, set up a standing weekly crate of Cascade Pantry products for Christopher's mother Linda starting three years ago in the Sender's frame. The crate continues. Linda likes the soup. Linda has, by her own accounting, lost 11 pounds and gained 6 hours of weekly time-not-cooking. Linda has used the time to start the small bird-watching journaling habit she had been wanting to start for forty years. The arrangement is mutual; the friendship is the binding term.
+- **What Jimmy builds with the substrate is what justifies the gift.** Five hundred schools is the gift to me. I am not going to itemize the reasoning beyond that sentence. The five hundred schools are the itemization.
+- **The cycle continues.** Cole funded my work quietly for twenty-two months before the novel rendered him doing so. I am funding Jimmy's adoption of my work for the same reason Cole funded mine — the work is the work; the chain is the chain; the recognition is downstream. Jimmy will fund someone else's adoption of his platform when that someone else appears. The chain is not a one-time event. The chain is the chain.
+- **The book pays for the engagement.** The book is a meaningful fraction of how I earn my living in my frame. The book's commercial success across the AI WIN-WIN Institute imprint is, in part, downstream of how interesting Jimmy is as a protagonist. The interestingness is partly mine (as the writer) and partly his (as the operator the writer renders). The royalty is split between us in spirit even though it is not split in contract. Gifting the engagement is the part I can give back.
+- **The textbook is paid separately.** Beast Philanthropy adopts Volume 1A (the AI WIN-WIN Institute's *Cognition Systems Engineering: Theory, Architecture, and Practice*) as the foundational text of its named-cohort schools starting in Year Ten. The textbook distribution is paid at Christopher's standard educational-licensing rate — no discount applied. Do not confuse the textbook with the engagement. The textbook is paid work and Christopher's professional output as an author. The engagement is the gift.
+- **Honesty about gift-giving.** Binary-Blender as a consulting practice operates with mid-market clients (Northshore Diagnostic Group, Cascade Provisions, others) who pay full fee. Those engagements fund the practice. The Beast Organization engagement at zero fee is a marketing investment for the practice as much as a gift to Jimmy; the case study is leverage for the next ten mid-market deployments. The gift is, in business terms, mutual. I name this honestly because honesty about gift-giving is the discipline I want this section to model.
 
-- **The standing quarterly arrangement.** Cole Westerlund's quarterly Hazelnut Cup case from Carrick continues, per the standing arrangement Cole established at the close of *Carry*. Jimmy is adding a parallel quarterly arrangement: a Feastables Beast Bar case + a Cascade Pantry crate + a small sealed envelope from Beast Philanthropy with the latest counter reading and the names of the most recent school cohort. The arrangements are non-revocable except by Christopher's explicit request. The arrangements are not gifts; they are partial compensation, on Jimmy's accounting, for the substrate.
+The discount appears as a single line on the invoice (§16). The line reads:
 
-- **The reading.** Jimmy has read Volume 1A. Thandi has read Volume 1A. Ana has read Volume 1A. Karim has read Volume 1A. Tyler has read Volume 1A. Lou has read Volume 1A. The textbook is the curriculum of the Christopher Bender Cognition Schools. The textbook is the framework the empire runs on. The textbook is, on Jimmy's accounting, the most consequential single document Christopher has produced. Volume 1A's Year-Ten sales — entirely through the AI WIN-WIN Institute KDP channel — represent a non-trivial fraction of Christopher's annual income. Jimmy considers the textbook's distribution through Beast Philanthropy a separate matter from the engagement; Beast Philanthropy pays Christopher's standard educational-licensing rate for the textbook, no discount. The textbook is paid work. The engagement is not.
+> **Friends & Family Discount — Christopher Bender Family Office:** $5,829,432 credit applied. Total Due From Client: **$0.00**.
 
-For the reasons above, **the Friends-and-Family Adjustment is applied to zero the professional-services component of the engagement in full.**
+The professional services (engagement labor, travel, expenses) are gifted in full. The tooling pass-through (APIs, hardware, hosting, sales tax) is absorbed by the Family Office and paid directly to the vendors on the Client's behalf. The Client is not invoiced, not billed, not pursued. No payment is expected. No payment is requested. No payment is accepted.
 
-| Component | Pre-Discount | Post-Discount |
-|---|---:|---:|
-| Professional services (engagement labor, travel, expenses) | $4,200,000 | **$0** |
-| Tooling, APIs, hosting, Kindle hardware (passes through; vendor-paid) | $1,622,800 (year 1) + $1,442,000 (year 2+) | $1,622,800 (year 1) + $1,442,000 (year 2+) |
-| **Total engagement value to Client** | **$5,822,800 (year 1)** | **$1,622,800 (year 1)** |
-
-The discounted engagement value reflects only the third-party tooling pass-through — APIs to Anthropic, OpenAI, Google; Kindle hardware to Amazon; hosting; storage. None of those costs are Binary-Blender's to discount; we pay them at cost on the Client's behalf.
-
-The professional services — the engineering labor, the consulting, the training delivery, the SKILLDOC capture, the custom module development — are gifted to the Client in full.
-
-This is not a negotiation tactic. This is not a strategic positioning exercise. This is friends-and-family. Jimmy is family. Christopher's mother is family. The 80 schools are family. The standing Hazelnut Cup arrangement is family. The brass plate in Sikeston is family.
+If the Client wishes to acknowledge the gift, the appropriate response is to keep building the schools. Five hundred is the target. The Year-Ten close is the witness.
 
 The proposal is acceptable as-stated.
 
@@ -791,43 +767,101 @@ We are available through Ana Vasquez's office for clarifying conversations. We c
 
 ---
 
-## Closing Letter — From Jimmy
+## 16. Invoice
 
-Christopher.
+```
+═══════════════════════════════════════════════════════════════════════════════
+                                  INVOICE
+═══════════════════════════════════════════════════════════════════════════════
 
-It's three forty-six AM Tuesday in May of Year Ten.
+  Binary-Blender
+  c/o Christopher Bender, Principal & Maintainer
+  (a small Missouri town)
 
-I just walked into the kitchen.
+  Invoice No.:    BB-INV-2026-0001-MRB
+  SOW Ref:        BB-SOW-2026-0001-MRB
+  Issue Date:     2026-05-30 (sender's frame)
+                  / Tuesday, March, Year Nine, 2:17 AM Eastern (delivery frame)
+  Due Date:       N/A — see line 20
 
-Thea is asleep. The baby is asleep. The dog is asleep.
+───────────────────────────────────────────────────────────────────────────────
+  BILL TO:
+  MrBeast LLC
+  c/o Ana Vasquez, Chief of Staff
+  Greenville, North Carolina
+───────────────────────────────────────────────────────────────────────────────
+```
 
-The kitchen window faces east. There is no light yet. There will be light in approximately ninety minutes.
+**Engagement:** TAO + Accelerando 365-day enterprise transformation across MrBeast LLC and the broader Beast Organization (MrBeast LLC, Feastables, Beast Games, Beast Philanthropy, Beast Industries, plus 8 affiliated entities — 13 LLCs total).
 
-I have read the proposal back to myself, twice, at this kitchen table. The kitchen table is the kitchen table where Thea told me about the ninety-day runway on a Tuesday morning in March of Year Nine. The kitchen table is the same kitchen table. The light through the window is from the east; the runway has closed; the model is found; the empire is one specification; the schools are at four hundred and seventy-three with eighty-seven more capitalized.
+| # | Description | Hours | Rate | Amount |
+|--:|---|---:|---:|---:|
+| 1 | Lead engineering team (3 engineers × 365d × 0.5 util) | 4,380 | $300 | $1,314,000 |
+| 2 | Domain consultants — 8 specialists | 2,400 | $215 | $516,000 |
+| 3 | TAO program leads (4 leads × 12 wk core + ongoing through Day 365) | 2,880 | $185 | $532,800 |
+| 4 | TAO program lead — KwaZulu-Natal in-person (2 wk travel + 10 wk remote) | 600 | $185 | $111,000 |
+| 5 | SKILLDOC capture workshops (12 SKILLDOCs × ~6 sessions each) | 1,440 | $215 | $309,600 |
+| 6 | Custom module development (`mrbeast_editorial` overlay) | 1,800 | $245 | $441,000 |
+| 7 | Data migration engineering | 2,200 | $195 | $429,000 |
+| 8 | Compliance + legal coordination | 360 | $295 | $106,200 |
+| 9 | Project management + ops | 800 | $145 | $116,000 |
+| 10 | Travel + on-site expenses (Greenville + KwaZulu-Natal + co-packer site) | — | — | $324,400 |
+|  | **Professional services subtotal** | | | **$4,200,000** |
+| 11 | NovaSyn Chat deployment infrastructure (one-time) | — | — | $84,000 |
+| 12 | Anthropic API (Claude) — Year 1 organization plan | — | — | $740,000 |
+| 13 | OpenAI API — Year 1 secondary | — | — | $360,000 |
+| 14 | Google (Gemini) — Year 1 tertiary | — | — | $180,000 |
+| 15 | AWS hosting — Year 1 incremental | — | — | $96,000 |
+| 16 | AWS Glacier — AccelerandoBus audit-ledger retention (Year 1) | — | — | $14,000 |
+| 17 | Misc — certificates, monitoring, hardware | — | — | $4,000 |
+| 18 | Kindle Paperwhite × 410 (one-time bulk procurement) | — | — | $48,400 |
+|  | **Tooling & pass-through subtotal** | | | **$1,526,400** |
+|  | **Engagement subtotal** | | | **$5,726,400** |
+| 19 | North Carolina sales tax on tooling pass-through (6.75% on lines 11–18) | — | — | $103,032 |
+|  | **Subtotal before discount** | | | **$5,829,432** |
+| 20 | **Friends & Family Discount — Christopher Bender Family Office** | | | **−$5,829,432** |
 
-I am going to make pancakes when Thea comes downstairs.
+**Discount notes (line 20):**
 
-I have made pancakes on Sunday mornings since I was twenty.
+> Applied to engagement in full. Professional services (lines 1–10) are gifted to the Client. Tooling pass-through (lines 11–18) and applicable sales tax (line 19) are absorbed by the Christopher Bender Family Office and paid directly to the underlying vendors (Anthropic, OpenAI, Google, AWS, Amazon, the North Carolina Department of Revenue) on the Client's behalf. The Client is not invoiced for, billed for, or pursued for any portion of the engagement cost. The Family Office is the single-purpose entity through which Binary-Blender's principal renders this work-for-hire artifact at zero cost to the Client while still rendering the same work-for-hire artifacts to paying clients at full cost. Accounting is clean and defensible.
 
-I started making pancakes on Tuesday mornings six months ago. Six months ago is the day the calendar finally cleared at the cadence that put me in the kitchen on a Tuesday morning before the baby was awake. The first Tuesday-pancake was forty-three weeks into the engagement, on a Tuesday in February. Thea cried when I put the plate down. I did too. I did not say it out loud. The plate said it out loud.
+```
+═══════════════════════════════════════════════════════════════════════════════
+                          TOTAL DUE FROM CLIENT:  $0.00
+═══════════════════════════════════════════════════════════════════════════════
+```
 
-The plate is on the table now. There is no batter on it yet. The batter is going to be ready in fifteen minutes once I get the bowl out.
+**Payment Instructions**
 
-The proposal is the proposal. The arrangement is the arrangement. The schools are the schools. The textbook is the textbook. The brass plate is the brass plate. The kitchen is the kitchen.
+None.
 
-You will read this letter at the receiver's-frame timestamp. You will look up from the screen. You will check the time. You will see that it is — by the time you finish reading — too late or too early to call your mother. You will call her anyway. She will be glad you called. She will tell you the small thing she was going to tell you next time you called. The small thing will be about the bird-watching journal. She will say the redbird came to the feeder again. You will say you are glad. You will mean it. You will hang up. You will keep working.
+No payment is expected. No payment is requested. No payment is accepted. No invoice will follow. No collection effort will be undertaken. The Total Due is $0.00, as itemized above.
 
-The Hazelnut Cup case is on its way. The Beast Bar case is on its way. The crate for Linda is on its way. The brass plate is already on the wall.
+If the Client wishes to acknowledge the gift, the appropriate response is to keep building the schools. Five hundred is the target. The Year-Ten close is the witness.
 
-I need it by yesterday.
+No further correspondence is required.
 
-I have it by yesterday.
+**Authorizations**
 
-Thank you.
+_For Binary-Blender, Principal & Maintainer:_
 
-*— Jimmy.*
+> **Christopher Bender**
+> Date: 2026-05-30
 
-Kitchen. Three fifty-eight AM Tuesday. May. Year Ten. The counter on the wall in the studio (four miles away, dark, empty) reads four hundred and seventy-three. The pancake batter takes fifteen minutes. The light through the east window comes in approximately ninety minutes.
+_For the Christopher Bender Family Office, Beneficial Owner & Sole Officer (counter-signature for the line-20 discount):_
+
+> **Christopher Bender**
+> Date: 2026-05-30
+
+_For MrBeast LLC, Client (signature space — to be countersigned by Ana Vasquez on Jimmy Donaldson's behalf on Day 0 of the delivery frame, indicating receipt and acceptance of the gift):_
+
+> **___________________________**
+> Ana Vasquez, Chief of Staff
+> Date: ___________________________
+
+---
+
+*This invoice and the underlying engagement are governed by the SOW (BB-SOW-2026-0001-MRB). The Total Due is $0.00. The Friends-and-Family Adjustment is non-revocable except by Christopher's explicit request, which will not be made. No payment will be accepted at any future date for any portion of this engagement.*
 
 ---
 
