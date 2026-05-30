@@ -289,7 +289,13 @@ export function generateInvokes(ast: AgiFile): string {
   if (hasEmit) imports.push("import { listen } from '@tauri-apps/api/event';");
 
   const typeImports: string[] = [
-    ...ast.entities.flatMap(e => [`  ${e.name}, Create${e.name}Input, Update${e.name}Input,`]),
+    ...ast.entities.flatMap(e => {
+      const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
+      const types: string[] = [e.name];
+      if (ops.includes('create')) types.push(`Create${e.name}Input`);
+      if (ops.includes('update')) types.push(`Update${e.name}Input`);
+      return [`  ${types.join(', ')},`];
+    }),
     ...multiOutputActions.map(a => `  ${toPascalCase(a.name)}Result,`),
   ];
 
@@ -447,9 +453,13 @@ export function generateStore(ast: AgiFile): string {
     '',
     "import { create } from 'zustand';",
     "import type {",
-    ...ast.entities.flatMap(e => [
-      `  ${e.name}, Create${e.name}Input, Update${e.name}Input,`,
-    ]),
+    ...ast.entities.flatMap(e => {
+      const ops = e.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : e.crud;
+      const types: string[] = [e.name];
+      if (ops.includes('create')) types.push(`Create${e.name}Input`);
+      if (ops.includes('update')) types.push(`Update${e.name}Input`);
+      return [`  ${types.join(', ')},`];
+    }),
     "} from '../lib/types';",
     "import {",
     ...ast.entities.flatMap(e => {
@@ -542,6 +552,7 @@ export function generateStore(ast: AgiFile): string {
         lines.push(`  edit${name}: (input: Update${name}Input) => Promise<void>;`);
       }
     } else {
+      const ops = entity.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : entity.crud;
       const plural = camel + 's';
       lines.push(`  ${plural}: ${name}[];`);
       lines.push(`  selected${name}Id: string | null;`);
@@ -553,9 +564,15 @@ export function generateStore(ast: AgiFile): string {
         if (!currentEntities.includes(rel.target)) continue;
         lines.push(`  load${name}sForCurrent${rel.target}: () => Promise<void>;`);
       }
-      lines.push(`  add${name}: (input: Create${name}Input) => Promise<void>;`);
-      lines.push(`  edit${name}: (id: string, input: Update${name}Input) => Promise<void>;`);
-      lines.push(`  remove${name}: (id: string) => Promise<void>;`);
+      if (ops.includes('create')) {
+        lines.push(`  add${name}: (input: Create${name}Input) => Promise<void>;`);
+      }
+      if (ops.includes('update')) {
+        lines.push(`  edit${name}: (id: string, input: Update${name}Input) => Promise<void>;`);
+      }
+      if (ops.includes('delete')) {
+        lines.push(`  remove${name}: (id: string) => Promise<void>;`);
+      }
       lines.push(`  select${name}: (id: string | null) => void;`);
     }
     lines.push('');
@@ -602,6 +619,7 @@ export function generateStore(ast: AgiFile): string {
         lines.push(`  },`);
       }
     } else {
+      const ops = entity.crud === 'full' ? ['list', 'create', 'read', 'update', 'delete'] : entity.crud;
       const plural = camel + 's';
 
       lines.push(`  ${plural}: [],`);
@@ -627,18 +645,24 @@ export function generateStore(ast: AgiFile): string {
         lines.push(`    }`);
         lines.push(`  },`);
       }
-      lines.push(`  add${name}: async (input) => {`);
-      lines.push(`    await create${name}(input);`);
-      lines.push(`    await get().load${name}s();`);
-      lines.push(`  },`);
-      lines.push(`  edit${name}: async (id, input) => {`);
-      lines.push(`    await update${name}(id, input);`);
-      lines.push(`    await get().load${name}s();`);
-      lines.push(`  },`);
-      lines.push(`  remove${name}: async (id) => {`);
-      lines.push(`    await delete${name}(id);`);
-      lines.push(`    await get().load${name}s();`);
-      lines.push(`  },`);
+      if (ops.includes('create')) {
+        lines.push(`  add${name}: async (input) => {`);
+        lines.push(`    await create${name}(input);`);
+        lines.push(`    await get().load${name}s();`);
+        lines.push(`  },`);
+      }
+      if (ops.includes('update')) {
+        lines.push(`  edit${name}: async (id, input) => {`);
+        lines.push(`    await update${name}(id, input);`);
+        lines.push(`    await get().load${name}s();`);
+        lines.push(`  },`);
+      }
+      if (ops.includes('delete')) {
+        lines.push(`  remove${name}: async (id) => {`);
+        lines.push(`    await delete${name}(id);`);
+        lines.push(`    await get().load${name}s();`);
+        lines.push(`  },`);
+      }
       lines.push(`  select${name}: (id) => set({ selected${name}Id: id }),`);
     }
     lines.push('');

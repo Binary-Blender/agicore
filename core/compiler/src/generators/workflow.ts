@@ -34,12 +34,25 @@ function isEnabled(ast: AgiFile): boolean {
   return hasWorkflows && telemetryOn;
 }
 
+function hasWorkflowConsumers(ast: AgiFile): boolean {
+  const hasWorkflows = ast.workflows && ast.workflows.length > 0;
+  const hasMutationPolicies = ast.mutationPolicies && ast.mutationPolicies.length > 0;
+  return hasWorkflows && hasMutationPolicies;
+}
+
 export function generateWorkflow(ast: AgiFile): Map<string, string> {
   const files = new Map<string, string>();
-  if (!isEnabled(ast)) return files;
 
-  files.set('src-tauri/src/commands/workflow.rs', buildWorkflowRs(ast));
-  files.set('src/lib/workflow.ts', buildWorkflowTs(ast));
+  if (isEnabled(ast)) {
+    files.set('src-tauri/src/commands/workflow.rs', buildWorkflowRs(ast));
+    files.set('src/lib/workflow.ts', buildWorkflowTs(ast));
+  } else if (hasWorkflowConsumers(ast)) {
+    // MutationConsole and other downstream UI imports `../lib/workflow` for
+    // andon-event types and listing — emit the TS wrapper even when full
+    // telemetry-driven runtime isn't enabled.
+    files.set('src/lib/workflow.ts', buildWorkflowTs(ast));
+  }
+
   return files;
 }
 

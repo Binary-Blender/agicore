@@ -901,13 +901,12 @@ function generateKanbanView(view: ViewDecl, entity: EntityDecl | undefined, _ast
   const entityPlural = entityCamel + 's';
   const groupBy = view.groupBy ?? 'status';
 
-  return `import React from 'react';
-import { useAppStore } from '../store';
+  return `import { useAppStore } from '../store/appStore';
 
 export function ${view.name}() {
-  const items = useAppStore(s => s.${entityPlural} ?? []);
+  const items = (useAppStore(s => s.${entityPlural}) ?? []) as any[];
 
-  const columns = Array.from(new Set(items.map((i: any) => i.${groupBy} ?? 'unknown')));
+  const columns: string[] = Array.from(new Set(items.map((i: any) => i.${groupBy} ?? 'unknown')));
 
   return (
     <div className="flex gap-4 overflow-x-auto p-4 h-full" style={{ minHeight: 0 }}>

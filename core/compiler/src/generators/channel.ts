@@ -272,7 +272,7 @@ function buildChannelViewStub(channels: ChannelDecl[]): string {
 import { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
-import { Radio, Send, RefreshCw } from 'lucide-react';
+import { Radio, RefreshCw } from 'lucide-react';
 
 // Channels declared in .agi source: ${channelNames}
 
